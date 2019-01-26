@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#define INTL_DE
+#define INTL_PL
 
 /************************************************************************
  *                                                                      *
@@ -100,7 +100,7 @@
  *
  ************************************************************************/
 // increment on change
-#define SOFTWARE_VERSION "NRZ-2018-123B"
+#define SOFTWARE_VERSION "NAMF-2019-016"
 
 /*****************************************************************
  * Includes                                                      *
@@ -125,6 +125,7 @@
 #include <Adafruit_BMP085.h>
 #include <Adafruit_BMP280.h>
 #include <Adafruit_BME280.h>
+#include "ClosedCube_SHT31D.h" // obsługa Nettigo Air Monitor HECA
 #include <DallasTemperature.h>
 #include <TinyGPS++.h>
 #include <time.h>
@@ -187,7 +188,7 @@ namespace cfg {
 	char wlanssid[35] = WLANSSID;
 	char wlanpwd[65] = WLANPWD;
 
-	char current_lang[3] = "DE";
+	char current_lang[3] = "PL";
 	char www_username[65] = WWW_USERNAME;
 	char www_password[65] = WWW_PASSWORD;
 	bool www_basicauth_enabled = WWW_BASICAUTH_ENABLED;
@@ -206,6 +207,7 @@ namespace cfg {
 	bool bmp_read = BMP_READ;
 	bool bmp280_read = BMP280_READ;
 	bool bme280_read = BME280_READ;
+	bool heca_read = HECA_READ;
 	bool ds18b20_read = DS18B20_READ;
 	bool gps_read = GPS_READ;
 	bool send2dusti = SEND2DUSTI;
@@ -248,7 +250,7 @@ namespace cfg {
 	void initNonTrivials(const char* id) {
 		strcpy(cfg::current_lang, CURRENT_LANG);
 		if (fs_ssid[0] == '\0') {
-			strcpy(fs_ssid, "Feinstaubsensor-");
+			strcpy(fs_ssid, "NAM-");
 			strcat(fs_ssid, id);
 		}
 	}
@@ -272,8 +274,8 @@ namespace cfg {
 #define URL_FSAPP "/data.php"
 #define PORT_FSAPP 80
 
-#define UPDATE_HOST "www.madavi.de"
-#define UPDATE_URL "/sensor/update/firmware.php"
+#define UPDATE_HOST "fw.air.nettigo.pl"
+#define UPDATE_URL "/update/index.php"
 #define UPDATE_PORT 80
 
 #define JSON_BUFFER_SIZE 2000
@@ -292,6 +294,7 @@ long int sample_count = 0;
 bool bmp_init_failed = false;
 bool bmp280_init_failed = false;
 bool bme280_init_failed = false;
+bool heca_init_failed = false;
 
 ESP8266WebServer server(80);
 int TimeZone = 1;
@@ -335,6 +338,11 @@ Adafruit_BMP280 bmp280;
  * BME280 declaration                                            *
  *****************************************************************/
 Adafruit_BME280 bme280;
+
+/*****************************************************************
+ * HECA (SHT30) declaration                                            *
+ *****************************************************************/
+ClosedCube_SHT31D heca;
 
 /*****************************************************************
  * DS18B20 declaration                                            *
@@ -428,6 +436,8 @@ double last_value_BMP280_P = -1.0;
 double last_value_BME280_T = -128.0;
 double last_value_BME280_H = -1.0;
 double last_value_BME280_P = -1.0;
+double last_value_HECA_T = -128.0;
+double last_value_HECA_H = -1.0;
 double last_value_DS18B20_T = -1.0;
 double last_value_GPS_lat = -200.0;
 double last_value_GPS_lon = -200.0;
@@ -884,6 +894,7 @@ void readConfig() {
 					setFromJSON(bmp_read);
 					setFromJSON(bmp280_read);
 					setFromJSON(bme280_read);
+					setFromJSON(heca_read);
 					setFromJSON(ds18b20_read);
 					setFromJSON(gps_read);
 					setFromJSON(send2dusti);
@@ -973,6 +984,7 @@ void writeConfig() {
 	copyToJSON_Bool(bmp_read);
 	copyToJSON_Bool(bmp280_read);
 	copyToJSON_Bool(bme280_read);
+	copyToJSON_Bool(heca_read);
 	copyToJSON_Bool(ds18b20_read);
 	copyToJSON_Bool(gps_read);
 	copyToJSON_Bool(send2dusti);
@@ -1385,6 +1397,7 @@ void webserver_config() {
 			page_content += form_checkbox_sensor("bmp_read", FPSTR(INTL_BMP180), bmp_read);
 			page_content += form_checkbox_sensor("bmp280_read", FPSTR(INTL_BMP280), bmp280_read);
 			page_content += form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read);
+			page_content += form_checkbox_sensor("heca_read", FPSTR(INTL_HECA), heca_read);
 			page_content += form_checkbox_sensor("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read);
 			page_content += form_checkbox("gps_read", FPSTR(INTL_NEO6M), gps_read);
 			page_content += F("<br/><br/>\n<b>");
@@ -1509,6 +1522,7 @@ void webserver_config() {
 			readBoolParam(bmp_read);
 			readBoolParam(bmp280_read);
 			readBoolParam(bme280_read);
+			readBoolParam(heca_read);
 			readBoolParam(ds18b20_read);
 			readBoolParam(gps_read);
 
@@ -1564,6 +1578,7 @@ void webserver_config() {
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP180"), String(bmp_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP280"), String(bmp280_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BME280"), String(bme280_read));
+		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HECA"), String(heca_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "GPS"), String(gps_read));
 		page_content += line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update));
@@ -1740,6 +1755,11 @@ void webserver_values() {
 			page_content += table_row_from_value(FPSTR(SENSORS_BME280), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_BME280_T, -128, 1, 0), unit_T);
 			page_content += table_row_from_value(FPSTR(SENSORS_BME280), FPSTR(INTL_HUMIDITY), check_display_value(last_value_BME280_H, -1, 1, 0), unit_H);
 			page_content += table_row_from_value(FPSTR(SENSORS_BME280), FPSTR(INTL_PRESSURE),  check_display_value(last_value_BME280_P / 100.0, (-1 / 100.0), 2, 0), unit_P);
+		}
+		if (cfg::heca_read) {
+			page_content += FPSTR(EMPTY_ROW);
+			page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_HECA_T, -128, 1, 0), unit_T);
+			page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_HUMIDITY), check_display_value(last_value_HECA_H, -1, 1, 0), unit_H);
 		}
 		if (cfg::ds18b20_read) {
 			page_content += FPSTR(EMPTY_ROW);
@@ -2523,6 +2543,27 @@ static String sensorBME280() {
 }
 
 /*****************************************************************
+ * read HECA (SHT30) sensor values                                     *
+ *****************************************************************/
+static String sensorHECA() {
+	String s;
+
+	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_HECA), DEBUG_MED_INFO, 1);
+
+	SHT31D result = heca.periodicFetchData();
+  if (result.error == SHT3XD_NO_ERROR) {
+		last_value_HECA_T = result.t;
+		last_value_HECA_H = result.rh;
+ 	} else {
+		last_value_HECA_T = -128.0;
+		last_value_HECA_H = -1.0;
+	}
+	s += Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T));
+	s += Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H));
+	return s;
+}
+
+/*****************************************************************
  * read DS18B20 sensor values                                    *
  *****************************************************************/
 static String sensorDS18B20() {
@@ -3247,6 +3288,8 @@ static String displayGenerateFooter(unsigned int screen_count) {
 void display_values() {
 	double t_value = -128.0;
 	double h_value = -1.0;
+	double t_hc_value = -128.0; // temperature inside heating chamber
+	double h_hc_value = -1.0; //  humidity inside heating chamber
 	double p_value = -1.0;
 	String t_sensor = "";
 	String h_sensor = "";
@@ -3325,6 +3368,10 @@ void display_values() {
 		p_value = last_value_BME280_P;
 		p_sensor = FPSTR(SENSORS_BME280);
 	}
+	if (cfg::heca_read) {
+		t_hc_value = last_value_HECA_T;
+		h_hc_value = last_value_HECA_H;
+	}
 	if (cfg::gps_read) {
 		lat_value = last_value_GPS_lat;
 		lon_value = last_value_GPS_lon;
@@ -3337,11 +3384,14 @@ void display_values() {
 	if (cfg::dht_read || cfg::ds18b20_read || cfg::htu21d_read || cfg::bmp_read || cfg::bmp280_read || cfg::bme280_read) {
 		screens[screen_count++] = 2;
 	}
-	if (cfg::gps_read) {
+	if (cfg::heca_read) {
 		screens[screen_count++] = 3;
 	}
-	screens[screen_count++] = 4;	// Wifi info
-	screens[screen_count++] = 5;	// chipID, firmware and count of measurements
+	if (cfg::gps_read) {
+		screens[screen_count++] = 4;
+	}
+	screens[screen_count++] = 5;	// Wifi info
+	screens[screen_count++] = 6;	// chipID, firmware and count of measurements
 	if (cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27) {
 		switch (screens[next_display_count % screen_count]) {
 		case (1):
@@ -3367,18 +3417,24 @@ void display_values() {
 			while (line_count < 3) { display_lines[line_count++] = ""; }
 			break;
 		case (3):
+			display_header = F("NAM HECA (SHT30)");
+			display_lines[0] = "Temp.: " + check_display_value(t_hc_value, -128, 1, 6) + " °C";
+			display_lines[1] = "Hum.:  " + check_display_value(h_hc_value, -1, 1, 6) + " %";
+			display_lines[2] = "PTC HE: Soon :)"; // PTC heater status
+			break;
+		case (4):
 			display_header = gps_sensor;
 			display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 10);
 			display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 10);
 			display_lines[2] = "Alt: " + check_display_value(alt_value, -1000.0, 2, 10);
 			break;
-		case (4):
+		case (5):
 			display_header = F("Wifi info");
 			display_lines[0] = "IP: " + WiFi.localIP().toString();
 			display_lines[1] = "SSID:" + WiFi.SSID();
 			display_lines[2] = "Signal: " + String(calcWiFiSignalQuality(WiFi.RSSI())) + "%";
 			break;
-		case (5):
+		case (6):
 			display_header = F("Device Info");
 			display_lines[0] = "ID: " + esp_chipid;
 			display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
@@ -3540,6 +3596,34 @@ bool initBME280(char addr) {
 	}
 }
 
+/*****************************************************************
+ * Init HECA                                                     *
+ *****************************************************************/
+
+ bool initHECA() {
+
+	debug_out(F("Trying HECA (SHT30) sensor on 0x44"), DEBUG_MIN_INFO, 0);
+	heca.begin(0x44);
+	//heca.begin(addr);
+	if (heca.periodicStart(SHT3XD_REPEATABILITY_HIGH, SHT3XD_FREQUENCY_1HZ) != SHT3XD_NO_ERROR) {
+		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
+		debug_out(F(" [HECA ERROR] Cannot start periodic mode"), DEBUG_MIN_INFO, 1);
+		return false;
+	} else {
+		// temperature set, temperature clear, humidity set, humidity clear
+		if (heca.writeAlertHigh(120, 119, 65, 60) != SHT3XD_NO_ERROR) {
+			debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_MIN_INFO, 1);
+		}
+		if (heca.writeAlertLow(-5, 5, 0, 1) != SHT3XD_NO_ERROR) {
+			debug_out(F(" [HECA ERROR] Cannot set Alert LOW"), DEBUG_MIN_INFO, 1);
+		}
+		if (heca.clearAll() != SHT3XD_NO_ERROR) {
+			debug_out(F(" [HECA ERROR] Cannot clear register"), DEBUG_MIN_INFO, 1);
+		}
+		return true;
+	}
+}
+
 static void powerOnTestSensors() {
 	if (cfg::ppd_read) {
 		pinMode(PPD_PIN_PM1, INPUT_PULLUP);                 // Listen at the designated PIN
@@ -3608,6 +3692,14 @@ static void powerOnTestSensors() {
 		if (!initBME280(0x76) && !initBME280(0x77)) {
 			debug_out(F("Check BME280 wiring"), DEBUG_MIN_INFO, 1);
 			bme280_init_failed = 1;
+		}
+	}
+
+	if (cfg::heca_read) {
+		debug_out(F("Read HECA (SHT30)..."), DEBUG_MIN_INFO, 1);
+		if (!initHECA()) {
+			debug_out(F("Check HECA (SHT30) wiring"), DEBUG_MIN_INFO, 1);
+			heca_init_failed = 1;
 		}
 	}
 
@@ -3751,6 +3843,9 @@ void setup() {
 	time_point_device_start_ms = starttime;
 	starttime_SDS = starttime;
 	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
+
+
+
 }
 
 static void checkForceRestart() {
@@ -3829,6 +3924,7 @@ void loop() {
 	String result_BMP = "";
 	String result_BMP280 = "";
 	String result_BME280 = "";
+	String result_HECA = "";
 	String result_DS18B20 = "";
 	String result_GPS = "";
 
@@ -3905,6 +4001,11 @@ void loop() {
 		if (cfg::bme280_read && (! bme280_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BME280), DEBUG_MAX_INFO, 1);
 			result_BME280 = sensorBME280();                 // getting temperature, humidity and pressure (optional)
+		}
+
+		if (cfg::heca_read && (! heca_init_failed)) {
+			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HECA), DEBUG_MAX_INFO, 1);
+			result_HECA = sensorHECA();                 // getting temperature, humidity and pressure (optional)
 		}
 
 		if (cfg::ds18b20_read) {
@@ -4020,6 +4121,16 @@ void loop() {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
 				sendLuftdaten(result_BME280, BME280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BME280_");
+				sum_send_time += millis() - start_send;
+			}
+		}
+
+		if (cfg::heca_read && (! heca_init_failed)) {
+			data += result_HECA;
+			if (cfg::send2dusti) {
+				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
+				start_send = millis();
+				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
 				sum_send_time += millis() - start_send;
 			}
 		}

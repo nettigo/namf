@@ -1,9 +1,9 @@
 /*
  *	airRohr firmware
  *	Copyright (C) 2016-2018  Code for Stuttgart a.o.
- * 
+ *
  *  Danish translations
- * 
+ *
  *	Texts should be as short as possible
  *	We only have 512 kB for the entire firmware
  */
@@ -28,6 +28,7 @@ const char INTL_HTU21D[] PROGMEM = "HTU21D ({t}, {h})";
 const char INTL_BMP180[] PROGMEM = "BMP180 ({t}, {p})";
 const char INTL_BMP280[] PROGMEM = "BMP280 ({t}, {p})";
 const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
+const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
 const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 const char INTL_NEO6M[] PROGMEM = "GPS (NEO 6M)";
 const char INTL_BASICAUTH[] PROGMEM = "Aktiver BasicAuth";
@@ -47,12 +48,12 @@ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Målinterval";
 const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Permanent&nbsp;router-mode";
 const char INTL_MORE_APIS[] PROGMEM = "Yderligere APIer";
 const char INTL_SEND_TO_OWN_API[] PROGMEM = "Send til eget API";
-const char INTL_SERVER[] PROGMEM = "Server"; 
-const char INTL_PATH[] PROGMEM = "Sti (path)"; 
-const char INTL_PORT[] PROGMEM = "Port"; 
-const char INTL_USER[] PROGMEM = "Brugernavn"; 
-const char INTL_PASSWORD[] PROGMEM = "Kodeord"; 
-const char INTL_SEND_TO[] PROGMEM = "Send til {v}"; 
+const char INTL_SERVER[] PROGMEM = "Server";
+const char INTL_PATH[] PROGMEM = "Sti (path)";
+const char INTL_PORT[] PROGMEM = "Port";
+const char INTL_USER[] PROGMEM = "Brugernavn";
+const char INTL_PASSWORD[] PROGMEM = "Kodeord";
+const char INTL_SEND_TO[] PROGMEM = "Send til {v}";
 const char INTL_READ_FROM[] PROGMEM = "Hent fra {v}";
 const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Sensor genstartes.";
 const char INTL_RESTART_DEVICE[] PROGMEM = "Genstart enhed";

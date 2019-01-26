@@ -79,7 +79,7 @@
 #endif
 
 // DHT22, temperature, humidity
-#define DHT_READ 1
+#define DHT_READ 0
 #define DHT_TYPE DHT22
 #define DHT_API_PIN 7
 
@@ -116,8 +116,12 @@
 #define BMP280_API_PIN 3
 
 // BME280, temperature, humidity, pressure
-#define BME280_READ 0
+#define BME280_READ 1
 #define BME280_API_PIN 11
+
+// HECA (SHT30), temperature, pressure
+#define HECA_READ 1
+#define HECA_API_PIN 15
 
 // DS18B20, temperature
 #define DS18B20_READ 0
@@ -147,7 +151,7 @@
 #define HAS_LCD1602_27 0
 
 // LCD Display LCD2004 (0x27) angeschlossen?
-#define HAS_LCD2004_27 0
+#define HAS_LCD2004_27 1
 
 // Wieviele Informationen sollen über die serielle Schnittstelle ausgegeben werden?
 #define DEBUG 3

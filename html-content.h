@@ -32,6 +32,7 @@ const char SENSORS_HTU21D[] PROGMEM = "HTU21D";
 const char SENSORS_BMP180[] PROGMEM = "BMP180";
 const char SENSORS_BMP280[] PROGMEM = "BMP280";
 const char SENSORS_BME280[] PROGMEM = "BME280";
+const char SENSORS_HECA[] PROGMEM = "HECA";
 
 const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
@@ -61,6 +62,7 @@ const char TABLE_TAG_CLOSE_BR[] PROGMEM = "</table>";
 const char EMPTY_ROW[] PROGMEM = "<tr><td colspan='3'>&nbsp;</td></tr>";
 
 const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inline;'>{t}</a><br/><br/><br/>\
+<a href='https://air.nettigo.pl/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Nettigo Air Monitor (Koduj dla Polski)</a><br/>\
 <a href='https://codefor.de/stuttgart/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Open Knowledge Lab Stuttgart a.o. (Code for Germany)</a>\
 </div></body></html>\r\n";
 
