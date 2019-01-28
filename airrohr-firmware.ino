@@ -100,7 +100,7 @@
  *
  ************************************************************************/
 // increment on change
-#define SOFTWARE_VERSION "NAMF-2019-016"
+#define SOFTWARE_VERSION "NAMF-2019-018G"
 
 /*****************************************************************
  * Includes                                                      *
@@ -111,8 +111,6 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266httpUpdate.h>
-//#include <WiFiClientSecure.h>
-//#include <WiFiClientSecureBearSSL.h>
 #include <SoftwareSerial.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
@@ -125,7 +123,7 @@
 #include <Adafruit_BMP085.h>
 #include <Adafruit_BMP280.h>
 #include <Adafruit_BME280.h>
-#include "ClosedCube_SHT31D.h" // obsługa Nettigo Air Monitor HECA
+#include "ClosedCube_SHT31D.h" // support for Nettigo Air Monitor HECA
 #include <DallasTemperature.h>
 #include <TinyGPS++.h>
 #include <time.h>
@@ -1312,6 +1310,13 @@ void webserver_root() {
 		page_content.replace(F("{conf}"), FPSTR(INTL_CONFIGURATION));
 		page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
 		page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
+		page_content.replace(F("{debug_level}"), FPSTR(INTL_DEBUG_LEVEL));
+		page_content.replace(F("{none}"), FPSTR(INTL_NONE));
+		page_content.replace(F("{error}"), FPSTR(INTL_ERROR));
+		page_content.replace(F("{warning}"), FPSTR(INTL_WARNING));
+		page_content.replace(F("{min_info}"), FPSTR(INTL_MIN_INFO));
+		page_content.replace(F("{med_info}"), FPSTR(INTL_MED_INFO));
+		page_content.replace(F("{max_info}"), FPSTR(INTL_MAX_INFO));
 		page_content += make_footer();
 		server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 	}
@@ -3611,7 +3616,7 @@ bool initBME280(char addr) {
 		return false;
 	} else {
 		// temperature set, temperature clear, humidity set, humidity clear
-		if (heca.writeAlertHigh(120, 119, 65, 60) != SHT3XD_NO_ERROR) {
+		if (heca.writeAlertHigh(120, 119, 60, 55) != SHT3XD_NO_ERROR) {
 			debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_MIN_INFO, 1);
 		}
 		if (heca.writeAlertLow(-5, 5, 0, 1) != SHT3XD_NO_ERROR) {
@@ -3827,7 +3832,7 @@ void setup() {
 	logEnabledAPIs();
 	logEnabledDisplays();
 
-	String server_name = F("Feinstaubsensor-");
+	String server_name = F("NAM-");
 	server_name += esp_chipid;
 	if (MDNS.begin(server_name.c_str())) {
 		MDNS.addService("http", "tcp", 80);

@@ -39,19 +39,21 @@ const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <title>{t}</title>\
 <meta name='viewport' content='width=device-width'>\
 <style type='text/css'>\
-body{font-family:Arial;margin:0}\
-.content{margin:10px}\
-.r{text-align:right}\
+body{font-family:Arial;margin:0;}\
+.content{margin:10px;}\
+.r{text-align:right;}\
 td{vertical-align:top;}\
-a{text-decoration:none;padding:10px;background:#38b5ad;color:white;display:block;width:auto;border-radius:5px;}\
+a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
+a:hover{background:#1A4};\
 .wifi{background:none;color:blue;padding:5px;display:inline;}\
 input[type='text']{width:100%;}\
 input[type='password']{width:100%;}\
 input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
-.s_green{padding:9px !important;width:100%;border-style:none;background:#38b5ad;color:white;text-align:left;}\
+.s_red{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
+.s_red:hover {background:#E33;}\
 </style>\
 </head><body>\
-<div style='min-height:120px;background-color:#38b5ad;margin-bottom:20px'>\
+<div style='min-height:130px;background-color:#2B4;margin-bottom:20px'>\
 <a href='/' style='background:none;width:0;display:inline'><img src='/images?name=luftdaten_logo' style='float:left;margin:20px'/></a>\
 <h3 style='margin:0'>{tt}</h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4>{h} {n} {t}</h4>";
@@ -62,8 +64,8 @@ const char TABLE_TAG_CLOSE_BR[] PROGMEM = "</table>";
 const char EMPTY_ROW[] PROGMEM = "<tr><td colspan='3'>&nbsp;</td></tr>";
 
 const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inline;'>{t}</a><br/><br/><br/>\
-<a href='https://air.nettigo.pl/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Nettigo Air Monitor (Koduj dla Polski)</a><br/>\
-<a href='https://codefor.de/stuttgart/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Open Knowledge Lab Stuttgart a.o. (Code for Germany)</a>\
+<b><a href='https://air.nettigo.pl/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Nettigo Air Monitor (Koduj dla Polski)</a></b><br/><br/>\
+<small>Firmware based on luftdaten.info project by<br/><a href='https://codefor.de/stuttgart/' target='_blank' style='display:inline;background:none;color:black;padding:0'>Open Knowledge Lab Stuttgart a.o. (Code for Germany)</a></small>\
 </div></body></html>\r\n";
 
 const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>{t}</a><br/>\
@@ -72,13 +74,14 @@ const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>{t}</a><br/>\
 <a href='/removeConfig'>{conf_delete}</a><br/>\
 <a href='/reset'>{restart}</a><br/>\
 <table style='width:100%;'>\
-<tr><td style='width:33%;'><a href='/debug?lvl=0'>Debug null</a></td>\
-<td style='width:33%;'><a href='/debug?lvl=1'>Debug Error</a></td>\
-<td style='width:33%;'><a href='/debug?lvl=2'>Debug Warning</a></td>\
+<tr><td colspan='3'><b>{debug_level}</b></td></tr>\
+<tr><td style='width:33%;'><a href='/debug?lvl=0'>{none}</a></td>\
+<td style='width:33%;'><a href='/debug?lvl=1'>{error}</a></td>\
+<td style='width:33%;'><a href='/debug?lvl=2'>{warning}</a></td>\
 </tr><tr>\
-<td><a href='/debug?lvl=3'>Debug Info low</a></td>\
-<td><a href='/debug?lvl=4'>Debug Info medium</a></td>\
-<td><a href='/debug?lvl=5'>Debug Info high</a></td>\
+<td><a href='/debug?lvl=3'>{min_info}</a></td>\
+<td><a href='/debug?lvl=4'>{med_info}</a></td>\
+<td><a href='/debug?lvl=5'>{max_info}</a></td>\
 </tr>\
 </table>\
 ";
@@ -89,11 +92,11 @@ function load_wifi_list(){var x=new XMLHttpRequest();x.open('GET','/wifi');x.onl
 </script>";
 
 const char WEB_REMOVE_CONFIG_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action='/removeConfig'><input type='submit' class='s_green' name='submit' value='{b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action='/removeConfig'><input type='submit' class='s_red' name='submit' value='{b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_RESET_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action'/reset'><input type='submit' class='s_green' name='submit' value='{b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action'/reset'><input type='submit' class='s_red' name='submit' value='{b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_IOS_REDIRECT[] PROGMEM = "<html><body>Redirecting...\
