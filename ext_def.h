@@ -2,12 +2,12 @@
 #define CURRENT_LANG INTL_LANG
 
 // Wifi config
-#define WLANSSID "Freifunk-disabled"
+#define WLANSSID ""
 #define WLANPWD ""
 
 // BasicAuth config
 #define WWW_USERNAME "admin"
-#define WWW_PASSWORD "feinstaub"
+#define WWW_PASSWORD "admin"
 #define WWW_BASICAUTH_ENABLED 0
 
 // Sensor Wifi config (config mode)
