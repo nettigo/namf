@@ -225,6 +225,7 @@ namespace cfg {
 	bool has_lcd1602 = HAS_LCD1602;
 	bool has_lcd1602_27 = HAS_LCD1602_27;
 	bool has_lcd2004_27 = HAS_LCD2004_27;
+	bool has_lcd2004_3f = HAS_LCD2004_3F;
 	int  debug = DEBUG;
 
 	bool ssl_madavi = SSL_MADAVI;
@@ -307,6 +308,7 @@ SH1106 display_sh1106(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
 LiquidCrystal_I2C lcd_1602_27(0x27, 16, 2);
 LiquidCrystal_I2C lcd_1602_3f(0x3F, 16, 2);
 LiquidCrystal_I2C lcd_2004_27(0x27, 20, 4);
+LiquidCrystal_I2C lcd_2004_3f(0x3F, 20, 4);
 
 /*****************************************************************
  * SDS011 declarations                                           *
@@ -540,6 +542,13 @@ void display_debug(const String& text1, const String& text2) {
 		lcd_2004_27.print(text1);
 		lcd_2004_27.setCursor(0, 1);
 		lcd_2004_27.print(text2);
+	}
+	if (cfg::has_lcd2004_3f) {
+		lcd_2004_3f.clear();
+		lcd_2004_3f.setCursor(0, 0);
+		lcd_2004_3f.print(text1);
+		lcd_2004_3f.setCursor(0, 1);
+		lcd_2004_3f.print(text2);
 	}
 }
 
@@ -912,6 +921,7 @@ void readConfig() {
 					setFromJSON(has_lcd1602);
 					setFromJSON(has_lcd1602_27);
 					setFromJSON(has_lcd2004_27);
+					setFromJSON(has_lcd2004_3f);
 					setFromJSON(debug);
 					setFromJSON(sending_intervall_ms);
 					setFromJSON(time_for_wifi_config);
@@ -1002,6 +1012,7 @@ void writeConfig() {
 	copyToJSON_Bool(has_lcd1602);
 	copyToJSON_Bool(has_lcd1602_27);
 	copyToJSON_Bool(has_lcd2004_27);
+	copyToJSON_Bool(has_lcd2004_3f);
 	copyToJSON_String(debug);
 	copyToJSON_String(sending_intervall_ms);
 	copyToJSON_String(time_for_wifi_config);
@@ -1419,6 +1430,7 @@ void webserver_config() {
 		page_content += form_checkbox("has_lcd1602_27", FPSTR(INTL_LCD1602_27), has_lcd1602_27);
 		page_content += form_checkbox("has_lcd1602", FPSTR(INTL_LCD1602_3F), has_lcd1602);
 		page_content += form_checkbox("has_lcd2004_27", FPSTR(INTL_LCD2004_27), has_lcd2004_27);
+		page_content += form_checkbox("has_lcd2004_3f", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f);
 
 		if (! wificonfig_loop) {
 			page_content += FPSTR(TABLE_TAG_OPEN);
@@ -1567,6 +1579,7 @@ void webserver_config() {
 		readBoolParam(has_lcd1602);
 		readBoolParam(has_lcd1602_27);
 		readBoolParam(has_lcd2004_27);
+		readBoolParam(has_lcd2004_3f);
 
 #undef readCharParam
 #undef readBoolParam
@@ -1595,6 +1608,7 @@ void webserver_config() {
 		page_content += line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27));
 		page_content += line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602));
 		page_content += line_from_value(FPSTR(INTL_LCD2004_27), String(has_lcd2004_27));
+		page_content += line_from_value(FPSTR(INTL_LCD2004_3F), String(has_lcd2004_3f));
 		page_content += line_from_value(FPSTR(INTL_DEBUG_LEVEL), String(debug));
 		page_content += line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms));
 		page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("CSV")), String(send2csv));
@@ -3400,7 +3414,7 @@ void display_values() {
 	}
 	screens[screen_count++] = 5;	// Wifi info
 	screens[screen_count++] = 6;	// chipID, firmware and count of measurements
-	if (cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27) {
+	if (cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 		switch (screens[next_display_count % screen_count]) {
 		case (1):
 			display_header = pm25_sensor;
@@ -3491,6 +3505,21 @@ void display_values() {
 			lcd_2004_27.setCursor(0, 3);
 			lcd_2004_27.print(display_lines[2]);
 		}
+		if (cfg::has_lcd2004_3f) {
+			display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " + display_header;
+			display_lines[0].replace(" µg/m³", "");
+			display_lines[0].replace("°", String(char(223)));
+			display_lines[1].replace(" µg/m³", "");
+			lcd_2004_3f.clear();
+			lcd_2004_3f.setCursor(0, 0);
+			lcd_2004_3f.print(display_header);
+			lcd_2004_3f.setCursor(0, 1);
+			lcd_2004_3f.print(display_lines[0]);
+			lcd_2004_3f.setCursor(0, 2);
+			lcd_2004_3f.print(display_lines[1]);
+			lcd_2004_3f.setCursor(0, 3);
+			lcd_2004_3f.print(display_lines[2]);
+		}
 	}
 
 // ----5----0----5----0
@@ -3563,6 +3592,10 @@ void init_lcd() {
 	if (cfg::has_lcd2004_27) {
 		lcd_2004_27.init();
 		lcd_2004_27.backlight();
+	}
+	if (cfg::has_lcd2004_3f) {
+		lcd_2004_3f.init();
+		lcd_2004_3f.backlight();
 	}
 }
 
@@ -3757,6 +3790,9 @@ static void logEnabledDisplays() {
 		debug_out(F("Show on LCD 1602 ..."), DEBUG_MIN_INFO, 1);
 	}
 	if (cfg::has_lcd2004_27) {
+		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
+	}
+	if (cfg::has_lcd2004_3f) {
 		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
 	}
 }
@@ -4028,7 +4064,7 @@ void loop() {
 		starttime_GPS = act_milli;
 	}
 
-	if ((cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27 || cfg::has_lcd1602 ||
+	if ((cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
 			cfg::has_lcd1602_27) && (act_milli > next_display_millis)) {
 		display_values();
 	}
