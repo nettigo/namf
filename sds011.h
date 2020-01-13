@@ -4,7 +4,7 @@
 
 #ifndef AIRROHR_FIRMWARE_SDS011_H
 #define AIRROHR_FIRMWARE_SDS011_H
-//extern SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false, 128);
+
 #include "variables.h"
 void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
     char buffer;
@@ -44,10 +44,10 @@ void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
                 *pm10_serial += (value << 8);
                 break;
             case (8):
-                debug_out(FPSTR(DBG_TXT_CHECKSUM_IS), DEBUG_MED_INFO, 0);
-                debug_out(String(checksum_is % 256), DEBUG_MED_INFO, 0);
-                debug_out(FPSTR(DBG_TXT_CHECKSUM_SHOULD), DEBUG_MED_INFO, 0);
-                debug_out(String(value), DEBUG_MED_INFO, 1);
+                debug_out(FPSTR(DBG_TXT_CHECKSUM_IS), DEBUG_MAX_INFO, 0);
+                debug_out(String(checksum_is % 256), DEBUG_MAX_INFO, 0);
+                debug_out(FPSTR(DBG_TXT_CHECKSUM_SHOULD), DEBUG_MAX_INFO, 0);
+                debug_out(String(value), DEBUG_MAX_INFO, 1);
                 if (value == (checksum_is % 256)) {
                     checksum_ok = 1;
                 } else {

@@ -2708,29 +2708,30 @@ bool initBME280(char addr) {
 
  bool initHECA() {
 
-	debug_out(F("Trying HECA (SHT30) sensor on 0x44"), DEBUG_MIN_INFO, 0);
+	debug_out(F("Trying HECA (SHT30) sensor on 0x44"), DEBUG_MED_INFO, 0);
 	heca.begin(0x44);
 	//heca.begin(addr);
 	if (heca.periodicStart(SHT3XD_REPEATABILITY_HIGH, SHT3XD_FREQUENCY_1HZ) != SHT3XD_NO_ERROR) {
-		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
-		debug_out(F(" [HECA ERROR] Cannot start periodic mode"), DEBUG_MIN_INFO, 1);
+		debug_out(F(" ... not found"), DEBUG_MED_INFO, 1);
+		debug_out(F(" [HECA ERROR] Cannot start periodic mode"), DEBUG_ERROR, 1);
 		return false;
 	} else {
 		// temperature set, temperature clear, humidity set, humidity clear
 		if (heca.writeAlertHigh(120, 119, 63, 60) != SHT3XD_NO_ERROR) {
-			debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_MIN_INFO, 1);
+			debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_ERROR, 1);
 		}
 		if (heca.writeAlertLow(-5, 5, 0, 1) != SHT3XD_NO_ERROR) {
-			debug_out(F(" [HECA ERROR] Cannot set Alert LOW"), DEBUG_MIN_INFO, 1);
+			debug_out(F(" [HECA ERROR] Cannot set Alert LOW"), DEBUG_ERROR, 1);
 		}
 		if (heca.clearAll() != SHT3XD_NO_ERROR) {
-			debug_out(F(" [HECA ERROR] Cannot clear register"), DEBUG_MIN_INFO, 1);
+			debug_out(F(" [HECA ERROR] Cannot clear register"), DEBUG_ERROR, 1);
 		}
 		return true;
 	}
 }
 
 static void powerOnTestSensors() {
+    cfg::debug = DEBUG_MED_INFO;
 	if (cfg::sds_read) {
 		debug_out(F("Read SDS..."), 0, 1);
 		SDS_cmd(PmSensorCmd::Start);
@@ -2766,9 +2767,7 @@ static void powerOnTestSensors() {
 		if (!initBMP280(0x76) && !initBMP280(0x77)) {
 			debug_out(F("Check BMP280 wiring"), DEBUG_MIN_INFO, 1);
 			bmp280_init_failed = 1;
-		} else {
-            sensorBME280();
-        }
+		}
 	}
 
 	if (cfg::bme280_read) {
@@ -2776,7 +2775,9 @@ static void powerOnTestSensors() {
 		if (!initBME280(0x76) && !initBME280(0x77)) {
 			debug_out(F("Check BME280 wiring"), DEBUG_MIN_INFO, 1);
 			bme280_init_failed = 1;
-		}
+		} else {
+            sensorBME280();
+        }
 	}
 
 	if (cfg::heca_read) {
@@ -2784,6 +2785,12 @@ static void powerOnTestSensors() {
 		if (!initHECA()) {
 			debug_out(F("Check HECA (SHT30) wiring"), DEBUG_MIN_INFO, 1);
 			heca_init_failed = 1;
+		} else {
+		    sensorHECA();
+		    debug_out(F("Temp: "),DEBUG_MIN_INFO,0);
+		    debug_out(String(last_value_HECA_T,2),DEBUG_MIN_INFO,1);
+            debug_out(F("Hum: "),DEBUG_MIN_INFO,0);
+            debug_out(String(last_value_HECA_H,2),DEBUG_MIN_INFO,1);
 		}
 	}
 
@@ -2791,6 +2798,8 @@ static void powerOnTestSensors() {
 		ds18b20.begin();                                    // Start DS18B20
 		debug_out(F("Read DS18B20..."), DEBUG_MIN_INFO, 1);
 	}
+
+    cfg::debug = DEBUG;
 }
 
 static void logEnabledAPIs() {
@@ -2891,6 +2900,9 @@ void setup() {
 
 	init_display();
 	init_lcd();
+
+    powerOnTestSensors();
+
 	setup_webserver();
 	display_debug(F("Connecting to"), String(cfg::wlanssid));
 	connectWifi();
@@ -2903,7 +2915,6 @@ void setup() {
 	debug_out(F("\nChipId: "), DEBUG_MIN_INFO, 0);
 	debug_out(esp_chipid, DEBUG_MIN_INFO, 1);
 
-	powerOnTestSensors();
 
 	if (cfg::gps_read) {
 		serialGPS.begin(9600);
