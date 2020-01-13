@@ -9,7 +9,7 @@ String add_sensor_type(const String& sensor_text);
 //Nettigo NAM 0.3.2 factory firmware - test
 
 // increment on change
-#define SOFTWARE_VERSION "NAMF-2019-018I"
+#define SOFTWARE_VERSION "NAMF-2020-FABRIC-1"
 #define SPOOF_SOFTWARE_VERSION "NRZ-2018-123B"
 
 
@@ -2896,6 +2896,13 @@ void setup() {
 
 	esp_chipid = String(ESP.getChipId());
 	cfg::initNonTrivials(esp_chipid.c_str());
+
+	Serial.print(F("\nNAMF ver: "));
+	Serial.println(SOFTWARE_VERSION);
+	Serial.print(F("Chip ID: "));
+	Serial.println(esp_chipid);
+
+	
 	readConfig();
 
 	init_display();
