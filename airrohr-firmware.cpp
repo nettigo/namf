@@ -2052,7 +2052,7 @@ String sensorSDS() {
             is_SDS_running = SDS_cmd(PmSensorCmd::Start);
         }
 
-        readSingleSDSpacket(&pm10_serial, &pm25_serial);
+        readSingleSDSPacket(&pm10_serial, &pm25_serial);
 	}
 	if (send_now) {
 		last_value_SDS_P1 = -1;
@@ -2732,13 +2732,17 @@ bool initBME280(char addr) {
 
 static void powerOnTestSensors() {
 	if (cfg::sds_read) {
-		debug_out(F("Read SDS..."), DEBUG_MIN_INFO, 1);
+		debug_out(F("Read SDS..."), 0, 1);
 		SDS_cmd(PmSensorCmd::Start);
 		delay(100);
 		SDS_cmd(PmSensorCmd::ContinuousMode);
-		delay(100);
-		debug_out(F("Stopping SDS011..."), DEBUG_MIN_INFO, 1);
-		is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+        int pm10 = 0, pm25 = 0;
+        while (pm10==0 || pm25 == 0) { readSingleSDSPacket(&pm10, &pm25); yield(); }
+        debug_out(F("PM10/2.5:"), 0, 1);
+        debug_out(String(pm10/10.0,2),0,1);
+        debug_out(String(pm25/10.0,2),0,1);
+        debug_out(F("Stopping SDS011..."), 0, 1);
+        is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
 	}
 
 	if (cfg::pms_read) {
@@ -2762,7 +2766,9 @@ static void powerOnTestSensors() {
 		if (!initBMP280(0x76) && !initBMP280(0x77)) {
 			debug_out(F("Check BMP280 wiring"), DEBUG_MIN_INFO, 1);
 			bmp280_init_failed = 1;
-		}
+		} else {
+            sensorBME280();
+        }
 	}
 
 	if (cfg::bme280_read) {
