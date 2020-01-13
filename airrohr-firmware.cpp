@@ -29,7 +29,6 @@ String add_sensor_type(const String& sensor_text);
 #include <base64.h>
 #include <ArduinoJson.h>
 #include "./DHT.h"
-#include <Adafruit_BMP085.h>
 #include <Adafruit_BMP280.h>
 #include <Adafruit_BME280.h>
 #include "ClosedCube_SHT31D.h" // support for Nettigo Air Monitor HECA
@@ -89,8 +88,6 @@ namespace cfg {
 	bool ppd_read = PPD_READ;
 	bool sds_read = SDS_READ;
 	bool pms_read = PMS_READ;
-	bool hpm_read = HPM_READ;
-	bool bmp_read = BMP_READ;
 	bool bmp280_read = BMP280_READ;
 	bool bme280_read = BME280_READ;
 	bool heca_read = HECA_READ;
@@ -177,7 +174,6 @@ String basic_auth_influx = "";
 String basic_auth_custom = "";
 
 long int sample_count = 0;
-bool bmp_init_failed = false;
 bool bmp280_init_failed = false;
 bool bme280_init_failed = false;
 bool heca_init_failed = false;
@@ -204,11 +200,6 @@ SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false, 512);
  * DHT declaration                                               *
  *****************************************************************/
 DHT dht(ONEWIRE_PIN, DHT_TYPE);
-
-/*****************************************************************
- * BMP declaration                                               *
- *****************************************************************/
-Adafruit_BMP085 bmp;
 
 /*****************************************************************
  * BMP280 declaration                                               *
@@ -265,7 +256,6 @@ unsigned long max_micro = 0;
 
 bool is_SDS_running = true;
 bool is_PMS_running = true;
-bool is_HPM_running = true;
 
 unsigned long sending_time = 0;
 unsigned long last_update_attempt;
@@ -289,14 +279,6 @@ int pms_pm10_min = 20000;
 int pms_pm25_max = 0;
 int pms_pm25_min = 20000;
 
-int hpm_pm10_sum = 0;
-int hpm_pm25_sum = 0;
-int hpm_val_count = 0;
-int hpm_pm10_max = 0;
-int hpm_pm10_min = 20000;
-int hpm_pm25_max = 0;
-int hpm_pm25_min = 20000;
-
 double last_value_PPD_P1 = -1.0;
 double last_value_PPD_P2 = -1.0;
 double last_value_SDS_P1 = -1.0;
@@ -304,12 +286,8 @@ double last_value_SDS_P2 = -1.0;
 double last_value_PMS_P0 = -1.0;
 double last_value_PMS_P1 = -1.0;
 double last_value_PMS_P2 = -1.0;
-double last_value_HPM_P1 = -1.0;
-double last_value_HPM_P2 = -1.0;
 double last_value_DHT_T = -128.0;
 double last_value_DHT_H = -1.0;
-double last_value_BMP_T = -128.0;
-double last_value_BMP_P = -1.0;
 double last_value_BMP280_T = -128.0;
 double last_value_BMP280_P = -1.0;
 double last_value_BME280_T = -128.0;
@@ -563,39 +541,6 @@ static bool PMS_cmd(PmSensorCmd cmd) {
 	return cmd != PmSensorCmd::Stop;
 }
 
-/*****************************************************************
- * send Honeywell PMS sensor command start, stop, cont. mode     *
- *****************************************************************/
-static bool HPM_cmd(PmSensorCmd cmd) {
-	static constexpr uint8_t start_cmd[] PROGMEM = {
-		0x68, 0x01, 0x01, 0x96
-	};
-	static constexpr uint8_t stop_cmd[] PROGMEM = {
-		0x68, 0x01, 0x02, 0x95
-	};
-	static constexpr uint8_t continuous_mode_cmd[] PROGMEM = {
-		0x68, 0x01, 0x40, 0x57
-	};
-	constexpr uint8_t cmd_len = array_num_elements(start_cmd);
-
-	uint8_t buf[cmd_len];
-	switch (cmd) {
-	case PmSensorCmd::Start:
-		memcpy_P(buf, start_cmd, cmd_len);
-		break;
-	case PmSensorCmd::Stop:
-		memcpy_P(buf, stop_cmd, cmd_len);
-		break;
-	case PmSensorCmd::ContinuousMode:
-		memcpy_P(buf, continuous_mode_cmd, cmd_len);
-		break;
-	case PmSensorCmd::VersionDate:
-		assert(false && "not supported by this sensor");
-		break;
-	}
-	serialSDS.write(buf, cmd_len);
-	return cmd != PmSensorCmd::Stop;
-}
 
 /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
@@ -767,8 +712,6 @@ void readConfig() {
 					setFromJSON(pms_read);
 					setFromJSON(pms24_read);
 					setFromJSON(pms32_read);
-					setFromJSON(hpm_read);
-					setFromJSON(bmp_read);
 					setFromJSON(bmp280_read);
 					setFromJSON(bme280_read);
 					setFromJSON(heca_read);
@@ -856,8 +799,6 @@ void writeConfig() {
 	copyToJSON_Bool(ppd_read);
 	copyToJSON_Bool(sds_read);
 	copyToJSON_Bool(pms_read);
-	copyToJSON_Bool(hpm_read);
-	copyToJSON_Bool(bmp_read);
 	copyToJSON_Bool(bmp280_read);
 	copyToJSON_Bool(bme280_read);
 	copyToJSON_Bool(heca_read);
@@ -1273,10 +1214,8 @@ void webserver_config() {
 			page_content += F("</b><br/>");
 			page_content += form_checkbox_sensor("sds_read", FPSTR(INTL_SDS011), sds_read);
 			page_content += form_checkbox_sensor("pms_read", FPSTR(INTL_PMS), pms_read);
-			page_content += form_checkbox_sensor("hpm_read", FPSTR(INTL_HPM), hpm_read);
 			page_content += form_checkbox_sensor("ppd_read", FPSTR(INTL_PPD42NS), ppd_read);
 			page_content += form_checkbox_sensor("dht_read", FPSTR(INTL_DHT22), dht_read);
-			page_content += form_checkbox_sensor("bmp_read", FPSTR(INTL_BMP180), bmp_read);
 			page_content += form_checkbox_sensor("bmp280_read", FPSTR(INTL_BMP280), bmp280_read);
 			page_content += form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read);
 			page_content += form_checkbox_sensor("heca_read", FPSTR(INTL_HECA), heca_read);
@@ -1398,9 +1337,7 @@ void webserver_config() {
 			readBoolParam(dht_read);
 			readBoolParam(sds_read);
 			readBoolParam(pms_read);
-			readBoolParam(hpm_read);
 			readBoolParam(ppd_read);
-			readBoolParam(bmp_read);
 			readBoolParam(bmp280_read);
 			readBoolParam(bme280_read);
 			readBoolParam(heca_read);
@@ -1453,9 +1390,7 @@ void webserver_config() {
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DHT"), String(dht_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "SDS"), String(sds_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("PMS(1,3,5,6,7)003")), String(pms_read));
-		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HPM"), String(hpm_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "PPD"), String(ppd_read));
-		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP180"), String(bmp_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP280"), String(bmp280_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BME280"), String(bme280_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HECA"), String(heca_read));
@@ -1605,20 +1540,10 @@ void webserver_values() {
 			page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0), unit_PM);
 			page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM10", check_display_value(last_value_PMS_P1, -1, 1, 0), unit_PM);
 		}
-		if (cfg::hpm_read) {
-			page_content += FPSTR(EMPTY_ROW);
-			page_content += table_row_from_value(FPSTR(SENSORS_HPM), "PM2.5", check_display_value(last_value_HPM_P2, -1, 1, 0), unit_PM);
-			page_content += table_row_from_value(FPSTR(SENSORS_HPM), "PM10", check_display_value(last_value_HPM_P1, -1, 1, 0), unit_PM);
-		}
 		if (cfg::dht_read) {
 			page_content += FPSTR(EMPTY_ROW);
 			page_content += table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DHT_T, -128, 1, 0), unit_T);
 			page_content += table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_HUMIDITY), check_display_value(last_value_DHT_H, -1, 1, 0), unit_H);
-		}
-		if (cfg::bmp_read) {
-			page_content += FPSTR(EMPTY_ROW);
-			page_content += table_row_from_value(FPSTR(SENSORS_BMP180), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_BMP_T, -128, 1, 0), unit_T);
-			page_content += table_row_from_value(FPSTR(SENSORS_BMP180), FPSTR(INTL_PRESSURE), check_display_value(last_value_BMP_P / 100.0, (-1 / 100.0), 2, 0), unit_P);
 		}
 		if (cfg::bmp280_read) {
 			page_content += FPSTR(EMPTY_ROW);
@@ -1970,14 +1895,10 @@ void wifiConfig() {
 	debug_out(String(cfg::sds_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("PMS: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::pms_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("HPM: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::hpm_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("DHT: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::dht_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("DS18B20: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::ds18b20_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("BMP: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::bmp_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("----\nSend to ..."), DEBUG_MIN_INFO, 1);
 	debug_out(F("Dusti: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::send2dusti), DEBUG_MIN_INFO, 1);
@@ -2286,37 +2207,6 @@ static String sensorDHT() {
 	return s;
 }
 
-
-/*****************************************************************
- * read BMP180 sensor values                                     *
- *****************************************************************/
-static String sensorBMP() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_BMP180), DEBUG_MED_INFO, 1);
-
-	const auto p = bmp.readPressure();
-	const auto t = bmp.readTemperature();
-	if (isnan(p) || isnan(t)) {
-		last_value_BMP_T = -128.0;
-		last_value_BMP_P = -1.0;
-		debug_out(String(FPSTR(SENSORS_BMP180)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-	} else {
-		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-		debug_out(String(t) + " C", DEBUG_MIN_INFO, 1);
-		debug_out(FPSTR(DBG_TXT_PRESSURE), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(p / 100) + " hPa", DEBUG_MIN_INFO, 1);
-		last_value_BMP_T = t;
-		last_value_BMP_P = p;
-		s += Value2Json(F("BMP_pressure"), Float2String(last_value_BMP_P));
-		s += Value2Json(F("BMP_temperature"), Float2String(last_value_BMP_T));
-	}
-	debug_out("----", DEBUG_MIN_INFO, 1);
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_BMP180), DEBUG_MED_INFO, 1);
-
-	return s;
-}
 
 /*****************************************************************
  * read BMP280 sensor values                                     *
@@ -2762,147 +2652,6 @@ String sensorPMS() {
 }
 
 /*****************************************************************
- * read Honeywell PM sensor sensor values                        *
- *****************************************************************/
-String sensorHPM() {
-	String s = "";
-	char buffer;
-	int value;
-	int len = 0;
-	int pm10_serial = 0;
-	int pm25_serial = 0;
-	int checksum_is = 0;
-	int checksum_should = 0;
-	int checksum_ok = 0;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_HPM), DEBUG_MED_INFO, 1);
-	if (msSince(starttime) < (cfg::sending_intervall_ms - (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
-		if (is_HPM_running) {
-			is_HPM_running = HPM_cmd(PmSensorCmd::Stop);
-		}
-	} else {
-		if (! is_HPM_running) {
-			is_HPM_running = HPM_cmd(PmSensorCmd::Start);
-		}
-
-		while (serialSDS.available() > 0) {
-			buffer = serialSDS.read();
-			debug_out(String(len) + " - " + String(buffer, DEC) + " - " + String(buffer, HEX) + " - " + int(buffer) + " .", DEBUG_MAX_INFO, 1);
-//			"aa" = 170, "ab" = 171, "c0" = 192
-			value = int(buffer);
-			switch (len) {
-			case (0):
-				if (value != 66) {
-					len = -1;
-				};
-				break;
-			case (1):
-				if (value != 77) {
-					len = -1;
-				};
-				break;
-			case (2):
-				checksum_is = value;
-				break;
-			case (6):
-				pm25_serial += ( value << 8);
-				break;
-			case (7):
-				pm25_serial += value;
-				break;
-			case (8):
-				pm10_serial = ( value << 8);
-				break;
-			case (9):
-				pm10_serial += value;
-				break;
-			case (30):
-				checksum_should = ( value << 8 );
-				break;
-			case (31):
-				checksum_should += value;
-				break;
-			}
-			if (len > 2 && len < 30) { checksum_is += value; }
-			len++;
-			if (len == 32) {
-				debug_out(FPSTR(DBG_TXT_CHECKSUM_IS), DEBUG_MED_INFO, 0);
-				debug_out(String(checksum_is + 143), DEBUG_MED_INFO, 0);
-				debug_out(FPSTR(DBG_TXT_CHECKSUM_SHOULD), DEBUG_MED_INFO, 0);
-				debug_out(String(checksum_should), DEBUG_MED_INFO, 1);
-				if (checksum_should == (checksum_is + 143)) {
-					checksum_ok = 1;
-				} else {
-					len = 0;
-				};
-				if (checksum_ok == 1 && (long(msSince(starttime)) > (long(cfg::sending_intervall_ms) - long(READINGTIME_SDS_MS)))) {
-					if ((! isnan(pm10_serial)) && (! isnan(pm25_serial))) {
-						hpm_pm10_sum += pm10_serial;
-						hpm_pm25_sum += pm25_serial;
-						if (hpm_pm10_min > pm10_serial) {
-							hpm_pm10_min = pm10_serial;
-						}
-						if (hpm_pm10_max < pm10_serial) {
-							hpm_pm10_max = pm10_serial;
-						}
-						if (hpm_pm25_min > pm25_serial) {
-							hpm_pm25_min = pm25_serial;
-						}
-						if (hpm_pm25_max < pm25_serial) {
-							hpm_pm25_max = pm25_serial;
-						}
-						debug_out(F("PM2.5 (sec.): "), DEBUG_MED_INFO, 0);
-						debug_out(Float2String(double(pm25_serial)), DEBUG_MED_INFO, 1);
-						debug_out(F("PM10 (sec.) : "), DEBUG_MED_INFO, 0);
-						debug_out(Float2String(double(pm10_serial)), DEBUG_MED_INFO, 1);
-						hpm_val_count++;
-					}
-					len = 0;
-					checksum_ok = 0;
-					pm10_serial = 0.0;
-					pm25_serial = 0.0;
-					checksum_is = 0;
-				}
-			}
-			yield();
-		}
-
-	}
-	if (send_now) {
-		last_value_HPM_P1 = -1;
-		last_value_HPM_P2 = -1;
-		if (hpm_val_count > 2) {
-			hpm_pm10_sum = hpm_pm10_sum - hpm_pm10_min - hpm_pm10_max;
-			hpm_pm25_sum = hpm_pm25_sum - hpm_pm25_min - hpm_pm25_max;
-			hpm_val_count = hpm_val_count - 2;
-		}
-		if (hpm_val_count > 0) {
-			last_value_HPM_P1 = double(hpm_pm10_sum) / (hpm_val_count * 1.0);
-			last_value_HPM_P2 = double(hpm_pm25_sum) / (hpm_val_count * 1.0);
-			debug_out("PM2.5: " + Float2String(last_value_HPM_P1), DEBUG_MIN_INFO, 1);
-			debug_out("PM10:  " + Float2String(last_value_HPM_P2), DEBUG_MIN_INFO, 1);
-			debug_out("-------", DEBUG_MIN_INFO, 1);
-			s += Value2Json("HPM_P1", Float2String(last_value_HPM_P1));
-			s += Value2Json("HPM_P2", Float2String(last_value_HPM_P2));
-		}
-		hpm_pm10_sum = 0;
-		hpm_pm25_sum = 0;
-		hpm_val_count = 0;
-		hpm_pm10_max = 0;
-		hpm_pm10_min = 20000;
-		hpm_pm25_max = 0;
-		hpm_pm25_min = 20000;
-		if (cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS)) {
-			is_HPM_running = HPM_cmd(PmSensorCmd::Stop);
-		}
-	}
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_HPM), DEBUG_MED_INFO, 1);
-
-	return s;
-}
-
-/*****************************************************************
  * read PPD42NS sensor values                                    *
  *****************************************************************/
 String sensorPPD() {
@@ -3165,12 +2914,6 @@ void display_values() {
 		pm25_value = last_value_PMS_P2;
 		pm25_sensor = FPSTR(SENSORS_PMSx003);
 	}
-	if (cfg::hpm_read) {
-		pm10_value = last_value_HPM_P1;
-		pm10_sensor = FPSTR(SENSORS_HPM);
-		pm25_value = last_value_HPM_P2;
-		pm25_sensor = FPSTR(SENSORS_HPM);
-	}
 	if (cfg::sds_read) {
 		pm10_value = last_value_SDS_P1;
 		pm10_sensor = FPSTR(SENSORS_SDS011);
@@ -3186,12 +2929,6 @@ void display_values() {
 	if (cfg::ds18b20_read) {
 		t_value = last_value_DS18B20_T;
 		t_sensor = FPSTR(SENSORS_DS18B20);
-	}
-	if (cfg::bmp_read) {
-		t_value = last_value_BMP_T;
-		t_sensor = FPSTR(SENSORS_BMP180);
-		p_value = last_value_BMP_P;
-		p_sensor = FPSTR(SENSORS_BMP180);
 	}
 	if (cfg::bmp280_read) {
 		t_value = last_value_BMP280_T;
@@ -3217,10 +2954,10 @@ void display_values() {
 		alt_value = last_value_GPS_alt;
 		gps_sensor = "NEO6M";
 	}
-	if (cfg::ppd_read || cfg::pms_read || cfg::hpm_read || cfg::sds_read) {
+	if (cfg::ppd_read || cfg::pms_read || cfg::sds_read) {
 		screens[screen_count++] = 1;
 	}
-	if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp_read || cfg::bmp280_read || cfg::bme280_read) {
+	if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
 		screens[screen_count++] = 2;
 	}
 	if (cfg::heca_read) {
@@ -3495,29 +3232,12 @@ static void powerOnTestSensors() {
 		is_PMS_running = PMS_cmd(PmSensorCmd::Stop);
 	}
 
-	if (cfg::hpm_read) {
-		debug_out(F("Read HPM..."), DEBUG_MIN_INFO, 1);
-		HPM_cmd(PmSensorCmd::Start);
-		delay(100);
-		HPM_cmd(PmSensorCmd::ContinuousMode);
-		delay(100);
-		debug_out(F("Stopping HPM..."), DEBUG_MIN_INFO, 1);
-		is_HPM_running = HPM_cmd(PmSensorCmd::Stop);
-	}
-
 	if (cfg::dht_read) {
 		dht.begin();                                        // Start DHT
 		debug_out(F("Read DHT..."), DEBUG_MIN_INFO, 1);
 	}
 
-	if (cfg::bmp_read) {
-		debug_out(F("Read BMP..."), DEBUG_MIN_INFO, 1);
-		if (!bmp.begin()) {
-			debug_out(F("No valid BMP085 sensor, check wiring!"), DEBUG_MIN_INFO, 1);
-			bmp_init_failed = 1;
-		}
-	}
-
+	
 	if (cfg::bmp280_read) {
 		debug_out(F("Read BMP280..."), DEBUG_MIN_INFO, 1);
 		if (!initBMP280(0x76) && !initBMP280(0x77)) {
@@ -3760,9 +3480,7 @@ void loop() {
 	String result_PPD = "";
 	String result_SDS = "";
 	String result_PMS = "";
-	String result_HPM = "";
 	String result_DHT = "";
-	String result_BMP = "";
 	String result_BMP280 = "";
 	String result_BME280 = "";
 	String result_HECA = "";
@@ -3809,11 +3527,6 @@ void loop() {
 			starttime_SDS = act_milli;
 		}
 
-		if (cfg::hpm_read) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "HPM", DEBUG_MAX_INFO, 1);
-			result_HPM = sensorHPM();
-			starttime_SDS = act_milli;
-		}
 	}
 
 	server.handleClient();
@@ -3822,11 +3535,6 @@ void loop() {
 		if (cfg::dht_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
-		}
-
-		if (cfg::bmp_read && (! bmp_init_failed)) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BMP180), DEBUG_MAX_INFO, 1);
-			result_BMP = sensorBMP();                       // getting temperature and pressure (optional)
 		}
 
 		if (cfg::bmp280_read && (! bmp280_init_failed)) {
@@ -3907,30 +3615,12 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-		if (cfg::hpm_read) {
-			data += result_HPM;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HPM): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_HPM, HPM_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HPM_");
-				sum_send_time += millis() - start_send;
-			}
-		}
 		if (cfg::dht_read) {
 			data += result_DHT;
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
 				sendLuftdaten(result_DHT, DHT_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DHT_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-		if (cfg::bmp_read && (! bmp_init_failed)) {
-			data += result_BMP;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BMP): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_BMP, BMP_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BMP_");
 				sum_send_time += millis() - start_send;
 			}
 		}

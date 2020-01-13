@@ -99,14 +99,6 @@
 #define PMS_READ 0
 #define PMS_API_PIN 1
 
-// Honeywell PM sensor
-#define HPM_READ 0
-#define HPM_API_PIN 1
-
-// BMP180, temperature, pressure
-#define BMP_READ 0
-#define BMP_API_PIN 3
-
 // BMP280, temperature, pressure
 #define BMP280_READ 0
 #define BMP280_API_PIN 3
