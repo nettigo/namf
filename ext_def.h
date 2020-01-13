@@ -83,14 +83,6 @@
 #define DHT_TYPE DHT22
 #define DHT_API_PIN 7
 
-// PPD42NS, der günstigere der beiden Feinstaubsensoren
-#define PPD_READ 0
-#define PPD_API_PIN 5
-#if defined(ARDUINO_SAMD_ZERO) || defined(ESP8266)
-#define PPD_PIN_PM1 D6
-#define PPD_PIN_PM2 D5
-#endif
-
 // SDS011, der etwas teuerere Feinstaubsensor
 #define SDS_READ 1
 #define SDS_API_PIN 1

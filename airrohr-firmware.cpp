@@ -85,7 +85,6 @@ namespace cfg {
 	char version_from_local_config[20] = "";
 
 	bool dht_read = DHT_READ;
-	bool ppd_read = PPD_READ;
 	bool sds_read = SDS_READ;
 	bool pms_read = PMS_READ;
 	bool bmp280_read = BMP280_READ;
@@ -227,14 +226,6 @@ DallasTemperature ds18b20(&oneWire);
  *****************************************************************/
 TinyGPSPlus gps;
 
-/*****************************************************************
- * Variable Definitions for PPD24NS                              *
- * P1 for PM10 & P2 for PM25                                     *
- *****************************************************************/
-
-unsigned long durationP1;
-unsigned long durationP2;
-
 boolean trigP1 = false;
 boolean trigP2 = false;
 unsigned long trigOnP1;
@@ -279,8 +270,6 @@ int pms_pm10_min = 20000;
 int pms_pm25_max = 0;
 int pms_pm25_min = 20000;
 
-double last_value_PPD_P1 = -1.0;
-double last_value_PPD_P2 = -1.0;
 double last_value_SDS_P1 = -1.0;
 double last_value_SDS_P2 = -1.0;
 double last_value_PMS_P0 = -1.0;
@@ -707,7 +696,6 @@ void readConfig() {
 					strcpyFromJSON(fs_pwd);
 					setFromJSON(www_basicauth_enabled);
 					setFromJSON(dht_read);
-					setFromJSON(ppd_read);
 					setFromJSON(sds_read);
 					setFromJSON(pms_read);
 					setFromJSON(pms24_read);
@@ -796,7 +784,6 @@ void writeConfig() {
 	copyToJSON_String(fs_pwd);
 	copyToJSON_Bool(www_basicauth_enabled);
 	copyToJSON_Bool(dht_read);
-	copyToJSON_Bool(ppd_read);
 	copyToJSON_Bool(sds_read);
 	copyToJSON_Bool(pms_read);
 	copyToJSON_Bool(bmp280_read);
@@ -1214,7 +1201,6 @@ void webserver_config() {
 			page_content += F("</b><br/>");
 			page_content += form_checkbox_sensor("sds_read", FPSTR(INTL_SDS011), sds_read);
 			page_content += form_checkbox_sensor("pms_read", FPSTR(INTL_PMS), pms_read);
-			page_content += form_checkbox_sensor("ppd_read", FPSTR(INTL_PPD42NS), ppd_read);
 			page_content += form_checkbox_sensor("dht_read", FPSTR(INTL_DHT22), dht_read);
 			page_content += form_checkbox_sensor("bmp280_read", FPSTR(INTL_BMP280), bmp280_read);
 			page_content += form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read);
@@ -1337,7 +1323,6 @@ void webserver_config() {
 			readBoolParam(dht_read);
 			readBoolParam(sds_read);
 			readBoolParam(pms_read);
-			readBoolParam(ppd_read);
 			readBoolParam(bmp280_read);
 			readBoolParam(bme280_read);
 			readBoolParam(heca_read);
@@ -1390,7 +1375,6 @@ void webserver_config() {
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DHT"), String(dht_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "SDS"), String(sds_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("PMS(1,3,5,6,7)003")), String(pms_read));
-		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "PPD"), String(ppd_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP280"), String(bmp280_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BME280"), String(bme280_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HECA"), String(heca_read));
@@ -1524,11 +1508,6 @@ void webserver_values() {
 		}
 		page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
 		page_content += tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE));
-		if (cfg::ppd_read) {
-			page_content += FPSTR(EMPTY_ROW);
-			page_content += table_row_from_value(FPSTR(SENSORS_PPD42NS), "PM1",  check_display_value(last_value_PPD_P1, -1, 1, 0), FPSTR(INTL_PARTICLES_PER_LITER));
-			page_content += table_row_from_value(FPSTR(SENSORS_PPD42NS), "PM2.5", check_display_value(last_value_PPD_P2, -1, 1, 0), FPSTR(INTL_PARTICLES_PER_LITER));
-		}
 		if (cfg::sds_read) {
 			page_content += FPSTR(EMPTY_ROW);
 			page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5", check_display_value(last_value_SDS_P2, -1, 1, 0), unit_PM);
@@ -1889,8 +1868,6 @@ void wifiConfig() {
 	debug_out(F("WLANSSID: "), DEBUG_MIN_INFO, 0);
 	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
 	debug_out(F("----\nReading ..."), DEBUG_MIN_INFO, 1);
-	debug_out(F("PPD: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::ppd_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("SDS: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::sds_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("PMS: "), DEBUG_MIN_INFO, 0);
@@ -2652,92 +2629,6 @@ String sensorPMS() {
 }
 
 /*****************************************************************
- * read PPD42NS sensor values                                    *
- *****************************************************************/
-String sensorPPD() {
-	String s = "";
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_PPD42NS), DEBUG_MED_INFO, 1);
-
-	if (msSince(starttime) <= SAMPLETIME_MS) {
-
-		// Read pins connected to ppd42ns
-		boolean valP1 = digitalRead(PPD_PIN_PM1);
-		boolean valP2 = digitalRead(PPD_PIN_PM2);
-
-		if(valP1 == LOW && trigP1 == false) {
-			trigP1 = true;
-			trigOnP1 = act_micro;
-		}
-
-		if (valP1 == HIGH && trigP1 == true) {
-			durationP1 = act_micro - trigOnP1;
-			lowpulseoccupancyP1 = lowpulseoccupancyP1 + durationP1;
-			trigP1 = false;
-		}
-
-		if(valP2 == LOW && trigP2 == false) {
-			trigP2 = true;
-			trigOnP2 = act_micro;
-		}
-
-		if (valP2 == HIGH && trigP2 == true) {
-			durationP2 = act_micro - trigOnP2;
-			lowpulseoccupancyP2 = lowpulseoccupancyP2 + durationP2;
-			trigP2 = false;
-		}
-
-	}
-	// Checking if it is time to sample
-	if (send_now) {
-		const auto calcConcentration = [](double ratio) {
-			/* spec sheet curve*/
-			return (1.1 * pow(ratio, 3) - 3.8 * pow(ratio, 2) + 520 * ratio + 0.62);
-		};
-
-		last_value_PPD_P1 = -1;
-		last_value_PPD_P2 = -1;
-		double ratio = lowpulseoccupancyP1 / (SAMPLETIME_MS * 10.0);					// int percentage 0 to 100
-		double concentration = calcConcentration(ratio);
-		// Begin printing
-		debug_out(F("LPO P10    : "), DEBUG_MIN_INFO, 0);
-		debug_out(String(lowpulseoccupancyP1), DEBUG_MIN_INFO, 1);
-		debug_out(F("Ratio PM10 : "), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(ratio) + " %", DEBUG_MIN_INFO, 1);
-		debug_out(F("PM10 Count : "), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(concentration), DEBUG_MIN_INFO, 1);
-
-		// json for push to api / P1
-		last_value_PPD_P1 = concentration;
-		s += Value2Json("durP1", String(lowpulseoccupancyP1));
-		s += Value2Json("ratioP1", Float2String(ratio));
-		s += Value2Json("P1", Float2String(last_value_PPD_P1));
-
-		ratio = lowpulseoccupancyP2 / (SAMPLETIME_MS * 10.0);
-		concentration = calcConcentration(ratio);
-		// Begin printing
-		debug_out(F("LPO PM25   : "), DEBUG_MIN_INFO, 0);
-		debug_out(String(lowpulseoccupancyP2), DEBUG_MIN_INFO, 1);
-		debug_out(F("Ratio PM25 : "), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(ratio) + " %", DEBUG_MIN_INFO, 1);
-		debug_out(F("PM25 Count : "), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(concentration), DEBUG_MIN_INFO, 1);
-
-		// json for push to api / P2
-		last_value_PPD_P2 = concentration;
-		s += Value2Json("durP2", String(lowpulseoccupancyP2));
-		s += Value2Json("ratioP2", Float2String(ratio));
-		s += Value2Json("P2", Float2String(last_value_PPD_P2));
-
-		debug_out("----", DEBUG_MIN_INFO, 1);
-	}
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_PPD42NS), DEBUG_MED_INFO, 1);
-
-	return s;
-}
-
-/*****************************************************************
  * read GPS sensor values                                        *
  *****************************************************************/
 String sensorGPS() {
@@ -2902,12 +2793,6 @@ void display_values() {
 	int screens[5];
 	int line_count = 0;
 	debug_out(F("output values to display..."), DEBUG_MIN_INFO, 1);
-	if (cfg::ppd_read) {
-		pm10_value = last_value_PPD_P1;
-		pm10_sensor = FPSTR(SENSORS_PPD42NS);
-		pm25_value = last_value_PPD_P2;
-		pm25_sensor = FPSTR(SENSORS_PPD42NS);
-	}
 	if (cfg::pms_read) {
 		pm10_value = last_value_PMS_P1;
 		pm10_sensor = FPSTR(SENSORS_PMSx003);
@@ -2954,7 +2839,7 @@ void display_values() {
 		alt_value = last_value_GPS_alt;
 		gps_sensor = "NEO6M";
 	}
-	if (cfg::ppd_read || cfg::pms_read || cfg::sds_read) {
+	if (cfg::pms_read || cfg::sds_read) {
 		screens[screen_count++] = 1;
 	}
 	if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
@@ -3206,12 +3091,6 @@ bool initBME280(char addr) {
 }
 
 static void powerOnTestSensors() {
-	if (cfg::ppd_read) {
-		pinMode(PPD_PIN_PM1, INPUT_PULLUP);                 // Listen at the designated PIN
-		pinMode(PPD_PIN_PM2, INPUT_PULLUP);                 // Listen at the designated PIN
-		debug_out(F("Read PPD..."), DEBUG_MIN_INFO, 1);
-	}
-
 	if (cfg::sds_read) {
 		debug_out(F("Read SDS..."), DEBUG_MIN_INFO, 1);
 		SDS_cmd(PmSensorCmd::Start);
@@ -3477,7 +3356,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
  * And action                                                    *
  *****************************************************************/
 void loop() {
-	String result_PPD = "";
 	String result_SDS = "";
 	String result_PMS = "";
 	String result_DHT = "";
@@ -3508,11 +3386,6 @@ void loop() {
 		}
 	}
 	last_micro = act_micro;
-
-	if (cfg::ppd_read) {
-		debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "PPD", DEBUG_MAX_INFO, 1);
-		result_PPD = sensorPPD();
-	}
 
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
 		if (cfg::sds_read) {
@@ -3588,15 +3461,6 @@ void loop() {
 		yield();
 		server.stop();
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
-		if (cfg::ppd_read) {
-			data += result_PPD;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PPD42NS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_PPD, PPD_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "PPD_");
-				sum_send_time += millis() - start_send;
-			}
-		}
 		if (cfg::sds_read) {
 			data += result_SDS;
 			if (cfg::send2dusti) {

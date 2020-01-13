@@ -21,7 +21,6 @@ const char INTL_SAVE[] PROGMEM = "";
 const char INTL_SENSORS[] PROGMEM = "";
 const char INTL_SDS011[] PROGMEM = "SDS011 ({pm})";
 const char INTL_PMS[] PROGMEM = "Plantower PMS(1,3,5,6,7)003 ({pm})";
-const char INTL_PPD42NS[] PROGMEM = "PPD42NS";
 const char INTL_DHT22[] PROGMEM = "DHT22 ({t}, {h})";
 const char INTL_BMP280[] PROGMEM = "BMP280 ({t}, {p})";
 const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";

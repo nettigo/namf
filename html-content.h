@@ -23,13 +23,8 @@ const char DBG_TXT_CALL_SENSOR[] PROGMEM = "Call sensor";
 const char DBG_TXT_SDS011_VERSION_DATE[] PROGMEM = "SDS011 version date";
 
 const char SENSORS_SDS011[] PROGMEM = "SDS011";
-const char SENSORS_PPD42NS[] PROGMEM = "PPD42NS";
-const char SENSORS_PMSx003[] PROGMEM = "PMSx003";
-const char SENSORS_HPM[] PROGMEM = "Honeywell PM";
 const char SENSORS_DHT22[] PROGMEM = "DHT22";
 const char SENSORS_DS18B20[] PROGMEM = "DS18B20";
-const char SENSORS_HTU21D[] PROGMEM = "HTU21D";
-const char SENSORS_BMP180[] PROGMEM = "BMP180";
 const char SENSORS_BMP280[] PROGMEM = "BMP280";
 const char SENSORS_BME280[] PROGMEM = "BME280";
 const char SENSORS_HECA[] PROGMEM = "HECA";
