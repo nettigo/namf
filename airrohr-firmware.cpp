@@ -1626,6 +1626,21 @@ static void waitForWifiToConnect(int maxRetries) {
 }
 
 /*****************************************************************
+ * Start WiFi in AP mode (for configuration)
+ *****************************************************************/
+
+void startAP(void) {
+		String fss = String(cfg::fs_ssid);
+		display_debug(fss.substring(0, 16), fss.substring(16));
+		wifiConfig();
+		if (WiFi.status() != WL_CONNECTED) {
+			waitForWifiToConnect(20);
+			debug_out("", DEBUG_MIN_INFO, 1);
+		}
+
+}
+
+/*****************************************************************
  * WiFi auto connecting script                                   *
  *****************************************************************/
 void connectWifi() {
@@ -1642,13 +1657,7 @@ void connectWifi() {
 	waitForWifiToConnect(40);
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (WiFi.status() != WL_CONNECTED) {
-		String fss = String(cfg::fs_ssid);
-		display_debug(fss.substring(0, 16), fss.substring(16));
-		wifiConfig();
-		if (WiFi.status() != WL_CONNECTED) {
-			waitForWifiToConnect(20);
-			debug_out("", DEBUG_MIN_INFO, 1);
-		}
+		startAP();
 	}
 	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
@@ -2912,12 +2921,20 @@ void setup() {
 
 	setup_webserver();
 	display_debug(F("Connecting to"), String(cfg::wlanssid));
-	connectWifi();
-	got_ntp = acquireNetworkTime();
-	debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
-	debug_out(String(got_ntp?"":"not ")+F("received"), DEBUG_MIN_INFO, 1);
-	autoUpdate();
-	create_basic_auth_strings();
+	debug_out(F("SSID: '"),DEBUG_ERROR,0);
+	debug_out(cfg::wlanssid,DEBUG_ERROR,0);
+	debug_out(F("'"),DEBUG_ERROR,1);
+	
+	if (strlen(cfg::wlanssid) > 0) {
+	    connectWifi();
+        got_ntp = acquireNetworkTime();
+        debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
+        debug_out(String(got_ntp?"":"not ")+F("received"), DEBUG_MIN_INFO, 1);
+        autoUpdate();
+        create_basic_auth_strings();
+    } else {
+	    startAP();
+	}
 	serialSDS.begin(9600);
 	debug_out(F("\nChipId: "), DEBUG_MIN_INFO, 0);
 	debug_out(esp_chipid, DEBUG_MIN_INFO, 1);
