@@ -24,7 +24,6 @@
 #include <base64.h>
 #include <ArduinoJson.h>
 #include "./DHT.h"
-#include <Adafruit_HTU21DF.h>
 #include <Adafruit_BMP085.h>
 #include <Adafruit_BMP280.h>
 #include <Adafruit_BME280.h>
@@ -102,7 +101,6 @@ namespace cfg {
 	char version_from_local_config[20] = "";
 
 	bool dht_read = DHT_READ;
-	bool htu21d_read = HTU21D_READ;
 	bool ppd_read = PPD_READ;
 	bool sds_read = SDS_READ;
 	bool pms_read = PMS_READ;
@@ -223,11 +221,6 @@ SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false, 512);
 DHT dht(ONEWIRE_PIN, DHT_TYPE);
 
 /*****************************************************************
- * HTU21D declaration                                            *
- *****************************************************************/
-Adafruit_HTU21DF htu21d;
-
-/*****************************************************************
  * BMP declaration                                               *
  *****************************************************************/
 Adafruit_BMP085 bmp;
@@ -330,8 +323,6 @@ double last_value_HPM_P1 = -1.0;
 double last_value_HPM_P2 = -1.0;
 double last_value_DHT_T = -128.0;
 double last_value_DHT_H = -1.0;
-double last_value_HTU21D_T = -128.0;
-double last_value_HTU21D_H = -1.0;
 double last_value_BMP_T = -128.0;
 double last_value_BMP_P = -1.0;
 double last_value_BMP280_T = -128.0;
@@ -786,7 +777,6 @@ void readConfig() {
 					strcpyFromJSON(fs_pwd);
 					setFromJSON(www_basicauth_enabled);
 					setFromJSON(dht_read);
-					setFromJSON(htu21d_read);
 					setFromJSON(ppd_read);
 					setFromJSON(sds_read);
 					setFromJSON(pms_read);
@@ -878,7 +868,6 @@ void writeConfig() {
 	copyToJSON_String(fs_pwd);
 	copyToJSON_Bool(www_basicauth_enabled);
 	copyToJSON_Bool(dht_read);
-	copyToJSON_Bool(htu21d_read);
 	copyToJSON_Bool(ppd_read);
 	copyToJSON_Bool(sds_read);
 	copyToJSON_Bool(pms_read);
@@ -1302,7 +1291,6 @@ void webserver_config() {
 			page_content += form_checkbox_sensor("hpm_read", FPSTR(INTL_HPM), hpm_read);
 			page_content += form_checkbox_sensor("ppd_read", FPSTR(INTL_PPD42NS), ppd_read);
 			page_content += form_checkbox_sensor("dht_read", FPSTR(INTL_DHT22), dht_read);
-			page_content += form_checkbox_sensor("htu21d_read", FPSTR(INTL_HTU21D), htu21d_read);
 			page_content += form_checkbox_sensor("bmp_read", FPSTR(INTL_BMP180), bmp_read);
 			page_content += form_checkbox_sensor("bmp280_read", FPSTR(INTL_BMP280), bmp280_read);
 			page_content += form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read);
@@ -1423,7 +1411,6 @@ void webserver_config() {
 			readBoolParam(send2madavi);
 			readBoolParam(ssl_madavi);
 			readBoolParam(dht_read);
-			readBoolParam(htu21d_read);
 			readBoolParam(sds_read);
 			readBoolParam(pms_read);
 			readBoolParam(hpm_read);
@@ -1479,7 +1466,6 @@ void webserver_config() {
 		page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Luftdaten.info")), String(send2dusti));
 		page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Madavi")), String(send2madavi));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DHT"), String(dht_read));
-		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HTU21D"), String(htu21d_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "SDS"), String(sds_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("PMS(1,3,5,6,7)003")), String(pms_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HPM"), String(hpm_read));
@@ -1643,11 +1629,6 @@ void webserver_values() {
 			page_content += FPSTR(EMPTY_ROW);
 			page_content += table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DHT_T, -128, 1, 0), unit_T);
 			page_content += table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_HUMIDITY), check_display_value(last_value_DHT_H, -1, 1, 0), unit_H);
-		}
-		if (cfg::htu21d_read) {
-			page_content += FPSTR(EMPTY_ROW);
-			page_content += table_row_from_value(FPSTR(SENSORS_HTU21D), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_HTU21D_T, -128, 1, 0), unit_T);
-			page_content += table_row_from_value(FPSTR(SENSORS_HTU21D), FPSTR(INTL_HUMIDITY), check_display_value(last_value_HTU21D_H, -1, 1, 0), unit_H);
 		}
 		if (cfg::bmp_read) {
 			page_content += FPSTR(EMPTY_ROW);
@@ -2009,8 +1990,6 @@ void wifiConfig() {
 	debug_out(String(cfg::dht_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("DS18B20: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::ds18b20_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("HTU21D: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::htu21d_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("BMP: "), DEBUG_MIN_INFO, 0);
 	debug_out(String(cfg::bmp_read), DEBUG_MIN_INFO, 1);
 	debug_out(F("----\nSend to ..."), DEBUG_MIN_INFO, 1);
@@ -2321,36 +2300,6 @@ static String sensorDHT() {
 	return s;
 }
 
-/*****************************************************************
- * read HTU21D sensor values                                     *
- *****************************************************************/
-static String sensorHTU21D() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_HTU21D), DEBUG_MED_INFO, 1);
-
-	const auto t = htu21d.readTemperature();
-	const auto h = htu21d.readHumidity();
-	if (isnan(t) || isnan(h)) {
-		last_value_HTU21D_T = -128.0;
-		last_value_HTU21D_H = -1.0;
-		debug_out(String(FPSTR(SENSORS_HTU21D)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-	} else {
-		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(t) + " C", DEBUG_MIN_INFO, 1);
-		debug_out(FPSTR(DBG_TXT_HUMIDITY), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(h) + " %", DEBUG_MIN_INFO, 1);
-		last_value_HTU21D_T = t;
-		last_value_HTU21D_H = h;
-		s += Value2Json(F("HTU21D_temperature"), Float2String(last_value_HTU21D_T));
-		s += Value2Json(F("HTU21D_humidity"), Float2String(last_value_HTU21D_H));
-	}
-	debug_out("----", DEBUG_MIN_INFO, 1);
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_HTU21D), DEBUG_MED_INFO, 1);
-
-	return s;
-}
 
 /*****************************************************************
  * read BMP180 sensor values                                     *
@@ -3252,12 +3201,6 @@ void display_values() {
 		t_value = last_value_DS18B20_T;
 		t_sensor = FPSTR(SENSORS_DS18B20);
 	}
-	if (cfg::htu21d_read) {
-		t_value = last_value_HTU21D_T;
-		t_sensor = FPSTR(SENSORS_HTU21D);
-		h_value = last_value_HTU21D_H;
-		h_sensor = FPSTR(SENSORS_HTU21D);
-	}
 	if (cfg::bmp_read) {
 		t_value = last_value_BMP_T;
 		t_sensor = FPSTR(SENSORS_BMP180);
@@ -3291,7 +3234,7 @@ void display_values() {
 	if (cfg::ppd_read || cfg::pms_read || cfg::hpm_read || cfg::sds_read) {
 		screens[screen_count++] = 1;
 	}
-	if (cfg::dht_read || cfg::ds18b20_read || cfg::htu21d_read || cfg::bmp_read || cfg::bmp280_read || cfg::bme280_read) {
+	if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp_read || cfg::bmp280_read || cfg::bme280_read) {
 		screens[screen_count++] = 2;
 	}
 	if (cfg::heca_read) {
@@ -3581,11 +3524,6 @@ static void powerOnTestSensors() {
 		debug_out(F("Read DHT..."), DEBUG_MIN_INFO, 1);
 	}
 
-	if (cfg::htu21d_read) {
-		htu21d.begin();                                     // Start HTU21D
-		debug_out(F("Read HTU21D..."), DEBUG_MIN_INFO, 1);
-	}
-
 	if (cfg::bmp_read) {
 		debug_out(F("Read BMP..."), DEBUG_MIN_INFO, 1);
 		if (!bmp.begin()) {
@@ -3838,7 +3776,6 @@ void loop() {
 	String result_PMS = "";
 	String result_HPM = "";
 	String result_DHT = "";
-	String result_HTU21D = "";
 	String result_BMP = "";
 	String result_BMP280 = "";
 	String result_BME280 = "";
@@ -3899,11 +3836,6 @@ void loop() {
 		if (cfg::dht_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
-		}
-
-		if (cfg::htu21d_read) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HTU21D), DEBUG_MAX_INFO, 1);
-			result_HTU21D = sensorHTU21D();                 // getting temperature and humidity (optional)
 		}
 
 		if (cfg::bmp_read && (! bmp_init_failed)) {
@@ -4004,15 +3936,6 @@ void loop() {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
 				sendLuftdaten(result_DHT, DHT_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DHT_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-		if (cfg::htu21d_read) {
-			data += result_HTU21D;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HTU21D): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_HTU21D, HTU21D_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HTU21D_");
 				sum_send_time += millis() - start_send;
 			}
 		}
