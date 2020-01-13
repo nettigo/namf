@@ -1,3 +1,4 @@
+*~
 .pio/*
 .pioenvs
 .piolibdeps
@@ -15,3 +16,6 @@ builds/*
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .travis.yml
+.idea/*
+CMakeLists*
+cmake-build*
