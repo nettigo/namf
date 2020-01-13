@@ -39,32 +39,12 @@ String add_sensor_type(const String& sensor_text);
 #include <coredecls.h>
 #include <assert.h>
 
-#if defined(INTL_BG)
-#include "intl_bg.h"
-#elif defined(INTL_CZ)
-#include "intl_cz.h"
-#elif defined(INTL_EN)
+#if defined(INTL_EN)
 #include "intl_en.h"
-#elif defined(INTL_ES)
-#include "intl_es.h"
-#elif defined(INTL_FR)
-#include "intl_fr.h"
-#elif defined(INTL_IT)
-#include "intl_it.h"
-#elif defined(INTL_LU)
-#include "intl_lu.h"
-#elif defined(INTL_NL)
-#include "intl_nl.h"
 #elif defined(INTL_PL)
 #include "intl_pl.h"
-#elif defined(INTL_PT)
-#include "intl_pt.h"
-#elif defined(INTL_RU)
-#include "intl_ru.h"
-#elif defined(INTL_SE)
-#include "intl_se.h"
 #else
-#include "intl_de.h"
+#include "intl_en.h"
 #endif
 #include "ext_def.h"
 #include "html-content.h"

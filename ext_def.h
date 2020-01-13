@@ -83,10 +83,6 @@
 #define DHT_TYPE DHT22
 #define DHT_API_PIN 7
 
-// HTU21D, temperature, humidity
-#define HTU21D_READ 0
-#define HTU21D_API_PIN 7
-
 // PPD42NS, der günstigere der beiden Feinstaubsensoren
 #define PPD_READ 0
 #define PPD_API_PIN 5
@@ -140,9 +136,6 @@
 
 // OLED Display SSD1306 angeschlossen?
 #define HAS_DISPLAY 0
-
-// OLED Display SH1106 angeschlossen?
-#define HAS_SH1106 0
 
 // LCD Display LCD1602 angeschlossen?
 #define HAS_LCD1602 0
