@@ -1,104 +1,8 @@
 #include <Arduino.h>
 #define INTL_PL
 
-/************************************************************************
- *                                                                      *
- *  This source code needs to be compiled for the board                 *
- *  NodeMCU 1.0 (ESP-12E Module)                                        *
- *                                                                      *
- ************************************************************************
- *                                                                      *
- *    airRohr firmware                                                  *
- *    Copyright (C) 2016-2018  Code for Stuttgart a.o.                  *
- *                                                                      *
- * This program is free software: you can redistribute it and/or modify *
- * it under the terms of the GNU General Public License as published by *
- * the Free Software Foundation, either version 3 of the License, or    *
- * (at your option) any later version.                                  *
- *                                                                      *
- * This program is distributed in the hope that it will be useful,      *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of       *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
- * GNU General Public License for more details.                         *
- *                                                                      *
- * You should have received a copy of the GNU General Public License    *
- * along with this program. If not, see <http://www.gnu.org/licenses/>. *
- *                                                                      *
- ************************************************************************
- * OK LAB Particulate Matter Sensor                                     *
- *      - nodemcu-LoLin board                                           *
- *      - Nova SDS0111                                                  *
- *  http://inovafitness.com/en/Laser-PM2-5-Sensor-SDS011-35.html        *
- *                                                                      *
- * Wiring Instruction:                                                  *
- *      - SDS011 Pin 1  (TX)   -> Pin D1 / GPIO5                        *
- *      - SDS011 Pin 2  (RX)   -> Pin D2 / GPIO4                        *
- *      - SDS011 Pin 3  (GND)  -> GND                                   *
- *      - SDS011 Pin 4  (2.5m) -> unused                                *
- *      - SDS011 Pin 5  (5V)   -> VU                                    *
- *      - SDS011 Pin 6  (1m)   -> unused                                *
- *                                                                      *
- ************************************************************************
- *                                                                      *
- * Alternative                                                          *
- *      - nodemcu-LoLin board                                           *
- *      - Shinyei PPD42NS                                               *
- *      http://www.sca-shinyei.com/pdf/PPD42NS.pdf                      *
- *                                                                      *
- * Wiring Instruction:                                                  *
- *      Pin 2 of dust sensor PM2.5 -> Digital 6 (PWM)                   *
- *      Pin 3 of dust sensor       -> +5V                               *
- *      Pin 4 of dust sensor PM1   -> Digital 3 (PMW)                   *
- *                                                                      *
- *      - PPD42NS Pin 1 (grey or green)  => GND                         *
- *      - PPD42NS Pin 2 (green or white)) => Pin D5 /GPIO14             *
- *        counts particles PM25                                         *
- *      - PPD42NS Pin 3 (black or yellow) => Vin                        *
- *      - PPD42NS Pin 4 (white or black) => Pin D6 / GPIO12             *
- *        counts particles PM10                                         *
- *      - PPD42NS Pin 5 (red)   => unused                               *
- *                                                                      *
- ************************************************************************
- * Extension: DHT22 (AM2303)                                            *
- *  http://www.aosong.com/en/products/details.asp?id=117                *
- *                                                                      *
- * DHT22 Wiring Instruction                                             *
- * (left to right, front is perforated side):                           *
- *      - DHT22 Pin 1 (VDD)     -> Pin 3V3 (3.3V)                       *
- *      - DHT22 Pin 2 (DATA)    -> Pin D7 (GPIO13)                      *
- *      - DHT22 Pin 3 (NULL)    -> unused                               *
- *      - DHT22 Pin 4 (GND)     -> Pin GND                              *
- *                                                                      *
- ************************************************************************
- * Extensions connected via I2C:                                        *
- * HTU21D (https://www.sparkfun.com/products/13763),                    *
- * BMP180, BMP280, BME280, OLED Display with SSD1306 (128x64 px)        *
- *                                                                      *
- * Wiring Instruction                                                   *
- * (see labels on display or sensor board)                              *
- *      VCC       ->     Pin 3V3                                        *
- *      GND       ->     Pin GND                                        *
- *      SCL       ->     Pin D4 (GPIO2)                                 *
- *      SDA       ->     Pin D3 (GPIO0)                                 *
- *                                                                      *
- ************************************************************************
- *                                                                      *
- * Please check Readme.md for other sensors and hardware                *
- *                                                                      *
- ************************************************************************
- *
- * 06.07.2018
- * Der Sketch verwendet 459607 Bytes (44%) des Programmspeicherplatzes. Das Maximum sind 1044464 Bytes.
- * Globale Variablen verwenden 48736 Bytes (59%) des dynamischen Speichers, 33184 Bytes für lokale Variablen verbleiben. Das Maximum sind 81920 Bytes.
- *
- * first version with esp8266 lib 2.4.2
- * Der Sketch verwendet 491364 Bytes (47%) des Programmspeicherplatzes. Das Maximum sind 1044464 Bytes.
- * Globale Variablen verwenden 37172 Bytes (45%) des dynamischen Speichers, 44748 Bytes für lokale Variablen verbleiben. Das Maximum sind 81920 Bytes.
- *
- * Der Sketch verwendet 489152 Bytes (46%) des Programmspeicherplatzes. Das Maximum sind 1044464 Bytes.
- * Globale Variablen verwenden 37160 Bytes (45%) des dynamischen Speichers, 44760 Bytes für lokale Variablen verbleiben. Das Maximum sind 81920 Bytes.
- *
- ************************************************************************/
+//Nettigo NAM 0.3.2 factory firmware - test
+
 // increment on change
 #define SOFTWARE_VERSION "NAMF-2019-018I"
 #define SPOOF_SOFTWARE_VERSION "NRZ-2018-123B"
@@ -116,7 +20,6 @@
 #include <SoftwareSerial.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
-#include <SH1106.h>
 #include <LiquidCrystal_I2C.h>
 #include <base64.h>
 #include <ArduinoJson.h>
@@ -221,7 +124,6 @@ namespace cfg {
 	bool auto_update = AUTO_UPDATE;
 	bool use_beta = USE_BETA;
 	bool has_display = HAS_DISPLAY;
-	bool has_sh1106 = HAS_SH1106;
 	bool has_lcd1602 = HAS_LCD1602;
 	bool has_lcd1602_27 = HAS_LCD1602_27;
 	bool has_lcd2004_27 = HAS_LCD2004_27;
@@ -304,7 +206,6 @@ int TimeZone = 1;
  * Display definitions                                           *
  *****************************************************************/
 SSD1306 display(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
-SH1106 display_sh1106(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
 LiquidCrystal_I2C lcd_1602_27(0x27, 16, 2);
 LiquidCrystal_I2C lcd_1602_3f(0x3F, 16, 2);
 LiquidCrystal_I2C lcd_2004_27(0x27, 20, 4);
@@ -513,14 +414,6 @@ void display_debug(const String& text1, const String& text2) {
 		display.drawString(0, 12, text1);
 		display.drawString(0, 24, text2);
 		display.display();
-	}
-	if (cfg::has_sh1106) {
-		display_sh1106.clear();
-		display_sh1106.displayOn();
-		display_sh1106.setTextAlignment(TEXT_ALIGN_LEFT);
-		display_sh1106.drawString(0, 12, text1);
-		display_sh1106.drawString(0, 24, text2);
-		display_sh1106.display();
 	}
 	if (cfg::has_lcd1602) {
 		lcd_1602_3f.clear();
@@ -917,7 +810,6 @@ void readConfig() {
 					setFromJSON(auto_update);
 					setFromJSON(use_beta);
 					setFromJSON(has_display);
-					setFromJSON(has_sh1106);
 					setFromJSON(has_lcd1602);
 					setFromJSON(has_lcd1602_27);
 					setFromJSON(has_lcd2004_27);
@@ -1008,7 +900,6 @@ void writeConfig() {
 	copyToJSON_Bool(auto_update);
 	copyToJSON_Bool(use_beta);
 	copyToJSON_Bool(has_display);
-	copyToJSON_Bool(has_sh1106);
 	copyToJSON_Bool(has_lcd1602);
 	copyToJSON_Bool(has_lcd1602_27);
 	copyToJSON_Bool(has_lcd2004_27);
@@ -1426,7 +1317,6 @@ void webserver_config() {
 		page_content += form_checkbox("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update);
 		page_content += form_checkbox("use_beta", FPSTR(INTL_USE_BETA), use_beta);
 		page_content += form_checkbox("has_display", FPSTR(INTL_DISPLAY), has_display);
-		page_content += form_checkbox("has_sh1106", FPSTR(INTL_SH1106), has_sh1106);
 		page_content += form_checkbox("has_lcd1602_27", FPSTR(INTL_LCD1602_27), has_lcd1602_27);
 		page_content += form_checkbox("has_lcd1602", FPSTR(INTL_LCD1602_3F), has_lcd1602);
 		page_content += form_checkbox("has_lcd2004_27", FPSTR(INTL_LCD2004_27), has_lcd2004_27);
@@ -1575,7 +1465,6 @@ void webserver_config() {
 		readBoolParam(auto_update);
 		readBoolParam(use_beta);
 		readBoolParam(has_display);
-		readBoolParam(has_sh1106);
 		readBoolParam(has_lcd1602);
 		readBoolParam(has_lcd1602_27);
 		readBoolParam(has_lcd2004_27);
@@ -1604,7 +1493,6 @@ void webserver_config() {
 		page_content += line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update));
 		page_content += line_from_value(FPSTR(INTL_USE_BETA), String(use_beta));
 		page_content += line_from_value(FPSTR(INTL_DISPLAY), String(has_display));
-		page_content += line_from_value(FPSTR(INTL_SH1106), String(has_sh1106));
 		page_content += line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27));
 		page_content += line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602));
 		page_content += line_from_value(FPSTR(INTL_LCD2004_27), String(has_lcd2004_27));
@@ -3414,7 +3302,7 @@ void display_values() {
 	}
 	screens[screen_count++] = 5;	// Wifi info
 	screens[screen_count++] = 6;	// chipID, firmware and count of measurements
-	if (cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+	if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 		switch (screens[next_display_count % screen_count]) {
 		case (1):
 			display_header = pm25_sensor;
@@ -3476,19 +3364,6 @@ void display_values() {
 			display.setTextAlignment(TEXT_ALIGN_CENTER);
 			display.drawString(64, 52, displayGenerateFooter(screen_count));
 			display.display();
-		}
-		if (cfg::has_sh1106) {
-			display_sh1106.clear();
-			display_sh1106.displayOn();
-			display_sh1106.setTextAlignment(TEXT_ALIGN_CENTER);
-			display_sh1106.drawString(64, 1, display_header);
-			display_sh1106.setTextAlignment(TEXT_ALIGN_LEFT);
-			display_sh1106.drawString(0, 16, display_lines[0]);
-			display_sh1106.drawString(0, 28, display_lines[1]);
-			display_sh1106.drawString(0, 40, display_lines[2]);
-			display_sh1106.setTextAlignment(TEXT_ALIGN_CENTER);
-			display_sh1106.drawString(64, 52, displayGenerateFooter(screen_count));
-			display_sh1106.display();
 		}
 		if (cfg::has_lcd2004_27) {
 			display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " + display_header;
@@ -3574,7 +3449,6 @@ void display_values() {
  *****************************************************************/
 void init_display() {
 	display.init();
-	display_sh1106.init();
 }
 
 /*****************************************************************
@@ -3783,7 +3657,7 @@ static void logEnabledAPIs() {
 }
 
 static void logEnabledDisplays() {
-	if (cfg::has_display || cfg::has_sh1106) {
+	if (cfg::has_display) {
 		debug_out(F("Show on OLED..."), DEBUG_MIN_INFO, 1);
 	}
 	if (cfg::has_lcd1602 || cfg::has_lcd1602_27) {
@@ -4064,7 +3938,7 @@ void loop() {
 		starttime_GPS = act_milli;
 	}
 
-	if ((cfg::has_display || cfg::has_sh1106 || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
+	if ((cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
 			cfg::has_lcd1602_27) && (act_milli > next_display_millis)) {
 		display_values();
 	}
