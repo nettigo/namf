@@ -1,6 +1,11 @@
 #include <Arduino.h>
 #define INTL_PL
 
+//declarations for changing .ino to .cpp
+String Float2String(const double value, uint8_t digits);
+String Float2String(const double value);
+void writeConfig();
+String add_sensor_type(const String& sensor_text);
 //Nettigo NAM 0.3.2 factory firmware - test
 
 // increment on change
@@ -1838,18 +1843,6 @@ void webserver_prometheus_endpoint() {
 }
 
 /*****************************************************************
- * Webserver Images                                              *
- *****************************************************************/
-static void webserver_images() {
-	if (server.arg("name") == F("luftdaten_logo")) {
-		debug_out(F("output luftdaten.info logo..."), DEBUG_MIN_INFO, 1);
-		server.send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
-	} else {
-		webserver_not_found();
-	}
-}
-
-/*****************************************************************
  * Webserver page not found                                      *
  *****************************************************************/
 void webserver_not_found() {
@@ -1866,6 +1859,19 @@ void webserver_not_found() {
 	}
 }
 
+
+
+/*****************************************************************
+ * Webserver Images                                              *
+ *****************************************************************/
+static void webserver_images() {
+	if (server.arg("name") == F("luftdaten_logo")) {
+		debug_out(F("output luftdaten.info logo..."), DEBUG_MIN_INFO, 1);
+		server.send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
+	} else {
+		webserver_not_found();
+	}
+}
 /*****************************************************************
  * Webserver setup                                               *
  *****************************************************************/
