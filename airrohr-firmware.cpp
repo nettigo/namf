@@ -6,6 +6,7 @@ String Float2String(const double value, uint8_t digits);
 String Float2String(const double value);
 void writeConfig();
 String add_sensor_type(const String& sensor_text);
+String Value2Json(const String& type, const String& value);
 //Nettigo NAM 0.3.2 factory firmware - test
 
 // increment on change
@@ -22,7 +23,6 @@ String add_sensor_type(const String& sensor_text);
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266httpUpdate.h>
-#include <SoftwareSerial.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
@@ -181,43 +181,6 @@ String Var2Json(const String& name, const int value) {
 }
 
 /*****************************************************************
- * send SDS011 command (start, stop, continuous mode, version    *
- *****************************************************************/
-static bool SDS_cmd(PmSensorCmd cmd) {
-	static constexpr uint8_t start_cmd[] PROGMEM = {
-		0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB
-	};
-	static constexpr uint8_t stop_cmd[] PROGMEM = {
-		0xAA, 0xB4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
-	};
-	static constexpr uint8_t continuous_mode_cmd[] PROGMEM = {
-		0xAA, 0xB4, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x07, 0xAB
-	};
-	static constexpr uint8_t version_cmd[] PROGMEM = {
-		0xAA, 0xB4, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
-	};
-	constexpr uint8_t cmd_len = array_num_elements(start_cmd);
-
-	uint8_t buf[cmd_len];
-	switch (cmd) {
-	case PmSensorCmd::Start:
-		memcpy_P(buf, start_cmd, cmd_len);
-		break;
-	case PmSensorCmd::Stop:
-		memcpy_P(buf, stop_cmd, cmd_len);
-		break;
-	case PmSensorCmd::ContinuousMode:
-		memcpy_P(buf, continuous_mode_cmd, cmd_len);
-		break;
-	case PmSensorCmd::VersionDate:
-		memcpy_P(buf, version_cmd, cmd_len);
-		break;
-	}
-	serialSDS.write(buf, cmd_len);
-	return cmd != PmSensorCmd::Stop;
-}
-
-/*****************************************************************
  * send Plantower PMS sensor command start, stop, cont. mode     *
  *****************************************************************/
 static bool PMS_cmd(PmSensorCmd cmd) {
@@ -252,111 +215,6 @@ static bool PMS_cmd(PmSensorCmd cmd) {
 }
 
 
-/*****************************************************************
- * read SDS011 sensor serial and firmware date                   *
- *****************************************************************/
-String SDS_version_date() {
-	String s = "";
-	char buffer;
-	int value;
-	int len = 0;
-	String version_date = "";
-	String device_id = "";
-	int checksum_is = 0;
-	int checksum_ok = 0;
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
-
-	is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-
-	delay(100);
-
-	is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
-
-	delay(500);
-
-	while (serialSDS.available() > 0) {
-		buffer = serialSDS.read();
-		debug_out(String(len) + " - " + String(buffer, DEC) + " - " + String(buffer, HEX) + " - " + int(buffer) + " .", DEBUG_MED_INFO, 1);
-//		"aa" = 170, "ab" = 171, "c0" = 192
-		value = int(buffer);
-		switch (len) {
-		case (0):
-			if (value != 170) {
-				len = -1;
-			};
-			break;
-		case (1):
-			if (value != 197) {
-				len = -1;
-			};
-			break;
-		case (2):
-			if (value != 7) {
-				len = -1;
-			};
-			checksum_is = 7;
-			break;
-		case (3):
-			version_date  = String(value);
-			break;
-		case (4):
-			version_date += "-" + String(value);
-			break;
-		case (5):
-			version_date += "-" + String(value);
-			break;
-		case (6):
-			if (value < 0x10) {
-				device_id  = "0" + String(value, HEX);
-			} else {
-				device_id  = String(value, HEX);
-			};
-			break;
-		case (7):
-			if (value < 0x10) {
-				device_id += "0";
-			};
-			device_id += String(value, HEX);
-			break;
-		case (8):
-			debug_out(FPSTR(DBG_TXT_CHECKSUM_IS), DEBUG_MED_INFO, 0);
-			debug_out(String(checksum_is % 256), DEBUG_MED_INFO, 0);
-			debug_out(FPSTR(DBG_TXT_CHECKSUM_SHOULD), DEBUG_MED_INFO, 0);
-			debug_out(String(value), DEBUG_MED_INFO, 1);
-			if (value == (checksum_is % 256)) {
-				checksum_ok = 1;
-			} else {
-				len = -1;
-			};
-			break;
-		case (9):
-			if (value != 171) {
-				len = -1;
-			};
-			break;
-		}
-		if (len > 2) { checksum_is += value; }
-		len++;
-		if (len == 10 && checksum_ok == 1) {
-			s = version_date + "(" + device_id + ")";
-			debug_out(F("SDS version date : "), DEBUG_MIN_INFO, 0);
-			debug_out(version_date, DEBUG_MIN_INFO, 1);
-			debug_out(F("SDS device ID: "), DEBUG_MIN_INFO, 0);
-			debug_out(device_id, DEBUG_MIN_INFO, 1);
-			len = 0;
-			checksum_ok = 0;
-			version_date = "";
-			device_id = "";
-			checksum_is = 0;
-		}
-		yield();
-	}
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
-
-	return s;
-}
 
 /*****************************************************************
  * disable unneeded NMEA sentences, TinyGPS++ needs GGA, RMC     *
@@ -2040,63 +1898,6 @@ static String sensorDS18B20() {
 
 	return s;
 }
-
-/*****************************************************************
- * read SDS011 sensor values                                     *
- *****************************************************************/
-String sensorSDS() {
-	String s = "";
-
-	int pm10_serial = 0;
-	int pm25_serial = 0;
-
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_SDS011), DEBUG_MED_INFO, 1);
-	if (msSince(starttime) < (cfg::sending_intervall_ms - (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
-		if (is_SDS_running) {
-			is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-		}
-	} else {
-        if (! is_SDS_running) {
-            is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-        }
-
-        readSingleSDSPacket(&pm10_serial, &pm25_serial);
-	}
-	if (send_now) {
-		last_value_SDS_P1 = -1;
-		last_value_SDS_P2 = -1;
-		if (sds_val_count > 2) {
-			sds_pm10_sum = sds_pm10_sum - sds_pm10_min - sds_pm10_max;
-			sds_pm25_sum = sds_pm25_sum - sds_pm25_min - sds_pm25_max;
-			sds_val_count = sds_val_count - 2;
-		}
-		if (sds_val_count > 0) {
-			last_value_SDS_P1 = double(sds_pm10_sum) / (sds_val_count * 10.0);
-			last_value_SDS_P2 = double(sds_pm25_sum) / (sds_val_count * 10.0);
-			debug_out("PM10:  " + Float2String(last_value_SDS_P1), DEBUG_MIN_INFO, 1);
-			debug_out("PM2.5: " + Float2String(last_value_SDS_P2), DEBUG_MIN_INFO, 1);
-			debug_out("----", DEBUG_MIN_INFO, 1);
-			s += Value2Json("SDS_P1", Float2String(last_value_SDS_P1));
-			s += Value2Json("SDS_P2", Float2String(last_value_SDS_P2));
-		}
-		sds_pm10_sum = 0;
-		sds_pm25_sum = 0;
-		sds_val_count = 0;
-		sds_pm10_max = 0;
-		sds_pm10_min = 20000;
-		sds_pm25_max = 0;
-		sds_pm25_min = 20000;
-		if ((cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
-			is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-		}
-	}
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_SDS011), DEBUG_MED_INFO, 1);
-
-	return s;
-}
-
 /*****************************************************************
  * read Plantronic PM sensor sensor values                       *
  *****************************************************************/
@@ -2747,11 +2548,20 @@ static void powerOnTestSensors() {
 		delay(100);
 		SDS_cmd(PmSensorCmd::ContinuousMode);
         int pm10 = 0, pm25 = 0;
-        while (pm10==0 || pm25 == 0) { readSingleSDSPacket(&pm10, &pm25); yield(); }
-        debug_out(F("PM10/2.5:"), 0, 1);
-        debug_out(String(pm10/10.0,2),0,1);
-        debug_out(String(pm25/10.0,2),0,1);
-        debug_out(F("Stopping SDS011..."), 0, 1);
+        unsigned timeOutCount = 0;
+        while (timeOutCount < 200 && (pm10 == 0 || pm25 == 0)) {
+            readSingleSDSPacket(&pm10, &pm25);
+            timeOutCount++;
+            delay(1);
+        }
+        if (timeOutCount == 200) {
+            debug_out(F("SDS011 not sending data!"), DEBUG_ERROR, 1);
+        } else {
+            debug_out(F("PM10/2.5:"),  DEBUG_ERROR,1);
+            debug_out(String(pm10/10.0,2),DEBUG_ERROR,1);
+            debug_out(String(pm25/10.0,2),DEBUG_ERROR,1);
+        }
+        debug_out(F("Stopping SDS011..."),  DEBUG_ERROR,1);
         is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
 	}
 
@@ -2911,8 +2721,9 @@ void setup() {
 	Serial.print(F("Chip ID: "));
 	Serial.println(esp_chipid);
 
-	
-	readConfig();
+    Serial.println(ESP.getFreeSketchSpace()/1024.0);
+
+    readConfig();
 
 	init_display();
 	init_lcd();
@@ -2936,9 +2747,6 @@ void setup() {
 	    startAP();
 	}
 	serialSDS.begin(9600);
-	debug_out(F("\nChipId: "), DEBUG_MIN_INFO, 0);
-	debug_out(esp_chipid, DEBUG_MIN_INFO, 1);
-
 
 	if (cfg::gps_read) {
 		serialGPS.begin(9600);

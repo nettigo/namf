@@ -5,6 +5,8 @@
 #ifndef AIRROHR_FIRMWARE_VARIABLES_H
 #define AIRROHR_FIRMWARE_VARIABLES_H
 
+#include <SoftwareSerial.h>
+
 /******************************************************************
  * Constants                                                      *
  ******************************************************************/
@@ -151,8 +153,8 @@ LiquidCrystal_I2C lcd_2004_3f(0x3F, 20, 4);
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false, 128);
-SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false, 512);
+SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false);
+SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
 
 /*****************************************************************
  * DHT declaration                                               *
