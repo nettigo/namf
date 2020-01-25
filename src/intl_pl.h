@@ -7,7 +7,6 @@
  *	Texts should be as short as possible
  *	We only have 512 kB for the entire firmware
  */
-
 const char INTL_LANG[] = "PL";
 const char INTL_PM_SENSOR[] PROGMEM = "Czujnik pyłu zawieszonego";
 const char INTL_CONFIGURATION[] PROGMEM = "Konfiguracja";

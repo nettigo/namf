@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#define INTL_PL
 
 //declarations for changing .ino to .cpp
 String Float2String(const double value, uint8_t digits);
@@ -9,8 +8,6 @@ String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
 //Nettigo NAM 0.3.2 factory firmware - test
 
-// increment on change
-#define SOFTWARE_VERSION "NAMF-2020-FABRIC-1"
 #define SPOOF_SOFTWARE_VERSION "NRZ-2018-123B"
 
 
@@ -22,7 +19,6 @@ String Value2Json(const String& type, const String& value);
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include <ESP8266httpUpdate.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
@@ -49,6 +45,8 @@ String Value2Json(const String& type, const String& value);
 #include "html-content.h"
 
 #include "variables.h"
+#include "update.h"
+
 
 /*****************************************************************
  * Debug output                                                  *
@@ -1643,7 +1641,6 @@ void sendData(const String& data, const int pin, const char* host, const int htt
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
 	String data_4_dusti = FPSTR(data_first_part);
-  //data_4_dusti.replace("{v}", SOFTWARE_VERSION);
 	data_4_dusti.replace("{v}", SPOOF_SOFTWARE_VERSION); // sorry for that!
 	data_4_dusti += data;
 	data_4_dusti.remove(data_4_dusti.length() - 1);
@@ -2174,40 +2171,6 @@ String sensorGPS() {
 	return s;
 }
 
-/*****************************************************************
- * AutoUpdate                                                    *
- *****************************************************************/
-static void autoUpdate() {
-	if (cfg::auto_update) {
-		debug_out(F("Starting OTA update ..."), DEBUG_MIN_INFO, 1);
-		debug_out(F("NodeMCU firmware : "), DEBUG_MIN_INFO, 0);
-		debug_out(SOFTWARE_VERSION, DEBUG_MIN_INFO, 1);
-		debug_out(UPDATE_HOST, DEBUG_MED_INFO, 1);
-		debug_out(UPDATE_URL, DEBUG_MED_INFO, 1);
-
-		const String SDS_version = cfg::sds_read ? SDS_version_date() : "";
-		display_debug(F("Looking for"), F("OTA update"));
-		last_update_attempt = millis();
-		const HTTPUpdateResult ret = ESPhttpUpdate.update(UPDATE_HOST, UPDATE_PORT, UPDATE_URL,
-									 SOFTWARE_VERSION + String(" ") + esp_chipid + String(" ") + SDS_version + String(" ") +
-									 String(cfg::current_lang) + String(" ") + String(INTL_LANG) + String(" ") +
-									 String(cfg::use_beta ? "BETA" : ""));
-		switch(ret) {
-		case HTTP_UPDATE_FAILED:
-			debug_out(String(FPSTR(DBG_TXT_UPDATE)) + FPSTR(DBG_TXT_UPDATE_FAILED), DEBUG_ERROR, 0);
-			debug_out(ESPhttpUpdate.getLastErrorString().c_str(), DEBUG_ERROR, 1);
-			display_debug(FPSTR(DBG_TXT_UPDATE), FPSTR(DBG_TXT_UPDATE_FAILED));
-			break;
-		case HTTP_UPDATE_NO_UPDATES:
-			debug_out(String(FPSTR(DBG_TXT_UPDATE)) + FPSTR(DBG_TXT_UPDATE_NO_UPDATE), DEBUG_MIN_INFO, 1);
-			display_debug(FPSTR(DBG_TXT_UPDATE), FPSTR(DBG_TXT_UPDATE_NO_UPDATE));
-			break;
-		case HTTP_UPDATE_OK:
-			debug_out(String(FPSTR(DBG_TXT_UPDATE)) + FPSTR(DBG_TXT_UPDATE_OK), DEBUG_MIN_INFO, 1); // may not called we reboot the ESP
-			break;
-		}
-	}
-}
 
 static String displayGenerateFooter(unsigned int screen_count) {
 	String display_footer;
@@ -2710,7 +2673,7 @@ static bool acquireNetworkTime() {
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
-	Serial.begin(9600);					// Output to Serial at 9600 baud
+	Serial.begin(115200);					// Output to Serial at 9600 baud
 	Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
 	esp_chipid = String(ESP.getChipId());
@@ -2741,7 +2704,7 @@ void setup() {
         got_ntp = acquireNetworkTime();
         debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
         debug_out(String(got_ntp?"":"not ")+F("received"), DEBUG_MIN_INFO, 1);
-        autoUpdate();
+        updateFW();
         create_basic_auth_strings();
     } else {
 	    startAP();
@@ -3041,7 +3004,7 @@ void loop() {
 		checkForceRestart();
 
 		if (msSince(last_update_attempt) > PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS) {
-			autoUpdate();
+			updateFW();
 		}
 
 		sending_time = (4 * sending_time + sum_send_time) / 5;

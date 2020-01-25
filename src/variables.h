@@ -5,6 +5,7 @@
 #ifndef AIRROHR_FIRMWARE_VARIABLES_H
 #define AIRROHR_FIRMWARE_VARIABLES_H
 
+#define SOFTWARE_VERSION  VERSION
 #include <SoftwareSerial.h>
 
 /******************************************************************
@@ -115,8 +116,8 @@ namespace cfg {
 #define URL_FSAPP "/data.php"
 #define PORT_FSAPP 80
 
-#define UPDATE_HOST "fw.air.nettigo.pl"
-#define UPDATE_URL "/update/index.php"
+#define UPDATE_HOST "fw.nettigo.pl"
+#define UPDATE_URL "/index.php"
 #define UPDATE_PORT 80
 
 #define JSON_BUFFER_SIZE 2000
