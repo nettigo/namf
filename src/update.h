@@ -35,13 +35,9 @@ void updateFW() {
     temp += "_";
     temp += INTL_LANG;
     size = temp.length()+1;
-    Serial.println(size);
     char *buf;
     buf= (char *)malloc((size+1)*sizeof(char));
     temp.toCharArray(buf,size);
-    Serial.println(strlen(buf));
-//    Serial.println(temp.length());
-    Serial.println(temp);
     Serial.println(buf);
 
     t_httpUpdate_return ret = tryUpdate(buf);

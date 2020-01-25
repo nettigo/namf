@@ -2504,18 +2504,20 @@ bool initBME280(char addr) {
 }
 
 static void powerOnTestSensors() {
+     debug_out(F("PowerOnTest"),0,1);
     cfg::debug = DEBUG_MED_INFO;
 	if (cfg::sds_read) {
 		debug_out(F("Read SDS..."), 0, 1);
 		SDS_cmd(PmSensorCmd::Start);
 		delay(100);
 		SDS_cmd(PmSensorCmd::ContinuousMode);
+        delay(100);
         int pm10 = 0, pm25 = 0;
         unsigned timeOutCount = 0;
         while (timeOutCount < 200 && (pm10 == 0 || pm25 == 0)) {
             readSingleSDSPacket(&pm10, &pm25);
             timeOutCount++;
-            delay(1);
+            delay(5);
         }
         if (timeOutCount == 200) {
             debug_out(F("SDS011 not sending data!"), DEBUG_ERROR, 1);
@@ -2523,6 +2525,8 @@ static void powerOnTestSensors() {
             debug_out(F("PM10/2.5:"),  DEBUG_ERROR,1);
             debug_out(String(pm10/10.0,2),DEBUG_ERROR,1);
             debug_out(String(pm25/10.0,2),DEBUG_ERROR,1);
+            last_value_SDS_P1 = double(pm10/10.0);
+            last_value_SDS_P2 = double(pm25/10.0);
         }
         debug_out(F("Stopping SDS011..."),  DEBUG_ERROR,1);
         is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
@@ -2674,7 +2678,9 @@ static bool acquireNetworkTime() {
  *****************************************************************/
 void setup() {
 	Serial.begin(115200);					// Output to Serial at 9600 baud
-	Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
+    serialSDS.begin(9600);
+
+    Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
 	esp_chipid = String(ESP.getChipId());
 	cfg::initNonTrivials(esp_chipid.c_str());
@@ -2709,7 +2715,6 @@ void setup() {
     } else {
 	    startAP();
 	}
-	serialSDS.begin(9600);
 
 	if (cfg::gps_read) {
 		serialGPS.begin(9600);
