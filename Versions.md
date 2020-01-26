@@ -1,4 +1,5 @@
 NAMF 2020-3
+* display on webpage first reading from SDS011 (collected on POST)
 
 NAMF 2020-2 (2020-01-25)
 * OTA update working

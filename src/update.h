@@ -32,8 +32,8 @@ void updateFW() {
     Serial.print("Check for update with ");
     unsigned int size = 0;
     String temp = String(SOFTWARE_VERSION);
-    temp += "_";
-    temp += INTL_LANG;
+//    temp += " ";
+//    temp += INTL_LANG;
     size = temp.length()+1;
     char *buf;
     buf= (char *)malloc((size+1)*sizeof(char));
