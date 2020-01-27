@@ -5,7 +5,8 @@
 #ifndef AIRROHR_FIRMWARE_VARIABLES_H
 #define AIRROHR_FIRMWARE_VARIABLES_H
 
-#define SOFTWARE_VERSION  VERSION
+#define SOFTWARE_VERSION  "NAMF-2020-3"
+
 #include <SoftwareSerial.h>
 
 /******************************************************************
@@ -116,8 +117,8 @@ namespace cfg {
 #define URL_FSAPP "/data.php"
 #define PORT_FSAPP 80
 
-#define UPDATE_HOST "fw.nettigo.pl"
-#define UPDATE_URL "/index.php"
+#define UPDATE_HOST "beta.fw.nettigo.pl"
+#define UPDATE_URL "/NAMF/index.php"
 #define UPDATE_PORT 80
 
 #define JSON_BUFFER_SIZE 2000

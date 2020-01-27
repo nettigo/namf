@@ -20,38 +20,42 @@ t_httpUpdate_return tryUpdate(char * const ver) {
 
 #include <ESP8266WiFi.h>
 #include <ESP8266httpUpdate.h>
-
 t_httpUpdate_return tryUpdate(char *const ver) {
+    Serial.println(F("CHAR UPDATE"));
     t_httpUpdate_return ret = ESPhttpUpdate.update(UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
     return ret;
+};
+
+
+
+t_httpUpdate_return tryUpdate(String const ver) {
+    Serial.println(ver);
+    char *buf;
+    unsigned size = ver.length();
+    buf= (char *)malloc((size+2)*sizeof(char));
+    ver.toCharArray(buf,size);
+    return tryUpdate(buf);
 };
 
 #endif
 
 void updateFW() {
-    Serial.print("Check for update with ");
-    unsigned int size = 0;
-    String temp = String(SOFTWARE_VERSION);
-//    temp += " ";
-//    temp += INTL_LANG;
-    size = temp.length()+1;
-    char *buf;
-    buf= (char *)malloc((size+1)*sizeof(char));
-    temp.toCharArray(buf,size);
-    Serial.println(buf);
+    Serial.print(F("Check for update with "));
+    Serial.println(SOFTWARE_VERSION);
 
-    t_httpUpdate_return ret = tryUpdate(buf);
+    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
+                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) + String(" ") );
     switch (ret) {
         case HTTP_UPDATE_FAILED:
-            Serial.println("[update] Update failed.");
+            Serial.println(F("[update] Update failed."));
             break;
         case HTTP_UPDATE_NO_UPDATES:
-            Serial.println("[update] Update no Update.");
-            Serial.print("Still running version: ");
+            Serial.println(F("[update] Update no Update."));
+            Serial.print(F("Still running version: "));
             Serial.println(SOFTWARE_VERSION);
             break;
         case HTTP_UPDATE_OK:
-            Serial.println("[update] Update ok."); // may not called we reboot the ESP
+            Serial.println(F("[update] Update ok.")); // may not called we reboot the ESP
             break;
     }
 

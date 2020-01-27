@@ -22,9 +22,9 @@ env.Replace(
 
 
 def after_build(source, target, env):
-    f = open('version.txt', 'r')
-    val = (f.read()).split(' ', 2)
-    print(val)
+    # f = open('version.txt', 'r')
+    # val = (f.read()).split(' ', 2)
+    # print(val)
 
     firmware_path = str(target[0].path)
     firmware_name = basename(firmware_path)
@@ -34,9 +34,8 @@ def after_build(source, target, env):
 
     configName = env.Dump('PIOENV').replace("'", "")
     sectionName = 'env:' + configName
-    lang = config.get(sectionName, "lang").upper()
-
-    dest = '/home/viciu/Documents/dev/fw.air.nettigo.pl/data/{0}.dir/{1}_{2}.bin'.format(val[0], val[1],lang)
+    lang = config.get(sectionName, "lang").lower()
+    dest = 'builds/latest_{0}.bin'.format(lang)
     print("Uploading {0} to {1}".format(firmware_name, dest))
     shutil.copy(target[0].path, dest)
 
