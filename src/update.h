@@ -21,7 +21,7 @@ t_httpUpdate_return tryUpdate(char * const ver) {
 #include <ESP8266WiFi.h>
 #include <ESP8266httpUpdate.h>
 t_httpUpdate_return tryUpdate(char *const ver) {
-    Serial.println(F("CHAR UPDATE"));
+    Serial.println(ver);
     t_httpUpdate_return ret = ESPhttpUpdate.update(UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
     return ret;
 };
@@ -29,11 +29,12 @@ t_httpUpdate_return tryUpdate(char *const ver) {
 
 
 t_httpUpdate_return tryUpdate(String const ver) {
-    Serial.println(ver);
+    Serial.print(ver);
+    Serial.println(F("."));
     char *buf;
     unsigned size = ver.length();
     buf= (char *)malloc((size+2)*sizeof(char));
-    ver.toCharArray(buf,size);
+    ver.toCharArray(buf,size+1);
     return tryUpdate(buf);
 };
 
@@ -44,13 +45,13 @@ void updateFW() {
     Serial.println(SOFTWARE_VERSION);
 
     t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) + String(" ") );
+                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
     switch (ret) {
         case HTTP_UPDATE_FAILED:
             Serial.println(F("[update] Update failed."));
             break;
         case HTTP_UPDATE_NO_UPDATES:
-            Serial.println(F("[update] Update no Update."));
+            Serial.println(F("[update] no Update."));
             Serial.print(F("Still running version: "));
             Serial.println(SOFTWARE_VERSION);
             break;

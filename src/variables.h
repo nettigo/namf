@@ -117,8 +117,8 @@ namespace cfg {
 #define URL_FSAPP "/data.php"
 #define PORT_FSAPP 80
 
-#define UPDATE_HOST "beta.fw.nettigo.pl"
-#define UPDATE_URL "/NAMF/index.php"
+#define UPDATE_HOST F("beta.fw.nettigo.pl")
+#define UPDATE_URL F("/NAMF/index.php")
 #define UPDATE_PORT 80
 
 #define JSON_BUFFER_SIZE 2000

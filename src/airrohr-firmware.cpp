@@ -38,6 +38,8 @@ String Value2Json(const String& type, const String& value);
 #include "intl_en.h"
 #elif defined(INTL_PL)
 #include "intl_pl.h"
+#elif defined(INTL_HU)
+#include "intl_hu.h"
 #else
 #include "intl_en.h"
 #endif
@@ -2687,7 +2689,9 @@ void setup() {
 	cfg::initNonTrivials(esp_chipid.c_str());
 
 	Serial.print(F("\nNAMF ver: "));
-	Serial.println(SOFTWARE_VERSION);
+	Serial.print(SOFTWARE_VERSION);
+	Serial.print(F("/"));
+	Serial.println(INTL_LANG);
 	Serial.print(F("Chip ID: "));
 	Serial.println(esp_chipid);
 
