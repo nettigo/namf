@@ -1,3 +1,5 @@
+#ifndef NAMF_EXT_DEF_H
+#define NAMF_EXT_DEF_H
 // Language config
 #define CURRENT_LANG INTL_LANG
 
@@ -180,3 +182,5 @@ static const uint16_t suites[] PROGMEM = {
 #define CLIENT_ADDRESS 2
 #define SERVER_ADDRESS 100
 #endif
+
+#endif //NAMF_EXT_DEF_H

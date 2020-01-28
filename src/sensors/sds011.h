@@ -5,7 +5,6 @@
 #ifndef AIRROHR_FIRMWARE_SDS011_H
 #define AIRROHR_FIRMWARE_SDS011_H
 
-#include "variables.h"
 void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
     char buffer;
     int value;

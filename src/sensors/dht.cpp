@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include "dht.h"
 #include "defines.h"
-#include "variables.h"
 
 /*****************************************************************
  * read DHT22 sensor values                                      *
@@ -55,7 +54,6 @@ MIT license
 written by Adafruit Industries
 */
 
-#include "DHT.h"
 
 #define MIN_INTERVAL 2000
 
