@@ -57,7 +57,7 @@ void debug_out(const String& text, const int level, const bool linebreak) {
 	}
 }
 
-#include "sds011.h"
+#include "sensors/sds011.h"
 
 /*****************************************************************
  * display values                                                *
