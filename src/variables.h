@@ -6,21 +6,27 @@
 #define AIRROHR_FIRMWARE_VARIABLES_H
 
 #define SOFTWARE_VERSION  "NAMF-2020-3"
-
+#include "defines.h"
 #include <SoftwareSerial.h>
+#include <ESP8266WebServer.h>
+#include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
+#include <SSD1306.h>
+#include <LiquidCrystal_I2C.h>
 
-/******************************************************************
- * Constants                                                      *
- ******************************************************************/
-const unsigned long SAMPLETIME_MS = 30000;
-const unsigned long SAMPLETIME_SDS_MS = 1000;
-const unsigned long WARMUPTIME_SDS_MS = 15000;
-const unsigned long READINGTIME_SDS_MS = 5000;
-const unsigned long SAMPLETIME_GPS_MS = 50;
-const unsigned long DISPLAY_UPDATE_INTERVAL_MS = 5000;
-const unsigned long ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
-const unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = ONE_DAY_IN_MS;        // check for firmware updates once a day
-const unsigned long DURATION_BEFORE_FORCED_RESTART_MS = ONE_DAY_IN_MS * 28;  // force a reboot every ~4 weeks
+#include "ClosedCube_SHT31D.h" // support for Nettigo Air Monitor HECA
+#include <DallasTemperature.h>
+#include <TinyGPS++.h>
+
+#include "ext_def.h"
+#if defined(INTL_EN)
+#include "intl_en.h"
+#elif defined(INTL_PL)
+#include "intl_pl.h"
+#elif defined(INTL_HU)
+#include "intl_hu.h"
+#else
+#include "intl_en.h"
+#endif
 
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
@@ -99,29 +105,6 @@ namespace cfg {
     }
 }
 
-#define HOST_MADAVI "api-rrd.madavi.de"
-#define URL_MADAVI "/data.php"
-#define PORT_MADAVI 80
-
-#define HOST_DUSTI "api.luftdaten.info"
-#define URL_DUSTI "/v1/push-sensor-data/"
-#define PORT_DUSTI 80
-
-// IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
-
-#define HOST_SENSEMAP "ingress.opensensemap.org"
-#define URL_SENSEMAP "/boxes/BOXID/data?luftdaten=1"
-#define PORT_SENSEMAP 443
-
-#define HOST_FSAPP "www.h2801469.stratoserver.net"
-#define URL_FSAPP "/data.php"
-#define PORT_FSAPP 80
-
-#define UPDATE_HOST F("beta.fw.nettigo.pl")
-#define UPDATE_URL F("/NAMF/index.php")
-#define UPDATE_PORT 80
-
-#define JSON_BUFFER_SIZE 2000
 
 
 
@@ -157,21 +140,6 @@ LiquidCrystal_I2C lcd_2004_3f(0x3F, 20, 4);
  *****************************************************************/
 SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false);
 SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
-
-/*****************************************************************
- * DHT declaration                                               *
- *****************************************************************/
-DHT dht(ONEWIRE_PIN, DHT_TYPE);
-
-/*****************************************************************
- * BMP280 declaration                                               *
- *****************************************************************/
-Adafruit_BMP280 bmp280;
-
-/*****************************************************************
- * BME280 declaration                                            *
- *****************************************************************/
-Adafruit_BME280 bme280;
 
 /*****************************************************************
  * HECA (SHT30) declaration                                            *
@@ -290,7 +258,6 @@ template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminat
     return N - 1;
 }
 
-#define msSince(timestamp_before) (act_milli - (timestamp_before))
 
 const char data_first_part[] PROGMEM = "{\"software_version\": \"{v}\", \"sensordatavalues\":[";
 

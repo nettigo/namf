@@ -64,3 +64,17 @@ String Var2Json(const String& name, const int value) {
 }
 
 
+
+/*****************************************************************
+ * Debug output                                                  *
+ *****************************************************************/
+void debug_out(const String& text, const int level, const bool linebreak) {
+    if (level <= cfg::debug) {
+        if (linebreak) {
+            Serial.println(text);
+        } else {
+            Serial.print(text);
+        }
+    }
+}
+

@@ -1,3 +1,6 @@
+#ifndef NAMF_HTML_CONTENT_H
+#define NAMF_HTML_CONTENT_H
+
 const char TXT_CONTENT_TYPE_JSON[] PROGMEM = "application/json";
 const char TXT_CONTENT_TYPE_INFLUXDB[] PROGMEM = "application/x-www-form-urlencoded";
 const char TXT_CONTENT_TYPE_TEXT_HTML[] PROGMEM = "text/html; charset=utf-8";
@@ -100,3 +103,5 @@ const char WEB_IOS_REDIRECT[] PROGMEM = "<html><body>Redirecting...\
 window.location = \"http://192.168.4.1/config\";\
 </script>\
 </body></html>";
+
+#endif

@@ -7,57 +7,28 @@
 /*****************************************************************
  * Includes                                                      *
  *****************************************************************/
+#include "defines.h"
+#include "variables.h"
+#include "update.h"
 #include "helpers.h"
 #include <FS.h>                     // must be first
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
-#include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
 #include <base64.h>
 #include <ArduinoJson.h>
-#include "./DHT.h"
-#include <Adafruit_BMP280.h>
-#include <Adafruit_BME280.h>
 #include "ClosedCube_SHT31D.h" // support for Nettigo Air Monitor HECA
-#include <DallasTemperature.h>
-#include <TinyGPS++.h>
 #include <time.h>
 #include <coredecls.h>
 #include <assert.h>
 
-#if defined(INTL_EN)
-#include "intl_en.h"
-#elif defined(INTL_PL)
-#include "intl_pl.h"
-#elif defined(INTL_HU)
-#include "intl_hu.h"
-#else
-#include "intl_en.h"
-#endif
-#include "ext_def.h"
 #include "html-content.h"
 
-#include "variables.h"
-#include "update.h"
-
-
-/*****************************************************************
- * Debug output                                                  *
- *****************************************************************/
-void debug_out(const String& text, const int level, const bool linebreak) {
-	if (level <= cfg::debug) {
-		if (linebreak) {
-			Serial.println(text);
-		} else {
-			Serial.print(text);
-		}
-	}
-}
-
 #include "sensors/sds011.h"
+#include "sensors/bme280.h"
+#include "sensors/dht.h"
 
 /*****************************************************************
  * display values                                                *
@@ -1665,48 +1636,6 @@ void send_csv(const String& data) {
 	}
 }
 
-/*****************************************************************
- * read DHT22 sensor values                                      *
- *****************************************************************/
-static String sensorDHT() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + "DHT11/22", DEBUG_MED_INFO, 1);
-
-	// Check if valid number if non NaN (not a number) will be send.
-	last_value_DHT_T = -128;
-	last_value_DHT_H = -1;
-
-	int count = 0;
-	const int MAX_ATTEMPTS = 5;
-	while ((count++ < MAX_ATTEMPTS) && (s == "")) {
-		auto h = dht.readHumidity();
-		auto t = dht.readTemperature();
-		if (isnan(t) || isnan(h)) {
-			delay(100);
-			h = dht.readHumidity();
-			t = dht.readTemperature(false);
-		}
-		if (isnan(t) || isnan(h)) {
-			debug_out(String(FPSTR(SENSORS_DHT22)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-		} else {
-			debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-			debug_out(String(t) + u8"°C", DEBUG_MIN_INFO, 1);
-			debug_out(FPSTR(DBG_TXT_HUMIDITY), DEBUG_MIN_INFO, 0);
-			debug_out(String(h) + "%", DEBUG_MIN_INFO, 1);
-			last_value_DHT_T = t;
-			last_value_DHT_H = h;
-			s += Value2Json(F("temperature"), Float2String(last_value_DHT_T));
-			s += Value2Json(F("humidity"), Float2String(last_value_DHT_H));
-		}
-	}
-	debug_out("----", DEBUG_MIN_INFO, 1);
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + "DHT11/22", DEBUG_MED_INFO, 1);
-
-	return s;
-}
-
 
 /*****************************************************************
  * read BMP280 sensor values                                     *
@@ -1739,43 +1668,6 @@ static String sensorBMP280() {
 	return s;
 }
 
-/*****************************************************************
- * read BME280 sensor values                                     *
- *****************************************************************/
-static String sensorBME280() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_BME280), DEBUG_MED_INFO, 1);
-
-	bme280.takeForcedMeasurement();
-	const auto t = bme280.readTemperature();
-	const auto h = bme280.readHumidity();
-	const auto p = bme280.readPressure();
-	if (isnan(t) || isnan(h) || isnan(p)) {
-		last_value_BME280_T = -128.0;
-		last_value_BME280_H = -1.0;
-		last_value_BME280_P = -1.0;
-		debug_out(String(FPSTR(SENSORS_BME280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-	} else {
-		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(t) + " C", DEBUG_MIN_INFO, 1);
-		debug_out(FPSTR(DBG_TXT_HUMIDITY), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(h) + " %", DEBUG_MIN_INFO, 1);
-		debug_out(FPSTR(DBG_TXT_PRESSURE), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(p / 100) + " hPa", DEBUG_MIN_INFO, 1);
-		last_value_BME280_T = t;
-		last_value_BME280_H = h;
-		last_value_BME280_P = p;
-		s += Value2Json(F("BME280_temperature"), Float2String(last_value_BME280_T));
-		s += Value2Json(F("BME280_humidity"), Float2String(last_value_BME280_H));
-		s += Value2Json(F("BME280_pressure"), Float2String(last_value_BME280_P));
-	}
-	debug_out("----", DEBUG_MIN_INFO, 1);
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_BME280), DEBUG_MED_INFO, 1);
-
-	return s;
-}
 
 /*****************************************************************
  * read HECA (SHT30) sensor values                                     *
