@@ -3,6 +3,34 @@
 //
 
 #include "sensors/bme280.h"
+
+Adafruit_BMP280 bmp280;
+Adafruit_BME280 bme280;
+
+/*****************************************************************
+ * Init BME280                                                   *
+ *****************************************************************/
+bool initBME280(char addr) {
+    debug_out(F("Trying BME280 sensor on "), DEBUG_MIN_INFO, 0);
+    debug_out(String(addr, HEX), DEBUG_MIN_INFO, 0);
+
+    if (bme280.begin(addr)) {
+        debug_out(F(" ... found"), DEBUG_MIN_INFO, 1);
+        bme280.setSampling(
+                Adafruit_BME280::MODE_FORCED,
+                Adafruit_BME280::SAMPLING_X1,
+                Adafruit_BME280::SAMPLING_X1,
+                Adafruit_BME280::SAMPLING_X1,
+                Adafruit_BME280::FILTER_OFF);
+        return true;
+    } else {
+        debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
+        return false;
+    }
+};
+
+
+
 /*****************************************************************
  * read BME280 sensor values                                     *
  *****************************************************************/
@@ -39,4 +67,4 @@ static String sensorBME280() {
     debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_BME280), DEBUG_MED_INFO, 1);
 
     return s;
-}
+};

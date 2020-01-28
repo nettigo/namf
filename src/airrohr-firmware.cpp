@@ -9,6 +9,7 @@
  *****************************************************************/
 #include "defines.h"
 #include "variables.h"
+#include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
 #include <FS.h>                     // must be first
@@ -2276,28 +2277,6 @@ bool initBMP280(char addr) {
 
 	if (bmp280.begin(addr)) {
 		debug_out(F(" ... found"), DEBUG_MIN_INFO, 1);
-		return true;
-	} else {
-		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
-		return false;
-	}
-}
-
-/*****************************************************************
- * Init BME280                                                   *
- *****************************************************************/
-bool initBME280(char addr) {
-	debug_out(F("Trying BME280 sensor on "), DEBUG_MIN_INFO, 0);
-	debug_out(String(addr, HEX), DEBUG_MIN_INFO, 0);
-
-	if (bme280.begin(addr)) {
-		debug_out(F(" ... found"), DEBUG_MIN_INFO, 1);
-		bme280.setSampling(
-			Adafruit_BME280::MODE_FORCED,
-			Adafruit_BME280::SAMPLING_X1,
-			Adafruit_BME280::SAMPLING_X1,
-			Adafruit_BME280::SAMPLING_X1,
-			Adafruit_BME280::FILTER_OFF);
 		return true;
 	} else {
 		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);

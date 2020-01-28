@@ -5,7 +5,7 @@
 #ifndef NAMF_HELPERS_H
 #define NAMF_HELPERS_H
 #include "Arduino.h"
-extern cfg;
+
 void debug_out(const String& text, const int level, const bool linebreak);
 
 //declarations for changing .ino to .cpp

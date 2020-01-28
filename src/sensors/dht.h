@@ -5,6 +5,7 @@
 #ifndef NAMF_DHT_H
 #define NAMF_DHT_H
 #include "defines.h"
+#include "variables.h"
 #include "helpers.h"
 extern const char DBG_TXT_START_READING[] PROGMEM;
 extern const char DBG_TXT_END_READING[] PROGMEM;
@@ -93,7 +94,7 @@ public:
  * DHT declaration                                               *
  *****************************************************************/
 
-DHT dht(ONEWIRE_PIN, DHT_TYPE);
+extern DHT dht;
 
 static String sensorDHT();
 

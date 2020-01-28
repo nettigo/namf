@@ -1,6 +1,7 @@
 //
 // Created by viciu on 28.01.2020.
 //
+#include "variables.h"
 #include "helpers.h"
 
 /*****************************************************************

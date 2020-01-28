@@ -38,228 +38,201 @@
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
 namespace cfg {
-    char wlanssid[35] = WLANSSID;
-    char wlanpwd[65] = WLANPWD;
+    extern char wlanssid[35];
+    extern char wlanpwd[65];
 
-    char current_lang[3] = "PL";
-    char www_username[65] = WWW_USERNAME;
-    char www_password[65] = WWW_PASSWORD;
-    bool www_basicauth_enabled = WWW_BASICAUTH_ENABLED;
+    extern char current_lang[3];
+    extern char www_username[65];
+    extern char www_password[65];
+    extern bool www_basicauth_enabled;
 
-    char fs_ssid[33] = FS_SSID;
-    char fs_pwd[65] = FS_PWD;
+    extern char fs_ssid[33];
+    extern char fs_pwd[65];
 
-    char version_from_local_config[20] = "";
+    extern char version_from_local_config[20];
 
-    bool dht_read = DHT_READ;
-    bool sds_read = SDS_READ;
-    bool pms_read = PMS_READ;
-    bool bmp280_read = BMP280_READ;
-    bool bme280_read = BME280_READ;
-    bool heca_read = HECA_READ;
-    bool ds18b20_read = DS18B20_READ;
-    bool gps_read = GPS_READ;
-    bool send2dusti = SEND2DUSTI;
-    bool send2madavi = SEND2MADAVI;
-    bool send2sensemap = SEND2SENSEMAP;
-    bool send2fsapp = SEND2FSAPP;
-    bool send2custom = SEND2CUSTOM;
-    bool send2lora = SEND2LORA;
-    bool send2influx = SEND2INFLUX;
-    bool send2csv = SEND2CSV;
-    bool auto_update = AUTO_UPDATE;
-    bool use_beta = USE_BETA;
-    bool has_display = HAS_DISPLAY;
-    bool has_lcd1602 = HAS_LCD1602;
-    bool has_lcd1602_27 = HAS_LCD1602_27;
-    bool has_lcd2004_27 = HAS_LCD2004_27;
-    bool has_lcd2004_3f = HAS_LCD2004_3F;
-    int  debug = DEBUG;
+    extern bool dht_read;
+    extern bool sds_read;
+    extern bool pms_read;
+    extern bool bmp280_read;
+    extern bool bme280_read;
+    extern bool heca_read;
+    extern bool ds18b20_read;
+    extern bool gps_read;
+    extern bool send2dusti;
+    extern bool send2madavi;
+    extern bool send2sensemap;
+    extern bool send2fsapp;
+    extern bool send2custom;
+    extern bool send2lora;
+    extern bool send2influx;
+    extern bool send2csv;
+    extern bool auto_update;
+    extern bool use_beta;
+    extern bool has_display;
+    extern bool has_lcd1602;
+    extern bool has_lcd1602_27;
+    extern bool has_lcd2004_27;
+    extern bool has_lcd2004_3f;
+    extern int  debug;
 
-    bool ssl_madavi = SSL_MADAVI;
-    bool ssl_dusti = SSL_DUSTI;
-    char senseboxid[30] = SENSEBOXID;
+    extern bool ssl_madavi;
+    extern bool ssl_dusti ;
+    extern char senseboxid[30];
 
-    int port_influx = PORT_INFLUX;
-    char user_influx[65] = USER_INFLUX;
-    char pwd_influx[65] = PWD_INFLUX;
+    extern int port_influx;
+    extern char user_influx[65];
+    extern char pwd_influx[65];
 
-    char host_custom[100] = HOST_CUSTOM;
-    char url_custom[100] = URL_CUSTOM;
-    int port_custom = PORT_CUSTOM;
-    char user_custom[65] = USER_CUSTOM;
-    char pwd_custom[65] = PWD_CUSTOM;
+    extern char host_custom[100];
+    extern char url_custom[100];
+    extern int port_custom;
+    extern char user_custom[65];
+    extern char pwd_custom[65];
 
-    char host_influx[100] = HOST_INFLUX;
-    char url_influx[100] = URL_INFLUX;
+    extern char host_influx[100];
+    extern char url_influx[100];
 
-    unsigned long time_for_wifi_config = 600000;
-    unsigned long sending_intervall_ms = 145000;
+    extern unsigned long time_for_wifi_config;
+    extern unsigned long sending_intervall_ms;
 
-    void initNonTrivials(const char* id) {
-        strcpy(cfg::current_lang, CURRENT_LANG);
-        if (fs_ssid[0] == '\0') {
-            strcpy(fs_ssid, "NAM-");
-            strcat(fs_ssid, id);
-        }
-    }
+    extern void initNonTrivials(const char* id);
 }
 
 
 
 
-enum class PmSensorCmd {
-    Start,
-    Stop,
-    ContinuousMode,
-    VersionDate
-};
+enum class PmSensorCmd;
+extern String basic_auth_influx ;
+extern String basic_auth_custom ;
 
-String basic_auth_influx = "";
-String basic_auth_custom = "";
+extern long int sample_count ;
+extern bool bmp280_init_failed ;
+extern bool bme280_init_failed ;
+extern bool heca_init_failed ;
 
-long int sample_count = 0;
-bool bmp280_init_failed = false;
-bool bme280_init_failed = false;
-bool heca_init_failed = false;
-
-ESP8266WebServer server(80);
-int TimeZone = 1;
+extern ESP8266WebServer server;
+extern int TimeZone ;
 
 /*****************************************************************
  * Display definitions                                           *
  *****************************************************************/
-SSD1306 display(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
-LiquidCrystal_I2C lcd_1602_27(0x27, 16, 2);
-LiquidCrystal_I2C lcd_1602_3f(0x3F, 16, 2);
-LiquidCrystal_I2C lcd_2004_27(0x27, 20, 4);
-LiquidCrystal_I2C lcd_2004_3f(0x3F, 20, 4);
+extern SSD1306 display;
+extern LiquidCrystal_I2C lcd_1602_27;
+extern LiquidCrystal_I2C lcd_1602_3f;
+extern LiquidCrystal_I2C lcd_2004_27;
+extern LiquidCrystal_I2C lcd_2004_3f;
 
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false);
-SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
+extern SoftwareSerial serialSDS;
+extern SoftwareSerial serialGPS;
 
 /*****************************************************************
  * HECA (SHT30) declaration                                            *
  *****************************************************************/
-ClosedCube_SHT31D heca;
+extern ClosedCube_SHT31D heca;
 
 /*****************************************************************
  * DS18B20 declaration                                            *
  *****************************************************************/
-OneWire oneWire(ONEWIRE_PIN);
-DallasTemperature ds18b20(&oneWire);
+extern OneWire oneWire;
+extern DallasTemperature ds18b20;
 
 /*****************************************************************
  * GPS declaration                                               *
  *****************************************************************/
-TinyGPSPlus gps;
+extern TinyGPSPlus gps;
 
-boolean trigP1 = false;
-boolean trigP2 = false;
-unsigned long trigOnP1;
-unsigned long trigOnP2;
+extern boolean trigP1 ;
+extern boolean trigP2 ;
+extern unsigned long trigOnP1;
+extern unsigned long trigOnP2;
 
-unsigned long lowpulseoccupancyP1 = 0;
-unsigned long lowpulseoccupancyP2 = 0;
+extern unsigned long lowpulseoccupancyP1 ;
+extern unsigned long lowpulseoccupancyP2 ;
 
-bool send_now = false;
-unsigned long starttime;
-unsigned long time_point_device_start_ms;
-unsigned long starttime_SDS;
-unsigned long starttime_GPS;
-unsigned long act_micro;
-unsigned long act_milli;
-unsigned long last_micro = 0;
-unsigned long min_micro = 1000000000;
-unsigned long max_micro = 0;
+extern bool send_now ;
+extern unsigned long starttime;
+extern unsigned long time_point_device_start_ms;
+extern unsigned long starttime_SDS;
+extern unsigned long starttime_GPS;
+extern unsigned long act_micro;
+extern unsigned long act_milli;
+extern unsigned long last_micro ;
+extern unsigned long min_micro ;
+extern unsigned long max_micro ;
 
-bool is_SDS_running = true;
-bool is_PMS_running = true;
+extern bool is_SDS_running ;
+extern bool is_PMS_running ;
 
-unsigned long sending_time = 0;
-unsigned long last_update_attempt;
+extern unsigned long sending_time ;
+extern unsigned long last_update_attempt;
 
-int sds_pm10_sum = 0;
-int sds_pm25_sum = 0;
-int sds_val_count = 0;
-int sds_pm10_max = 0;
-int sds_pm10_min = 20000;
-int sds_pm25_max = 0;
-int sds_pm25_min = 20000;
+extern int sds_pm10_sum ;
+extern int sds_pm25_sum ;
+extern int sds_val_count ;
+extern int sds_pm10_max ;
+extern int sds_pm10_min ;
+extern int sds_pm25_max ;
+extern int sds_pm25_min ;
 
-int pms_pm1_sum = 0;
-int pms_pm10_sum = 0;
-int pms_pm25_sum = 0;
-int pms_val_count = 0;
-int pms_pm1_max = 0;
-int pms_pm1_min = 20000;
-int pms_pm10_max = 0;
-int pms_pm10_min = 20000;
-int pms_pm25_max = 0;
-int pms_pm25_min = 20000;
+extern int pms_pm1_sum ;
+extern int pms_pm10_sum ;
+extern int pms_pm25_sum ;
+extern int pms_val_count ;
+extern int pms_pm1_max ;
+extern int pms_pm1_min ;
+extern int pms_pm10_max ;
+extern int pms_pm10_min ;
+extern int pms_pm25_max ;
+extern int pms_pm25_min ;
 
-double last_value_SDS_P1 = -1.0;
-double last_value_SDS_P2 = -1.0;
-double last_value_PMS_P0 = -1.0;
-double last_value_PMS_P1 = -1.0;
-double last_value_PMS_P2 = -1.0;
-double last_value_DHT_T = -128.0;
-double last_value_DHT_H = -1.0;
-double last_value_BMP280_T = -128.0;
-double last_value_BMP280_P = -1.0;
-double last_value_BME280_T = -128.0;
-double last_value_BME280_H = -1.0;
-double last_value_BME280_P = -1.0;
-double last_value_HECA_T = -128.0;
-double last_value_HECA_H = -1.0;
-double last_value_DS18B20_T = -1.0;
-double last_value_GPS_lat = -200.0;
-double last_value_GPS_lon = -200.0;
-double last_value_GPS_alt = -1000.0;
-String last_value_GPS_date = "";
-String last_value_GPS_time = "";
-String last_data_string = "";
+extern double last_value_SDS_P1 ;
+extern double last_value_SDS_P2 ;
+extern double last_value_PMS_P0 ;
+extern double last_value_PMS_P1 ;
+extern double last_value_PMS_P2 ;
+extern double last_value_DHT_T ;
+extern double last_value_DHT_H ;
+extern double last_value_BMP280_T ;
+extern double last_value_BMP280_P ;
+extern double last_value_BME280_T ;
+extern double last_value_BME280_H ;
+extern double last_value_BME280_P ;
+extern double last_value_HECA_T ;
+extern double last_value_HECA_H ;
+extern double last_value_DS18B20_T ;
+extern double last_value_GPS_lat ;
+extern double last_value_GPS_lon ;
+extern double last_value_GPS_alt ;
+extern String last_value_GPS_date ;
+extern String last_value_GPS_time ;
+extern String last_data_string ;
 
-String esp_chipid;
+extern String esp_chipid;
 
-long last_page_load = millis();
+extern long last_page_load ;
 
-bool wificonfig_loop = false;
+extern bool wificonfig_loop ;
 
-bool first_cycle = true;
+extern bool first_cycle ;
 
-bool sntp_time_is_set = false;
+extern bool sntp_time_is_set ;
 
-bool got_ntp = false;
+extern bool got_ntp ;
 
-unsigned long count_sends = 0;
-unsigned long next_display_millis = 0;
-unsigned long next_display_count = 0;
+extern unsigned long count_sends ;
+extern unsigned long next_display_millis ;
+extern unsigned long next_display_count ;
 
-struct struct_wifiInfo {
-    char ssid[35];
-    uint8_t encryptionType;
-    int32_t RSSI;
-    int32_t channel;
-    bool isHidden;
-};
-
-struct struct_wifiInfo *wifiInfo;
-uint8_t count_wifiInfo;
-
-template<typename T, std::size_t N> constexpr std::size_t array_num_elements(const T(&)[N]) {
-    return N;
-}
-
-template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminated_char_array(const T(&)[N]) {
-    return N - 1;
-}
+extern struct struct_wifiInfo *wifiInfo;
+extern uint8_t count_wifiInfo;
 
 
-const char data_first_part[] PROGMEM = "{\"software_version\": \"{v}\", \"sensordatavalues\":[";
+
+extern const char data_first_part[] ;
 
 
 #endif //AIRROHR_FIRMWARE_VARIABLES_H
