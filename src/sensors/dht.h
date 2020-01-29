@@ -6,6 +6,7 @@
 #define NAMF_DHT_H
 #include "defines.h"
 #include "variables.h"
+#include "html-content.h"
 #include "helpers.h"
 extern const char DBG_TXT_START_READING[] PROGMEM;
 extern const char DBG_TXT_END_READING[] PROGMEM;
