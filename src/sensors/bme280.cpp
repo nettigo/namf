@@ -34,7 +34,7 @@ bool initBME280(char addr) {
 /*****************************************************************
  * read BME280 sensor values                                     *
  *****************************************************************/
-static String sensorBME280() {
+String sensorBME280() {
     String s;
 
     debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_BME280), DEBUG_MED_INFO, 1);

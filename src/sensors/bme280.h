@@ -30,6 +30,6 @@ extern Adafruit_BMP280 bmp280;
 extern Adafruit_BME280 bme280;
 
 bool initBME280(char addr);
-static String sensorBME280();
+String sensorBME280();
 
 #endif //NAMF_BME280_H

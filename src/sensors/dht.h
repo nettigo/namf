@@ -96,7 +96,7 @@ public:
 
 extern DHT dht;
 
-static String sensorDHT();
+String sensorDHT();
 
 
 #endif //NAMF_DHT_H

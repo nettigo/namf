@@ -10,7 +10,7 @@ DHT dht(ONEWIRE_PIN, DHT_TYPE);
  * read DHT22 sensor values                                      *
  *****************************************************************/
 
-static String sensorDHT() {
+String sensorDHT() {
     String s;
 
     debug_out(String(FPSTR(DBG_TXT_START_READING)) + "DHT11/22", DEBUG_MED_INFO, 1);
