@@ -12,7 +12,6 @@
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
-#include <FS.h>                     // must be first
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
@@ -249,84 +248,6 @@ void readConfig() {
 	}
 }
 
-/*****************************************************************
- * write config to spiffs                                        *
- *****************************************************************/
-void writeConfig() {
-	using namespace cfg;
-	String json_string = "{";
-	debug_out(F("saving config..."), DEBUG_MIN_INFO, 1);
-
-#define copyToJSON_Bool(varname) json_string += Var2Json(#varname,varname);
-#define copyToJSON_Int(varname) json_string += Var2Json(#varname,varname);
-#define copyToJSON_String(varname) json_string += Var2Json(#varname,String(varname));
-	copyToJSON_String(current_lang);
-	copyToJSON_String(SOFTWARE_VERSION);
-	copyToJSON_String(wlanssid);
-	copyToJSON_String(wlanpwd);
-	copyToJSON_String(www_username);
-	copyToJSON_String(www_password);
-	copyToJSON_String(fs_ssid);
-	copyToJSON_String(fs_pwd);
-	copyToJSON_Bool(www_basicauth_enabled);
-	copyToJSON_Bool(dht_read);
-	copyToJSON_Bool(sds_read);
-	copyToJSON_Bool(pms_read);
-	copyToJSON_Bool(bmp280_read);
-	copyToJSON_Bool(bme280_read);
-	copyToJSON_Bool(heca_read);
-	copyToJSON_Bool(ds18b20_read);
-	copyToJSON_Bool(gps_read);
-	copyToJSON_Bool(send2dusti);
-	copyToJSON_Bool(ssl_dusti);
-	copyToJSON_Bool(send2madavi);
-	copyToJSON_Bool(ssl_madavi);
-	copyToJSON_Bool(send2sensemap);
-	copyToJSON_Bool(send2fsapp);
-	copyToJSON_Bool(send2lora);
-	copyToJSON_Bool(send2csv);
-	copyToJSON_Bool(auto_update);
-	copyToJSON_Bool(use_beta);
-	copyToJSON_Bool(has_display);
-	copyToJSON_Bool(has_lcd1602);
-	copyToJSON_Bool(has_lcd1602_27);
-	copyToJSON_Bool(has_lcd2004_27);
-	copyToJSON_Bool(has_lcd2004_3f);
-	copyToJSON_String(debug);
-	copyToJSON_String(sending_intervall_ms);
-	copyToJSON_String(time_for_wifi_config);
-	copyToJSON_String(senseboxid);
-	copyToJSON_Bool(send2custom);
-	copyToJSON_String(host_custom);
-	copyToJSON_String(url_custom);
-	copyToJSON_Int(port_custom);
-	copyToJSON_String(user_custom);
-	copyToJSON_String(pwd_custom);
-
-	copyToJSON_Bool(send2influx);
-	copyToJSON_String(host_influx);
-	copyToJSON_String(url_influx);
-	copyToJSON_Int(port_influx);
-	copyToJSON_String(user_influx);
-	copyToJSON_String(pwd_influx);
-#undef copyToJSON_Bool
-#undef copyToJSON_Int
-#undef copyToJSON_String
-
-	json_string.remove(json_string.length() - 1);
-	json_string += "}";
-
-	debug_out(json_string, DEBUG_MIN_INFO, 1);
-	File configFile = SPIFFS.open("/config.json", "w");
-	if (configFile) {
-		configFile.print(json_string);
-		debug_out(F("Config written: "), DEBUG_MIN_INFO, 0);
-		debug_out(json_string, DEBUG_MIN_INFO, 1);
-		configFile.close();
-	} else {
-		debug_out(F("failed to open config file for writing"), DEBUG_ERROR, 1);
-	}
-}
 
 /*****************************************************************
  * Base64 encode user:password                                   *
@@ -618,6 +539,68 @@ void webserver_root() {
 static int constexpr constexprstrlen(const char* str) {
 	return *str ? 1 + constexprstrlen(str + 1) : 0;
 }
+
+//Webserver - current config as JSON (txt) to save
+void webserver_config_json() {
+
+    if (!webserver_request_auth())
+    { return; }
+    String page_content = getConfigString();
+    if(page_content.length() < 4000) {
+        String cookie = String(F("NAMF_CONFIG="));
+        cookie += page_content;
+        server.sendHeader(F("Set-Cookie"), cookie);
+    }
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), page_content);
+}
+
+//Webserver - current config as JSON (txt) to save
+void webserver_config_json_save() {
+
+    if (!webserver_request_auth())
+    { return; }
+    String page_content = make_header(FPSTR(INTL_CONFIGURATION));
+    if (server.method() == HTTP_POST) {
+        if (server.hasArg("json")) {
+            writeConfigRaw(server.arg("json"));
+            server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+            delay(5000);
+            Serial.println("RESET");
+            ESP.restart();
+        }
+        else {
+            server.sendHeader(F("Location"), F("/"));
+        }
+
+    }else {
+        page_content += F("<a href=\"/config.json\" target=\"_blank\">Sensor config in JSON</a></br></br>");
+
+        page_content += F("<form name=\"json_form\" method='POST' action='/configSave.json' style='width:100%;'>");
+        page_content += F("<textarea id=\"json\" name=\"json\" rows=\"10\" cols=\"120\"></textarea></br>");
+        page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
+        page_content += F("</form>");
+        page_content += F("<script type=\"text/javascript\">\n"
+                          "\n"
+                          "  // Original JavaScript code by Chirp Internet: www.chirp.com.au\n"
+                          "  // Please acknowledge use of this code by including this header.\n"
+                          "\n"
+                          "  function getCookie(name)\n"
+                          "  {\n"
+                          "    var re = new RegExp(name + \"=([^;]+)\");\n"
+                          "    var value = re.exec(document.cookie);\n"
+                          "    return (value != null) ? unescape(value[1]) : null;\n"
+                          "  }\n"
+                          "\n"
+                          " if(json = getCookie(\"NAMF_CONFIG\")) document.json_form.json.value = json;"
+                          "</script>");
+        page_content += make_footer();
+
+
+    }
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+}
+
+
 
 /*****************************************************************
  * Webserver config: show config page                            *
@@ -1249,6 +1232,8 @@ static void webserver_images() {
 void setup_webserver() {
 	server.on("/", webserver_root);
 	server.on("/config", webserver_config);
+    server.on("/config.json", HTTP_GET, webserver_config_json);
+    server.on("/configSave.json", webserver_config_json_save);
 	server.on("/wifi", webserver_wifi);
 	server.on("/values", webserver_values);
 	server.on("/generate_204", webserver_config);

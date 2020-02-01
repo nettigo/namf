@@ -5,6 +5,7 @@
 #ifndef NAMF_HELPERS_H
 #define NAMF_HELPERS_H
 #include "Arduino.h"
+#include <FS.h>                     // must be first
 
 void debug_out(const String& text, const int level, const bool linebreak);
 
@@ -12,6 +13,8 @@ void debug_out(const String& text, const int level, const bool linebreak);
 String Float2String(const double value, uint8_t digits);
 String Float2String(const double value);
 void writeConfig();
+String getConfigString();
+void writeConfigRaw(String json_string);
 String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
 String Var2Json(const String& name, const bool value);
