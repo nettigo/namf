@@ -545,15 +545,48 @@ void webserver_config_json() {
 
     if (!webserver_request_auth())
     { return; }
-    String page_content = getConfigString();
-    if(page_content.length() < 4000) {
-        String cookie = String(F("NAMF_CONFIG="));
-        cookie += page_content;
-        server.sendHeader(F("Set-Cookie"), cookie);
-    }
+    String page_content = getMaskedConfigString();
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), page_content);
 }
 
+//Webserver - force update with custom URL
+void webserver_config_force_update() {
+
+    if (!webserver_request_auth())
+    { return; }
+    String page_content = make_header(FPSTR(INTL_CONFIGURATION));
+    if (server.method() == HTTP_POST) {
+        if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
+            updateFW(server.arg("host"), server.arg("port"), server.arg("path"));
+            server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+            delay(5000);
+            ESP.restart();
+        }
+        else {
+            server.sendHeader(F("Location"), F("/"));
+        }
+
+    }else {
+
+        page_content += F("<h2>Force update</h2>");
+        page_content += F("<form method='POST' action='/forceUpdate' style='width:100%;'>");
+        page_content += F("HOST:<input name=\"host\" value=");
+        page_content += UPDATE_HOST;
+        page_content += ("></br>");
+        page_content += F("PORT:<input name=\"port\" value=");
+        page_content += UPDATE_PORT;
+        page_content += ("></br>");
+        page_content += F("PATH:<input name=\"path\" value=");
+        page_content += UPDATE_URL;
+        page_content += ("></br>");
+        page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
+        page_content += F("</form>");
+        page_content += make_footer();
+
+
+    }
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+}
 //Webserver - current config as JSON (txt) to save
 void webserver_config_json_save() {
 
@@ -579,20 +612,6 @@ void webserver_config_json_save() {
         page_content += F("<textarea id=\"json\" name=\"json\" rows=\"10\" cols=\"120\"></textarea></br>");
         page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
         page_content += F("</form>");
-        page_content += F("<script type=\"text/javascript\">\n"
-                          "\n"
-                          "  // Original JavaScript code by Chirp Internet: www.chirp.com.au\n"
-                          "  // Please acknowledge use of this code by including this header.\n"
-                          "\n"
-                          "  function getCookie(name)\n"
-                          "  {\n"
-                          "    var re = new RegExp(name + \"=([^;]+)\");\n"
-                          "    var value = re.exec(document.cookie);\n"
-                          "    return (value != null) ? unescape(value[1]) : null;\n"
-                          "  }\n"
-                          "\n"
-                          " if(json = getCookie(\"NAMF_CONFIG\")) document.json_form.json.value = json;"
-                          "</script>");
         page_content += make_footer();
 
 
@@ -1234,7 +1253,8 @@ void setup_webserver() {
 	server.on("/config", webserver_config);
     server.on("/config.json", HTTP_GET, webserver_config_json);
     server.on("/configSave.json", webserver_config_json_save);
-	server.on("/wifi", webserver_wifi);
+    server.on("/forceUpdate", webserver_config_force_update);
+    server.on("/wifi", webserver_wifi);
 	server.on("/values", webserver_values);
 	server.on("/generate_204", webserver_config);
 	server.on("/fwlink", webserver_config);

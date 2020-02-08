@@ -5,6 +5,10 @@
 #ifndef NAMF_UPDATE_H
 #define NAMF_UPDATE_H
 
+#include "defines.h"
+#include "variables.h"
+#include "helpers.h"
+
 #ifdef ESP32
 #include <WiFi.h> /// FOR ESP32
 #include <HTTPClient.h> /// FOR ESP32 HTTP FOTA UPDATE ///
@@ -20,33 +24,19 @@ t_httpUpdate_return tryUpdate(char * const ver) {
 
 #include <ESP8266WiFi.h>
 #include <ESP8266httpUpdate.h>
-t_httpUpdate_return tryUpdate(char *const ver) {
+t_httpUpdate_return tryUpdate(const String host, const String port, const String path, const String ver) {
     Serial.println(ver);
-    t_httpUpdate_return ret = ESPhttpUpdate.update(UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
+    t_httpUpdate_return ret = ESPhttpUpdate.update(host, port.toInt(), path, ver);
     return ret;
 };
-
-
-
-t_httpUpdate_return tryUpdate(String const ver) {
-    Serial.print(ver);
-    Serial.println(F("."));
-    char *buf;
-    unsigned size = ver.length();
-    buf= (char *)malloc((size+2)*sizeof(char));
-    ver.toCharArray(buf,size+1);
-    return tryUpdate(buf);
-};
-
 #endif
 
-void updateFW() {
-    Serial.print(F("Check for update with "));
-    Serial.println(SOFTWARE_VERSION);
+t_httpUpdate_return tryUpdate(String const ver) {
+    return tryUpdate(String(UPDATE_HOST),String(UPDATE_PORT), String(UPDATE_URL), ver);
+};
 
-    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
-    switch (ret) {
+void verifyUpdate (t_httpUpdate_return result) {
+    switch (result) {
         case HTTP_UPDATE_FAILED:
             Serial.println(F("[update] Update failed."));
             break;
@@ -60,6 +50,29 @@ void updateFW() {
             break;
     }
 
+
 }
+
+void updateFW(const String host, const String port, const String path) {
+    debug_out(F("Check for update with "),DEBUG_MIN_INFO,1);
+    debug_out(host,DEBUG_MIN_INFO,1);
+    debug_out(port,DEBUG_MIN_INFO,1);
+    debug_out(path,DEBUG_MIN_INFO,1);
+    Serial.println(SOFTWARE_VERSION);
+
+    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
+                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
+    verifyUpdate(ret);
+};
+
+
+void updateFW() {
+    Serial.print(F("Check for update with default URL"));
+    Serial.println(SOFTWARE_VERSION);
+
+    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
+                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
+    verifyUpdate(ret);
+};
 
 #endif //NAMF_UPDATE_H

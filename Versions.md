@@ -1,3 +1,7 @@
+NAMF 2020-4
+* forceUpdate - page to force update from custom URL
+* provide way to display current config as JSON and upload it later to sensor (/configSave.json)
+
 NAMF 2020-3
 * display on webpage first reading from SDS011 (collected on POST)
 
