@@ -19,13 +19,13 @@
 
 #include "ext_def.h"
 #if defined(INTL_EN)
-#include "intl_en.h"
+#include "lang/intl_en.h"
 #elif defined(INTL_PL)
-#include "intl_pl.h"
+#include "lang/intl_pl.h"
 #elif defined(INTL_HU)
-#include "intl_hu.h"
+#include "lang/intl_hu.h"
 #else
-#include "intl_en.h"
+#include "lang/intl_en.h"
 #endif
 
 /******************************************************************
