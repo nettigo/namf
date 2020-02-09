@@ -1,3 +1,7 @@
+NAMF 2020-5
+* updating libraries and core to most recent
+* SSL seems to be working 
+
 NAMF 2020-4
 * forceUpdate - page to force update from custom URL
 * provide way to display current config as JSON and upload it later to sensor (/configSave.json)

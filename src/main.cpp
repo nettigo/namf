@@ -1461,7 +1461,9 @@ void sendData(const String& data, const int pin, const char* host, const int htt
     WiFiClient* client;
     client = new WiFiClientSecure;
     static_cast<WiFiClientSecure*>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
-    configureCACertTrustAnchor(static_cast<WiFiClientSecure*>(client));
+    if (httpPort==443) {
+        configureCACertTrustAnchor(static_cast<WiFiClientSecure*>(client));
+    }
     client -> setTimeout(20000);
     int result = 0;
 
