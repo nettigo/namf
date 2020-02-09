@@ -1239,7 +1239,7 @@ void webserver_not_found() {
  *****************************************************************/
 static void webserver_images() {
 	if (server.arg("name") == F("luftdaten_logo")) {
-		debug_out(F("output luftdaten.info logo..."), DEBUG_MIN_INFO, 1);
+//		debug_out(F("output luftdaten.info logo..."), DEBUG_MAX_INFO, 1);
 		server.send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
 	} else {
 		webserver_not_found();
@@ -1457,13 +1457,16 @@ static void configureCACertTrustAnchor(WiFiClientSecure* client) {
  * send data to rest api                                         *
  *****************************************************************/
 void sendData(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* basic_auth_string, const String& contentType) {
-//#include "ca-root.h"
     WiFiClient* client;
-    client = new WiFiClientSecure;
-    static_cast<WiFiClientSecure*>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+    bool ssl = false;
     if (httpPort==443) {
+        client = new WiFiClientSecure;
+        ssl = true;
         configureCACertTrustAnchor(static_cast<WiFiClientSecure*>(client));
+    } else {
+        client = new WiFiClient;
     }
+    static_cast<WiFiClientSecure*>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
     client -> setTimeout(20000);
     int result = 0;
 
@@ -1476,7 +1479,10 @@ void sendData(const String& data, const int pin, const char* host, const int htt
     http.setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid);
     http.setReuse(false);
     bool send_success = false;
-    if (http.begin(*client, host, httpPort, url)) {
+    debug_out(String(host),DEBUG_MIN_INFO,1);
+    debug_out(String(httpPort),DEBUG_MIN_INFO,1);
+    debug_out(String(url),DEBUG_MIN_INFO,1);
+    if (http.begin(*client, host, httpPort, url, ssl)) {
         http.addHeader(F("Content-Type"), contentType);
         http.addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid);
         if (pin) {
@@ -1488,12 +1494,17 @@ void sendData(const String& data, const int pin, const char* host, const int htt
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
             debug_out(F("Succeeded - "),DEBUG_MIN_INFO,1);
             send_success = true;
-        } else if (result >= HTTP_CODE_BAD_REQUEST) {
-            debug_out(F("Request failed with error: "),DEBUG_MIN_INFO,0);
-            debug_out(String(result),DEBUG_MIN_INFO,1);
+        } else {
+            debug_out(F("Not succeeded "),DEBUG_MIN_INFO,1);
+            http.writeToStream(&Serial);
+        }
+        debug_out(F("Request result: "),DEBUG_MIN_INFO,0);
+        debug_out(String(result),DEBUG_MIN_INFO,1);
+        if (http.getString().length()>0) {
             debug_out(F("Details:"),DEBUG_MIN_INFO,1);
             debug_out(http.getString(),DEBUG_MIN_INFO,1);
         }
+
         http.end();
     } else {
         debug_out(F("Failed connecting"),DEBUG_MIN_INFO,1);
@@ -1560,6 +1571,7 @@ String create_influxdb_string(const String& data) {
 	} else {
 		debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
 	}
+	debug_out(data_4_influxdb,DEBUG_MIN_INFO,1);
 	return data_4_influxdb;
 }
 
@@ -1996,7 +2008,7 @@ void display_values() {
 	int screen_count = 0;
 	int screens[5];
 	int line_count = 0;
-	debug_out(F("output values to display..."), DEBUG_MIN_INFO, 1);
+//	debug_out(F("output values to display..."), DEBUG_MAX_INFO, 1);
 	if (cfg::pms_read) {
 		pm10_value = last_value_PMS_P1;
 		pm10_sensor = FPSTR(SENSORS_PMSx003);
@@ -2554,7 +2566,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		const String data_4_influxdb = create_influxdb_string(data);
-		sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx.c_str(), FPSTR(TXT_CONTENT_TYPE_INFLUXDB));
+		sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx.c_str(), FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
 		sum_send_time += millis() - start_send;
 	}
 
