@@ -1434,117 +1434,70 @@ void connectWifi() {
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
 }
 
+#if defined(ESP8266)
+#include "ca-root.h"
+BearSSL::X509List x509_dst_root_ca(dst_root_ca_x3);
+
+static void configureCACertTrustAnchor(WiFiClientSecure* client) {
+    constexpr time_t fw_built_year = (__DATE__[ 7] - '0') * 1000 + \
+							  (__DATE__[ 8] - '0') *  100 + \
+							  (__DATE__[ 9] - '0') *   10 + \
+							  (__DATE__[10] - '0');
+    if (time(nullptr) < (fw_built_year - 1970) * 365 * 24 * 3600) {
+        debug_out(F("Time incorrect; Disabling CA verification."), DEBUG_MIN_INFO,1);
+        client->setInsecure();
+    }
+    else {
+        client->setTrustAnchors(&x509_dst_root_ca);
+    }
+}
+#endif
+
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
 void sendData(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* basic_auth_string, const String& contentType) {
 //#include "ca-root.h"
+    WiFiClient* client;
+    client = new WiFiClientSecure;
+    static_cast<WiFiClientSecure*>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+    configureCACertTrustAnchor(static_cast<WiFiClientSecure*>(client));
+    client -> setTimeout(20000);
+    int result = 0;
 
-	debug_out(F("Start connecting to "), DEBUG_MIN_INFO, 0);
+
+    debug_out(F("Start connecting to "), DEBUG_MIN_INFO, 0);
 	debug_out(host, DEBUG_MIN_INFO, 1);
 
-	String request_head = F("POST ");
-	request_head += String(url);
-	request_head += F(" HTTP/1.1\r\n");
-	request_head += F("Host: ");
-	request_head += String(host) + "\r\n";
-	request_head += F("Content-Type: ");
-	request_head += contentType + "\r\n";
-	if (strlen(basic_auth_string) != 0) {
-		request_head += F("Authorization: Basic ");
-		request_head += String(basic_auth_string) + "\r\n";
-	}
-	request_head += F("X-PIN: ");
-	request_head += String(pin) + "\r\n";
-	request_head += F("X-Sensor: esp8266-");
-	request_head += esp_chipid + "\r\n";
-	request_head += F("Content-Length: ");
-	request_head += String(data.length(), DEC) + "\r\n";
-	request_head += F("Connection: close\r\n\r\n");
+    HTTPClient http;
+    http.setTimeout(20 * 1000);
+    http.setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid);
+    http.setReuse(false);
+    bool send_success = false;
+    if (http.begin(*client, host, httpPort, url)) {
+        http.addHeader(F("Content-Type"), contentType);
+        http.addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid);
+        if (pin) {
+            http.addHeader(F("X-PIN"), String(pin));
+        }
 
-	const auto doConnect = [ = ](WiFiClient * client) -> bool {
-		client->setNoDelay(true);
-		client->setTimeout(20000);
+        result = http.POST(data);
 
-		if (!client->connect(host, httpPort)) {
-			debug_out(F("connection failed"), DEBUG_ERROR, 1);
-			return false;
-		}
-		return true;
-	};
+        if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
+            debug_out(F("Succeeded - "),DEBUG_MIN_INFO,1);
+            send_success = true;
+        } else if (result >= HTTP_CODE_BAD_REQUEST) {
+            debug_out(F("Request failed with error: "),DEBUG_MIN_INFO,0);
+            debug_out(String(result),DEBUG_MIN_INFO,1);
+            debug_out(F("Details:"),DEBUG_MIN_INFO,1);
+            debug_out(http.getString(),DEBUG_MIN_INFO,1);
+        }
+        http.end();
+    } else {
+        debug_out(F("Failed connecting"),DEBUG_MIN_INFO,1);
+    }
 
-	const auto doRequest = [ = ](WiFiClient * client) {
-		debug_out(F("Requesting URL: "), DEBUG_MIN_INFO, 0);
-		debug_out(url, DEBUG_MIN_INFO, 1);
-		debug_out(esp_chipid, DEBUG_MIN_INFO, 1);
-		debug_out(data, DEBUG_MIN_INFO, 1);
-
-		// send request to the server
-		client->print(request_head);
-
-		client->println(data);
-
-		// wait for response
-		int retries = 20;
-		while (client->connected() && !client->available()) {
-			delay(100);
-			wdt_reset();
-			if (!--retries)
-				break;
-		}
-
-		// Read reply from server and print them
-		while(client->available()) {
-			char c = client->read();
-			debug_out(String(c), DEBUG_MIN_INFO, 0);
-		}
-		client->stop();
-		debug_out(F("\nclosing connection\n----\n\n"), DEBUG_MIN_INFO, 1);
-	};
-
-	// Use WiFiClient class to create TCP connections
-	if (httpPort == 443) {
-		WiFiClientSecure client_s;
-		if (doConnect(&client_s)) {
-			doRequest(&client_s);
-		}
-
-/*		WiFiClientSecure client_s;
-		if (doConnect(&client_s)) {
-			if (verify) {
-				if (client_s.setCACert_P(dst_root_ca_x3_bin_crt, dst_root_ca_x3_bin_crt_len)) {
-					if (client_s.verifyCertChain(host)) {
-						debug_out(F("Server cert verified"), DEBUG_MIN_INFO, 1);
-						doRequest(&client_s);
-					} else {
-						debug_out(F("ERROR: cert verification failed!"), DEBUG_ERROR, 1);
-					}
-				} else {
-					debug_out(F("Failed to load root CA cert!"), DEBUG_ERROR, 1);
-				}
-			} else {
-				doRequest(&client_s);
-			}
-		}
-*/
-/*		BearSSL::WiFiClientSecure client_s;
-		if (verify) {
-			BearSSLX509List cert(dst_root_ca_x3);
-			client_s.setTrustAnchors(&cert);
-		} else {
-			client_s.setInsecure();
-		}
-		if (doConnect(&client_s)) {
-			doRequest(&client_s);
-		}
-*/
-	} else {
-		WiFiClient client;
-		if (doConnect(&client)) {
-			doRequest(&client);
-		}
-	}
-	debug_out(F("End connecting to "), DEBUG_MIN_INFO, 0);
+    debug_out(F("End connecting to "), DEBUG_MIN_INFO, 0);
 	debug_out(host, DEBUG_MIN_INFO, 1);
 
 	wdt_reset(); // nodemcu is alive
@@ -1559,10 +1512,10 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
 	data_4_dusti.replace("{v}", SPOOF_SOFTWARE_VERSION); // sorry for that!
 	data_4_dusti += data;
 	data_4_dusti.remove(data_4_dusti.length() - 1);
-	data_4_dusti.replace(replace_str, "");
+    data_4_dusti.replace(replace_str, "");
 	data_4_dusti += "]}";
 	if (data != "") {
-		sendData(data_4_dusti, pin, host, httpPort, url, verify, "", FPSTR(TXT_CONTENT_TYPE_JSON));
+        sendData(data_4_dusti, pin, host, httpPort, url, verify, "", FPSTR(TXT_CONTENT_TYPE_JSON));
 	} else {
 		debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
 	}
