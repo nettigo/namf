@@ -5,7 +5,7 @@
 #ifndef AIRROHR_FIRMWARE_VARIABLES_H
 #define AIRROHR_FIRMWARE_VARIABLES_H
 
-#define SOFTWARE_VERSION  "NAMF-2020-5"
+#define SOFTWARE_VERSION  "NAMF-2020-6"
 #include "defines.h"
 #include <SoftwareSerial.h>
 #include <ESP8266WebServer.h>

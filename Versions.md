@@ -1,3 +1,6 @@
+NAMF 2020-6
+* SSL/plain connection fixes
+
 NAMF 2020-5
 * updating libraries and core to most recent
 * SSL seems to be working 
