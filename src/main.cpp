@@ -1,6 +1,5 @@
 #include <Arduino.h>
 
-
 #define SPOOF_SOFTWARE_VERSION "NRZ-2018-123B"
 
 
@@ -1456,65 +1455,68 @@ static void configureCACertTrustAnchor(WiFiClientSecure* client) {
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
-void sendData(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* basic_auth_string, const String& contentType) {
-    WiFiClient* client;
+void
+sendData(const String &data, const int pin, const char *host, const int httpPort, const char *url, const bool verify,
+         const char *basic_auth_string, const String &contentType) {
+    WiFiClient *client;
     bool ssl = false;
-    if (httpPort==443) {
+    if (httpPort == 443) {
         client = new WiFiClientSecure;
         ssl = true;
-        configureCACertTrustAnchor(static_cast<WiFiClientSecure*>(client));
+        configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
     } else {
         client = new WiFiClient;
     }
-    static_cast<WiFiClientSecure*>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
-    client -> setTimeout(20000);
+    static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+    client->setTimeout(20000);
     int result = 0;
 
-
     debug_out(F("Start connecting to "), DEBUG_MIN_INFO, 0);
-	debug_out(host, DEBUG_MIN_INFO, 1);
+    debug_out(host, DEBUG_MIN_INFO, 1);
 
-    HTTPClient http;
-    http.setTimeout(20 * 1000);
-    http.setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid);
-    http.setReuse(false);
+    HTTPClient *http;
+    http = new HTTPClient;
+    http->setTimeout(20 * 1000);
+    http->setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid);
+    http->setReuse(false);
     bool send_success = false;
-    debug_out(String(host),DEBUG_MIN_INFO,1);
-    debug_out(String(httpPort),DEBUG_MIN_INFO,1);
-    debug_out(String(url),DEBUG_MIN_INFO,1);
-    if (http.begin(*client, host, httpPort, url, ssl)) {
-        http.addHeader(F("Content-Type"), contentType);
-        http.addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid);
+    debug_out(String(host), DEBUG_MIN_INFO, 1);
+    debug_out(String(httpPort), DEBUG_MIN_INFO, 1);
+    debug_out(String(url), DEBUG_MIN_INFO, 1);
+    if (http->begin(*client, host, httpPort, url, ssl)) {
+        http->addHeader(F("Content-Type"), contentType);
+        http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid);
         if (pin) {
-            http.addHeader(F("X-PIN"), String(pin));
+            http->addHeader(F("X-PIN"), String(pin));
         }
 
-        result = http.POST(data);
+        result = http->POST(data);
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
-            debug_out(F("Succeeded - "),DEBUG_MIN_INFO,1);
+            debug_out(F("Succeeded - "), DEBUG_MIN_INFO, 1);
             send_success = true;
         } else {
-            debug_out(F("Not succeeded "),DEBUG_MIN_INFO,1);
-            http.writeToStream(&Serial);
+            debug_out(F("Not succeeded "), DEBUG_MIN_INFO, 1);
         }
-        debug_out(F("Request result: "),DEBUG_MIN_INFO,0);
-        debug_out(String(result),DEBUG_MIN_INFO,1);
-        if (http.getString().length()>0) {
-            debug_out(F("Details:"),DEBUG_MIN_INFO,1);
-            debug_out(http.getString(),DEBUG_MIN_INFO,1);
+        debug_out(F("Request result: "), DEBUG_MIN_INFO, 0);
+        debug_out(String(result), DEBUG_MIN_INFO, 1);
+        if (result != 204 && http->getString().length() > 0) {
+            debug_out(F("Details:"), DEBUG_MIN_INFO, 1);
+            debug_out(http->getString(), DEBUG_MIN_INFO, 1);
         }
 
-        http.end();
+
     } else {
-        debug_out(F("Failed connecting"),DEBUG_MIN_INFO,1);
+        debug_out(F("Failed connecting"), DEBUG_MIN_INFO, 1);
     }
-
+    http->end();
     debug_out(F("End connecting to "), DEBUG_MIN_INFO, 0);
-	debug_out(host, DEBUG_MIN_INFO, 1);
+    debug_out(host, DEBUG_MIN_INFO, 1);
+    delete (http);
+    delete (client);
 
-	wdt_reset(); // nodemcu is alive
-	yield();
+    wdt_reset(); // nodemcu is alive
+    yield();
 }
 
 /*****************************************************************
@@ -1566,7 +1568,8 @@ String create_influxdb_string(const String& data) {
 		if ((unsigned)(data_4_influxdb.lastIndexOf(',') + 1) == data_4_influxdb.length()) {
 			data_4_influxdb.remove(data_4_influxdb.length() - 1);
 		}
-
+        data_4_influxdb += ",measurements=";
+		data_4_influxdb += String(count_sends+1);
 		data_4_influxdb += "\n";
 	} else {
 		debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
