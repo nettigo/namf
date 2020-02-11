@@ -1570,6 +1570,8 @@ String create_influxdb_string(const String& data) {
 		}
         data_4_influxdb += ",measurements=";
 		data_4_influxdb += String(count_sends+1);
+        data_4_influxdb += ",free=";
+		data_4_influxdb += String(ESP.getFreeHeap());
 		data_4_influxdb += "\n";
 	} else {
 		debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);

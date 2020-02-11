@@ -1,5 +1,6 @@
-NAMF 2020-8 (2020.02.x)
+NAMF 2020-8 (2020.02.11)
     * mDNS brought back
+    * to influx sensor sends also amount of free memory
     
 NAMF 2020-7 (2020.02.10)
 * memory leak in sendData fixed
