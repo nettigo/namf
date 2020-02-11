@@ -2478,8 +2478,6 @@ void setup() {
     Serial.print(F("Chip ID: "));
     Serial.println(esp_chipid);
 
-    Serial.println(ESP.getFreeSketchSpace() / 1024.0);
-
     readConfig();
 
     init_display();
