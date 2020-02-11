@@ -7,7 +7,6 @@
 /******************************************************************
  * Constants                                                      *
  ******************************************************************/
-const unsigned long SAMPLETIME_MS = 30000;
 const unsigned long SAMPLETIME_SDS_MS = 1000;
 const unsigned long WARMUPTIME_SDS_MS = 15000;
 const unsigned long READINGTIME_SDS_MS = 5000;
@@ -24,8 +23,6 @@ const unsigned long DURATION_BEFORE_FORCED_RESTART_MS = ONE_DAY_IN_MS * 28;  // 
 #define HOST_DUSTI "api.luftdaten.info"
 #define URL_DUSTI "/v1/push-sensor-data/"
 #define PORT_DUSTI 80
-
-// IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
 
 #define HOST_SENSEMAP "ingress.opensensemap.org"
 #define URL_SENSEMAP "/boxes/BOXID/data?luftdaten=1"
