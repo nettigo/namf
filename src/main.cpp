@@ -2630,6 +2630,8 @@ void loop() {
 	}
 	last_micro = act_micro;
 
+    server.handleClient();
+#if !defined(BOOT_FW)
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
 		if (cfg::sds_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "SDS", DEBUG_MAX_INFO, 1);
@@ -2825,5 +2827,6 @@ void loop() {
 		count_sends += 1;
 	}
 	yield();
+#endif
 //	if (sample_count % 500 == 0) { Serial.println(ESP.getFreeHeap(),DEC); }
 }
