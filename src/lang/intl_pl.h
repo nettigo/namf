@@ -1,11 +1,11 @@
 /*
+ *	NAMF - Nettigo Air Monitor Firmware
+ *	Copyright (C) 2019-2020  Nettigo
+ *
  *	airRohr firmware
  *	Copyright (C) 2016-2018  Code for Stuttgart a.o.
  *
  *  Polish translations
- *
- *	Texts should be as short as possible
- *	We only have 512 kB for the entire firmware
  */
 const char INTL_LANG[] = "PL";
 const char INTL_PM_SENSOR[] PROGMEM = "Czujnik pyłu zawieszonego";
