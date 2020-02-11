@@ -2461,63 +2461,66 @@ static bool acquireNetworkTime() {
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
-	Serial.begin(115200);					// Output to Serial at 9600 baud
+    Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
-	esp_chipid = String(ESP.getChipId());
-	cfg::initNonTrivials(esp_chipid.c_str());
+    esp_chipid = String(ESP.getChipId());
+    cfg::initNonTrivials(esp_chipid.c_str());
 
-	Serial.print(F("\nNAMF ver: "));
-	Serial.print(SOFTWARE_VERSION);
-	Serial.print(F("/"));
-	Serial.println(INTL_LANG);
-	Serial.print(F("Chip ID: "));
-	Serial.println(esp_chipid);
+    Serial.print(F("\nNAMF ver: "));
+    Serial.print(SOFTWARE_VERSION);
+    Serial.print(F("/"));
+    Serial.println(INTL_LANG);
+    Serial.print(F("Chip ID: "));
+    Serial.println(esp_chipid);
 
-    Serial.println(ESP.getFreeSketchSpace()/1024.0);
+    Serial.println(ESP.getFreeSketchSpace() / 1024.0);
 
     readConfig();
 
-	init_display();
-	init_lcd();
+    init_display();
+    init_lcd();
 
     powerOnTestSensors();
 
-	setup_webserver();
-	display_debug(F("Connecting to"), String(cfg::wlanssid));
-	debug_out(F("SSID: '"),DEBUG_ERROR,0);
-	debug_out(cfg::wlanssid,DEBUG_ERROR,0);
-	debug_out(F("'"),DEBUG_ERROR,1);
-	
-	if (strlen(cfg::wlanssid) > 0) {
-	    connectWifi();
+    setup_webserver();
+    display_debug(F("Connecting to"), String(cfg::wlanssid));
+    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
+    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
+    debug_out(F("'"), DEBUG_ERROR, 1);
+
+    if (strlen(cfg::wlanssid) > 0) {
+        connectWifi();
         got_ntp = acquireNetworkTime();
         debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
-        debug_out(String(got_ntp?"":"not ")+F("received"), DEBUG_MIN_INFO, 1);
+        debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
         updateFW();
         create_basic_auth_strings();
     } else {
-	    startAP();
-	}
+        startAP();
+    }
 
-	if (cfg::gps_read) {
-		serialGPS.begin(9600);
-		debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
-		disable_unneeded_nmea();
-	}
+    if (cfg::gps_read) {
+        serialGPS.begin(9600);
+        debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
+        disable_unneeded_nmea();
+    }
 
-	logEnabledAPIs();
-	logEnabledDisplays();
+    logEnabledAPIs();
+    logEnabledDisplays();
 
-	String server_name = F("NAM-");
-	server_name += esp_chipid;
-	if (MDNS.begin(server_name.c_str())) {
-		MDNS.addService("http", "tcp", 80);
-	}
+    String server_name = F("NAM-");
+    server_name += esp_chipid;
 
-	delay(50);
+    if (MDNS.begin(server_name.c_str())) {
+        MDNS.addService("http", "tcp", 80);
+    } else {
+        debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
+    }
+
+    delay(50);
 
 	// sometimes parallel sending data and web page will stop nodemcu, watchdogtimer set to 30 seconds
 	wdt_disable();
@@ -2613,9 +2616,10 @@ void loop() {
 
 	act_micro = micros();
 	act_milli = millis();
-	send_now = msSince(starttime) > cfg::sending_intervall_ms;
+    send_now = msSince(starttime) > cfg::sending_intervall_ms;
+    sample_count++;
 
-	sample_count++;
+    MDNS.update();
 
 	wdt_reset(); // nodemcu is alive
 
