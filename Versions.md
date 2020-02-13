@@ -1,12 +1,12 @@
 NAMF 2020-9
-    * /data.json now returns also measurements count
-    * added MaxFreeBlockSize and HeapFragmentation to influx and diagnostics (on current values pages)
-    * added Uptime, Reset Reason, Free Memory and Heap Fragmentation to measurements page
+* /data.json now returns also measurements count
+* added MaxFreeBlockSize and HeapFragmentation to influx and diagnostics (on current values pages)
+* added Uptime, Reset Reason, Free Memory and Heap Fragmentation to measurements page
  
 
 NAMF 2020-8 (2020.02.11)
-    * mDNS brought back
-    * to influx sensor sends also amount of free memory
+* mDNS brought back
+* to influx sensor sends also amount of free memory
     
 NAMF 2020-7 (2020.02.10)
 * memory leak in sendData fixed
