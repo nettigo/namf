@@ -2,7 +2,6 @@
 
 #define SPOOF_SOFTWARE_VERSION "NRZ-2018-123B"
 
-
 /*****************************************************************
  * Includes                                                      *
  *****************************************************************/
@@ -1045,16 +1044,18 @@ void webserver_values() {
 		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
 		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
 		page_content += FPSTR(EMPTY_ROW);
+		page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
 		page_content += table_row_from_value(F("NAM"),F("Uptime"), String((millis() - time_point_device_start_ms) / 1000),"s");
-		page_content += table_row_from_value(F("NAM"),F("Reset Reason"), ESP.getResetReason(),"");
-		page_content += table_row_from_value(F("NAM"),F("Free Memory"), String(ESP.getFreeHeap()),"b");
-		page_content += table_row_from_value(F("NAM"),F("Heap Fragmentation"), String(ESP.getHeapFragmentation()),"%");
-        page_content += table_row_from_value(F("NAM"),F("Max Free Block Size"), String(ESP.getMaxFreeBlockSize()),"b");
-        page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
-
-
-
-
+		page_content += FPSTR(EMPTY_ROW);
+		page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
+		page_content += table_row_from_value(F("ESP"),F("Free Memory"), String(ESP.getFreeHeap()),"B");
+		page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), String(ESP.getMaxFreeBlockSize()),"B");
+		page_content += table_row_from_value(F("ESP"),F("Free Heap"), String(ESP.getFreeHeap()),"B");
+		page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), String(ESP.getHeapFragmentation()),"%");
+		page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), String(ESP.getFreeContStack()),"B");
+		page_content += FPSTR(EMPTY_ROW);
+		page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
+		page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
 		page_content += FPSTR(TABLE_TAG_CLOSE_BR);
 		page_content += make_footer();
 		server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);

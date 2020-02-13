@@ -2,7 +2,8 @@ NAMF 2020-9
 * /data.json now returns also measurements count
 * added MaxFreeBlockSize and HeapFragmentation to influx and diagnostics (on current values pages)
 * added Uptime, Reset Reason, Free Memory and Heap Fragmentation to measurements page
- 
+* new core 2.6.3
+* added Core & SDK version to measurements page
 
 NAMF 2020-8 (2020.02.11)
 * mDNS brought back
