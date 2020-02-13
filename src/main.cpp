@@ -867,7 +867,7 @@ void webserver_config() {
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BME280"), String(bme280_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "HECA"), String(heca_read));
 		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read));
-		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "GPS"), String(gps_read));
+		page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("GPS")), String(gps_read));
 		page_content += line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update));
 		page_content += line_from_value(FPSTR(INTL_USE_BETA), String(use_beta));
 		page_content += line_from_value(FPSTR(INTL_DISPLAY), String(has_display));
@@ -1034,21 +1034,21 @@ void webserver_values() {
 		}
 		if (cfg::gps_read) {
 			page_content += FPSTR(EMPTY_ROW);
-			page_content += table_row_from_value("GPS", FPSTR(INTL_LATITUDE), check_display_value(last_value_GPS_lat, -200.0, 6, 0), "°");
-			page_content += table_row_from_value("GPS", FPSTR(INTL_LONGITUDE), check_display_value(last_value_GPS_lon, -200.0, 6, 0), "°");
-			page_content += table_row_from_value("GPS", FPSTR(INTL_ALTITUDE),  check_display_value(last_value_GPS_alt, -1000.0, 2, 0), "m");
-			page_content += table_row_from_value("GPS", FPSTR(INTL_DATE), last_value_GPS_date, "");
-			page_content += table_row_from_value("GPS", FPSTR(INTL_TIME), last_value_GPS_time, "");
+			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_LATITUDE), check_display_value(last_value_GPS_lat, -200.0, 6, 0), "°");
+			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_LONGITUDE), check_display_value(last_value_GPS_lon, -200.0, 6, 0), "°");
+			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_ALTITUDE),  check_display_value(last_value_GPS_alt, -1000.0, 2, 0), "m");
+			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, "");
+			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, "");
 		}
 
 		page_content += FPSTR(EMPTY_ROW);
-		page_content += table_row_from_value("WiFi", FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
-		page_content += table_row_from_value("WiFi", FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
+		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
+		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
 		page_content += FPSTR(EMPTY_ROW);
-		page_content += table_row_from_value("Uptime","", String((millis() - time_point_device_start_ms) / 1000),"s");
-		page_content += table_row_from_value("Reset Reason","", ESP.getResetReason(),"");
-		page_content += table_row_from_value("Free Memory","", String(ESP.getFreeHeap()),"");
-		page_content += table_row_from_value("Heap Fragmentation","", String(ESP.getHeapFragmentation()),"%");
+		page_content += table_row_from_value(F("Uptime"),"", String((millis() - time_point_device_start_ms) / 1000),"s");
+		page_content += table_row_from_value(F("Reset Reason"),"", ESP.getResetReason(),"");
+		page_content += table_row_from_value(F("Free Memory"),"", String(ESP.getFreeHeap()),"");
+		page_content += table_row_from_value(F("Heap Fragmentation"),"", String(ESP.getHeapFragmentation()),"%");
 
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += F("<tr><td colspan='2'>");
@@ -1582,6 +1582,10 @@ String create_influxdb_string(const String& data) {
 		data_4_influxdb += String(count_sends+1);
         data_4_influxdb += ",free=";
 		data_4_influxdb += String(ESP.getFreeHeap());
+        data_4_influxdb += ",frag=";
+		data_4_influxdb += String(ESP.getHeapFragmentation());
+        data_4_influxdb += ",max_block=";
+		data_4_influxdb += String(ESP.getMaxFreeBlockSize());
 		data_4_influxdb += "\n";
 	} else {
 		debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
@@ -1901,7 +1905,7 @@ String sensorGPS() {
 	String gps_lat = "";
 	String gps_lon = "";
 
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + "GPS", DEBUG_MED_INFO, 1);
+	debug_out(String(FPSTR(DBG_TXT_START_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
 
 	while (serialGPS.available() > 0) {
 		if (gps.encode(serialGPS.read())) {
@@ -1984,7 +1988,7 @@ String sensorGPS() {
 		debug_out(F("No GPS data received: check wiring"), DEBUG_ERROR, 1);
 	}
 
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + "GPS", DEBUG_MED_INFO, 1);
+	debug_out(String(FPSTR(DBG_TXT_END_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
 
 	return s;
 }
@@ -2692,7 +2696,7 @@ void loop() {
 	}
 
 	if (cfg::gps_read && ((msSince(starttime_GPS) > SAMPLETIME_GPS_MS) || send_now)) {
-		debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "GPS", DEBUG_MAX_INFO, 1);
+		debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + F("GPS"), DEBUG_MAX_INFO, 1);
 		result_GPS = sensorGPS();                           // getting GPS coordinates
 		starttime_GPS = act_milli;
 	}
