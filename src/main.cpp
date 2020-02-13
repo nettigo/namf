@@ -1045,18 +1045,13 @@ void webserver_values() {
 		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
 		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
 		page_content += FPSTR(EMPTY_ROW);
-		page_content += table_row_from_value(F("Uptime"),"", String((millis() - time_point_device_start_ms) / 1000),"s");
-		page_content += table_row_from_value(F("Reset Reason"),"", ESP.getResetReason(),"");
-		page_content += table_row_from_value(F("Free Memory"),"", String(ESP.getFreeHeap()),"");
-		page_content += table_row_from_value(F("Heap Fragmentation"),"", String(ESP.getHeapFragmentation()),"%");
-        page_content += table_row_from_value(F("Max Free Block Size"),"", String(ESP.getMaxFreeBlockSize()),"");
+		page_content += table_row_from_value(F("NAM"),F("Uptime"), String((millis() - time_point_device_start_ms) / 1000),"s");
+		page_content += table_row_from_value(F("NAM"),F("Reset Reason"), ESP.getResetReason(),"");
+		page_content += table_row_from_value(F("NAM"),F("Free Memory"), String(ESP.getFreeHeap()),"b");
+		page_content += table_row_from_value(F("NAM"),F("Heap Fragmentation"), String(ESP.getHeapFragmentation()),"%");
+        page_content += table_row_from_value(F("NAM"),F("Max Free Block Size"), String(ESP.getMaxFreeBlockSize()),"b");
+        page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
 
-		page_content += FPSTR(EMPTY_ROW);
-		page_content += F("<tr><td colspan='2'>");
-		page_content += FPSTR(INTL_NUMBER_OF_MEASUREMENTS);
-		page_content += F("</td><td class='r'>");
-		page_content += String(count_sends);
-		page_content += F("</td></tr>");
 
 
 
