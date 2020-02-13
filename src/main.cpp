@@ -1049,6 +1049,7 @@ void webserver_values() {
 		page_content += table_row_from_value(F("Reset Reason"),"", ESP.getResetReason(),"");
 		page_content += table_row_from_value(F("Free Memory"),"", String(ESP.getFreeHeap()),"");
 		page_content += table_row_from_value(F("Heap Fragmentation"),"", String(ESP.getHeapFragmentation()),"%");
+        page_content += table_row_from_value(F("Max Free Block Size"),"", String(ESP.getMaxFreeBlockSize()),"%");
 
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += F("<tr><td colspan='2'>");
