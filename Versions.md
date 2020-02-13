@@ -1,3 +1,7 @@
+NAMF 2020-9
+    * /data.json now returns also measurements count
+ 
+
 NAMF 2020-8 (2020.02.11)
     * mDNS brought back
     * to influx sensor sends also amount of free memory
