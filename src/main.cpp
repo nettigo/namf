@@ -1044,6 +1044,11 @@ void webserver_values() {
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value("WiFi", FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
 		page_content += table_row_from_value("WiFi", FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
+		page_content += FPSTR(EMPTY_ROW);
+		page_content += table_row_from_value("Uptime","", String((millis() - time_point_device_start_ms) / 1000),"s");
+		page_content += table_row_from_value("Reset Reason","", ESP.getResetReason(),"");
+		page_content += table_row_from_value("Free Memory","", String(ESP.getFreeHeap()),"");
+		page_content += table_row_from_value("Heap Fragmentation","", String(ESP.getHeapFragmentation()),"%");
 
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += F("<tr><td colspan='2'>");
@@ -1051,6 +1056,9 @@ void webserver_values() {
 		page_content += F("</td><td class='r'>");
 		page_content += String(count_sends);
 		page_content += F("</td></tr>");
+
+
+
 		page_content += FPSTR(TABLE_TAG_CLOSE_BR);
 		page_content += make_footer();
 		server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
@@ -2516,6 +2524,7 @@ void setup() {
 
     if (MDNS.begin(server_name.c_str())) {
         MDNS.addService("http", "tcp", 80);
+		
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
