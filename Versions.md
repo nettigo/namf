@@ -1,5 +1,6 @@
 NAMF 2020-9
     * /data.json now returns also measurements count
+    * added MaxFreeBlockSize and HeapFragmentation to influx and diagnostics (on current values pages)
     * added Uptime, Reset Reason, Free Memory and Heap Fragmentation to measurements page
  
 
