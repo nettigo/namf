@@ -1,5 +1,6 @@
 NAMF 2020-9
     * /data.json now returns also measurements count
+    * added Uptime, Reset Reason, Free Memory and Heap Fragmentation to measurements page
  
 
 NAMF 2020-8 (2020.02.11)
