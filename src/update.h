@@ -60,7 +60,7 @@ void updateFW(const String host, const String port, const String path) {
     debug_out(path,DEBUG_MIN_INFO,1);
     Serial.println(SOFTWARE_VERSION);
 
-    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
+    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
                                         String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
     verifyUpdate(ret);
 };
@@ -70,7 +70,7 @@ void updateFW() {
     Serial.print(F("Check for update with default URL"));
     Serial.println(SOFTWARE_VERSION);
 
-    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid + String(" ") + "SDS" + String(" ") +
+    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
                                         String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
     verifyUpdate(ret);
 };

@@ -196,7 +196,7 @@ String last_value_GPS_date = "";
 String last_value_GPS_time = "";
 String last_data_string = "";
 
-String esp_chipid;
+String esp_chipid() {return String(ESP.getChipId());};
 
 long last_page_load = millis();
 

@@ -275,7 +275,7 @@ String make_header(const String& title) {
 		s.replace("{n}", "");
 	}
 	s.replace("{t}", title);
-	s.replace("{id}", esp_chipid);
+	s.replace("{id}", esp_chipid());
 	s.replace("{mac}", WiFi.macAddress());
 	s.replace("{fwt}", FPSTR(INTL_FIRMWARE));
 	s.replace("{fw}", SOFTWARE_VERSION);
@@ -1194,7 +1194,7 @@ void webserver_prometheus_endpoint() {
 	debug_out(F("output prometheus endpoint..."), DEBUG_MIN_INFO, 1);
 	String data_4_prometheus = F("software_version{version=\"{ver}\",{id}} 1\nuptime_ms{{id}} {up}\nsending_intervall_ms{{id}} {si}\nnumber_of_measurements{{id}} {cs}\n");
 	String id = F("node=\"esp8266-");
-	id += esp_chipid + "\"";
+	id += esp_chipid() + "\"";
 	debug_out(F("Parse JSON for Prometheus"), DEBUG_MIN_INFO, 1);
 	debug_out(last_data_string, DEBUG_MED_INFO, 1);
 	data_4_prometheus.replace("{id}", id);
@@ -1483,7 +1483,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
     HTTPClient *http;
     http = new HTTPClient;
     http->setTimeout(20 * 1000);
-    http->setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid);
+    http->setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid());
     http->setReuse(false);
     bool send_success = false;
     debug_out(String(host), DEBUG_MIN_INFO, 1);
@@ -1491,7 +1491,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
     debug_out(String(url), DEBUG_MIN_INFO, 1);
     if (http->begin(*client, host, httpPort, url, ssl)) {
         http->addHeader(F("Content-Type"), contentType);
-        http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid);
+        http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
@@ -1564,7 +1564,7 @@ String create_influxdb_string(const String& data) {
 	JsonObject& json2data = jsonBuffer.parseObject(data);
 	if (json2data.success()) {
 		data_4_influxdb += F("feinstaub,node=esp8266-");
-		data_4_influxdb += esp_chipid + " ";
+		data_4_influxdb += esp_chipid() + " ";
 		for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
 			String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
 			data_4_influxdb += tmp_str + "=";
@@ -2130,7 +2130,7 @@ void display_values() {
 			break;
 		case (6):
 			display_header = F("Device Info");
-			display_lines[0] = "ID: " + esp_chipid;
+			display_lines[0] = "ID: " + esp_chipid();
 			display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
 			display_lines[2] = "Measurements: " + String(count_sends);
 			break;
@@ -2204,7 +2204,7 @@ void display_values() {
 		display_lines[1] = WiFi.SSID();
 		break;
 	case (5):
-		display_lines[0] = "ID: " + esp_chipid;
+		display_lines[0] = "ID: " + esp_chipid();
 		display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
 		break;
 	}
@@ -2480,15 +2480,14 @@ void setup() {
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
-    esp_chipid = String(ESP.getChipId());
-    cfg::initNonTrivials(esp_chipid.c_str());
+    cfg::initNonTrivials(esp_chipid().c_str());
 
     Serial.print(F("\nNAMF ver: "));
     Serial.print(SOFTWARE_VERSION);
     Serial.print(F("/"));
     Serial.println(INTL_LANG);
     Serial.print(F("Chip ID: "));
-    Serial.println(esp_chipid);
+    Serial.println(esp_chipid());
 
     readConfig();
 
@@ -2524,7 +2523,7 @@ void setup() {
     logEnabledDisplays();
 
     String server_name = F("NAM-");
-    server_name += esp_chipid;
+    server_name += esp_chipid();
 
     if (MDNS.begin(server_name.c_str())) {
         MDNS.addService("http", "tcp", 80);
@@ -2602,7 +2601,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2custom) {
 		String data_4_custom = data;
 		data_4_custom.remove(0, 1);
-		data_4_custom = "{\"esp8266id\": \"" + String(esp_chipid) + "\", " + data_4_custom;
+		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		sendData(data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false, basic_auth_custom.c_str(), FPSTR(TXT_CONTENT_TYPE_JSON));

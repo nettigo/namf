@@ -215,7 +215,7 @@ extern String last_value_GPS_date ;
 extern String last_value_GPS_time ;
 extern String last_data_string ;
 
-extern String esp_chipid;
+extern String esp_chipid();
 
 extern long last_page_load ;
 
