@@ -1048,11 +1048,10 @@ void webserver_values() {
 		page_content += table_row_from_value(F("NAM"),F("Uptime"), String((millis() - time_point_device_start_ms) / 1000),"s");
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
-		page_content += table_row_from_value(F("ESP"),F("Free Memory"), String(ESP.getFreeHeap()),"B");
 		page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), String(ESP.getMaxFreeBlockSize()),"B");
-		page_content += table_row_from_value(F("ESP"),F("Free Heap"), String(ESP.getFreeHeap()),"B");
 		page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), String(ESP.getHeapFragmentation()),"%");
 		page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), String(ESP.getFreeContStack()),"B");
+        page_content += table_row_from_value(F("ESP"),F("Free Memory"), String(ESP.getFreeHeap()),"B");
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
 		page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
