@@ -1574,14 +1574,16 @@ String create_influxdb_string(const String& data) {
 		if ((unsigned)(data_4_influxdb.lastIndexOf(',') + 1) == data_4_influxdb.length()) {
 			data_4_influxdb.remove(data_4_influxdb.length() - 1);
 		}
-        data_4_influxdb += ",measurements=";
+        data_4_influxdb += F(",measurements=");
 		data_4_influxdb += String(count_sends+1);
-        data_4_influxdb += ",free=";
+        data_4_influxdb += F(",free=");
 		data_4_influxdb += String(ESP.getFreeHeap());
-        data_4_influxdb += ",frag=";
+        data_4_influxdb += F(",frag=");
 		data_4_influxdb += String(ESP.getHeapFragmentation());
-        data_4_influxdb += ",max_block=";
+        data_4_influxdb += F(",max_block=");
 		data_4_influxdb += String(ESP.getMaxFreeBlockSize());
+        data_4_influxdb += F(",cont_stack=");
+		data_4_influxdb += String(ESP.getFreeContStack());
 		data_4_influxdb += "\n";
 	} else {
 		debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
