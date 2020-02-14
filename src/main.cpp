@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define SPOOF_SOFTWARE_VERSION "NRZ-2018-123B"
+#define SPOOF_SOFTWARE_VERSION F("NRZ-2020-129")
 
 /*****************************************************************
  * Includes                                                      *
