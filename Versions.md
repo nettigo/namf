@@ -1,5 +1,6 @@
 NAMF 2020-11 (??)
 * moved to dynamic definition of LCDs (both character and graphical) Less code, less memory
+* since only one char LCD is supported in given config HTML was changed to dropdown on config page
 
 NAMF 2020-10 (2020.02.14)
 * new core 2.6.3
