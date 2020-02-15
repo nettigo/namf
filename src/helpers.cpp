@@ -237,6 +237,19 @@ String form_checkbox(const String& name, const String& info, const bool checked,
     return s;
 }
 
+String form_option(String const &name, const String & info, const bool checked){
+    String ret;
+    ret = F("<option value=");
+    ret += name;
+    if (checked) {
+        ret += F(" selected=\"selected\"");
+    }
+    ret += F(">");
+    ret += info;
+    ret += "</option>";
+    return ret;
+}
+
 String form_checkbox_sensor(const String& name, const String& info, const bool checked) {
     return form_checkbox(name, add_sensor_type(info), checked);
 }

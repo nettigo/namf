@@ -585,15 +585,18 @@ void webserver_config() {
 		page_content += form_checkbox("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update);
 		page_content += form_checkbox("use_beta", FPSTR(INTL_USE_BETA), use_beta);
 		page_content += form_checkbox("has_display", FPSTR(INTL_DISPLAY), has_display);
-		page_content += form_checkbox("has_lcd1602_27", FPSTR(INTL_LCD1602_27), has_lcd1602_27);
-		page_content += form_checkbox("has_lcd1602", FPSTR(INTL_LCD1602_3F), has_lcd1602);
-		page_content += form_checkbox("has_lcd2004_27", FPSTR(INTL_LCD2004_27), has_lcd2004_27);
-		page_content += form_checkbox("has_lcd2004_3f", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f);
+		page_content += form_checkbox("has_lcd", FPSTR(INTL_LCD),has_lcd1602||has_lcd1602_27||has_lcd2004_3f||has_lcd2004_27,false);
+		page_content += F(" <select name=\"lcd_type\">");
+		page_content += form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27);
+        page_content += form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602);
+        page_content += form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27);
+        page_content += form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f);
+        page_content += F("</select></br></br>");
 
-		if (! wificonfig_loop) {
-			page_content += FPSTR(TABLE_TAG_OPEN);
-			page_content += form_select_lang();
-			page_content += form_input("debug", FPSTR(INTL_DEBUG_LEVEL), String(debug), 1);
+        if (! wificonfig_loop) {
+            page_content += FPSTR(TABLE_TAG_OPEN);
+            page_content += form_select_lang();
+            page_content += form_input("debug", FPSTR(INTL_DEBUG_LEVEL), String(debug), 1);
 			page_content += form_input("sending_intervall_ms", FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms / 1000), 5);
 			page_content += form_input("time_for_wifi_config", FPSTR(INTL_DURATION_ROUTER_MODE), String(time_for_wifi_config / 1000), 5);
 			page_content += FPSTR(TABLE_TAG_CLOSE_BR);
@@ -637,7 +640,11 @@ void webserver_config() {
 			page_content += F("<script>window.setTimeout(load_wifi_list,1000);</script>");
 		}
 	} else {
-
+        String message = "POST form was:\n";
+        for (uint8_t i = 0; i < server.args(); i++) {
+            message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+        }
+        Serial.println(message);
 #define readCharParam(param) \
 		if (server.hasArg(#param)){ \
 			server.arg(#param).toCharArray(param, sizeof(param)); \
@@ -729,10 +736,26 @@ void webserver_config() {
 		readBoolParam(auto_update);
 		readBoolParam(use_beta);
 		readBoolParam(has_display);
-		readBoolParam(has_lcd1602);
-		readBoolParam(has_lcd1602_27);
-		readBoolParam(has_lcd2004_27);
-		readBoolParam(has_lcd2004_3f);
+        if (server.hasArg("has_lcd")) {
+            has_lcd1602 = false;
+            has_lcd1602_27 = false;
+            has_lcd2004_27 = false;
+            has_lcd2004_3f = false;
+            switch (server.arg("lcd_type").toInt()) {
+                case 1:
+                    has_lcd1602 = true;
+                    break;
+                case 2:
+                    has_lcd1602_27 = true;
+                    break;
+                case 3:
+                    has_lcd2004_27 = true;
+                    break;
+                case 4:
+                    has_lcd2004_3f = true;
+                    break;
+            }
+        }
 
 #undef readCharParam
 #undef readBoolParam

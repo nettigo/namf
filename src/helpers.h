@@ -22,6 +22,7 @@ String Var2Json(const String& name, const bool value);
 String Var2Json(const String& name, const int value);
 //Nettigo NAM 0.3.2 factory firmware - test
 
+String form_option(String const &name, const String & info, const bool checked = false);
 String form_input(const String& name, const String& info, const String& value, const int length);
 String form_password(const String& name, const String& info, const String& value, const int length);
 String form_checkbox(const String& name, const String& info, const bool checked, const bool linebreak = true);
