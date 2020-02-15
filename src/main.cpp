@@ -640,11 +640,6 @@ void webserver_config() {
 			page_content += F("<script>window.setTimeout(load_wifi_list,1000);</script>");
 		}
 	} else {
-        String message = "POST form was:\n";
-        for (uint8_t i = 0; i < server.args(); i++) {
-            message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-        }
-        Serial.println(message);
 #define readCharParam(param) \
 		if (server.hasArg(#param)){ \
 			server.arg(#param).toCharArray(param, sizeof(param)); \
