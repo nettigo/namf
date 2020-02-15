@@ -121,11 +121,8 @@ extern int TimeZone ;
 /*****************************************************************
  * Display definitions                                           *
  *****************************************************************/
-extern SSD1306 display;
+extern SSD1306 * display;
 extern LiquidCrystal_I2C * char_lcd;
-//extern LiquidCrystal_I2C char_lcd;
-//extern LiquidCrystal_I2C char_lcd;
-//extern LiquidCrystal_I2C char_lcd;
 
 /*****************************************************************
  * SDS011 declarations                                           *

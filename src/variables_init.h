@@ -102,11 +102,8 @@ int TimeZone = 1;
 /*****************************************************************
  * Display definitions                                           *
  *****************************************************************/
-SSD1306 display(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
-LiquidCrystal_I2C * char_lcd;//(0x27, 16, 2);
-//LiquidCrystal_I2C * char_lcd;//(0x3F, 16, 2);
-//LiquidCrystal_I2C * char_lcd;//(0x27, 20, 4);
-//LiquidCrystal_I2C * char_lcd;//(0x3F, 20, 4);
+SSD1306 *display = NULL;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
+LiquidCrystal_I2C *char_lcd = NULL;//(0x27, 16, 2);
 
 /*****************************************************************
  * SDS011 declarations                                           *

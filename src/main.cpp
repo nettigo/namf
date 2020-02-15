@@ -34,13 +34,13 @@
 void display_debug(const String& text1, const String& text2) {
 	debug_out(F("output debug text to displays..."), DEBUG_MIN_INFO, 1);
 	debug_out(text1 + "\n" + text2, DEBUG_MAX_INFO, 1);
-	if (cfg::has_display) {
-		display.clear();
-		display.displayOn();
-		display.setTextAlignment(TEXT_ALIGN_LEFT);
-		display.drawString(0, 12, text1);
-		display.drawString(0, 24, text2);
-		display.display();
+	if (display) {
+		display->clear();
+		display->displayOn();
+		display->setTextAlignment(TEXT_ALIGN_LEFT);
+		display->drawString(0, 12, text1);
+		display->drawString(0, 24, text2);
+		display->display();
 	}
 	if (char_lcd) {
 		char_lcd -> clear();
@@ -2115,18 +2115,18 @@ void display_values() {
 			break;
 		}
 
-		if (cfg::has_display) {
-			display.clear();
-			display.displayOn();
-			display.setTextAlignment(TEXT_ALIGN_CENTER);
-			display.drawString(64, 1, display_header);
-			display.setTextAlignment(TEXT_ALIGN_LEFT);
-			display.drawString(0, 16, display_lines[0]);
-			display.drawString(0, 28, display_lines[1]);
-			display.drawString(0, 40, display_lines[2]);
-			display.setTextAlignment(TEXT_ALIGN_CENTER);
-			display.drawString(64, 52, displayGenerateFooter(screen_count));
-			display.display();
+		if (display) {
+			display->clear();
+			display->displayOn();
+			display->setTextAlignment(TEXT_ALIGN_CENTER);
+			display->drawString(64, 1, display_header);
+			display->setTextAlignment(TEXT_ALIGN_LEFT);
+			display->drawString(0, 16, display_lines[0]);
+			display->drawString(0, 28, display_lines[1]);
+			display->drawString(0, 40, display_lines[2]);
+			display->setTextAlignment(TEXT_ALIGN_CENTER);
+			display->drawString(64, 52, displayGenerateFooter(screen_count));
+			display->display();
 		}
 		if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 			display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " + display_header;
@@ -2189,7 +2189,10 @@ void display_values() {
  * Init OLED display                                             *
  *****************************************************************/
 void init_display() {
-	display.init();
+    if (cfg::has_display) {
+        display = new SSD1306(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
+        display->init();
+    }
 }
 
 /*****************************************************************
@@ -2381,10 +2384,7 @@ static void logEnabledDisplays() {
 	if (cfg::has_lcd1602 || cfg::has_lcd1602_27) {
 		debug_out(F("Show on LCD 1602 ..."), DEBUG_MIN_INFO, 1);
 	}
-	if (cfg::has_lcd2004_27) {
-		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
-	}
-	if (cfg::has_lcd2004_3f) {
+	if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
 	}
 }
