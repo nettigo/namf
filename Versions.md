@@ -1,3 +1,6 @@
+NAMF 2020-11 (??)
+* moved to dynamic definition of LCDs (both character and graphical) Less code, less memory
+
 NAMF 2020-10 (2020.02.14)
 * new core 2.6.3
 * added Core & SDK version to measurements page
