@@ -42,33 +42,12 @@ void display_debug(const String& text1, const String& text2) {
 		display.drawString(0, 24, text2);
 		display.display();
 	}
-	if (cfg::has_lcd1602) {
-		lcd_1602_3f.clear();
-		lcd_1602_3f.setCursor(0, 0);
-		lcd_1602_3f.print(text1);
-		lcd_1602_3f.setCursor(0, 1);
-		lcd_1602_3f.print(text2);
-	}
-	if (cfg::has_lcd1602_27) {
-		lcd_1602_27.clear();
-		lcd_1602_27.setCursor(0, 0);
-		lcd_1602_27.print(text1);
-		lcd_1602_27.setCursor(0, 1);
-		lcd_1602_27.print(text2);
-	}
-	if (cfg::has_lcd2004_27) {
-		lcd_2004_27.clear();
-		lcd_2004_27.setCursor(0, 0);
-		lcd_2004_27.print(text1);
-		lcd_2004_27.setCursor(0, 1);
-		lcd_2004_27.print(text2);
-	}
-	if (cfg::has_lcd2004_3f) {
-		lcd_2004_3f.clear();
-		lcd_2004_3f.setCursor(0, 0);
-		lcd_2004_3f.print(text1);
-		lcd_2004_3f.setCursor(0, 1);
-		lcd_2004_3f.print(text2);
+	if (char_lcd) {
+		char_lcd -> clear();
+		char_lcd->setCursor(0, 0);
+		char_lcd->print(text1);
+		char_lcd->setCursor(0, 1);
+		char_lcd->print(text2);
 	}
 }
 
@@ -2149,35 +2128,20 @@ void display_values() {
 			display.drawString(64, 52, displayGenerateFooter(screen_count));
 			display.display();
 		}
-		if (cfg::has_lcd2004_27) {
+		if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 			display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " + display_header;
 			display_lines[0].replace(" µg/m³", "");
 			display_lines[0].replace("°", String(char(223)));
 			display_lines[1].replace(" µg/m³", "");
-			lcd_2004_27.clear();
-			lcd_2004_27.setCursor(0, 0);
-			lcd_2004_27.print(display_header);
-			lcd_2004_27.setCursor(0, 1);
-			lcd_2004_27.print(display_lines[0]);
-			lcd_2004_27.setCursor(0, 2);
-			lcd_2004_27.print(display_lines[1]);
-			lcd_2004_27.setCursor(0, 3);
-			lcd_2004_27.print(display_lines[2]);
-		}
-		if (cfg::has_lcd2004_3f) {
-			display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " + display_header;
-			display_lines[0].replace(" µg/m³", "");
-			display_lines[0].replace("°", String(char(223)));
-			display_lines[1].replace(" µg/m³", "");
-			lcd_2004_3f.clear();
-			lcd_2004_3f.setCursor(0, 0);
-			lcd_2004_3f.print(display_header);
-			lcd_2004_3f.setCursor(0, 1);
-			lcd_2004_3f.print(display_lines[0]);
-			lcd_2004_3f.setCursor(0, 2);
-			lcd_2004_3f.print(display_lines[1]);
-			lcd_2004_3f.setCursor(0, 3);
-			lcd_2004_3f.print(display_lines[2]);
+			char_lcd->clear();
+			char_lcd->setCursor(0, 0);
+			char_lcd->print(display_header);
+			char_lcd->setCursor(0, 1);
+			char_lcd->print(display_lines[0]);
+			char_lcd->setCursor(0, 2);
+			char_lcd->print(display_lines[1]);
+			char_lcd->setCursor(0, 3);
+			char_lcd->print(display_lines[2]);
 		}
 	}
 
@@ -2209,19 +2173,12 @@ void display_values() {
 		break;
 	}
 
-	if (cfg::has_lcd1602_27) {
-		lcd_1602_27.clear();
-		lcd_1602_27.setCursor(0, 0);
-		lcd_1602_27.print(display_lines[0]);
-		lcd_1602_27.setCursor(0, 1);
-		lcd_1602_27.print(display_lines[1]);
-	}
-	if (cfg::has_lcd1602) {
-		lcd_1602_3f.clear();
-		lcd_1602_3f.setCursor(0, 0);
-		lcd_1602_3f.print(display_lines[0]);
-		lcd_1602_3f.setCursor(0, 1);
-		lcd_1602_3f.print(display_lines[1]);
+	if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
+		char_lcd->clear();
+		char_lcd->setCursor(0, 0);
+		char_lcd->print(display_lines[0]);
+		char_lcd->setCursor(0, 1);
+		char_lcd->print(display_lines[1]);
 	}
 	yield();
 	next_display_count += 1;
@@ -2240,21 +2197,20 @@ void init_display() {
  *****************************************************************/
 void init_lcd() {
 	if (cfg::has_lcd1602_27) {
-		lcd_1602_27.init();
-		lcd_1602_27.backlight();
+		char_lcd = new LiquidCrystal_I2C(0x27, 16, 2);
+    } else if (cfg::has_lcd1602) {
+        char_lcd = new LiquidCrystal_I2C(0x3F, 16, 2);
+    } else if (cfg::has_lcd2004_27) {
+        char_lcd = new LiquidCrystal_I2C(0x27, 20, 4);
+    } else if (cfg::has_lcd2004_3f) {
+        char_lcd = new LiquidCrystal_I2C(0x3F, 20, 4);
 	}
-	if (cfg::has_lcd1602) {
-		lcd_1602_3f.init();
-		lcd_1602_3f.backlight();
-	}
-	if (cfg::has_lcd2004_27) {
-		lcd_2004_27.init();
-		lcd_2004_27.backlight();
-	}
-	if (cfg::has_lcd2004_3f) {
-		lcd_2004_3f.init();
-		lcd_2004_3f.backlight();
-	}
+
+	//LCD is set? Configure it!
+    if (char_lcd) {
+        char_lcd->init();
+        char_lcd->backlight();
+    }
 }
 
 /*****************************************************************
