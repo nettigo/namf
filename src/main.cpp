@@ -531,7 +531,13 @@ void webserver_config() {
 		}
 		page_content += FPSTR(TABLE_TAG_OPEN);
 		page_content += form_input("wlanssid", FPSTR(INTL_FS_WIFI_NAME), wlanssid, capacity_null_terminated_char_array(wlanssid));
-		page_content += form_password("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd, capacity_null_terminated_char_array(wlanpwd));
+        if (! wificonfig_loop) {
+            page_content += form_password("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd,
+                                          capacity_null_terminated_char_array(wlanpwd));
+        } else {
+            page_content += form_input("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd,
+                                          capacity_null_terminated_char_array(wlanpwd));
+        }
 		page_content += FPSTR(TABLE_TAG_CLOSE_BR);
 		page_content += F("<hr/>\n<b>");
 
