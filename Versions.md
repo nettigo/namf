@@ -1,7 +1,10 @@
-NAMF 2020-11 (??)
+NAMF 2020-12 ()
+
+NAMF 2020-11 (2020.02.16)
 * moved to dynamic definition of LCDs (both character and graphical) Less code, less memory
 * since only one char LCD is supported in given config HTML was changed to dropdown on config page
 * memory stats are being collected in more logic way (max/min values measured at end of each loop)
+* WiFi password is visible in input field when sensor is being first time configured. When already configured sensor is booted in AP mode, password is not shown (thus saving form with empty field will remove password from config)  
 
 NAMF 2020-10 (2020.02.14)
 * new core 2.6.3
