@@ -1491,7 +1491,7 @@ String create_influxdb_string(const String& data) {
         data_4_influxdb += F(",free=");
 		data_4_influxdb += String(memoryStatsMin.freeHeap);
         data_4_influxdb += F(",frag=");
-		data_4_influxdb += String(memoryStatsMin.frag);
+		data_4_influxdb += String(memoryStatsMax.frag);
         data_4_influxdb += F(",max_block=");
 		data_4_influxdb += String(memoryStatsMin.maxFreeBlock);
         data_4_influxdb += F(",cont_stack=");
