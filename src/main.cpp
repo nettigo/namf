@@ -438,6 +438,7 @@ void webserver_config_force_update() {
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
     if (server.method() == HTTP_POST) {
         if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
+            cfg::auto_update = true;
             updateFW(server.arg("host"), server.arg("port"), server.arg("path"));
             server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
