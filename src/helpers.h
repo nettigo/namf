@@ -29,5 +29,6 @@ String form_checkbox(const String& name, const String& info, const bool checked,
 String form_checkbox_sensor(const String& name, const String& info, const bool checked);
 String form_submit(const String& value);
 String form_select_lang();
-
+void resetMemoryStats();
+void collectMemStats();
 #endif //NAMF_HELPERS_H

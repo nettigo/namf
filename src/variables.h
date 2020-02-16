@@ -234,6 +234,7 @@ extern uint8_t count_wifiInfo;
 
 
 extern const char data_first_part[] ;
-
+extern memory_stat_t memoryStatsMax;
+extern memory_stat_t memoryStatsMin;
 
 #endif //AIRROHR_FIRMWARE_VARIABLES_H

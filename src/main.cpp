@@ -956,10 +956,14 @@ void webserver_values() {
 		page_content += table_row_from_value(F("NAM"),F("Uptime"), String((millis() - time_point_device_start_ms) / 1000),"s");
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
-		page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), String(ESP.getMaxFreeBlockSize()),"B");
-		page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), String(ESP.getHeapFragmentation()),"%");
-		page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), String(ESP.getFreeContStack()),"B");
-        page_content += table_row_from_value(F("ESP"),F("Free Memory"), String(ESP.getFreeHeap()),"B");
+		String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
+		page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B");
+        tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
+        page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), tmp,"%");
+        tmp = String(memoryStatsMin.freeContStack) + String("/") + String(memoryStatsMax.freeContStack);
+        page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B");
+        tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
+        page_content += table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B");
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
 		page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
@@ -1485,13 +1489,13 @@ String create_influxdb_string(const String& data) {
         data_4_influxdb += F(",measurements=");
 		data_4_influxdb += String(count_sends+1);
         data_4_influxdb += F(",free=");
-		data_4_influxdb += String(ESP.getFreeHeap());
+		data_4_influxdb += String(memoryStatsMin.freeHeap);
         data_4_influxdb += F(",frag=");
-		data_4_influxdb += String(ESP.getHeapFragmentation());
+		data_4_influxdb += String(memoryStatsMin.frag);
         data_4_influxdb += F(",max_block=");
-		data_4_influxdb += String(ESP.getMaxFreeBlockSize());
+		data_4_influxdb += String(memoryStatsMin.maxFreeBlock);
         data_4_influxdb += F(",cont_stack=");
-		data_4_influxdb += String(ESP.getFreeContStack());
+		data_4_influxdb += String(memoryStatsMin.freeContStack);
 		data_4_influxdb += "\n";
 	} else {
 		debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
@@ -2375,6 +2379,7 @@ void setup() {
     Serial.println(esp_chipid());
 
     readConfig();
+    resetMemoryStats();
 
     init_display();
     init_lcd();
@@ -2726,8 +2731,11 @@ void loop() {
 		starttime = millis();                               // store the start time
 		first_cycle = false;
 		count_sends += 1;
+
+		resetMemoryStats();
 	}
 	yield();
+    collectMemStats();
 #endif
 //	if (sample_count % 500 == 0) { Serial.println(ESP.getFreeHeap(),DEC); }
 }

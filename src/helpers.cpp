@@ -297,5 +297,25 @@ String form_select_lang() {
     }
     return s;
 }
+void resetMemoryStats() {
+    memoryStatsMax = memory_stat_t{0,0,0, 0};
+    memoryStatsMin = memory_stat_t{UINT32_MAX, UINT16_MAX, UINT8_MAX, UINT32_MAX};
+}
+void collectMemStats() {
+    memory_stat_t memoryStats;
+    ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
+
+    if (memoryStats.freeHeap > memoryStatsMax.freeHeap)             memoryStatsMax.freeHeap  = memoryStats.freeHeap;
+    if (memoryStats.maxFreeBlock > memoryStatsMax.maxFreeBlock)     memoryStatsMax.maxFreeBlock  = memoryStats.maxFreeBlock;
+    if (memoryStats.frag > memoryStatsMax.frag)                     memoryStatsMax.frag  = memoryStats.frag;
+
+    if (memoryStats.freeHeap < memoryStatsMin.freeHeap)             memoryStatsMin.freeHeap  = memoryStats.freeHeap;
+    if (memoryStats.maxFreeBlock < memoryStatsMin.maxFreeBlock)     memoryStatsMin.maxFreeBlock  = memoryStats.maxFreeBlock;
+    if (memoryStats.frag < memoryStatsMin.frag)                     memoryStatsMin.frag  = memoryStats.frag;
+
+    uint32_t cont = ESP.getFreeContStack();
+    if (cont > memoryStatsMax.freeContStack)                     memoryStatsMax.freeContStack  = cont;
+    if (cont < memoryStatsMin.freeContStack)                     memoryStatsMin.freeContStack  = cont;
 
 
+}

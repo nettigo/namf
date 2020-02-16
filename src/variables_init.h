@@ -231,5 +231,7 @@ template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminat
 
 const char data_first_part[] PROGMEM = "{\"software_version\": \"{v}\", \"sensordatavalues\":[";
 
+memory_stat_t memoryStatsMax;
+memory_stat_t memoryStatsMin;
 
 #endif //NAMF_VARIABLES_INIT_H
