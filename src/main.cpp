@@ -535,7 +535,7 @@ void webserver_config() {
             page_content += form_password("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd,
                                           capacity_null_terminated_char_array(wlanpwd));
         } else {
-            page_content += form_input("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd,
+            page_content += form_input("wlanpwd", FPSTR(INTL_PASSWORD), "",
                                           capacity_null_terminated_char_array(wlanpwd));
         }
 		page_content += FPSTR(TABLE_TAG_CLOSE_BR);
