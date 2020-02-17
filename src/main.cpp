@@ -1310,7 +1310,6 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
             http->addHeader(F("X-PIN"), String(pin));
         }
         if (basic_auth_string) {
-            debug_out(F("Adding auth data"),DEBUG_MIN_INFO,true);
             http -> addHeader(F("Authorization"), String(basic_auth_string) + "\r\n");
         }
         result = http->POST(data);
