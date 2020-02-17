@@ -234,7 +234,7 @@ void create_basic_auth_strings() {
         String tmp =
                 String("Basic ") + base64::encode(String(cfg::user_custom) + String(":") + String(cfg::pwd_custom));
         unsigned int size = strlen(tmp.c_str()) + 1;
-        basic_auth_custom = new(char[size]);
+        basic_auth_custom = new char[size];
         strncpy(basic_auth_custom, tmp.c_str(), size);
 
     }
@@ -242,7 +242,7 @@ void create_basic_auth_strings() {
     if (cfg::user_influx[0] != '\0' || cfg::pwd_influx[0] != '\0') {
         String tmp = String("Basic ") + base64::encode(String(cfg::user_influx) + ":" + String(cfg::pwd_influx));
         unsigned int size = strlen(tmp.c_str()) + 1;
-        basic_auth_influx = new(char[size]);
+        basic_auth_influx = new char[size];
         strncpy(basic_auth_influx, tmp.c_str(), size);
     }
 }
@@ -1310,6 +1310,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
             http->addHeader(F("X-PIN"), String(pin));
         }
         if (basic_auth_string) {
+            debug_out(F("Adding auth data"),DEBUG_MIN_INFO,true);
             http -> addHeader(F("Authorization"), String(basic_auth_string) + "\r\n");
         }
         result = http->POST(data);
@@ -1352,7 +1353,7 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     data_4_dusti.replace(replace_str, "");
 	data_4_dusti += "]}";
 	if (data != "") {
-        sendData(data_4_dusti, pin, host, httpPort, url, verify, "", FPSTR(TXT_CONTENT_TYPE_JSON));
+        sendData(data_4_dusti, pin, host, httpPort, url, verify, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 	} else {
 		debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
 	}
@@ -2354,7 +2355,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2madavi) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
-		sendData(data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true, "", FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
 
@@ -2363,14 +2364,14 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		String sensemap_path = URL_SENSEMAP;
 		sensemap_path.replace("BOXID", cfg::senseboxid);
-		sendData(data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false, "", FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
 
 	if (cfg::send2fsapp) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
-		sendData(data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false, "", FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
 
@@ -2638,7 +2639,7 @@ void loop() {
 
 		resetMemoryStats();
 	}
-	yield();
+	delay(10);
     collectMemStats();
 #endif
 //	if (sample_count % 500 == 0) { Serial.println(ESP.getFreeHeap(),DEC); }

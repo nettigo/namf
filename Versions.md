@@ -1,3 +1,6 @@
+NAMF 2020-13 (2020.02.17)
+* fix for garbage auth data when sending to Luftdaten/Madavi
+
 NAMF 2020-12 (2020.02.17)
 * allow to disable character LCD
 * remove config button is now orange to avoid confusion with restart button
