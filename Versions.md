@@ -1,4 +1,5 @@
 NAMF 2020-12 ()
+* remove config button is now orange to avoid confusion with restart button
 
 NAMF 2020-11 (2020.02.16)
 * moved to dynamic definition of LCDs (both character and graphical) Less code, less memory

@@ -50,6 +50,8 @@ input[type='password']{width:100%;}\
 input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 .s_red{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
 .s_red:hover {background:#E33;}\
+.s_orange{background:#F80;}\
+.s_orange:hover{background:#E70;}\
 </style>\
 </head><body>\
 <div style='min-height:130px;background-color:#2B4;margin-bottom:20px'>\
@@ -70,7 +72,7 @@ const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inl
 const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>{t}</a><br/>\
 <a href='https://maps.luftdaten.info/' target='_blank'>{map}</a><br/>\
 <a href='/config'>{conf}</a><br/>\
-<a href='/removeConfig'>{conf_delete}</a><br/>\
+<a href='/removeConfig' class='s_orange'>{conf_delete}</a><br/>\
 <a href='/reset'>{restart}</a><br/>\
 <table style='width:100%;'>\
 <tr><td colspan='3'><b>{debug_level}</b></td></tr>\
