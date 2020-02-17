@@ -738,11 +738,11 @@ void webserver_config() {
 		readBoolParam(auto_update);
 		readBoolParam(use_beta);
 		readBoolParam(has_display);
+        has_lcd1602 = false;
+        has_lcd1602_27 = false;
+        has_lcd2004_27 = false;
+        has_lcd2004_3f = false;
         if (server.hasArg("has_lcd")) {
-            has_lcd1602 = false;
-            has_lcd1602_27 = false;
-            has_lcd2004_27 = false;
-            has_lcd2004_3f = false;
             switch (server.arg("lcd_type").toInt()) {
                 case 1:
                     has_lcd1602 = true;
