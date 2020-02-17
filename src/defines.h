@@ -6,6 +6,7 @@
 #define NAMF_DEFINES_H
 
 #include <stdint.h>
+#include <Arduino.h>
 /******************************************************************
  * Constants                                                      *
  ******************************************************************/
@@ -25,6 +26,9 @@ typedef struct memory_stat_t {
     uint32_t freeContStack;
 } memory_stat_t;
 
+extern String tmpl(const String& patt, const String& value1, const String& value2, const String& value3);
+extern String tmpl(const String& patt, const String& value1, const String& value2);
+extern String tmpl(const String& patt, const String& value);
 
 #define HOST_MADAVI "api-rrd.madavi.de"
 #define URL_MADAVI "/data.php"

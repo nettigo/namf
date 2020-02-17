@@ -11,6 +11,9 @@
 #include "helpers.h"
 #include "html-content.h"
 
+extern void updateFW(const String host, const String port, const String path);
+extern void updateFW();
+
 void sendHttpRedirect(ESP8266WebServer &httpServer);
 /*****************************************************************
  * Webserver Images                                              *
@@ -38,4 +41,12 @@ void webserver_root();
 
 String make_header(const String& title);
 String make_footer();
+//Webserver - current config as JSON (txt) to save
+void webserver_config_json();
+//Webserver - force update with custom URL
+void webserver_config_force_update();
+//Webserver - current config as JSON (txt) to save
+void webserver_config_json_save();
+void webserver_config();
+
 #endif //NAMF_WEBSERVER_H

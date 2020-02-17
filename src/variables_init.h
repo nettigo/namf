@@ -224,9 +224,6 @@ template<typename T, std::size_t N> constexpr std::size_t array_num_elements(con
     return N;
 }
 
-template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminated_char_array(const T(&)[N]) {
-    return N - 1;
-}
 
 
 const char data_first_part[] PROGMEM = "{\"software_version\": \"{v}\", \"sensordatavalues\":[";

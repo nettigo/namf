@@ -31,4 +31,5 @@ String form_submit(const String& value);
 String form_select_lang();
 void resetMemoryStats();
 void collectMemStats();
+void display_debug(const String& text1, const String& text2);
 #endif //NAMF_HELPERS_H

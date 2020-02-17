@@ -319,3 +319,27 @@ void collectMemStats() {
 
 
 }
+
+/*****************************************************************
+ * display values                                                *
+ *****************************************************************/
+void display_debug(const String& text1, const String& text2) {
+    debug_out(F("output debug text to displays..."), DEBUG_MIN_INFO, 1);
+    debug_out(text1 + "\n" + text2, DEBUG_MAX_INFO, 1);
+    if (display) {
+        display->clear();
+        display->displayOn();
+        display->setTextAlignment(TEXT_ALIGN_LEFT);
+        display->drawString(0, 12, text1);
+        display->drawString(0, 24, text2);
+        display->display();
+    }
+    if (char_lcd) {
+        char_lcd -> clear();
+        char_lcd->setCursor(0, 0);
+        char_lcd->print(text1);
+        char_lcd->setCursor(0, 1);
+        char_lcd->print(text2);
+    }
+}
+
