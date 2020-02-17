@@ -1,3 +1,7 @@
+NAMF 2020-14 ()
+* HECA support moved to src/sensors/heca
+* started move webserver functions to separate file
+
 NAMF 2020-13 (2020.02.17)
 * fix for garbage auth data when sending to Luftdaten/Madavi
 

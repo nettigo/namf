@@ -17,7 +17,6 @@
 #include <LiquidCrystal_I2C.h>
 #include <base64.h>
 #include <ArduinoJson.h>
-#include "ClosedCube_SHT31D.h" // support for Nettigo Air Monitor HECA
 #include <time.h>
 #include <coredecls.h>
 #include <assert.h>
@@ -27,6 +26,7 @@
 #include "sensors/sds011.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
+#include "sensors/heca.h"
 
 /*****************************************************************
  * check display values, return '-' if undefined                 *
@@ -1043,27 +1043,6 @@ static String sensorBMP280() {
 
 
 /*****************************************************************
- * read HECA (SHT30) sensor values                                     *
- *****************************************************************/
-static String sensorHECA() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_HECA), DEBUG_MED_INFO, 1);
-
-	SHT31D result = heca.periodicFetchData();
-  if (result.error == SHT3XD_NO_ERROR) {
-		last_value_HECA_T = result.t;
-		last_value_HECA_H = result.rh;
- 	} else {
-		last_value_HECA_T = -128.0;
-		last_value_HECA_H = -1.0;
-	}
-	s += Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T));
-	s += Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H));
-	return s;
-}
-
-/*****************************************************************
  * read DS18B20 sensor values                                    *
  *****************************************************************/
 static String sensorDS18B20() {
@@ -1633,34 +1612,6 @@ bool initBMP280(char addr) {
 	} else {
 		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
 		return false;
-	}
-}
-
-/*****************************************************************
- * Init HECA                                                     *
- *****************************************************************/
-
- bool initHECA() {
-
-	debug_out(F("Trying HECA (SHT30) sensor on 0x44"), DEBUG_MED_INFO, 0);
-	heca.begin(0x44);
-	//heca.begin(addr);
-	if (heca.periodicStart(SHT3XD_REPEATABILITY_HIGH, SHT3XD_FREQUENCY_1HZ) != SHT3XD_NO_ERROR) {
-		debug_out(F(" ... not found"), DEBUG_MED_INFO, 1);
-		debug_out(F(" [HECA ERROR] Cannot start periodic mode"), DEBUG_ERROR, 1);
-		return false;
-	} else {
-		// temperature set, temperature clear, humidity set, humidity clear
-		if (heca.writeAlertHigh(120, 119, 63, 60) != SHT3XD_NO_ERROR) {
-			debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_ERROR, 1);
-		}
-		if (heca.writeAlertLow(-5, 5, 0, 1) != SHT3XD_NO_ERROR) {
-			debug_out(F(" [HECA ERROR] Cannot set Alert LOW"), DEBUG_ERROR, 1);
-		}
-		if (heca.clearAll() != SHT3XD_NO_ERROR) {
-			debug_out(F(" [HECA ERROR] Cannot clear register"), DEBUG_ERROR, 1);
-		}
-		return true;
 	}
 }
 
