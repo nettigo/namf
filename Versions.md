@@ -1,6 +1,7 @@
-NAMF 2020-12 ()
+NAMF 2020-12 (2020.02.17)
 * allow to disable character LCD
 * remove config button is now orange to avoid confusion with restart button
+* fixed basic auth when sending to influx and custom API
 
 NAMF 2020-11 (2020.02.16)
 * moved to dynamic definition of LCDs (both character and graphical) Less code, less memory
