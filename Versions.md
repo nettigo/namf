@@ -1,4 +1,4 @@
-NAMF 2020-14 ()
+NAMF 2020-14 (2020-02-17)
 * HECA support moved to src/sensors/heca
 * started move webserver functions to separate file
 * stopped software version spoofing
