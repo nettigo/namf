@@ -1,7 +1,5 @@
 #include <Arduino.h>
 
-#define SPOOF_SOFTWARE_VERSION F("NRZ-2020-129")
-
 /*****************************************************************
  * Includes                                                      *
  *****************************************************************/
@@ -913,7 +911,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
 	String data_4_dusti = FPSTR(data_first_part);
-	data_4_dusti.replace("{v}", SPOOF_SOFTWARE_VERSION); // sorry for that!
+	data_4_dusti.replace("{v}", SOFTWARE_VERSION); // sorry for that!
 	data_4_dusti += data;
 	data_4_dusti.remove(data_4_dusti.length() - 1);
     data_4_dusti.replace(replace_str, "");
@@ -2018,8 +2016,7 @@ void loop() {
 	if (send_now) {
 		debug_out(F("Creating data string:"), DEBUG_MIN_INFO, 1);
 		String data = FPSTR(data_first_part);
-		//data.replace("{v}", SOFTWARE_VERSION);
-		data.replace("{v}", SPOOF_SOFTWARE_VERSION); // sorry for that!
+		data.replace("{v}", SOFTWARE_VERSION);
 		String data_sample_times  = Value2Json(F("samples"), String(sample_count));
 		data_sample_times += Value2Json(F("min_micro"), String(min_micro));
 		data_sample_times += Value2Json(F("max_micro"), String(max_micro));
@@ -2156,7 +2153,7 @@ void loop() {
 
 		resetMemoryStats();
 	}
-	delay(10);
+	delay(1);
     collectMemStats();
 #endif
 //	if (sample_count % 500 == 0) { Serial.println(ESP.getFreeHeap(),DEC); }
