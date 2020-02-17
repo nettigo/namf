@@ -88,8 +88,8 @@ enum class PmSensorCmd {
     VersionDate
 };
 
-String basic_auth_influx = "";
-String basic_auth_custom = "";
+char *basic_auth_influx = NULL;
+char *basic_auth_custom = NULL;
 
 long int sample_count = 0;
 bool bmp280_init_failed = false;

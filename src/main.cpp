@@ -230,14 +230,21 @@ void readConfig() {
  * Base64 encode user:password                                   *
  *****************************************************************/
 void create_basic_auth_strings() {
-	basic_auth_custom = "";
-	if (cfg::user_custom[0] != '\0' || cfg::pwd_custom[0] != '\0') {
-		basic_auth_custom = base64::encode(String(cfg::user_custom) + ":" + String(cfg::pwd_custom));
-	}
-	basic_auth_influx = "";
-	if (cfg::user_influx[0] != '\0' || cfg::pwd_influx[0] != '\0') {
-		basic_auth_influx = base64::encode(String(cfg::user_influx) + ":" + String(cfg::pwd_influx));
-	}
+    if (cfg::user_custom[0] != '\0' || cfg::pwd_custom[0] != '\0') {
+        String tmp =
+                String("Basic ") + base64::encode(String(cfg::user_custom) + String(":") + String(cfg::pwd_custom));
+        unsigned int size = strlen(tmp.c_str()) + 1;
+        basic_auth_custom = new(char[size]);
+        strncpy(basic_auth_custom, tmp.c_str(), size);
+
+    }
+
+    if (cfg::user_influx[0] != '\0' || cfg::pwd_influx[0] != '\0') {
+        String tmp = String("Basic ") + base64::encode(String(cfg::user_influx) + ":" + String(cfg::pwd_influx));
+        unsigned int size = strlen(tmp.c_str()) + 1;
+        basic_auth_influx = new(char[size]);
+        strncpy(basic_auth_influx, tmp.c_str(), size);
+    }
 }
 
 
@@ -1290,7 +1297,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
     HTTPClient *http;
     http = new HTTPClient;
     http->setTimeout(20 * 1000);
-    http->setUserAgent(SOFTWARE_VERSION + '/' + esp_chipid());
+    http->setUserAgent(String(SOFTWARE_VERSION) + "/" + esp_chipid());
     http->setReuse(false);
     bool send_success = false;
     debug_out(String(host), DEBUG_MIN_INFO, 1);
@@ -1302,7 +1309,9 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
-
+        if (basic_auth_string) {
+            http -> addHeader(F("Authorization"), String(basic_auth_string) + "\r\n");
+        }
         result = http->POST(data);
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
@@ -2132,7 +2141,7 @@ static void powerOnTestSensors() {
 		debug_out(F("Read DHT..."), DEBUG_MIN_INFO, 1);
 	}
 
-	
+
 	if (cfg::bmp280_read) {
 		debug_out(F("Read BMP280..."), DEBUG_MIN_INFO, 1);
 		if (!initBMP280(0x76) && !initBMP280(0x77)) {
@@ -2312,7 +2321,7 @@ void setup() {
 
     if (MDNS.begin(server_name.c_str())) {
         MDNS.addService("http", "tcp", 80);
-		
+
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
@@ -2369,7 +2378,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		const String data_4_influxdb = create_influxdb_string(data);
-		sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx.c_str(), FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
+		sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
 		sum_send_time += millis() - start_send;
 	}
 
@@ -2389,7 +2398,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
-		sendData(data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false, basic_auth_custom.c_str(), FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false, basic_auth_custom, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
 	return sum_send_time;

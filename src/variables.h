@@ -107,8 +107,8 @@ namespace cfg {
 
 
 enum class PmSensorCmd;
-extern String basic_auth_influx ;
-extern String basic_auth_custom ;
+extern char *basic_auth_influx ;
+extern char *basic_auth_custom ;
 
 extern long int sample_count ;
 extern bool bmp280_init_failed ;
@@ -212,7 +212,7 @@ extern String last_value_GPS_date ;
 extern String last_value_GPS_time ;
 extern String last_data_string ;
 
-extern String esp_chipid();
+extern &String esp_chipid();
 
 extern long last_page_load ;
 
