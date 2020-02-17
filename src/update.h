@@ -24,6 +24,7 @@ t_httpUpdate_return tryUpdate(char * const ver) {
 
 #include <ESP8266WiFi.h>
 #include <ESP8266httpUpdate.h>
+#include "helpers.h"
 t_httpUpdate_return tryUpdate(const String host, const String port, const String path, const String ver) {
     Serial.println(ver);
     t_httpUpdate_return ret = ESPhttpUpdate.update(host, port.toInt(), path, ver);
@@ -38,9 +39,11 @@ t_httpUpdate_return tryUpdate(String const ver) {
 void verifyUpdate (t_httpUpdate_return result) {
     switch (result) {
         case HTTP_UPDATE_FAILED:
+            display_debug(F("[update] Update failed."),"");
             Serial.println(F("[update] Update failed."));
             break;
         case HTTP_UPDATE_NO_UPDATES:
+            display_debug(F("[update] no Update."), String(SOFTWARE_VERSION));
             Serial.println(F("[update] no Update."));
             Serial.print(F("Still running version: "));
             Serial.println(SOFTWARE_VERSION);
