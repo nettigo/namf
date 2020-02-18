@@ -11,6 +11,7 @@ const char INTL_LANG[] = "PL";
 const char INTL_PM_SENSOR[] PROGMEM = "Czujnik pyłu zawieszonego";
 const char INTL_CONFIGURATION[] PROGMEM = "Konfiguracja";
 const char INTL_WIFI_SETTINGS[] PROGMEM = "Ustawienia WiFi";
+const char INTL_WIFI_TX_PWR[] PROGMEM = "Moc nadawcza 0-20.5(dBm)";
 const char INTL_WIFI_NETWORKS[] PROGMEM = "Ładowanie sieci WiFi...";
 const char INTL_LANGUAGE[] PROGMEM = "Język";
 const char INTL_NO_NETWORKS[] PROGMEM =  "Nie znaleziono sieci WiFi";

@@ -135,6 +135,9 @@
 // LCD Display LCD2004 (0x3F)
 #define HAS_LCD2004_3F 0
 
+//default TX trasnmit power
+#define TX_OUTPUT_POWER 20.5
+
 // Wieviele Informationen sollen über die serielle Schnittstelle ausgegeben werden?
 #define DEBUG 3
 

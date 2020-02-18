@@ -160,6 +160,7 @@ void readConfig() {
 					setFromJSON(debug);
 					setFromJSON(sending_intervall_ms);
 					setFromJSON(time_for_wifi_config);
+					setFromJSON(outputPower);
 					strcpyFromJSON(senseboxid);
 					if (strcmp(senseboxid, "00112233445566778899aabb") == 0) {
 						strcpy(senseboxid, "");
@@ -784,7 +785,7 @@ static void waitForWifiToConnect(int maxRetries) {
  * Start WiFi in AP mode (for configuration)
  *****************************************************************/
 
-void startAP(void) {
+void    startAP(void) {
 		String fss = String(cfg::fs_ssid);
 		display_debug(fss.substring(0, 16), fss.substring(16));
 		wifiConfig();
@@ -801,7 +802,7 @@ void startAP(void) {
 void connectWifi() {
 	debug_out(String(WiFi.status()), DEBUG_MIN_INFO, 1);
 	WiFi.disconnect();
-	WiFi.setOutputPower(20.5);
+	WiFi.setOutputPower(cfg::outputPower);
 	WiFi.setPhyMode(WIFI_PHY_MODE_11N);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI

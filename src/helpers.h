@@ -20,6 +20,7 @@ String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
 String Var2Json(const String& name, const bool value);
 String Var2Json(const String& name, const int value);
+String Var2Json(const String& name, const float value);
 //Nettigo NAM 0.3.2 factory firmware - test
 
 String form_option(String const &name, const String & info, const bool checked = false);

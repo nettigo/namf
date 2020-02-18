@@ -78,6 +78,7 @@ namespace cfg {
     extern bool has_lcd1602_27;
     extern bool has_lcd2004_27;
     extern bool has_lcd2004_3f;
+    extern float outputPower;
     extern int  debug;
 
     extern bool ssl_madavi;

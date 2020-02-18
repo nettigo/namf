@@ -315,6 +315,7 @@ void webserver_config() {
                                        String(sending_intervall_ms / 1000), 5);
             page_content += form_input("time_for_wifi_config", FPSTR(INTL_DURATION_ROUTER_MODE),
                                        String(time_for_wifi_config / 1000), 5);
+            page_content += form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5);
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("\n<b>");
 
@@ -384,6 +385,14 @@ void webserver_config() {
             } \
         }
 
+#define readFloatParam(param) \
+        if (server.hasArg(#param)){ \
+            int val = server.arg(#param).toFloat(); \
+            if (val != 0){ \
+                param = val; \
+            } \
+        }
+
 #define readTimeParam(param) \
         if (server.hasArg(#param)){ \
             int val = server.arg(#param).toInt(); \
@@ -430,6 +439,7 @@ void webserver_config() {
             readIntParam(debug);
             readTimeParam(sending_intervall_ms);
             readTimeParam(time_for_wifi_config);
+            readFloatParam(outputPower);
 
             readBoolParam(send2csv);
 

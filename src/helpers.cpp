@@ -65,6 +65,14 @@ String Var2Json(const String& name, const int value) {
 }
 
 
+String Var2Json(const String& name, const float value) {
+    String s = F("\"{n}\":\"{v}\",");
+    s.replace("{n}", name);
+    s.replace("{v}", String(value));
+    return s;
+}
+
+
 
 /*****************************************************************
  * Debug output                                                  *
@@ -131,6 +139,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_String(debug);
     copyToJSON_String(sending_intervall_ms);
     copyToJSON_String(time_for_wifi_config);
+    copyToJSON_Int(outputPower);
     copyToJSON_String(senseboxid);
     copyToJSON_Bool(send2custom);
     copyToJSON_String(host_custom);

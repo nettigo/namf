@@ -1,5 +1,6 @@
 NAMF 2020-15 ()
 * /forceUpdate will now work with custom URL, until now it worked only with default
+* new config option - WiFi TX output power
 
 NAMF 2020-14 (2020-02-17)
 * HECA support moved to src/sensors/heca
