@@ -179,7 +179,17 @@ void webserver_config_json_save() {
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
     if (server.method() == HTTP_POST) {
         if (server.hasArg("json")) {
-            writeConfigRaw(server.arg("json"));
+            if (writeConfigRaw(server.arg("json"),"/test.json")) {
+                server.send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error writing config"));
+                return;
+            };
+            File tempCfg = SPIFFS.open ("/test.json", "r");
+            if (readAndParseConfigFile(tempCfg)) {
+                server.send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error parsing config"));
+                return;
+            }
+            //now config is mix of and new config file. Should be save to save it
+            writeConfig();
             server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
             Serial.println("RESET");

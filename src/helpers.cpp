@@ -1,6 +1,7 @@
 //
 // Created by viciu on 28.01.2020.
 //
+#include <ArduinoJson.h>
 #include "variables.h"
 #include "helpers.h"
 
@@ -170,19 +171,126 @@ String getMaskedConfigString() {
     return getConfigString(true);
 }
 
+int readAndParseConfigFile(File configFile) {
+    using namespace cfg;
+    String json_string = "";
+    bool pms24_read = false;
+    bool pms32_read = false;
+    if (configFile) {
+        debug_out(F("opened config file..."), DEBUG_MIN_INFO, 1);
+        const size_t size = configFile.size();
+        // Allocate a buffer to store contents of the file.
+        std::unique_ptr<char[]> buf(new char[size]);
+
+        configFile.readBytes(buf.get(), size);
+        StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+        JsonObject &json = jsonBuffer.parseObject(buf.get());
+        json.printTo(json_string);
+        debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
+        debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
+        debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
+        debug_out(json_string, DEBUG_MAX_INFO, 1);
+        if (json.success()) {
+            debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
+            if (json.containsKey("SOFTWARE_VERSION")) {
+                strcpy(version_from_local_config, json["SOFTWARE_VERSION"]);
+            }
+
+#define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
+#define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
+            strcpyFromJSON(current_lang);
+            strcpyFromJSON(wlanssid);
+            strcpyFromJSON(wlanpwd);
+            strcpyFromJSON(www_username);
+            strcpyFromJSON(www_password);
+            strcpyFromJSON(fs_ssid);
+            strcpyFromJSON(fs_pwd);
+            setFromJSON(www_basicauth_enabled);
+            setFromJSON(dht_read);
+            setFromJSON(sds_read);
+            setFromJSON(pms_read);
+            setFromJSON(pms24_read);
+            setFromJSON(pms32_read);
+            setFromJSON(bmp280_read);
+            setFromJSON(bme280_read);
+            setFromJSON(heca_read);
+            setFromJSON(ds18b20_read);
+            setFromJSON(gps_read);
+            setFromJSON(send2dusti);
+            setFromJSON(ssl_dusti);
+            setFromJSON(send2madavi);
+            setFromJSON(ssl_madavi);
+            setFromJSON(send2sensemap);
+            setFromJSON(send2fsapp);
+            setFromJSON(send2lora);
+            setFromJSON(send2csv);
+            setFromJSON(auto_update);
+            setFromJSON(use_beta);
+            setFromJSON(has_display);
+            setFromJSON(has_lcd1602);
+            setFromJSON(has_lcd1602_27);
+            setFromJSON(has_lcd2004_27);
+            setFromJSON(has_lcd2004_3f);
+            setFromJSON(debug);
+            setFromJSON(sending_intervall_ms);
+            setFromJSON(time_for_wifi_config);
+            setFromJSON(outputPower);
+            strcpyFromJSON(senseboxid);
+            if (strcmp(senseboxid, "00112233445566778899aabb") == 0) {
+                strcpy(senseboxid, "");
+                send2sensemap = 0;
+            }
+            setFromJSON(send2custom);
+            strcpyFromJSON(host_custom);
+            strcpyFromJSON(url_custom);
+            setFromJSON(port_custom);
+            strcpyFromJSON(user_custom);
+            strcpyFromJSON(pwd_custom);
+            setFromJSON(send2influx);
+            strcpyFromJSON(host_influx);
+            strcpyFromJSON(url_influx);
+            setFromJSON(port_influx);
+            strcpyFromJSON(user_influx);
+            strcpyFromJSON(pwd_influx);
+            if (strcmp(host_influx, "api.luftdaten.info") == 0) {
+                strcpy(host_influx, "");
+                send2influx = 0;
+            }
+            configFile.close();
+            if (pms24_read || pms32_read) {
+                pms_read = 1;
+                writeConfig();
+            }
+#undef setFromJSON
+#undef strcpyFromJSON
+            return 0;
+        } else {
+            debug_out(F("failed to load json config"), DEBUG_ERROR, 1);
+            return -1;
+        }
+    }
+}
+
 /*****************************************************************
  * write config to spiffs                                        *
  *****************************************************************/
-void writeConfigRaw(String json_string) {
+int writeConfigRaw(String json_string, const char * filename) {
     debug_out(json_string, DEBUG_MIN_INFO, 1);
-    File configFile = SPIFFS.open("/config.json", "w");
+    File configFile;
+    if (filename) {
+        configFile = SPIFFS.open(filename, "w");
+    } else {
+        configFile = SPIFFS.open("/config.json", "w");
+    }
     if (configFile) {
         configFile.print(json_string);
         debug_out(F("Config written: "), DEBUG_MIN_INFO, 0);
         debug_out(json_string, DEBUG_MIN_INFO, 1);
         configFile.close();
+        return 0;
     } else {
         debug_out(F("failed to open config file for writing"), DEBUG_ERROR, 1);
+        return -1;
     }
 }
 
