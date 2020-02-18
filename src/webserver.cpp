@@ -391,12 +391,12 @@ void webserver_config() {
 
 #define readIntParam(param) \
         if (server.hasArg(#param)){ \
-            int val = server.arg(#param).toInt(); \
+            param = server.arg(#param).toInt(); \
         }
 
 #define readFloatParam(param) \
         if (server.hasArg(#param)){ \
-            int val = server.arg(#param).toFloat(); \
+            param = server.arg(#param).toFloat(); \
         }
 
 #define readTimeParam(param) \
