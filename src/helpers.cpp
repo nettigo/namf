@@ -269,12 +269,13 @@ int readAndParseConfigFile(File configFile) {
             return -1;
         }
     }
+    return -1;
 }
 
 /*****************************************************************
  * write config to spiffs                                        *
  *****************************************************************/
-int writeConfigRaw(String json_string, const char * filename) {
+int writeConfigRaw(const String &json_string, const char * filename) {
     debug_out(json_string, DEBUG_MIN_INFO, 1);
     File configFile;
     if (filename) {

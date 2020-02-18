@@ -181,11 +181,13 @@ void webserver_config_json_save() {
         if (server.hasArg("json")) {
             if (writeConfigRaw(server.arg("json"),"/test.json")) {
                 server.send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error writing config"));
-                return;
+                return; //we dont have reason to restart, current config was not altered yet
             };
             File tempCfg = SPIFFS.open ("/test.json", "r");
             if (readAndParseConfigFile(tempCfg)) {
                 server.send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error parsing config"));
+                delay(500);
+                ESP.restart(); // we dont know in what state config is. Maybe something was read maybe not
                 return;
             }
             //now config is mix of and new config file. Should be save to save it

@@ -15,7 +15,7 @@ String Float2String(const double value);
 void writeConfig();
 String getConfigString(boolean);
 String getMaskedConfigString();
-int writeConfigRaw(String json_string, const char * filename = NULL);
+int writeConfigRaw(const String &json_string, const char * filename = NULL);
 int readAndParseConfigFile(File);
 String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
