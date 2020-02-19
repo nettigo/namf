@@ -461,3 +461,26 @@ void display_debug(const String& text1, const String& text2) {
     }
 }
 
+/* Convert millis value to string like (2 d 3h 20m 30s)
+ */
+String millisToTime(const unsigned long time) {
+    String tmp = "";
+    unsigned dt = 0;
+    unsigned long t = time;
+    if ((dt = t / (24 * 60 * 60 * 1000)) > 0) {
+        t = t - dt * 24 * 60 * 60 * 1000;
+        tmp += String(dt) + String("d ");
+    }
+    //they are some hours left or hours = 0 but already have some time value in string
+    if ((dt = t / (60 * 60 * 1000)) > 0 || tmp.length() > 0) {
+        t = t - dt * 60 * 60 * 1000;
+        tmp += String(dt) + String("h ");
+    }
+    if ((dt = t / (60 * 1000)) > 0 || tmp.length() > 0) {
+        t = t - dt * 60 * 1000;
+        tmp += String(dt) + String("m ");
+    }
+    tmp += String(t / 1000) + String("s");
+    return tmp;
+
+}
