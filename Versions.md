@@ -1,4 +1,5 @@
 NAMF 2020-17
+* uptime is nice formatted not just seconds
 
 NAMF 2020-16 (2020-02-19)
 * hostname for DHCP server

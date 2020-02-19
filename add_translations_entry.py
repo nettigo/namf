@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import glob
 import sys
 import os
@@ -13,7 +13,7 @@ It will iterate all language files and will add new entry with given label, unle
 is already present in file. When run it copies all files before changes to ./src/lang/bckps
 
 EXAMPLE:
- python ./add_translations_entry.py INTL_NEW_LABEL "Some string for output"
+ python add_translations_entry.py INTL_NEW_LABEL "Some string for output"
 
 """
 
