@@ -718,10 +718,11 @@ void connectWifi() {
 	WiFi.setPhyMode(WIFI_PHY_MODE_11N);
 	WiFi.mode(WIFI_STA);
 	
-	String hostname = F("NAM-");
-    hostname += esp_chipid();
-	WiFi.hostname(hostname.c_str()); // Hostname for DHCP Server.
+	//String hostname = F("NAM-");
+    //hostname += esp_chipid();
+	//WiFi.hostname(hostname.c_str()); // Hostname for DHCP Server.
 
+	WiFi.hostname(cfg::fs_ssid); // Hostname for DHCP Server
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
 
 	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
@@ -1750,10 +1751,11 @@ void setup() {
     logEnabledAPIs();
     logEnabledDisplays();
 
-    String server_name = F("NAM-");
-    server_name += esp_chipid();
-
-    if (MDNS.begin(server_name.c_str())) {
+    //String server_name = F("NAM-");
+    //server_name += esp_chipid();
+    //if (MDNS.begin(server_name.c_str())) {
+		
+	if (MDNS.begin(cfg::fs_ssid)) {
         MDNS.addService("http", "tcp", 80);
 
     } else {
