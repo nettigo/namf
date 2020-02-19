@@ -552,8 +552,6 @@ void setup_webserver() {
     server.on("/forceUpdate", webserver_config_force_update);
     server.on("/wifi", webserver_wifi);
 	server.on("/values", webserver_values);
-	server.on("/generate_204", webserver_config);
-	server.on("/fwlink", webserver_config);
 	server.on("/debug", webserver_debug_level);
 	server.on("/removeConfig", webserver_removeConfig);
 	server.on("/reset", webserver_reset);
