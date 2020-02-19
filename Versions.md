@@ -1,4 +1,7 @@
-NAMF 2020-15 ()
+NAMF 2020-16 ()
+* hostname for DHCP server
+
+NAMF 2020-15 (2020-02-18)
 * /forceUpdate will now work with custom URL, until now it worked only with default
 * new config option - WiFi TX output power
 

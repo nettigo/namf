@@ -650,6 +650,7 @@ void wifiConfig() {
 	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
 	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
 
+	// we could set hostname also here
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd);
 
 	debug_out(F("---- Result Webconfig ----"), DEBUG_MIN_INFO, 1);
@@ -716,6 +717,11 @@ void connectWifi() {
 	WiFi.setOutputPower(cfg::outputPower);
 	WiFi.setPhyMode(WIFI_PHY_MODE_11N);
 	WiFi.mode(WIFI_STA);
+	
+	String hostname = F("NAM-");
+    hostname += esp_chipid();
+	WiFi.hostname(hostname.c_str()); // Hostname for DHCP Server.
+
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
 
 	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
