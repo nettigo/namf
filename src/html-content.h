@@ -69,13 +69,12 @@ const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inl
 <small>Firmware based on luftdaten.info project by<br/><a href='https://codefor.de/stuttgart/' target='_blank' style='display:inline;background:none;color:black;padding:0'>Open Knowledge Lab Stuttgart a.o. (Code for Germany)</a></small>\
 </div></body></html>\r\n";
 
-const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>{t}</a><br/>\
-<a href='https://maps.luftdaten.info/' target='_blank'>{map}</a><br/>\
-<a href='/config'>{conf}</a><br/>\
-<a href='/removeConfig' class='s_orange'>{conf_delete}</a><br/>\
-<a href='/reset'>{restart}</a><br/>\
+const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a><br/>\
+<a href='/config'>&#128295; {conf}</a><br/>\
+<a href='/removeConfig' class='s_orange'>&#128293; {conf_delete}</a><br/>\
+<a href='/reset'>&#128260; {restart}</a><br/>\
 <table style='width:100%;'>\
-<tr><td colspan='3'><b>{debug_level}</b></td></tr>\
+<tr><td colspan='3'>&#128027; <b>{debug_level}</b></td></tr>\
 <tr><td style='width:33%;'><a href='/debug?lvl=0'>{none}</a></td>\
 <td style='width:33%;'><a href='/debug?lvl=1'>{error}</a></td>\
 <td style='width:33%;'><a href='/debug?lvl=2'>{warning}</a></td>\

@@ -1,5 +1,6 @@
 NAMF 2020-16 ()
 * hostname for DHCP server
+* interface changes: removed map link, utf-8 icons in main menu
 
 NAMF 2020-15 (2020-02-18)
 * /forceUpdate will now work with custom URL, until now it worked only with default

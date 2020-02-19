@@ -78,7 +78,7 @@ void webserver_root() {
         debug_out(F("output root page..."), DEBUG_MIN_INFO, 1);
         page_content += FPSTR(WEB_ROOT_PAGE_CONTENT);
         page_content.replace("{t}", FPSTR(INTL_CURRENT_DATA));
-        page_content.replace(F("{map}"), FPSTR(INTL_ACTIVE_SENSORS_MAP));
+        //page_content.replace(F("{map}"), FPSTR(INTL_ACTIVE_SENSORS_MAP));
         page_content.replace(F("{conf}"), FPSTR(INTL_CONFIGURATION));
         page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
         page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
