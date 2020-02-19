@@ -127,7 +127,8 @@ void create_basic_auth_strings() {
     }
 
     if (cfg::user_influx[0] != '\0' || cfg::pwd_influx[0] != '\0') {
-        String tmp = String("Basic ") + base64::encode(String(cfg::user_influx) + ":" + String(cfg::pwd_influx));
+        String tmp =
+                String("Basic ") + base64::encode(String(cfg::user_influx) + String(":") + String(cfg::pwd_influx));
         unsigned int size = strlen(tmp.c_str()) + 1;
         basic_auth_influx = new char[size];
         strncpy(basic_auth_influx, tmp.c_str(), size);
