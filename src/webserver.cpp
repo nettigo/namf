@@ -319,7 +319,9 @@ void webserver_config() {
         page_content += form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27);
         page_content += form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f);
         page_content += F("</select></br></br>");
-
+        if (wificonfig_loop) { //outputPower should be able to change in both modes
+            page_content += form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5);
+        }
         if (!wificonfig_loop) {
             page_content += FPSTR(TABLE_TAG_OPEN);
             page_content += form_select_lang();
@@ -420,6 +422,9 @@ void webserver_config() {
             readCharParam(wlanssid);
             readPasswdParam(wlanpwd);
         }
+        //always allow to change output power
+        readFloatParam(outputPower);
+
         if (!wificonfig_loop) {
             readCharParam(current_lang);
             readCharParam(www_username);
@@ -446,7 +451,6 @@ void webserver_config() {
             readIntParam(debug);
             readTimeParam(sending_intervall_ms);
             readTimeParam(time_for_wifi_config);
-            readFloatParam(outputPower);
 
             readBoolParam(send2csv);
 
@@ -550,6 +554,7 @@ void webserver_config() {
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
     if (server.method() == HTTP_POST) {
+        debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
         display_debug(F("Writing config"), F("and restarting"));
         writeConfig();
         delay(500);
