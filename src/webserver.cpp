@@ -112,7 +112,7 @@ String make_header(const String& title) {
     s.replace("{id}", esp_chipid());
     s.replace("{mac}", WiFi.macAddress());
     s.replace("{fwt}", FPSTR(INTL_FIRMWARE));
-    s.replace("{fw}", SOFTWARE_VERSION);
+    s.replace("{fw}", String(SOFTWARE_VERSION));
     return s;
 }
 

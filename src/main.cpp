@@ -477,7 +477,7 @@ void webserver_data_json() {
 	debug_out(F("output data json..."), DEBUG_MIN_INFO, 1);
 	if (first_cycle) {
 		s1 = FPSTR(data_first_part);
-		s1.replace("{v}", SOFTWARE_VERSION);
+		s1.replace("{v}", String(SOFTWARE_VERSION));
 		s1 += "]}";
 		age = cfg::sending_intervall_ms - msSince(starttime);
 		if (age > cfg::sending_intervall_ms) {
@@ -517,7 +517,7 @@ void webserver_prometheus_endpoint() {
 	debug_out(F("Parse JSON for Prometheus"), DEBUG_MIN_INFO, 1);
 	debug_out(last_data_string, DEBUG_MED_INFO, 1);
 	data_4_prometheus.replace("{id}", id);
-	data_4_prometheus.replace("{ver}", SOFTWARE_VERSION);
+	data_4_prometheus.replace("{ver}", String(SOFTWARE_VERSION));
 	data_4_prometheus.replace("{up}", String(msSince(time_point_device_start_ms)));
 	data_4_prometheus.replace("{si}", String(cfg::sending_intervall_ms));
 	data_4_prometheus.replace("{cs}", String(count_sends));
@@ -828,7 +828,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
 	String data_4_dusti = FPSTR(data_first_part);
-	data_4_dusti.replace("{v}", SOFTWARE_VERSION); // sorry for that!
+	data_4_dusti.replace("{v}", String(SOFTWARE_VERSION));
 	data_4_dusti += data;
 	data_4_dusti.remove(data_4_dusti.length() - 1);
     data_4_dusti.replace(replace_str, "");
@@ -1934,7 +1934,7 @@ void loop() {
 	if (send_now) {
 		debug_out(F("Creating data string:"), DEBUG_MIN_INFO, 1);
 		String data = FPSTR(data_first_part);
-		data.replace("{v}", SOFTWARE_VERSION);
+		data.replace("{v}", String(SOFTWARE_VERSION));
 		String data_sample_times  = Value2Json(F("samples"), String(sample_count));
 		data_sample_times += Value2Json(F("min_micro"), String(min_micro));
 		data_sample_times += Value2Json(F("max_micro"), String(max_micro));
