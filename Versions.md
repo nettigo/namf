@@ -8,6 +8,7 @@ NAMF 2020-16 ()
 * readme update
 * lang files update
 * sensor name based on AP SSID visible in header
+* removed int_templ.h 
 
 NAMF 2020-15 (2020-02-18)
 * /forceUpdate will now work with custom URL, until now it worked only with default
