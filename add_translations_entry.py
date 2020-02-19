@@ -13,7 +13,7 @@ It will iterate all language files and will add new entry with given label, unle
 is already present in file. When run it copies all files before changes to ./src/lang/bckps
 
 EXAMPLE:
- python add_translations_entry.py INTL_NEW_LABEL "Some string for output"
+ python ./add_translations_entry.py INTL_NEW_LABEL "Some string for output"
 
 """
 
@@ -30,14 +30,14 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
     print(filepath)
     shutil.copy(filepath,"./src/lang/bckps/")
     with open(filepath, 'rb+') as lang:
-        if label in lang.read():
+        if label in lang.read().decode(encoding="utf-8", errors="strict") :
             print("{} already in {}".format(label,filepath))
             continue
         lang.seek(-1, os.SEEK_END)
         last = lang.read(1)
         if "\n" != last:
-            lang.write("\n")
-        lang.write("const char {0}[] PROGMEM = \"{1}\";\n".format(label, value))
+            lang.write("\n".encode(encoding="utf-8", errors="strict"))
+        lang.write("const char {0}[] PROGMEM = \"{1}\";\n".format(label, value).encode(encoding="utf-8", errors="strict"))
         lang.close
 
 
