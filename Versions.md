@@ -1,4 +1,6 @@
-NAMF 2020-16 ()
+NAMF 2020-17
+
+NAMF 2020-16 (2020-02-19)
 * hostname for DHCP server
 * interface changes: removed map link, utf-8 icons in main menu
 * interface changes: removeConfig moved to bottom, save & restart is now red, more icons
