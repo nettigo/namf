@@ -3,6 +3,7 @@ NAMF 2020-16 ()
 * interface changes: removed map link, utf-8 icons in main menu
 * interface changes: removeConfig moved to bottom, save & restart is now red, more icons
 * Config AP SSID is now mDNS and DHCP hostname. Using UTF-8 special chars and dot (".") may mess with propper mDNS resolving.
+* disabled HTTP 1.1 support in HTTP client
 
 NAMF 2020-15 (2020-02-18)
 * /forceUpdate will now work with custom URL, until now it worked only with default

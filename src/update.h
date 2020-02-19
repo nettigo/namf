@@ -26,8 +26,9 @@ t_httpUpdate_return tryUpdate(char * const ver) {
 #include <ESP8266httpUpdate.h>
 #include "helpers.h"
 t_httpUpdate_return tryUpdate(const String host, const String port, const String path, const String ver) {
+    WiFiClient client;
     Serial.println(ver);
-    t_httpUpdate_return ret = ESPhttpUpdate.update(host, port.toInt(), path, ver);
+    t_httpUpdate_return ret = ESPhttpUpdate.update(client, host, port.toInt(), path, ver);
     return ret;
 };
 #endif
