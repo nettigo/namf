@@ -1,4 +1,6 @@
-NAMF 2020-17
+NAMF 2020-18 ()
+
+NAMF 2020-17 (2020-02-19)
 * uptime is nice formatted not just seconds
 * outputPower can be adjusted also in AP mode
 
