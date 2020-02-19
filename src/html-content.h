@@ -54,9 +54,9 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 .s_orange:hover{background:#E70;}\
 </style>\
 </head><body>\
-<div style='min-height:130px;background-color:#2B4;margin-bottom:20px'>\
+<div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
 <a href='/' style='background:none;width:0;display:inline'><img src='/images?name=luftdaten_logo' style='float:left;margin:20px'/></a>\
-<h3 style='margin:0'>{tt}</h3>\
+<h3 style='margin:0'>{tt}<br>{sname}</h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4>{h} {n} {t}</h4>";
 
 const char BR_TAG[] PROGMEM = "<br/>";

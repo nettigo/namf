@@ -6,6 +6,8 @@ NAMF 2020-16 ()
 * disabled HTTP 1.1 support in HTTP client
 * removed unused links /generate_204 & /fwlink
 * readme update
+* lang files update
+* sensor name based on AP SSID visible in header
 
 NAMF 2020-15 (2020-02-18)
 * /forceUpdate will now work with custom URL, until now it worked only with default

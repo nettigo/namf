@@ -73,7 +73,7 @@ void webserver_root() {
         if (!webserver_request_auth())
         { return; }
 
-        String page_content = make_header(" ");
+        String page_content = make_header(cfg::fs_ssid);
         last_page_load = millis();
         debug_out(F("output root page..."), DEBUG_MIN_INFO, 1);
         page_content += FPSTR(WEB_ROOT_PAGE_CONTENT);
@@ -108,6 +108,7 @@ String make_header(const String& title) {
         s.replace("{n}", "");
     }
     s.replace("{t}", title);
+    s.replace("{sname}", cfg::fs_ssid);
     s.replace("{id}", esp_chipid());
     s.replace("{mac}", WiFi.macAddress());
     s.replace("{fwt}", FPSTR(INTL_FIRMWARE));
