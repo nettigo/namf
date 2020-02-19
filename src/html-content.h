@@ -71,7 +71,6 @@ const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inl
 
 const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a><br/>\
 <a href='/config'>&#128295; {conf}</a><br/>\
-<a href='/removeConfig' class='s_orange'>&#128293; {conf_delete}</a><br/>\
 <a href='/reset'>&#128260; {restart}</a><br/>\
 <table style='width:100%;'>\
 <tr><td colspan='3'>&#128027; <b>{debug_level}</b></td></tr>\
@@ -84,6 +83,7 @@ const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a
 <td><a href='/debug?lvl=5'>{max_info}</a></td>\
 </tr>\
 </table>\
+<br/><a href='/removeConfig' class='s_orange'>&#128293; {conf_delete}</a><br/>\
 ";
 
 const char WEB_CONFIG_SCRIPT[] PROGMEM = "<script>\
@@ -92,11 +92,11 @@ function load_wifi_list(){var x=new XMLHttpRequest();x.open('GET','/wifi');x.onl
 </script>";
 
 const char WEB_REMOVE_CONFIG_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action='/removeConfig'><input type='submit' class='s_red' name='submit' value='{b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action='/removeConfig'><input type='submit' class='s_red' name='submit' value='&#128293; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_RESET_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action'/reset'><input type='submit' class='s_red' name='submit' value='{b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action'/reset'><input type='submit' class='s_red' name='submit' value='&#128260; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_IOS_REDIRECT[] PROGMEM = "<html><body>Redirecting...\

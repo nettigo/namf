@@ -376,7 +376,7 @@ String form_submit(const String& value) {
     String s = F(	"<tr>"
                      "<td>&nbsp;</td>"
                      "<td>"
-                     "<input type='submit' name='submit' value='{v}' />"
+                     "<input type='submit' name='submit' value='{v}' class='s_red'/>"
                      "</td>"
                      "</tr>");
     s.replace("{v}", value);
