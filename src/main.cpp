@@ -1813,13 +1813,16 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sum_send_time += millis() - start_send;
 	}
 
-	if (cfg::send2influx) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		const String data_4_influxdb = create_influxdb_string(data);
-		sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
-		sum_send_time += millis() - start_send;
-	}
+    if (cfg::send2influx) {
+        debugData(data,"influx start:");
+        debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
+        start_send = millis();
+        const String data_4_influxdb = create_influxdb_string(data);
+        debugData(data,"po influx_string:");
+
+        sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
+        sum_send_time += millis() - start_send;
+    }
     debugData(data,"po influx ");
 
 	/*		if (send2lora) {
