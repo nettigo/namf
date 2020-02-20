@@ -1,4 +1,5 @@
 NAMF 2020-18 ()
+* we return to 80MHz on ESP8266
 
 NAMF 2020-17 (2020-02-19)
 * uptime is nice formatted not just seconds
