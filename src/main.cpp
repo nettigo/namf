@@ -866,14 +866,16 @@ String create_influxdb_string(const String& data) {
 		data_4_influxdb += F("feinstaub,node=esp8266-");
 		data_4_influxdb += esp_chipid() + " ";
 		for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
-            String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
+            String tmp_str = "";
 		    if (first_line)
 		        first_line = false;
 		    else
 		        tmp_str += ",";
-			data_4_influxdb += tmp_str + "=";
-			tmp_str = json2data["sensordatavalues"][i]["value"].as<char*>();
-		}
+		    tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char*>();
+			tmp_str += "=";
+			tmp_str += json2data["sensordatavalues"][i]["value"].as<char*>();
+            data_4_influxdb += tmp_str;
+        }
         data_4_influxdb += F(",measurements=");
 		data_4_influxdb += String(count_sends+1);
         data_4_influxdb += F(",free=");
