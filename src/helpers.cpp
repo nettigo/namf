@@ -484,8 +484,12 @@ String millisToTime(const unsigned long time) {
     return tmp;
 
 }
+void debugData(const String &d, const __FlashStringHelper  *msg) {
+    PGM_P p = reinterpret_cast<PGM_P>(msg);
+    debugData(d,p);
+}
 
-void debugData(String d, const char *msg){
+void debugData(const String &d, const char *msg){
     Serial.print(F("\n****["));
     time_t now = time(nullptr);
     String tmp=(ctime(&now));

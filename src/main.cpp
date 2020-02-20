@@ -828,17 +828,20 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
  * send single sensor data to luftdaten.info api                 *
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
+    debugData(data,F("sendLuftdaten data in:"));
 	String data_4_dusti = FPSTR(data_first_part);
-	data_4_dusti.replace("{v}", String(SOFTWARE_VERSION));
+	data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
 	data_4_dusti += data;
 	data_4_dusti.remove(data_4_dusti.length() - 1);
-    data_4_dusti.replace(replace_str, "");
-	data_4_dusti += "]}";
+    data_4_dusti.replace(replace_str, String(""));
+	data_4_dusti += String("]}");
 	if (data != "") {
         sendData(data_4_dusti, pin, host, httpPort, url, verify, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 	} else {
 		debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
 	}
+    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
+    debugData(data,F("sendLuftdaten data out:"));
 }
 
 /*****************************************************************
@@ -2005,6 +2008,7 @@ void loop() {
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
+                debugData(data,"przed SendLuftdaten:");
 				sendLuftdaten(result_BME280, BME280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BME280_");
 				sum_send_time += millis() - start_send;
 			}
