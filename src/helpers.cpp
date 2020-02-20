@@ -497,5 +497,9 @@ void debugData(const String &d, const char *msg){
     Serial.print(tmp);
     Serial.print(F("]**** "));
     Serial.print(msg);
-    Serial.println(d);
+    if (d.endsWith("\n")) {
+        Serial.print(d);
+    } else {
+        Serial.println(d);
+    }
 }

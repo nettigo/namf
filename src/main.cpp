@@ -1798,7 +1798,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
-    debugData(data,"po madavi:");
+    debugData(data,F("po madavi:"));
 
     if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
@@ -1817,16 +1817,16 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	}
 
     if (cfg::send2influx) {
-        debugData(data,"influx start:");
+        debugData(data,F("influx start:"));
         debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
         start_send = millis();
         const String data_4_influxdb = create_influxdb_string(data);
-        debugData(data,"po influx_string:");
+        debugData(data,F("po influx_string:"));
 
         sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
         sum_send_time += millis() - start_send;
     }
-    debugData(data,"po influx ");
+    debugData(data,F("po influx "));
 
 	/*		if (send2lora) {
 				debug_out(F("## Sending to LoRa gateway: "), DEBUG_MIN_INFO, 1);
@@ -1847,7 +1847,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false, basic_auth_custom, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
-    debugData(data,"po custom ");
+    debugData(data,F("po custom "));
 
     return sum_send_time;
 }
@@ -1973,7 +1973,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,"po SDS/Luft ");
+        debugData(data,F("po SDS/Luft "));
 
         if (cfg::pms_read) {
 			data += result_PMS;
@@ -1993,7 +1993,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,"po DHT ");
+        debugData(data,F("po DHT "));
 		if (cfg::bmp280_read && (! bmp280_init_failed)) {
 			data += result_BMP280;
 			if (cfg::send2dusti) {
@@ -2008,12 +2008,12 @@ void loop() {
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
-                debugData(data,"przed SendLuftdaten:");
+                debugData(data,F("przed SendLuftdaten:"));
 				sendLuftdaten(result_BME280, BME280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BME280_");
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,"po BME280 ");
+        debugData(data,F("po BME280 "));
 
         if (cfg::heca_read && (! heca_init_failed)) {
 			data += result_HECA;
@@ -2024,7 +2024,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,"po HECA ");
+        debugData(data,F("po HECA "));
 
 		if (cfg::ds18b20_read) {
 			data += result_DS18B20;
@@ -2051,7 +2051,7 @@ void loop() {
 		data += data_sample_times;
 
 		data += "]}";
-        debugData(data,"po Luftdaten ");
+        debugData(data,F("po Luftdaten "));
 
 		sum_send_time += sendDataToOptionalApis(data);
 
