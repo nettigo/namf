@@ -1135,6 +1135,7 @@ String sensorPMS() {
 
 	}
 	if (send_now) {
+	    debugData(String(F("****************** Upload data to APIs*****************************")));
 		last_value_PMS_P0 = -1;
 		last_value_PMS_P1 = -1;
 		last_value_PMS_P2 = -1;
