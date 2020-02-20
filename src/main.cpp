@@ -862,16 +862,17 @@ String create_influxdb_string(const String& data) {
 	StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
 	JsonObject& json2data = jsonBuffer.parseObject(data);
 	if (json2data.success()) {
+	    bool first_line = true;
 		data_4_influxdb += F("feinstaub,node=esp8266-");
 		data_4_influxdb += esp_chipid() + " ";
 		for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
-			String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
+            String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
+		    if (first_line)
+		        first_line = false;
+		    else
+		        tmp_str += ",";
 			data_4_influxdb += tmp_str + "=";
 			tmp_str = json2data["sensordatavalues"][i]["value"].as<char*>();
-			data_4_influxdb += tmp_str + ",";
-		}
-		if ((unsigned)(data_4_influxdb.lastIndexOf(',') + 1) == data_4_influxdb.length()) {
-			data_4_influxdb.remove(data_4_influxdb.length() - 1);
 		}
         data_4_influxdb += F(",measurements=");
 		data_4_influxdb += String(count_sends+1);
@@ -2027,11 +2028,9 @@ void loop() {
 		}
 
 		data_sample_times += Value2Json("signal", signal_strength);
+        data_sample_times.remove(data_sample_times.length()-1);
 		data += data_sample_times;
 
-		if ((unsigned)(data.lastIndexOf(',') + 1) == data.length()) {
-			data.remove(data.length() - 1);
-		}
 		data += "]}";
 
 		sum_send_time += sendDataToOptionalApis(data);
