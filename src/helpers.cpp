@@ -33,6 +33,15 @@ String Value2Json(const String& type, const String& value) {
     return s;
 }
 
+
+String Value2Json( const __FlashStringHelper * t, const String& value) {
+    String type(t);
+    String s = F("{\"value_type\":\"{t}\",\"value\":\"{v}\"},");
+    s.replace("{t}", type);
+    s.replace("{v}", value);
+    return s;
+}
+
 /*****************************************************************
  * convert string value to json string                           *
  *****************************************************************/

@@ -19,6 +19,7 @@ int writeConfigRaw(const String &json_string, const char * filename = NULL);
 int readAndParseConfigFile(File);
 String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
+String Value2Json(const __FlashStringHelper *, const String& value);
 String Var2Json(const String& name, const bool value);
 String Var2Json(const String& name, const int value);
 String Var2Json(const String& name, const float value);
