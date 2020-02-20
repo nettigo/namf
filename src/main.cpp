@@ -1795,8 +1795,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
+    debugData(data,"po madavi:");
 
-	if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
+    if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		String sensemap_path = URL_SENSEMAP;
@@ -1819,6 +1820,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
 		sum_send_time += millis() - start_send;
 	}
+    debugData(data,"po influx ");
 
 	/*		if (send2lora) {
 				debug_out(F("## Sending to LoRa gateway: "), DEBUG_MIN_INFO, 1);
@@ -1839,7 +1841,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false, basic_auth_custom, FPSTR(TXT_CONTENT_TYPE_JSON));
 		sum_send_time += millis() - start_send;
 	}
-	return sum_send_time;
+    debugData(data,"po custom ");
+
+    return sum_send_time;
 }
 
 /*****************************************************************
@@ -1962,7 +1966,9 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-		if (cfg::pms_read) {
+        debugData(data,"po SDS/Luft ");
+
+        if (cfg::pms_read) {
 			data += result_PMS;
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
@@ -1980,6 +1986,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        debugData(data,"po DHT ");
 		if (cfg::bmp280_read && (! bmp280_init_failed)) {
 			data += result_BMP280;
 			if (cfg::send2dusti) {
@@ -1998,8 +2005,9 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        debugData(data,"po BME280 ");
 
-		if (cfg::heca_read && (! heca_init_failed)) {
+        if (cfg::heca_read && (! heca_init_failed)) {
 			data += result_HECA;
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
@@ -2008,6 +2016,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        debugData(data,"po HECA ");
 
 		if (cfg::ds18b20_read) {
 			data += result_DS18B20;
@@ -2034,6 +2043,7 @@ void loop() {
 		data += data_sample_times;
 
 		data += "]}";
+        debugData(data,"po Luftdaten ");
 
 		sum_send_time += sendDataToOptionalApis(data);
 

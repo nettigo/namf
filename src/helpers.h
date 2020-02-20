@@ -35,4 +35,5 @@ void resetMemoryStats();
 void collectMemStats();
 void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
+void debugData(String, const char * ="");
 #endif //NAMF_HELPERS_H
