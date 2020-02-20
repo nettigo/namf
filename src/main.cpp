@@ -375,7 +375,6 @@ void webserver_values() {
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
 		page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
-		page_content += table_row_from_value(F("ENV"),F("FW build time"), String(BUILD_TIME),"");
 		page_content += FPSTR(TABLE_TAG_CLOSE_BR);
 		page_content += make_footer();
 		server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
