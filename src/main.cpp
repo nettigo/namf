@@ -1927,12 +1927,17 @@ void loop() {
 
 		if (cfg::bme280_read && (! bme280_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BME280), DEBUG_MAX_INFO, 1);
+            debugData(result_HECA,F("BME  przed:"));
 			result_BME280 = sensorBME280();                 // getting temperature, humidity and pressure (optional)
-		}
+            debugData(result_HECA,F("BME po:"));
+
+        }
 
 		if (cfg::heca_read && (! heca_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HECA), DEBUG_MAX_INFO, 1);
+			debugData(result_HECA,F("HECA  przed:"));
 			result_HECA = sensorHECA();                 // getting temperature, humidity and pressure (optional)
+            debugData(result_HECA,F("HECA  po:"));
 		}
 
 		if (cfg::ds18b20_read) {
@@ -1957,8 +1962,8 @@ void loop() {
 		String data = FPSTR(data_first_part);
 		data.replace("{v}", String(SOFTWARE_VERSION));
 		String data_sample_times  = Value2Json(F("samples"), String(sample_count));
-		data_sample_times += Value2Json(F("min_micro"), String(min_micro));
-		data_sample_times += Value2Json(F("max_micro"), String(max_micro));
+		data_sample_times += Value2Json(String(F("min_micro")), String(min_micro));
+		data_sample_times += Value2Json(String(F("max_micro")), String(max_micro));
 
 		String signal_strength = String(WiFi.RSSI());
 		debug_out(F("WLAN signal strength: "), DEBUG_MIN_INFO, 0);
