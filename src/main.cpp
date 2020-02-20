@@ -1674,7 +1674,7 @@ static bool acquireNetworkTime() {
 	debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
 	debug_out(F("NTP.org:"),DEBUG_MIN_INFO,1);
 	settimeofday_cb(time_is_set);
-	configTime(8 * 3600, 0, "pool.ntp.org");
+	configTime(0, 0, "pool.ntp.org");
 	while (retryCount++ < 20) {
 		// later than 2000/01/01:00:00:00
 		if (sntp_time_is_set) {
