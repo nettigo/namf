@@ -830,12 +830,18 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
     debugData(data,F("sendLuftdaten data in:"));
 	String data_4_dusti = FPSTR(data_first_part);
-	data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
-	data_4_dusti += data;
-	data_4_dusti.remove(data_4_dusti.length() - 1);
+    debugData(data_4_dusti,String(__LINE__));
+    data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
+    debugData(data_4_dusti,String(__LINE__));
+    data_4_dusti += data;
+    debugData(data_4_dusti,String(__LINE__));
+    data_4_dusti.remove(data_4_dusti.length() - 1);
+    debugData(data_4_dusti,String(__LINE__));
     data_4_dusti.replace(replace_str, String(""));
-	data_4_dusti += String("]}");
-	if (data != "") {
+    debugData(data_4_dusti,String(__LINE__));
+    data_4_dusti += String("]}");
+    debugData(data_4_dusti,String(__LINE__));
+    if (data != "") {
         sendData(data_4_dusti, pin, host, httpPort, url, verify, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 	} else {
 		debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);

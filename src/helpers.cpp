@@ -488,7 +488,9 @@ void debugData(const String &d, const __FlashStringHelper  *msg) {
     PGM_P p = reinterpret_cast<PGM_P>(msg);
     debugData(d,p);
 }
-
+void debugData(const String&d, const String&m){
+    debugData(d,m.c_str());
+}
 void debugData(const String &d, const char *msg){
     Serial.print(F("\n****["));
     time_t now = time(nullptr);
