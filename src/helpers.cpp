@@ -486,7 +486,12 @@ String millisToTime(const unsigned long time) {
 }
 
 void debugData(String d, const char *msg){
-    Serial.print("\n**** ");
+    Serial.print("\n****[");
+    time_t now = time(nullptr);
+    String tmp=(ctime(&now));
+    tmp.trim();
+    Serial.print(tmp);
+    Serial.print("]**** ");
     Serial.print(msg);
     Serial.println(d);
 }
