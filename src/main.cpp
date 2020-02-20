@@ -1135,7 +1135,6 @@ String sensorPMS() {
 
 	}
 	if (send_now) {
-	    debugData(String(F("****************** Upload data to APIs*****************************")));
 		last_value_PMS_P0 = -1;
 		last_value_PMS_P1 = -1;
 		last_value_PMS_P2 = -1;
@@ -1903,7 +1902,8 @@ void loop() {
 	server.handleClient();
 
 	if (send_now) {
-		if (cfg::dht_read) {
+        debugData(String(F("****************** Upload data to APIs*****************************")));
+        if (cfg::dht_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
 		}
