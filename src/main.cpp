@@ -1927,9 +1927,9 @@ void loop() {
 
 		if (cfg::bme280_read && (! bme280_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BME280), DEBUG_MAX_INFO, 1);
-            debugData(result_HECA,F("BME  przed:"));
+            debugData(result_BME280,F("BME  przed:"));
 			result_BME280 = sensorBME280();                 // getting temperature, humidity and pressure (optional)
-            debugData(result_HECA,F("BME po:"));
+            debugData(result_BME280,F("BME po:"));
 
         }
 
