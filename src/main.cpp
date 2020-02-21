@@ -850,7 +850,7 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     debugData(data_4_dusti,String(__LINE__));
     debugData(data,String(__LINE__));
     if (data != "") {
-        sendData(data_4_dusti, pin, host, httpPort, url, verify, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
+        sendData(data_4_dusti, pin, host, httpPort, url, verify, nullptr, FPSTR(TXT_CONTENT_TYPE_JSON));
 	} else {
 		debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
 	}
