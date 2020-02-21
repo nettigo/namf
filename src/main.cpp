@@ -839,12 +839,16 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     debugData(data_4_dusti,String(__LINE__));
     data_4_dusti += data;
     debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
     data_4_dusti.remove(data_4_dusti.length() - 1);
     debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
     data_4_dusti.replace(replace_str, String(""));
     debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
     data_4_dusti += String("]}");
     debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
     if (data != "") {
         sendData(data_4_dusti, pin, host, httpPort, url, verify, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
 	} else {
