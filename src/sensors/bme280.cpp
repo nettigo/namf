@@ -48,6 +48,7 @@ String sensorBME280() {
         last_value_BME280_H = -1.0;
         last_value_BME280_P = -1.0;
         debug_out(String(FPSTR(SENSORS_BME280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
+        return s;
     } else {
         debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
         debug_out(Float2String(t) + " C", DEBUG_MIN_INFO, 1);
