@@ -372,8 +372,8 @@ void webserver_values() {
         page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B");
         tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
         page_content += table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B");
-        page_content += table_row_from_value(F("ESP"),F("ChipID"), String(ESP.getFlashChipId()),"");
-        page_content += table_row_from_value(F("ESP"),F("Chip Vendor ID"), String(ESP.getFlashChipVendorId()),"");
+        page_content += table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),"");
+        page_content += table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),"");
         page_content += table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz");
         page_content += table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),"");
 		page_content += FPSTR(EMPTY_ROW);
