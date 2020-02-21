@@ -1,3 +1,6 @@
+NAMF 2020-19 ()
+* both BME280 and HECA should not send to API results when communication error (still -128°C as temperature in WWW intreface)
+
 NAMF 2020-18 (202002-21)
 * we return to 80MHz on ESP8266
 * VTables in DRAM
