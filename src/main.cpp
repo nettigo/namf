@@ -771,10 +771,10 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
         client = new WiFiClientSecure;
         ssl = true;
         configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
+        static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
     } else {
         client = new WiFiClient;
     }
-    static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
     client->setTimeout(20000);
     int result = 0;
 
