@@ -1,6 +1,7 @@
-NAMF 2020-18 ()
+NAMF 2020-18 (202002-21)
 * we return to 80MHz on ESP8266
 * VTables in DRAM
+* bugfixes, hope to get more reliable
 
 NAMF 2020-17 (2020-02-19)
 * uptime is nice formatted not just seconds
