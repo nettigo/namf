@@ -1,5 +1,8 @@
 NAMF 2020-19 ()
 * both BME280 and HECA should not send to API results when communication error (still -128°C as temperature in WWW intreface)
+* changed BME280 library to fork with fixed hangs. Waiting for AF to include changes
+* (almost) all logs on Serial are with timestamps
+  
 
 NAMF 2020-18 (202002-21)
 * we return to 80MHz on ESP8266
