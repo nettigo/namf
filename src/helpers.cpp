@@ -84,11 +84,23 @@ String Var2Json(const String& name, const float value) {
 
 
 
+
 /*****************************************************************
  * Debug output                                                  *
  *****************************************************************/
 void debug_out(const String& text, const int level, const bool linebreak) {
+    static bool timestamp=true;
     if (level <= cfg::debug) {
+        if (timestamp) {
+            time_t now = time(nullptr);
+            String tmp=(ctime(&now));
+            tmp.trim();
+            tmp+=": ";
+            Serial.print(tmp);
+            timestamp=false;
+        }
+        if (linebreak) timestamp = true;
+
         if (linebreak) {
             Serial.println(text);
         } else {
