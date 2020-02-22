@@ -1,3 +1,6 @@
+NAMF 2020-20 (2020-02-22)
+* bugfix in Winsen CO2 averaging function
+
 NAMF 2020-19 (2020-02-22)
 * both BME280 and HECA should not send to API results when communication error (still -128°C as temperature in WWW intreface)
 * changed BME280 library to fork with fixed hangs. Waiting for AF to include changes
