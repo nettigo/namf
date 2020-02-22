@@ -143,6 +143,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(heca_read);
     copyToJSON_Bool(ds18b20_read);
     copyToJSON_Bool(gps_read);
+    copyToJSON_Bool(winsen_mhz14a_read);
     copyToJSON_Bool(send2dusti);
     copyToJSON_Bool(ssl_dusti);
     copyToJSON_Bool(send2madavi);
@@ -237,6 +238,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(heca_read);
             setFromJSON(ds18b20_read);
             setFromJSON(gps_read);
+            setFromJSON(winsen_mhz14a_read);
             setFromJSON(send2dusti);
             setFromJSON(ssl_dusti);
             setFromJSON(send2madavi);

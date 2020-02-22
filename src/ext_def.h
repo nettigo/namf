@@ -103,7 +103,10 @@
 
 // HECA (SHT30), temperature, pressure
 #define HECA_READ 1
-#define HECA_API_PIN 15
+#define HECA_API_PIN 7
+
+#define WINSEN_MHZ14A_READ 0
+#define WINSEN_MHZ14A_API 9
 
 // DS18B20, temperature
 #define DS18B20_READ 0

@@ -25,6 +25,7 @@
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
+#include "sensors/winsen-mzh.h"
 
 /*****************************************************************
  * check display values, return '-' if undefined                 *
@@ -316,7 +317,12 @@ void webserver_values() {
 			page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5", check_display_value(last_value_SDS_P2, -1, 1, 0), unit_PM);
 			page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM10", check_display_value(last_value_SDS_P1, -1, 1, 0), unit_PM);
 		}
-		if (cfg::pms_read) {
+        if (cfg::winsen_mhz14a_read) {
+            page_content += FPSTR(EMPTY_ROW);
+            page_content += table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
+                                                 F("ppm"));
+        }
+        if (cfg::pms_read) {
 			page_content += FPSTR(EMPTY_ROW);
 			page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0), unit_PM);
 			page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0), unit_PM);
@@ -1761,6 +1767,9 @@ void setup() {
         startAP();
     }
 
+    serialGPS.begin(9600);
+    setupWinsenMZH(serialGPS);
+
     if (cfg::gps_read) {
         serialGPS.begin(9600);
         debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
@@ -1876,6 +1885,7 @@ void loop() {
 	String result_BMP280 = "";
 	String result_BME280 = "";
 	String result_HECA = "";
+	String result_MZH14 = "";
 	String result_DS18B20 = "";
 	String result_GPS = "";
 
@@ -1918,6 +1928,7 @@ void loop() {
 		}
 
 	}
+    readWinsenMZH(serialGPS);
 
 	server.handleClient();
 
@@ -2036,12 +2047,12 @@ void loop() {
 
         if (cfg::heca_read && (! heca_init_failed)) {
 			data += result_HECA;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
-				sum_send_time += millis() - start_send;
-			}
+//			if (cfg::send2dusti) {
+//				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
+//				start_send = millis();
+//				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
+//				sum_send_time += millis() - start_send;
+//			}
 		}
         debugData(data,F("po HECA "));
 
@@ -2064,6 +2075,9 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+
+        if(cfg::winsen_mhz14a_read)
+		    data += sensorMZH();
 
 		data_sample_times += Value2Json("signal", signal_strength);
         data_sample_times.remove(data_sample_times.length()-1);
