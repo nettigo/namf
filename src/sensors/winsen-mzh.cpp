@@ -178,7 +178,7 @@ void readWinsenMZH(SoftwareSerial &serial) {
             lastRead = millis();
             samples[index++] = co2;
             last_value_WINSEN_CO2 = co2;
-            if (index > WINSEN_AVG_SAMPLE) index = 0;
+            if (index >= WINSEN_AVG_SAMPLE) index = 0;
         } //else debug_out(String("**** NO read Winsen"), DEBUG_MIN_INFO, true);
 }
 
