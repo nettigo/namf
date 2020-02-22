@@ -4,7 +4,7 @@ NAMF 2020-19 ()
 * (almost) all logs on Serial are with timestamps
   
 
-NAMF 2020-18 (202002-21)
+NAMF 2020-18 (2020-02-21)
 * we return to 80MHz on ESP8266
 * VTables in DRAM
 * bugfixes, hope to get more reliable
