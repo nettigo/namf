@@ -99,9 +99,9 @@ void debug_out(const String& text, const int level, const bool linebreak) {
             Serial.print(tmp);
             timestamp=false;
         }
-        if (linebreak) timestamp = true;
 
         if (linebreak) {
+            timestamp = true;
             Serial.println(text);
         } else {
             Serial.print(text);
