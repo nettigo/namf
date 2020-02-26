@@ -164,12 +164,12 @@ static bool read_temp_co2(SoftwareSerial &serial, unsigned int *co2, unsigned in
 #define WINSEN_AVG_SAMPLE   10
 unsigned int *samples = nullptr;
 
-void setupWinsenMZH(SoftwareSerial &serial) {
+void setupWinsenMHZ(SoftwareSerial &serial) {
     set_range(serial, RANGE_2K);
     samples = new unsigned int[WINSEN_AVG_SAMPLE];
 }
 
-void readWinsenMZH(SoftwareSerial &serial) {
+void readWinsenMHZ(SoftwareSerial &serial) {
     unsigned int co2, temp;
     static unsigned long lastRead = millis();
     static unsigned long interval = cfg::sending_intervall_ms / (WINSEN_AVG_SAMPLE+2);
@@ -184,7 +184,7 @@ void readWinsenMZH(SoftwareSerial &serial) {
         } //else debug_out(String("**** NO read Winsen"), DEBUG_MIN_INFO, true);
 }
 
-String sensorMZH() {
+String sensorMHZ() {
     String s;
     unsigned long sum = 0;
     if (!samples)
