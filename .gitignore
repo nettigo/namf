@@ -20,3 +20,4 @@ builds/*
 CMakeLists*
 cmake-build*
 src/lang/bckps/*
+.add_build_time

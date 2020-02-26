@@ -107,12 +107,23 @@ String make_header(const String& title) {
     } else {
         s.replace("{n}", "");
     }
+    String v = String(SOFTWARE_VERSION);
+#ifdef BUILD_TIME
+    v+="(";
+    char timestamp[16];
+    struct tm ts;
+    time_t t = BUILD_TIME;
+    ts = *localtime(&t);
+    strftime(timestamp,16, "%Y%m%d-%H%M%S", &ts);
+    v+=String(timestamp);
+    v+=")";
+#endif
     s.replace("{t}", title);
     s.replace("{sname}", cfg::fs_ssid);
     s.replace("{id}", esp_chipid());
     s.replace("{mac}", WiFi.macAddress());
     s.replace("{fwt}", FPSTR(INTL_FIRMWARE));
-    s.replace("{fw}", String(SOFTWARE_VERSION));
+    s.replace("{fw}", v);
     return s;
 }
 
