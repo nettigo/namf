@@ -1930,7 +1930,8 @@ void loop() {
 		}
 
 	}
-    readWinsenMZH(serialGPS);
+    if (cfg::winsen_mhz14a_read)
+	    readWinsenMZH(serialGPS);
 
 	server.handleClient();
 
