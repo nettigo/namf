@@ -1769,7 +1769,7 @@ void setup() {
 
     if (cfg::winsen_mhz14a_read) {
         serialGPS.begin(9600);
-        setupWinsenMZH(serialGPS);
+        setupWinsenMHZ(serialGPS);
     }
 
     if (cfg::gps_read) {
@@ -1887,7 +1887,7 @@ void loop() {
 	String result_BMP280 = "";
 	String result_BME280 = "";
 	String result_HECA = "";
-	String result_MZH14 = "";
+	String result_MHZ14 = "";
 	String result_DS18B20 = "";
 	String result_GPS = "";
 
@@ -1931,7 +1931,7 @@ void loop() {
 
 	}
     if (cfg::winsen_mhz14a_read)
-	    readWinsenMZH(serialGPS);
+	    readWinsenMHZ(serialGPS);
 
 	server.handleClient();
 
@@ -2080,7 +2080,7 @@ void loop() {
 		}
 
         if(cfg::winsen_mhz14a_read)
-		    data += sensorMZH();
+		    data += sensorMHZ();
 
 		data_sample_times += Value2Json("signal", signal_strength);
         data_sample_times.remove(data_sample_times.length()-1);
