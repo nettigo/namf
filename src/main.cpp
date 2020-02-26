@@ -25,7 +25,7 @@
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
-#include "sensors/winsen-mzh.h"
+#include "sensors/winsen-mhz.h"
 
 /*****************************************************************
  * check display values, return '-' if undefined                 *
