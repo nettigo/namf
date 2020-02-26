@@ -1767,8 +1767,10 @@ void setup() {
         startAP();
     }
 
-    serialGPS.begin(9600);
-    setupWinsenMZH(serialGPS);
+    if (cfg::winsen_mhz14a_read) {
+        serialGPS.begin(9600);
+        setupWinsenMZH(serialGPS);
+    }
 
     if (cfg::gps_read) {
         serialGPS.begin(9600);
