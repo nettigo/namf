@@ -1,4 +1,6 @@
-NAMF 2020-21 ()
+NAMF 2020-22 ()
+
+NAMF 2020-21 (2020-02-27)
 * default Winsen MH-Z14A CO2 range set to 2000 ppm
 * Winsens averaging function should not lower result in first measurement
 * polish fw can be built with build timestamp in page header (create .add_build_time empty file in root directory)
