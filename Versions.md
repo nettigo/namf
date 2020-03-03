@@ -1,4 +1,7 @@
-NAMF 2020-23 ()
+NAMF 2020-24 ()
+
+NAMF 2020-23 (2020-03-3)
+* technical release to make sure binaries on update server correspond to code in GH
 
 NAMF 2020-22 (2020-03-3)
 * check for updates every hour
