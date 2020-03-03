@@ -1,4 +1,8 @@
-NAMF 2020-22 ()
+NAMF 2020-23 ()
+
+NAMF 2020-22 (2020-03-3)
+* check for updates every hour
+* don't check for update every time when sending data 
 
 NAMF 2020-21 (2020-02-27)
 * default Winsen MH-Z14A CO2 range set to 2000 ppm
