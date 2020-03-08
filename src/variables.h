@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-23"
+#define SOFTWARE_VERSION  "NAMF-2020-24"
 #endif
 #include "defines.h"
 #include <SoftwareSerial.h>

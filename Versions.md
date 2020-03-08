@@ -1,4 +1,5 @@
-NAMF 2020-24 ()
+NAMF 2020-24 (2020-03-08)
+* added Content-Length to headers when sending data to API. Should fix issue #3 
 
 NAMF 2020-23 (2020-03-3)
 * technical release to make sure binaries on update server correspond to code in GH

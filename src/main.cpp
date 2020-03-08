@@ -798,6 +798,7 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
     debug_out(String(url), DEBUG_MIN_INFO, 1);
     if (http->begin(*client, host, httpPort, url, ssl)) {
         http->addHeader(F("Content-Type"), contentType);
+        http->addHeader(F("Content-Length"), String(data.length()));
         http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
