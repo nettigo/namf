@@ -35,6 +35,15 @@
 // OpenSenseMap
 #define SENSEBOXID ""
 
+enum LoggerEntry
+{
+	LoggerDusti,
+	LoggerMadavi,
+	LoggerSensemap,
+	LoggerFSapp,
+	LoggerInflux,
+	LoggerCustom
+};
 
 // IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
 
