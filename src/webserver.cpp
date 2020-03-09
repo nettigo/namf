@@ -318,7 +318,10 @@ void webserver_config() {
         page_content += form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602);
         page_content += form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27);
         page_content += form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f);
+        page_content += F("</select></br>");
+        page_content += form_checkbox("has_ledbar_32", FPSTR(INTL_LEDBAR_32), has_ledbar_32);
         page_content += F("</select></br></br>");
+
         if (wificonfig_loop) { //outputPower should be able to change in both modes
             page_content += form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5);
         }
@@ -498,6 +501,7 @@ void webserver_config() {
                     break;
             }
         }
+        readBoolParam(has_ledbar_32);
 
 #undef readCharParam
 #undef readBoolParam
@@ -522,6 +526,7 @@ void webserver_config() {
         page_content += line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602));
         page_content += line_from_value(FPSTR(INTL_LCD2004_27), String(has_lcd2004_27));
         page_content += line_from_value(FPSTR(INTL_LCD2004_3F), String(has_lcd2004_3f));
+        page_content += line_from_value(FPSTR(INTL_LEDBAR_32), String(has_ledbar_32));
         page_content += line_from_value(FPSTR(INTL_DEBUG_LEVEL), String(debug));
         page_content += line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms));
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("CSV")), String(send2csv));

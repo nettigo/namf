@@ -135,6 +135,9 @@
 // LCD Display LCD2004 (0x3F)
 #define HAS_LCD2004_3F 0
 
+// RGB LED BAR (0x32)
+#define HAS_LEDBAR_32 0
+
 //default TX trasnmit power
 #define TX_OUTPUT_POWER 20.5
 

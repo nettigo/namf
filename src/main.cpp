@@ -25,6 +25,7 @@
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
+#include "display/ledbar.h"
 
 /*****************************************************************
  * check display values, return '-' if undefined                 *
@@ -1678,6 +1679,10 @@ static void logEnabledDisplays() {
 	if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
 	}
+	if (cfg::has_ledbar_32) {
+		debug_out(F("Show on LED Bar..."), DEBUG_MIN_INFO, 1);
+	}
+
 }
 
 void time_is_set (void) {

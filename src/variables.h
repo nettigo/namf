@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-18"
+#define SOFTWARE_VERSION  "NAMF-2020-25"
 #endif
 #include "defines.h"
 #include <SoftwareSerial.h>
@@ -78,6 +78,7 @@ namespace cfg {
     extern bool has_lcd1602_27;
     extern bool has_lcd2004_27;
     extern bool has_lcd2004_3f;
+    extern bool has_ledbar_32;
     extern float outputPower;
     extern int  debug;
 

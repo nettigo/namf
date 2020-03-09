@@ -146,6 +146,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(has_lcd1602_27);
     copyToJSON_Bool(has_lcd2004_27);
     copyToJSON_Bool(has_lcd2004_3f);
+    copyToJSON_Bool(has_ledbar_32);
     copyToJSON_String(debug);
     copyToJSON_String(sending_intervall_ms);
     copyToJSON_String(time_for_wifi_config);
@@ -240,6 +241,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(has_lcd1602_27);
             setFromJSON(has_lcd2004_27);
             setFromJSON(has_lcd2004_3f);
+            setFromJSON(has_ledbar_32);
             setFromJSON(debug);
             setFromJSON(sending_intervall_ms);
             setFromJSON(time_for_wifi_config);
