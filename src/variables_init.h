@@ -90,9 +90,6 @@ enum class PmSensorCmd {
     VersionDate
 };
 
-char *basic_auth_influx = NULL;
-char *basic_auth_custom = NULL;
-
 long int sample_count = 0;
 bool bmp280_init_failed = false;
 bool bme280_init_failed = false;

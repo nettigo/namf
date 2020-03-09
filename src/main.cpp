@@ -113,31 +113,6 @@ void readConfig() {
 	}
 }
 
-
-/*****************************************************************
- * Base64 encode user:password                                   *
- *****************************************************************/
-void create_basic_auth_strings() {
-    if (cfg::user_custom[0] != '\0' || cfg::pwd_custom[0] != '\0') {
-        String tmp =
-                String("Basic ") + base64::encode(String(cfg::user_custom) + String(":") + String(cfg::pwd_custom));
-        unsigned int size = strlen(tmp.c_str()) + 1;
-        basic_auth_custom = new char[size];
-        strncpy(basic_auth_custom, tmp.c_str(), size);
-
-    }
-
-    if (cfg::user_influx[0] != '\0' || cfg::pwd_influx[0] != '\0') {
-        String tmp =
-                String("Basic ") + base64::encode(String(cfg::user_influx) + String(":") + String(cfg::pwd_influx));
-        unsigned int size = strlen(tmp.c_str()) + 1;
-        basic_auth_influx = new char[size];
-        strncpy(basic_auth_influx, tmp.c_str(), size);
-    }
-}
-
-
-
 String tmpl(const String& patt, const String& value) {
 	String s = patt;
 	s.replace("{v}", value);
@@ -1778,7 +1753,6 @@ void setup() {
         debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
         debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
         updateFW();
-        create_basic_auth_strings();
     } else {
         startAP();
     }
