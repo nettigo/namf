@@ -18,6 +18,7 @@ String sensorHECA() {
     } else {
         last_value_HECA_T = -128.0;
         last_value_HECA_H = -1.0;
+        return s;
     }
     s += Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T));
     s += Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H));

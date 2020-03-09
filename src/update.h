@@ -38,6 +38,7 @@ t_httpUpdate_return tryUpdate(String const ver) {
 };
 
 void verifyUpdate (t_httpUpdate_return result) {
+    last_update_attempt = millis();
     switch (result) {
         case HTTP_UPDATE_FAILED:
             display_debug(F("[update] Update failed."),"");

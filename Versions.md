@@ -1,4 +1,34 @@
-NAMF 2020-18 (202002-21)
+NAMF 2020-26 ()
+
+NAMF 2020-25 (2020-03-09)
+* merged PR#4 with Logger differentiation based on Luftdaten code
+ 
+NAMF 2020-24 (2020-03-08)
+* added Content-Length to headers when sending data to API. Should fix issue #3 
+
+NAMF 2020-23 (2020-03-3)
+* technical release to make sure binaries on update server correspond to code in GH
+
+NAMF 2020-22 (2020-03-3)
+* check for updates every hour
+* don't check for update every time when sending data 
+
+NAMF 2020-21 (2020-02-27)
+* default Winsen MH-Z14A CO2 range set to 2000 ppm
+* Winsens averaging function should not lower result in first measurement
+* polish fw can be built with build timestamp in page header (create .add_build_time empty file in root directory)
+
+NAMF 2020-20 (2020-02-22)
+* bugfix in Winsen CO2 averaging function
+
+NAMF 2020-19 (2020-02-22)
+* both BME280 and HECA should not send to API results when communication error (still -128°C as temperature in WWW intreface)
+* changed BME280 library to fork with fixed hangs. Waiting for AF to include changes
+* (almost) all logs on Serial are with timestamps
+* don't send HECA logs to Luftdaten API
+* support for CO2 sensor - Winsen MH-Z14A, connect it to D6/D5 instead of GPS. So CO2 sensor or GPS no both  
+
+NAMF 2020-18 (2020-02-21)
 * we return to 80MHz on ESP8266
 * VTables in DRAM
 * bugfixes, hope to get more reliable

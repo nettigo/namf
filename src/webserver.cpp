@@ -107,12 +107,23 @@ String make_header(const String& title) {
     } else {
         s.replace("{n}", "");
     }
+    String v = String(SOFTWARE_VERSION);
+#ifdef BUILD_TIME
+    v+="(";
+    char timestamp[16];
+    struct tm ts;
+    time_t t = BUILD_TIME;
+    ts = *localtime(&t);
+    strftime(timestamp,16, "%Y%m%d-%H%M%S", &ts);
+    v+=String(timestamp);
+    v+=")";
+#endif
     s.replace("{t}", title);
     s.replace("{sname}", cfg::fs_ssid);
     s.replace("{id}", esp_chipid());
     s.replace("{mac}", WiFi.macAddress());
     s.replace("{fwt}", FPSTR(INTL_FIRMWARE));
-    s.replace("{fw}", String(SOFTWARE_VERSION));
+    s.replace("{fw}", v);
     return s;
 }
 
@@ -302,6 +313,7 @@ void webserver_config() {
             page_content += form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read);
             page_content += form_checkbox_sensor("heca_read", FPSTR(INTL_HECA), heca_read);
             page_content += form_checkbox_sensor("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read);
+            page_content += form_checkbox("winsen_mhz14a_read", FPSTR(INTL_MHZ14A), winsen_mhz14a_read);
             page_content += form_checkbox("gps_read", FPSTR(INTL_NEO6M), gps_read);
             page_content += F("<br/><br/>\n<b>");
         }
@@ -450,6 +462,7 @@ void webserver_config() {
             readBoolParam(heca_read);
             readBoolParam(ds18b20_read);
             readBoolParam(gps_read);
+            readBoolParam(winsen_mhz14a_read);
 
             readIntParam(debug);
             readTimeParam(sending_intervall_ms);

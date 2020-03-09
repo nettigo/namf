@@ -39,5 +39,11 @@ def after_build(source, target, env):
     print("Uploading {0} to {1}".format(firmware_name, dest))
     shutil.copy(target[0].path, dest)
 
+    firmware_path = str(source[0].path)
+    firmware_name = basename(firmware_path)
+    dest = 'builds/latest_{0}.elf'.format(lang)
+    print("Uploading {0} to {1}".format(firmware_name, dest))
+    shutil.copy(source[0].path, dest)
+
 
 env.AddPostAction("$BUILD_DIR/firmware.bin", after_build)

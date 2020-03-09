@@ -61,6 +61,7 @@ namespace cfg {
     extern bool bmp280_read;
     extern bool bme280_read;
     extern bool heca_read;
+    extern bool winsen_mhz14a_read;
     extern bool ds18b20_read;
     extern bool gps_read;
     extern bool send2dusti;
@@ -206,6 +207,7 @@ extern double last_value_BME280_H ;
 extern double last_value_BME280_P ;
 extern double last_value_HECA_T ;
 extern double last_value_HECA_H ;
+extern unsigned int last_value_WINSEN_CO2 ;
 extern double last_value_DS18B20_T ;
 extern double last_value_GPS_lat ;
 extern double last_value_GPS_lon ;

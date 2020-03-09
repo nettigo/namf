@@ -25,6 +25,7 @@
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
+#include "sensors/winsen-mhz.h"
 #include "display/ledbar.h"
 
 /*****************************************************************
@@ -112,31 +113,6 @@ void readConfig() {
 		debug_out(F("failed to mount FS"), DEBUG_ERROR, 1);
 	}
 }
-
-
-/*****************************************************************
- * Base64 encode user:password                                   *
- *****************************************************************/
-void create_basic_auth_strings() {
-    if (cfg::user_custom[0] != '\0' || cfg::pwd_custom[0] != '\0') {
-        String tmp =
-                String("Basic ") + base64::encode(String(cfg::user_custom) + String(":") + String(cfg::pwd_custom));
-        unsigned int size = strlen(tmp.c_str()) + 1;
-        basic_auth_custom = new char[size];
-        strncpy(basic_auth_custom, tmp.c_str(), size);
-
-    }
-
-    if (cfg::user_influx[0] != '\0' || cfg::pwd_influx[0] != '\0') {
-        String tmp =
-                String("Basic ") + base64::encode(String(cfg::user_influx) + String(":") + String(cfg::pwd_influx));
-        unsigned int size = strlen(tmp.c_str()) + 1;
-        basic_auth_influx = new char[size];
-        strncpy(basic_auth_influx, tmp.c_str(), size);
-    }
-}
-
-
 
 String tmpl(const String& patt, const String& value) {
 	String s = patt;
@@ -317,7 +293,12 @@ void webserver_values() {
 			page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5", check_display_value(last_value_SDS_P2, -1, 1, 0), unit_PM);
 			page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM10", check_display_value(last_value_SDS_P1, -1, 1, 0), unit_PM);
 		}
-		if (cfg::pms_read) {
+        if (cfg::winsen_mhz14a_read) {
+            page_content += FPSTR(EMPTY_ROW);
+            page_content += table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
+                                                 F("ppm"));
+        }
+        if (cfg::pms_read) {
 			page_content += FPSTR(EMPTY_ROW);
 			page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0), unit_PM);
 			page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0), unit_PM);
@@ -763,10 +744,9 @@ static void configureCACertTrustAnchor(WiFiClientSecure* client) {
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
-void
-sendData(const String &data, const int pin, const char *host, const int httpPort, const char *url, const bool verify,
-         const char *basic_auth_string, const String &contentType) {
+void sendData(const LoggerEntry logger, const String &data, const int pin, const char *host, const int httpPort, const char *url, const bool verify) {
     WiFiClient *client;
+	const __FlashStringHelper *contentType;
     bool ssl = false;
     if (httpPort == 443) {
         client = new WiFiClientSecure;
@@ -778,6 +758,16 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
     }
     client->setTimeout(20000);
     int result = 0;
+	
+	switch (logger)
+	{
+	case LoggerInflux:
+		contentType = FPSTR(TXT_CONTENT_TYPE_INFLUXDB);
+		break;
+	default:
+		contentType = FPSTR(TXT_CONTENT_TYPE_JSON);
+		break;
+	}
 
     debug_out(F("Start connecting to "), DEBUG_MIN_INFO, 0);
     debug_out(host, DEBUG_MIN_INFO, 1);
@@ -792,14 +782,21 @@ sendData(const String &data, const int pin, const char *host, const int httpPort
     debug_out(String(httpPort), DEBUG_MIN_INFO, 1);
     debug_out(String(url), DEBUG_MIN_INFO, 1);
     if (http->begin(*client, host, httpPort, url, ssl)) {
+		if (logger == LoggerCustom && (*cfg::user_custom || *cfg::pwd_custom))
+		{
+			http->setAuthorization(cfg::user_custom, cfg::pwd_custom);
+		}
+		if (logger == LoggerInflux && (*cfg::user_influx || *cfg::pwd_influx))
+		{
+			http->setAuthorization(cfg::user_influx, cfg::pwd_influx);
+		}
+		
         http->addHeader(F("Content-Type"), contentType);
         http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
-        if (basic_auth_string) {
-            http -> addHeader(F("Authorization"), String(basic_auth_string) + "\r\n");
-        }
+        
         result = http->POST(data);
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
@@ -851,7 +848,7 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     debugData(data_4_dusti,String(__LINE__));
     debugData(data,String(__LINE__));
     if (data != "") {
-        sendData(data_4_dusti, pin, host, httpPort, url, verify, nullptr, FPSTR(TXT_CONTENT_TYPE_JSON));
+        sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
 	} else {
 		debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
 	}
@@ -1761,9 +1758,13 @@ void setup() {
         debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
         debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
         updateFW();
-        create_basic_auth_strings();
     } else {
         startAP();
+    }
+
+    if (cfg::winsen_mhz14a_read) {
+        serialGPS.begin(9600);
+        setupWinsenMHZ(serialGPS);
     }
 
     if (cfg::gps_read) {
@@ -1814,7 +1815,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2madavi) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
-		sendData(data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
 		sum_send_time += millis() - start_send;
 	}
     debugData(data,F("po madavi:"));
@@ -1824,14 +1825,14 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		String sensemap_path = URL_SENSEMAP;
 		sensemap_path.replace("BOXID", cfg::senseboxid);
-		sendData(data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
 		sum_send_time += millis() - start_send;
 	}
 
 	if (cfg::send2fsapp) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
-		sendData(data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false, NULL, FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
 		sum_send_time += millis() - start_send;
 	}
 
@@ -1842,8 +1843,8 @@ static unsigned long sendDataToOptionalApis(const String &data) {
         const String data_4_influxdb = create_influxdb_string(data);
         debugData(data,F("po influx_string:"));
 
-        sendData(data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false, basic_auth_influx, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN));
-        sum_send_time += millis() - start_send;
+        sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
+		sum_send_time += millis() - start_send;
     }
     debugData(data,F("po influx "));
 
@@ -1863,7 +1864,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
-		sendData(data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false, basic_auth_custom, FPSTR(TXT_CONTENT_TYPE_JSON));
+		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
 		sum_send_time += millis() - start_send;
 	}
     debugData(data,F("po custom "));
@@ -1881,6 +1882,7 @@ void loop() {
 	String result_BMP280 = "";
 	String result_BME280 = "";
 	String result_HECA = "";
+	String result_MHZ14 = "";
 	String result_DS18B20 = "";
 	String result_GPS = "";
 
@@ -1923,6 +1925,8 @@ void loop() {
 		}
 
 	}
+    if (cfg::winsen_mhz14a_read)
+	    readWinsenMHZ(serialGPS);
 
 	server.handleClient();
 
@@ -2041,12 +2045,12 @@ void loop() {
 
         if (cfg::heca_read && (! heca_init_failed)) {
 			data += result_HECA;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
-				sum_send_time += millis() - start_send;
-			}
+//			if (cfg::send2dusti) {
+//				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
+//				start_send = millis();
+//				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
+//				sum_send_time += millis() - start_send;
+//			}
 		}
         debugData(data,F("po HECA "));
 
@@ -2069,6 +2073,9 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+
+        if(cfg::winsen_mhz14a_read)
+		    data += sensorMHZ();
 
 		data_sample_times += Value2Json("signal", signal_strength);
         data_sample_times.remove(data_sample_times.length()-1);

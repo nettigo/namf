@@ -33,6 +33,7 @@ namespace cfg {
     bool bmp280_read = BMP280_READ;
     bool bme280_read = BME280_READ;
     bool heca_read = HECA_READ;
+    bool winsen_mhz14a_read = WINSEN_MHZ14A_READ;
     bool ds18b20_read = DS18B20_READ;
     bool gps_read = GPS_READ;
     bool send2dusti = SEND2DUSTI;
@@ -89,9 +90,6 @@ enum class PmSensorCmd {
     ContinuousMode,
     VersionDate
 };
-
-char *basic_auth_influx = NULL;
-char *basic_auth_custom = NULL;
 
 long int sample_count = 0;
 bool bmp280_init_failed = false;
@@ -187,6 +185,7 @@ double last_value_BME280_H = -1.0;
 double last_value_BME280_P = -1.0;
 double last_value_HECA_T = -128.0;
 double last_value_HECA_H = -1.0;
+unsigned int last_value_WINSEN_CO2 = 0;
 double last_value_DS18B20_T = -1.0;
 double last_value_GPS_lat = -200.0;
 double last_value_GPS_lon = -200.0;

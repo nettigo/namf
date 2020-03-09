@@ -84,12 +84,24 @@ String Var2Json(const String& name, const float value) {
 
 
 
+
 /*****************************************************************
  * Debug output                                                  *
  *****************************************************************/
 void debug_out(const String& text, const int level, const bool linebreak) {
+    static bool timestamp=true;
     if (level <= cfg::debug) {
+        if (timestamp) {
+            time_t now = time(nullptr);
+            String tmp=(ctime(&now));
+            tmp.trim();
+            tmp+=": ";
+            Serial.print(tmp);
+            timestamp=false;
+        }
+
         if (linebreak) {
+            timestamp = true;
             Serial.println(text);
         } else {
             Serial.print(text);
@@ -131,6 +143,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(heca_read);
     copyToJSON_Bool(ds18b20_read);
     copyToJSON_Bool(gps_read);
+    copyToJSON_Bool(winsen_mhz14a_read);
     copyToJSON_Bool(send2dusti);
     copyToJSON_Bool(ssl_dusti);
     copyToJSON_Bool(send2madavi);
@@ -226,6 +239,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(heca_read);
             setFromJSON(ds18b20_read);
             setFromJSON(gps_read);
+            setFromJSON(winsen_mhz14a_read);
             setFromJSON(send2dusti);
             setFromJSON(ssl_dusti);
             setFromJSON(send2madavi);
