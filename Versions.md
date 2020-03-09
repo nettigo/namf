@@ -1,3 +1,8 @@
+NAMF 2020-26 ()
+
+NAMF 2020-25 (2020-03-09)
+* merged PR#4 with Logger differentiation based on Luftdaten code
+ 
 NAMF 2020-24 (2020-03-08)
 * added Content-Length to headers when sending data to API. Should fix issue #3 
 
