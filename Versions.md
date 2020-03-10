@@ -1,4 +1,5 @@
 NAMF 2020-26 ()
+* added I2C RGB LED Bar support
 
 NAMF 2020-25 (2020-03-09)
 * merged PR#4 with Logger differentiation based on Luftdaten code
