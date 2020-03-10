@@ -1974,7 +1974,7 @@ void loop() {
 		display_values();
 	}
 
-	if (cfg::has_ledbar_32) {
+	if ((cfg::has_ledbar_32) && (send_now)) {
 		displayLEDBar();
 	}
 
