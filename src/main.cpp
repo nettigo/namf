@@ -1974,6 +1974,10 @@ void loop() {
 		display_values();
 	}
 
+	if (cfg::has_ledbar_32) {
+		displayLEDBar();
+	}
+
 	if (send_now) {
 		debug_out(F("Creating data string:"), DEBUG_MIN_INFO, 1);
 		String data = FPSTR(data_first_part);
