@@ -482,7 +482,7 @@ void webserver_data_json() {
 	}
 	String s2 = F(", \"age\":\"");
 	s2 += String((long)((age + 500) / 1000));
-	s2 += String(F(", \"measurements\":\""));
+	s2 += String(F("\", \"measurements\":\""));
 	s2 += String((unsigned long)(count_sends));
 	s2 += F("\", \"sensordatavalues\"");
 	debug_out(F("replace with: "), DEBUG_MIN_INFO, 0);
