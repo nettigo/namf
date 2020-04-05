@@ -1,4 +1,7 @@
-NAMF 2020-27 ()
+NAMF 2020-28
+
+NAMF 2020-27 (2020-04-05)
+* fixed malformed JSON in /data.json (merged PR#5)
 
 NAMF 2020-26 (2020-03-17)
 * added I2C RGB LED Bar support
