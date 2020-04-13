@@ -51,6 +51,7 @@ namespace cfg {
     bool has_lcd1602_27 = HAS_LCD1602_27;
     bool has_lcd2004_27 = HAS_LCD2004_27;
     bool has_lcd2004_3f = HAS_LCD2004_3F;
+    bool show_wifi_info = SHOW_WIFI_INFO;
     bool has_ledbar_32 = HAS_LEDBAR_32;
     float outputPower = TX_OUTPUT_POWER;
     int debug = DEBUG;
