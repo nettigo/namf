@@ -502,10 +502,10 @@ void webserver_config() {
         if (server.hasArg("has_lcd")) {
             switch (server.arg("lcd_type").toInt()) {
                 case 1:
-                    has_lcd1602 = true;
+                    has_lcd1602_27 = true;
                     break;
                 case 2:
-                    has_lcd1602_27 = true;
+                    has_lcd1602 = true;
                     break;
                 case 3:
                     has_lcd2004_27 = true;
