@@ -1380,7 +1380,9 @@ void display_values() {
 	if (cfg::gps_read) {
 		screens[screen_count++] = 4;
 	}
-	screens[screen_count++] = 5;	// Wifi info
+	if (cfg::show_wifi_info) {
+		screens[screen_count++] = 5;	// Wifi info
+	}
 	screens[screen_count++] = 6;	// chipID, firmware and count of measurements
 	if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
 		switch (screens[next_display_count % screen_count]) {
@@ -1467,30 +1469,30 @@ void display_values() {
 // T/H: -10.0°C/100.0%
 // T/P: -10.0°C/1000hPa
 
-	switch (screens[next_display_count % screen_count]) {
-	case (1):
-		display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
-		display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6);
-		break;
-	case (2):
-		display_lines[0] = "T: " + check_display_value(t_value, -128, 1, 6) + char(223) + "C";
-		display_lines[1] = "H: " + check_display_value(h_value, -1, 1, 6) + "%";
-		break;
-	case (3):
-		display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 11);
-		display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 11);
-		break;
-	case (4):
-		display_lines[0] = WiFi.localIP().toString();
-		display_lines[1] = WiFi.SSID();
-		break;
-	case (5):
-		display_lines[0] = "ID: " + esp_chipid();
-		display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
-		break;
-	}
-
 	if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
+		switch (screens[next_display_count % screen_count]) {
+		case (1):
+			display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
+			display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6);
+			break;
+		case (2):
+			display_lines[0] = "T: " + check_display_value(t_value, -128, 1, 6) + char(223) + "C";
+			display_lines[1] = "H: " + check_display_value(h_value, -1, 1, 6) + "%";
+			break;
+		case (3):
+			display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 11);
+			display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 11);
+			break;
+		case (4):
+			display_lines[0] = WiFi.localIP().toString();
+			display_lines[1] = WiFi.SSID();
+			break;
+		case (5):
+			display_lines[0] = "ID: " + esp_chipid();
+			display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
+			break;
+		}
+
 		char_lcd->clear();
 		char_lcd->setCursor(0, 0);
 		char_lcd->print(display_lines[0]);

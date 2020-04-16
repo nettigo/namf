@@ -46,6 +46,7 @@ const char INTL_LCD1602_3F[] PROGMEM = "LCD 1602 (I2C: 0x3F)";
 const char INTL_LCD2004_27[] PROGMEM = "LCD 2004 (I2C: 0x27)";
 const char INTL_LCD2004_3F[] PROGMEM = "LCD 2004 (I2C: 0x3F)";
 const char INTL_LEDBAR_32[] PROGMEM = "RGB LED BAR (I2C: 0x32)";
+const char INTL_SHOW_WIFI_INFO[] PROGMEM = "A Wi-Fi kapcsolat adatainak megjelenítése az LCD-n";
 const char INTL_DEBUG_LEVEL[] PROGMEM = "Debug&nbsp;Level";
 const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Mérési intervallum";
 const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Hotspot mód időtartama";

@@ -150,6 +150,9 @@ enum LoggerEntry
 // RGB LED BAR (0x32)
 #define HAS_LEDBAR_32 0
 
+// show wifi info on LCD display
+#define SHOW_WIFI_INFO 1
+
 //default TX trasnmit power
 #define TX_OUTPUT_POWER 20.5
 
