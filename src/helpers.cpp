@@ -5,6 +5,18 @@
 #include "variables.h"
 #include "helpers.h"
 
+int32_t calcWiFiSignalQuality(int32_t rssi) {
+    if (rssi > -50) {
+        rssi = -50;
+    }
+    if (rssi < -100) {
+        rssi = -100;
+    }
+    return (rssi + 100) * 2;
+}
+
+
+
 /*****************************************************************
  * convert float to string with a                                *
  * precision of two (or a given number of) decimal places        *

@@ -7,6 +7,8 @@
 #include "Arduino.h"
 #include <FS.h>                     // must be first
 
+int32_t calcWiFiSignalQuality(int32_t rssi);
+
 void debug_out(const String& text, const int level, const bool linebreak);
 
 //declarations for changing .ino to .cpp
