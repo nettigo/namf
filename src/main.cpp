@@ -1480,14 +1480,18 @@ void display_values() {
 			display_lines[1] = "H: " + check_display_value(h_value, -1, 1, 6) + "%";
 			break;
 		case (3):
+			display_lines[0] = "HECA T: " + check_display_value(t_hc_value, -128, 1, 6) + " °C";
+			display_lines[1] = "HECA H: " + check_display_value(h_hc_value, -1, 1, 6) + " %";
+			break;
+		case (4):
 			display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 11);
 			display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 11);
 			break;
-		case (4):
+		case (5):
 			display_lines[0] = WiFi.localIP().toString();
 			display_lines[1] = WiFi.SSID();
 			break;
-		case (5):
+		case (6):
 			display_lines[0] = "ID: " + esp_chipid();
 			display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
 			break;
