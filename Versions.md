@@ -1,4 +1,8 @@
-NAMF 2020-28
+NAMF 2020-29 ()
+
+NAMF 2020-28 (2020-04-24)
+* option to disable displaying WiFi SSID/IP addr
+* code cleanup - moved some display functions to separate files
 
 NAMF 2020-27 (2020-04-05)
 * fixed malformed JSON in /data.json (merged PR#5)
