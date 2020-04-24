@@ -5,6 +5,18 @@
 #include "variables.h"
 #include "helpers.h"
 
+int32_t calcWiFiSignalQuality(int32_t rssi) {
+    if (rssi > -50) {
+        rssi = -50;
+    }
+    if (rssi < -100) {
+        rssi = -100;
+    }
+    return (rssi + 100) * 2;
+}
+
+
+
 /*****************************************************************
  * convert float to string with a                                *
  * precision of two (or a given number of) decimal places        *
@@ -159,6 +171,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(has_lcd1602_27);
     copyToJSON_Bool(has_lcd2004_27);
     copyToJSON_Bool(has_lcd2004_3f);
+    copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(has_ledbar_32);
     copyToJSON_String(debug);
     copyToJSON_String(sending_intervall_ms);
@@ -255,6 +268,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(has_lcd1602_27);
             setFromJSON(has_lcd2004_27);
             setFromJSON(has_lcd2004_3f);
+            setFromJSON(show_wifi_info);
             setFromJSON(has_ledbar_32);
             setFromJSON(debug);
             setFromJSON(sending_intervall_ms);
