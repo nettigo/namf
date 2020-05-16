@@ -13,6 +13,8 @@
 
 extern void updateFW(const String host, const String port, const String path);
 extern void updateFW();
+//latest stack dump
+void webserver_dump_stack();
 
 void sendHttpRedirect(ESP8266WebServer &httpServer);
 /*****************************************************************

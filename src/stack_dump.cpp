@@ -1,11 +1,10 @@
 #include "stack_dump.h"
 
 extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack, uint32_t stack_end) {
-    register uint32_t sp asm("a1");
     cont_t g_cont __attribute__ ((aligned (16)));
     File out;
 
-    out = SPIFFS.open("stack_dump", "w");
+    out = SPIFFS.open("/stack_dump", "w");
     time_t now = time(nullptr);
     char tmp[48];
     strncpy(tmp, ctime(&now), 47);
@@ -13,7 +12,6 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
 
     uint32_t cont_stack_start = (uint32_t) &(g_cont.stack);
     uint32_t cont_stack_end = (uint32_t) g_cont.stack_end;
-    uint32_t stack_end2 = stack_end;
     uint32_t offset = 0;
     if (rst_info->reason == REASON_SOFT_WDT_RST) {
         offset = 0x1b0;

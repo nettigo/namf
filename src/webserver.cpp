@@ -62,7 +62,23 @@ bool webserver_request_auth() {
     }
     return true;
 }
+void webserver_dump_stack(){
+    if (!SPIFFS.exists ("/stack_dump")) {
+        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "No stack dump");
+        return;
+    }
+    File dump;
+    char buf[100];
+    dump = SPIFFS.open("/stack_dump","r");
+    server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "");
+    unsigned size = dump.size();
+    for (byte i=0; i<=size/100; i++) {
+        dump.readBytes(buf,99);
+        server.sendContent(buf);
+    }
 
+}
 /*****************************************************************
  * Webserver root: show all options                              *
  *****************************************************************/
