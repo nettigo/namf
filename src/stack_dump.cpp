@@ -21,9 +21,9 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
         offset = 0x10;
     }
     if (stack > cont_stack_start && stack < cont_stack_end) {
-        out.print("ctx: cont");
+        out.println("ctx: cont");
     } else {
-        out.print("ctx: sys");
+        out.println("ctx: sys");
     }
 
 
@@ -35,7 +35,7 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
         bool looksLikeStackFrame = (values[2] == pos + 0x10);
         snprintf(tmp,47, "%08x:  %08x %08x %08x %08x %c", pos, values[0], values[1], values[2], values[3],
                 (looksLikeStackFrame) ? '<' : ' ');
-        out.print(tmp);
+        out.println(tmp);
     }
     out.close();
 
