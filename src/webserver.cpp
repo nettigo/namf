@@ -77,6 +77,8 @@ void webserver_dump_stack(){
         dump.readBytes(buf,99);
         server.sendContent(buf);
     }
+//    sprintf(buf,"File size: %i bytes\n",size);
+//    server.sendContent(buf);
 
 }
 /*****************************************************************

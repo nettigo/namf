@@ -8,5 +8,6 @@
 #include <cont.h>
 #include "FS.h"
 #include <user_interface.h>
+#include "variables.h"
 
 #endif //NAMF_STACK_DUMP_H

@@ -9,8 +9,11 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
     time_t now = time(nullptr);
     char tmp[48];
     strncpy(tmp, ctime(&now), 47);
-    out.println(tmp);
-
+    out.print(tmp);
+    out.println(SOFTWARE_VERSION);
+    out.println(INTL_LANG);
+    out.println(ESP.getSketchMD5());
+    out.println();
     uint32_t cont_stack_start = (uint32_t) &(g_cont.stack);
     uint32_t cont_stack_end = (uint32_t) g_cont.stack_end;
     uint32_t offset = 0;
@@ -39,11 +42,6 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
             snprintf(tmp,47,"Unknown reset cause: %i", rst_info->reason);
             out.println(tmp);
     }
-    if (rst_info->reason == REASON_SOFT_WDT_RST) {
-
-    } else if (rst_info->reason == REASON_EXCEPTION_RST) {
-    } else if (rst_info->reason == REASON_WDT_RST) {
-    }
 
     out.println(F("\n>>>stack>>>\n"));
     if (stack - offset > cont_stack_start && stack - offset < cont_stack_end) {
@@ -67,4 +65,5 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
         out.println(F("<<<stack<<<\n\n\n\n\n\n"));
     }
     out.close();
+    delay(30);
 }
