@@ -1,4 +1,8 @@
-NAMF 2020-29 ()
+NAMF 2020-30 ()
+
+NAMF 2020-29 (2020-05-18)
+* in case of crash, stack dump will be saved in /stack_dump file on SPIFFS
+* new url /stack_dump shows latest stack dump
 
 NAMF 2020-28 (2020-04-24)
 * option to disable displaying WiFi SSID/IP addr
