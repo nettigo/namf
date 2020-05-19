@@ -16,10 +16,10 @@ void displayLEDBar() {
         pm10 = last_value_PMS_P1;
     }
 
-    if (pm10 < 1) {
+    if (pm10 < 0.1) {
         // disable LED
         lightLED(0, 0, 0, 0, 0);
-    } else if ((pm10 >= 1) && (pm10 < 12)) {
+    } else if ((pm10 >= 0.1) && (pm10 < 12)) {
         // 1 LEDs in green
         lightLED(0, 1, 0, 150, 0);
     } else if ((pm10 >= 12) && (pm10 < 25)) {        
