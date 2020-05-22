@@ -1502,6 +1502,14 @@ void setup() {
     Serial.print(F("Chip ID: "));
     Serial.println(esp_chipid());
 
+    FSInfo fs_info;
+    SPIFFS.info(fs_info);
+    Serial.print(F("SPIFFS size (kB): "));
+    Serial.println(fs_info.totalBytes/(1024));
+
+    Serial.print(F("Free sketch space (kB): "));
+    Serial.println(ESP.getFreeSketchSpace()/1024);
+
     readConfig();
     resetMemoryStats();
 
