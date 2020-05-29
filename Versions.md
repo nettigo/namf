@@ -1,5 +1,6 @@
 NAMF 2020-30 ()
 * First green LED on LED bar now starts from 0.1 instead 1.
+* Option to set WiFi PHY Mode to extend range
 
 NAMF 2020-29 (2020-05-18)
 * in case of crash, stack dump will be saved in /stack_dump file on SPIFFS

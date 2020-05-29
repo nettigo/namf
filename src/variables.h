@@ -82,6 +82,7 @@ namespace cfg {
     extern bool show_wifi_info;
     extern bool has_ledbar_32;
     extern float outputPower;
+    extern int phyMode; 
     extern int  debug;
 
     extern bool ssl_madavi;

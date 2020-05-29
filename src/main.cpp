@@ -679,6 +679,7 @@ void connectWifi() {
 	WiFi.disconnect();
 	WiFi.setOutputPower(cfg::outputPower);
 	WiFi.setPhyMode(WIFI_PHY_MODE_11N);
+	WiFi.setPhyMode((WiFiPhyMode_t)cfg::phyMode);
 	WiFi.mode(WIFI_STA);
 	
 	//String hostname = F("NAM-");

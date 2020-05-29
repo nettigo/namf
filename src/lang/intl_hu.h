@@ -13,6 +13,7 @@ const char INTL_PM_SENSOR[] PROGMEM = "Szálló por szenzor";
 const char INTL_CONFIGURATION[] PROGMEM = "Konfiguráció";
 const char INTL_WIFI_SETTINGS[] PROGMEM = "WiFi beállítások";
 const char INTL_WIFI_TX_PWR[] PROGMEM = "TX power 0-20.5(dBm)";
+const char INTL_WIFI_PHY_MODE[] PROGMEM = "WiFi Phy Mode (1=B / 2=G / 3=N)";
 const char INTL_WIFI_NETWORKS[] PROGMEM = "WiFi hálózatok keresése...";
 const char INTL_LANGUAGE[] PROGMEM = "Nyelv";
 const char INTL_NO_NETWORKS[] PROGMEM =  "Nem találtam WiFi hálózatot";

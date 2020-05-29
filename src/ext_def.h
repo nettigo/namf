@@ -156,6 +156,9 @@ enum LoggerEntry
 //default TX trasnmit power
 #define TX_OUTPUT_POWER 20.5
 
+//default WiFi PHY MODE
+#define PHY_MODE WIFI_PHY_MODE_11N;
+
 // Wieviele Informationen sollen über die serielle Schnittstelle ausgegeben werden?
 #define DEBUG 3
 

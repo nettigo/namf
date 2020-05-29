@@ -54,6 +54,7 @@ namespace cfg {
     bool show_wifi_info = SHOW_WIFI_INFO;
     bool has_ledbar_32 = HAS_LEDBAR_32;
     float outputPower = TX_OUTPUT_POWER;
+    int phyMode = PHY_MODE;
     int debug = DEBUG;
 
     bool ssl_madavi = SSL_MADAVI;

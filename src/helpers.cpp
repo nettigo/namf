@@ -177,6 +177,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_String(sending_intervall_ms);
     copyToJSON_String(time_for_wifi_config);
     copyToJSON_Int(outputPower);
+    copyToJSON_Int(phyMode);
     copyToJSON_String(senseboxid);
     copyToJSON_Bool(send2custom);
     copyToJSON_String(host_custom);
@@ -274,6 +275,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(sending_intervall_ms);
             setFromJSON(time_for_wifi_config);
             setFromJSON(outputPower);
+            setFromJSON(phyMode);
             strcpyFromJSON(senseboxid);
             if (strcmp(senseboxid, "00112233445566778899aabb") == 0) {
                 strcpy(senseboxid, "");

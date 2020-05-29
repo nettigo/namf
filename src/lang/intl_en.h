@@ -13,6 +13,7 @@ const char INTL_PM_SENSOR[] PROGMEM = "Particulate matter sensor";
 const char INTL_CONFIGURATION[] PROGMEM = "Configuration";
 const char INTL_WIFI_SETTINGS[] PROGMEM = "WiFi Settings";
 const char INTL_WIFI_TX_PWR[] PROGMEM = "TX power 0-20.5(dBm)";
+const char INTL_WIFI_PHY_MODE[] PROGMEM = "WiFi Phy Mode (B/G/N)";
 const char INTL_WIFI_NETWORKS[] PROGMEM = "Loading wifi networks ...";
 const char INTL_LANGUAGE[] PROGMEM = "Language";
 const char INTL_NO_NETWORKS[] PROGMEM =  "No WiFi Network Found";

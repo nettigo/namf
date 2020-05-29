@@ -355,6 +355,7 @@ void webserver_config() {
 
         if (wificonfig_loop) { //outputPower should be able to change in both modes
             page_content += form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5);
+            page_content += form_input("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5);
         }
         if (!wificonfig_loop) {
             page_content += FPSTR(TABLE_TAG_OPEN);
@@ -365,6 +366,7 @@ void webserver_config() {
             page_content += form_input("time_for_wifi_config", FPSTR(INTL_DURATION_ROUTER_MODE),
                                        String(time_for_wifi_config / 1000), 5);
             page_content += form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5);
+            page_content += form_input("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5);
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("\n<b>");
 
@@ -458,6 +460,7 @@ void webserver_config() {
         }
         //always allow to change output power
         readFloatParam(outputPower);
+        readIntParam(phyMode);
 
         if (!wificonfig_loop) {
             readCharParam(current_lang);
