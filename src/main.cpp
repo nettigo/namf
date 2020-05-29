@@ -1510,6 +1510,8 @@ void setup() {
 
     Serial.print(F("Free sketch space (kB): "));
     Serial.println(ESP.getFreeSketchSpace()/1024);
+    Serial.print(F("CPU freq (MHz): "));
+    Serial.println(ESP.getCpuFreqMHz());
 
     readConfig();
     resetMemoryStats();
