@@ -1,3 +1,5 @@
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/nettigo/namf) ![GitHub](https://img.shields.io/github/license/nettigo/namf) ![Hardware](https://img.shields.io/badge/hardware%20license-TAPR-orange) ![GitHub issues](https://img.shields.io/github/issues/nettigo/namf)
+
 # Nettigo Air Monitor Firmware
 
 NAMF is a firmware for [Nettigo Air Monitor Sensor](https://nettigo.eu/products/tagged/NAM) - a modular platform for measuring air quality. Hardware is OSHWA Certified with [UID PL000001](https://certification.oshwa.org/pl000001.html).
