@@ -1,4 +1,8 @@
-NAMF 2020-30 ()
+NAMF 2020-31 ()
+
+NAMF 2020-30 (2020-06-02)
+* CPU clock boosted to 160 MHz
+* display info about free SPIFFS and CPU freq on start (Serial)
 * First green LED on LED bar now starts from 0.1 instead 1.
 * Option to set WiFi PHY Mode to extend range
 
