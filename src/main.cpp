@@ -8,6 +8,7 @@
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
+#include "system/scheduler.h"
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
@@ -22,12 +23,16 @@
 #include "html-content.h"
 #include "webserver.h"
 #include "sensors/sds011.h"
+#include "sensors/sps30.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
 #include "sensors/winsen-mhz.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
+
+NAMFScheduler scheduler;
+
 
 /*****************************************************************
  * send Plantower PMS sensor command start, stop, cont. mode     *
@@ -1492,6 +1497,9 @@ void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600);
 
+    scheduler.registerSensor(SPS30, SPS30_init, SPS30_process, nullJSONF);
+    scheduler.init();
+
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
     cfg::initNonTrivials(esp_chipid().c_str());
@@ -1672,6 +1680,8 @@ void loop() {
     MDNS.update();
 
 	wdt_reset(); // nodemcu is alive
+
+	scheduler.process();
 
 	if (last_micro != 0) {
 		unsigned long diff_micro = act_micro - last_micro;
