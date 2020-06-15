@@ -1497,7 +1497,7 @@ void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600);
 
-    scheduler.registerSensor(SimpleScheduler::SPS30, SPS30_process);
+    scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process);
     scheduler.init();
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
