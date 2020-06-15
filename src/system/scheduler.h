@@ -4,48 +4,68 @@
 
 #ifndef NAMF_SCHEDULER_H
 #define NAMF_SCHEDULER_H
-
 #include <Arduino.h>
-
-typedef unsigned long (*loopTimerFunc)(void);
-
-typedef String (*loopJSONFunc)(void);
-
-extern unsigned long nullF(void);
-extern String nullJSONF(void);
-
-typedef enum {
-    EMPTY,
-    SPS30,
-    NAMF_LOOP_SIZE
-} LoopEntryType;
-
-struct LoopEntry {
-    loopTimerFunc init;
-    loopTimerFunc process;
-    loopJSONFunc results;
-    unsigned long nextRun;
-    LoopEntryType slotID;
-};
 
 #define SCHEDULER_SIZE  10
 
-class NAMFScheduler {
-public:
-    NAMFScheduler();
-    void process(void);
-    void init(void);
+namespace SimpleScheduler {
 
-    int registerSensor(byte slot, loopTimerFunc initF, loopTimerFunc processF, loopJSONFunc resultF);
+    typedef enum {
+        EMPTY,
+        SPS30,
+        NAMF_LOOP_SIZE
+    } LoopEntryType;
 
-    void runIn(byte slot, unsigned long time, loopTimerFunc func);
+    typedef enum {
+        INIT,
+        RUN,
+        LOOP_EVENT_TYPE_SIZE
+    } LoopEventType;
 
-    void runIn(byte slot, unsigned long time);
-private:
-    LoopEntry _tasks[SCHEDULER_SIZE];
-    byte loopSize;
-    int findSlot(byte id);
-};
+    class NAMFSchedulerEntry {
+    public:
+        NAMFSchedulerEntry() { nextRun = 0; };
+
+        void init(void) {}
+
+        unsigned long process(void);
+
+    private:
+        unsigned long nextRun;
+    };
+
+    typedef unsigned long (*loopTimerFunc)(LoopEventType);
+
+    extern unsigned long nullF(LoopEventType);
+
+
+    struct LoopEntry {
+        loopTimerFunc process;
+        unsigned long nextRun;
+        LoopEntryType slotID;
+    };
+
+
+    class NAMFScheduler {
+    public:
+        NAMFScheduler();
+
+        void process(void);
+
+        void init(void);
+
+        int registerSensor(byte slot,loopTimerFunc processF);
+
+        void runIn(byte slot, unsigned long time, loopTimerFunc func);
+
+        void runIn(byte slot, unsigned long time);
+
+    private:
+        LoopEntry _tasks[SCHEDULER_SIZE];
+        byte loopSize;
+
+        int findSlot(byte id);
+    };
 /*
 NAMFScheduler scheduler;
 
@@ -105,5 +125,7 @@ void process_sheduler() {
     scheduler.process();
 }
 */
+
+}
 
 #endif //NAMF_SCHEDULER_H
