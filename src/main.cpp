@@ -23,7 +23,7 @@
 #include "html-content.h"
 #include "webserver.h"
 #include "sensors/sds011.h"
-#include "sensors/sps30.h"
+#include "sensors/sensirion_sps30.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
@@ -1497,9 +1497,6 @@ void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600);
 
-    scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process);
-    scheduler.init();
-
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
     cfg::initNonTrivials(esp_chipid().c_str());
@@ -1510,6 +1507,9 @@ void setup() {
     Serial.println(INTL_LANG);
     Serial.print(F("Chip ID: "));
     Serial.println(esp_chipid());
+
+    scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process);
+    scheduler.init();
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);
