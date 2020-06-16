@@ -69,30 +69,6 @@ namespace SPS30 {
                 if (ret < 0) {
                     Serial.print("error reading measurement\n");
                 } else {
-                    Serial.print("PM  1.0: ");
-                    Serial.println(m.mc_1p0);
-                    Serial.print("PM  2.5: ");
-                    Serial.println(m.mc_2p5);
-                    Serial.print("PM  4.0: ");
-                    Serial.println(m.mc_4p0);
-                    Serial.print("PM 10.0: ");
-                    Serial.println(m.mc_10p0);
-#ifndef SPS30_LIMITED_I2C_BUFFER_SIZE
-                    Serial.print("NC  0.5: ");
-                    Serial.println(m.nc_0p5);
-                    Serial.print("NC  1.0: ");
-                    Serial.println(m.nc_1p0);
-                    Serial.print("NC  2.5: ");
-                    Serial.println(m.nc_2p5);
-                    Serial.print("NC  4.0: ");
-                    Serial.println(m.nc_4p0);
-                    Serial.print("NC 10.0: ");
-                    Serial.println(m.nc_10p0);
-
-                    Serial.print("Typical particle size: ");
-                    Serial.println(m.typical_particle_size);
-#endif
-                    Serial.println();
 
                 }
                 return 30 * 1000;
