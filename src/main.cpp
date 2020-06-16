@@ -9,6 +9,7 @@
 #include "update.h"
 #include "helpers.h"
 #include "system/scheduler.h"
+#include "system/components.h"
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
@@ -1790,7 +1791,6 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,F("po SDS/Luft "));
 
         if (cfg::pms_read) {
 			data += result_PMS;
@@ -1810,7 +1810,6 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,F("po DHT "));
 		if (cfg::bmp280_read && (! bmp280_init_failed)) {
 			data += result_BMP280;
 			if (cfg::send2dusti) {
@@ -1830,7 +1829,6 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-        debugData(data,F("po BME280 "));
 
         if (cfg::heca_read && (! heca_init_failed)) {
 			data += result_HECA;
@@ -1841,7 +1839,6 @@ void loop() {
 //				sum_send_time += millis() - start_send;
 //			}
 		}
-        debugData(data,F("po HECA "));
 
 		if (cfg::ds18b20_read) {
 			data += result_DS18B20;
@@ -1865,6 +1862,9 @@ void loop() {
 
         if(cfg::winsen_mhz14a_read)
 		    data += sensorMHZ();
+
+        //add results from new scheduler
+        SimpleScheduler::getResults(data);
 
 		data_sample_times += Value2Json("signal", signal_strength);
         data_sample_times.remove(data_sample_times.length()-1);

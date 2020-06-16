@@ -5,10 +5,11 @@
 #ifndef NAMF_COMPONENTS_H
 #define NAMF_COMPONENTS_H
 #include <Arduino.h>
+#include "sensors/sensirion_sps30.h"
 
 namespace SimpleScheduler {
-    String getResults( String res) {
-        res += SPS30_results();
+    void getResults( String &res) {
+        SPS30::results(res);
     }
 }
 
