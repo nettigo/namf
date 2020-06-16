@@ -14,15 +14,34 @@
 
 namespace SPS30 {
     bool started = false;
+
     int16_t ret;
     uint8_t auto_clean_days = 4;
     uint32_t auto_clean;
-    struct sps30_measurement m;
-    uint16_t data_ready;
+    struct sps30_measurement sum ;
+    unsigned int measurement_count;
     char serial[SPS_MAX_SERIAL_LEN];
+
+    void zeroMeasurmentStruct(sps30_measurement &str) {
+        sps30_measurement zero = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        str = zero;
+    }
+
+    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading){
+        storage.mc_1p0 += reading.mc_1p0;
+        storage.mc_2p5 += reading.mc_2p5;
+        storage.mc_4p0 += reading.mc_4p0;
+        storage.mc_10p0 += reading.mc_10p0;
+        storage.nc_1p0 += reading.nc_1p0;
+        storage.nc_2p5 += reading.nc_2p5;
+        storage.nc_4p0 += reading.nc_4p0;
+        storage.nc_10p0 += reading.nc_10p0;
+        storage.typical_particle_size += reading.typical_particle_size;
+    }
 
     unsigned long init() {
         debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
+        zeroMeasurmentStruct(sum);
         sensirion_i2c_init();
         while ((ret = sps30_probe()) != 0) {
             Serial.print("SPS sensor probing failed\n");
@@ -60,6 +79,8 @@ namespace SPS30 {
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
+        struct sps30_measurement m;
+
         switch (e) {
             case SimpleScheduler::INIT:
                 init();
@@ -67,30 +88,29 @@ namespace SPS30 {
             case SimpleScheduler::RUN:
                 ret = sps30_read_measurement(&m);
                 if (ret < 0) {
-                    Serial.print("error reading measurement\n");
+                    //Error reading
                 } else {
-
+                    addMeasurementStruct(sum, m);
+                    measurement_count++;
                 }
-                return 30 * 1000;
-                break;
+                return 5 * 1000;
         }
-        debug_out("************** SPS30 process", DEBUG_MIN_INFO, true);
         return 15 * 1000;
     }
 
     void results(String &s) {
-        if (!started) return;
+        if (!started || measurement_count == 0) return;
         String tmp; tmp.reserve(512);
-        tmp += Value2Json(F("SPS30_P0"), String(m.mc_1p0));
-        tmp += Value2Json(F("SPS30_P2"), String(m.mc_2p5));
-        tmp += Value2Json(F("SPS30_P4"), String(m.mc_4p0));
-        tmp += Value2Json(F("SPS30_P1"), String(m.mc_10p0));
-        tmp += Value2Json(F("SPS30_N05"), String(m.nc_0p5));
-        tmp += Value2Json(F("SPS30_N1"), String(m.nc_1p0));
-        tmp += Value2Json(F("SPS30_N25"), String(m.nc_2p5));
-        tmp += Value2Json(F("SPS30_N4"), String(m.nc_4p0));
-        tmp += Value2Json(F("SPS30_N10"), String(m.nc_10p0));
-        tmp += Value2Json(F("SPS30_TS"), String(m.typical_particle_size));
+        tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0/measurement_count));
+        tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5/measurement_count));
+        tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0/measurement_count));
+        tmp += Value2Json(F("SPS30_P1"), String(sum.mc_10p0/measurement_count));
+        tmp += Value2Json(F("SPS30_N05"), String(sum.nc_0p5/measurement_count));
+        tmp += Value2Json(F("SPS30_N1"), String(sum.nc_1p0/measurement_count));
+        tmp += Value2Json(F("SPS30_N25"), String(sum.nc_2p5/measurement_count));
+        tmp += Value2Json(F("SPS30_N4"), String(sum.nc_4p0/measurement_count));
+        tmp += Value2Json(F("SPS30_N10"), String(sum.nc_10p0/measurement_count));
+        tmp += Value2Json(F("SPS30_TS"), String(sum.typical_particle_size/measurement_count));
 //        debug_out(tmp,DEBUG_MIN_INFO,true);
         s += tmp;
     }
