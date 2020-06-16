@@ -12,5 +12,4 @@
 
 void display_values();
 String check_display_value(double value, double undef, uint8_t len, uint8_t str_len);
-
 #endif //NAMF_DISPLAY_COMMONS_H

@@ -10,7 +10,7 @@
 #include "variables.h"
 #include "helpers.h"
 #include "html-content.h"
-
+String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
 extern void updateFW(const String host, const String port, const String path);
 extern void updateFW();
 //latest stack dump

@@ -130,18 +130,6 @@ String tmpl(const String& patt, const String& value1, const String& value2, cons
 	return s;
 }
 
-String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit) {
-	String s = F(	"<tr>"
-					"<td>{s}</td>"
-					"<td>{p}</td>"
-					"<td class='r'>{v}&nbsp;{u}</td>"
-					"</tr>");
-	s.replace("{s}", sensor);
-	s.replace("{p}", param);
-	s.replace("{v}", value);
-	s.replace("{u}", unit);
-	return s;
-}
 
 String wlan_ssid_to_table_row(const String& ssid, const String& encryption, int32_t rssi) {
 	String s = F(	"<tr>"
@@ -322,6 +310,8 @@ void webserver_values() {
 			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, "");
 			page_content += table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, "");
 		}
+
+		SimpleScheduler::getResultsAsHTML(page_content);
 
 		page_content += FPSTR(EMPTY_ROW);
 		page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");

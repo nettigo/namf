@@ -18,6 +18,12 @@ namespace SimpleScheduler {
     void afterSendData(bool status) {
         SPS30::afterSend(status);
     }
+
+    //collect HTML table with current results
+    void getResultsAsHTML( String &res) {
+        SPS30::resultsAsHTML(res);
+    }
+
 }
 
 

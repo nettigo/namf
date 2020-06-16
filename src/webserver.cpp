@@ -603,3 +603,15 @@ void webserver_config() {
         ESP.restart();
     }
 }
+String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit) {
+    String s = F(	"<tr>"
+                     "<td>{s}</td>"
+                     "<td>{p}</td>"
+                     "<td class='r'>{v}&nbsp;{u}</td>"
+                     "</tr>");
+    s.replace("{s}", sensor);
+    s.replace("{p}", param);
+    s.replace("{v}", value);
+    s.replace("{u}", unit);
+    return s;
+}

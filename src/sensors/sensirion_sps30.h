@@ -8,6 +8,8 @@
 #include "variables.h"
 #include "system/scheduler.h"
 #include "helpers.h"
+#include "html-content.h"
+#include "webserver.h"
 #include <sps30.h>
 
 #define SPS_MAX_SERIAL_LEN 32
@@ -111,15 +113,34 @@ namespace SPS30 {
         tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0/measurement_count));
         tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5/measurement_count));
         tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0/measurement_count));
-        tmp += Value2Json(F("SPS30_P1"), String(sum.mc_10p0/measurement_count));
-        tmp += Value2Json(F("SPS30_N05"), String(sum.nc_0p5/measurement_count));
-        tmp += Value2Json(F("SPS30_N1"), String(sum.nc_1p0/measurement_count));
-        tmp += Value2Json(F("SPS30_N25"), String(sum.nc_2p5/measurement_count));
-        tmp += Value2Json(F("SPS30_N4"), String(sum.nc_4p0/measurement_count));
-        tmp += Value2Json(F("SPS30_N10"), String(sum.nc_10p0/measurement_count));
-        tmp += Value2Json(F("SPS30_TS"), String(sum.typical_particle_size/measurement_count));
+        tmp += Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count));
+        tmp += Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count));
+        tmp += Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count));
+        tmp += Value2Json(F("SPS30_N25"), String(sum.nc_2p5 / measurement_count));
+        tmp += Value2Json(F("SPS30_N4"), String(sum.nc_4p0 / measurement_count));
+        tmp += Value2Json(F("SPS30_N10"), String(sum.nc_10p0 / measurement_count));
+        tmp += Value2Json(F("SPS30_TS"), String(sum.typical_particle_size / measurement_count));
 //        debug_out(tmp,DEBUG_MIN_INFO,true);
         s += tmp;
+    }
+
+    void resultsAsHTML(String &page_content) {
+        const String unit_PM = "µg/m³";
+        const String unit_T = "°C";
+        const String unit_H = "%";
+        const String unit_P = "hPa";
+
+        page_content += FPSTR(EMPTY_ROW);
+        if (measurement_count == 0) {
+            page_content += table_row_from_value(FPSTR("SPS30"), F("brak odczytów"), F(""), unit_PM);
+
+        }else {
+            page_content += table_row_from_value(FPSTR("SPS30"), F("PM1.0"), String(sum.mc_1p0/measurement_count), unit_PM);
+            page_content += table_row_from_value(FPSTR("SPS30"), F("PM2.5"), String(sum.mc_2p5/measurement_count), unit_PM);
+            page_content += table_row_from_value(FPSTR("SPS30"), F("PM4.0"), String(sum.mc_4p0/measurement_count), unit_PM);
+
+        }
+
     }
 
 }
