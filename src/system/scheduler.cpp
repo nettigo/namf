@@ -22,13 +22,8 @@ namespace SimpleScheduler {
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].nextRun && _tasks[i].nextRun < millis()) {
                 unsigned long nextRun = _tasks[i].process(RUN);
-                Serial.print("Next run:");
-                Serial.println(nextRun);
                 if (nextRun) {
                     _tasks[i].nextRun = millis() + nextRun;
-                    Serial.print("Next run:");
-                    Serial.println(_tasks[i].nextRun);
-
                 } else {
                     _tasks[i].nextRun = 0;
                 }
