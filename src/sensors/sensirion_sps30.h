@@ -98,6 +98,13 @@ namespace SPS30 {
         return 15 * 1000;
     }
 
+    //we will reset average even on API failure
+    void afterSend(bool success) {
+        zeroMeasurmentStruct(sum);
+        measurement_count = 0;
+    }
+
+    //return JSON with results
     void results(String &s) {
         if (!started || measurement_count == 0) return;
         String tmp; tmp.reserve(512);

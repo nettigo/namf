@@ -8,8 +8,15 @@
 #include "sensors/sensirion_sps30.h"
 
 namespace SimpleScheduler {
+
+    //collect results as JSON
     void getResults( String &res) {
         SPS30::results(res);
+    }
+
+    //did all API collect data?
+    void afterSendData(bool status) {
+        SPS30::afterSend(status);
     }
 }
 

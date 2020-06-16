@@ -1875,6 +1875,9 @@ void loop() {
 
 		sum_send_time += sendDataToOptionalApis(data);
 
+		//as for now we do not collect sending status, so we assume sending was successful
+		SimpleScheduler::afterSendData(true);
+
 		server.begin();
 
 		checkForceRestart();
