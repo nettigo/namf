@@ -58,7 +58,6 @@ following directories:
 /* ./src/lang/intl_hu.po */ const char INTL_HPM[] PROGMEM = "Honeywell PM sensor";
 /* ./src/lang/intl_hu.po */ const char INTL_HTU21D[] PROGMEM = "HTU21D ({t}, {h})";
 /* ./src/lang/intl_hu.po */ const char INTL_HUMIDITY[] PROGMEM = "relatív páratartalom";
-/* ./src/lang/intl_hu.po */ const char INTL_LANG[] PROGMEM = "HU";
 /* ./src/lang/intl_hu.po */ const char INTL_LANGUAGE[] PROGMEM = "Nyelv";
 /* ./src/lang/intl_hu.po */ const char INTL_LATITUDE[] PROGMEM = "Földrajzi szélesség";
 /* ./src/lang/intl_hu.po */ const char INTL_LCD[] PROGMEM = "Has character LCD";

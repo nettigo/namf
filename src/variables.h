@@ -23,12 +23,16 @@
 
 #include "ext_def.h"
 #if defined(INTL_EN)
+const char INTL_LANG[] = "EN";
 #include "lang/intl_en.h"
 #elif defined(INTL_PL)
+const char INTL_LANG[] = "PL";
 #include "lang/intl_pl.h"
 #elif defined(INTL_HU)
+const char INTL_LANG[] = "HU";
 #include "lang/intl_hu.h"
 #else
+const char INTL_LANG[] = "EN";
 #include "lang/intl_en.h"
 #endif
 

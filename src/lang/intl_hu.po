@@ -1,4 +1,3 @@
-INTL_LANG HU
 INTL_PM_SENSOR Szálló por szenzor
 INTL_CONFIGURATION Konfiguráció
 INTL_WIFI_SETTINGS WiFi beállítások

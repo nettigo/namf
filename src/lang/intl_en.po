@@ -1,4 +1,3 @@
-INTL_LANG EN
 INTL_PM_SENSOR Particulate matter sensor
 INTL_CONFIGURATION Configuration
 INTL_WIFI_SETTINGS WiFi Settings
