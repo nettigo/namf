@@ -1,0 +1,97 @@
+INTL_LANG PL
+INTL_PM_SENSOR Czujnik pyłu zawieszonego
+INTL_CONFIGURATION Konfiguracja
+INTL_WIFI_SETTINGS Ustawienia WiFi
+INTL_WIFI_TX_PWR Moc nadawcza 0-20.5(dBm)
+INTL_WIFI_PHY_MODE Tryb pracy WiFi (1=B / 2=G / 3=N)
+INTL_WIFI_NETWORKS Ładowanie sieci WiFi...
+INTL_LANGUAGE Język
+INTL_NO_NETWORKS Nie znaleziono sieci WiFi
+INTL_NETWORKS_FOUND Znalezione sieci: 
+INTL_AB_HIER_NUR_ANDERN Ustawienia zaawansowane
+INTL_SAVE Zapisz
+INTL_SENSORS Sensory
+INTL_SDS011 SDS011 ({pm})
+INTL_PMS Plantower PMS(1,3,5,6,7)003 ({pm})
+INTL_DHT22 DHT22 ({t}, {h})
+INTL_BMP280 BMP280 ({t}, {p})
+INTL_BME280 BME280 ({t}, {h}, {p})
+INTL_HECA HECA (SHT30) ({t}, {h})
+INTL_DS18B20 DS18B20 ({t})
+INTL_NEO6M GPS (NEO 6M)
+INTL_BASICAUTH Autoryzacja
+INTL_FS_WIFI Czujnik WiFi
+INTL_FS_WIFI_DESCRIPTION Parametry WiFi w trybie konfiguracji czujnika
+INTL_FS_WIFI_NAME Nazwa sieci
+INTL_MORE_SETTINGS Więcej ustawień
+INTL_AUTO_UPDATE Aktualizuj firmware automatycznie
+INTL_USE_BETA Załaduj firmware beta
+INTL_DISPLAY OLED SSD1306
+INTL_LCD Ma wyświetlacz
+INTL_LCD1602_27 LCD 1602 (I2C: 0x27)
+INTL_LCD1602_3F LCD 1602 (I2C: 0x3F)
+INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
+INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
+INTL_LEDBAR_32 Linijka diodowa RGB (I2C: 0x32)
+INTL_SHOW_WIFI_INFO Pokaż status WiFi na LCD
+INTL_DEBUG_LEVEL Poziom&nbsp;debugowania
+INTL_MEASUREMENT_INTERVAL Czas między pomiarami (sek.)
+INTL_DURATION_ROUTER_MODE Czas trwania w trybie routera (sek.)
+INTL_MORE_APIS Kolejne API
+INTL_SEND_TO_OWN_API Wysyłaj dane do własnego API
+INTL_SERVER Adres serwera
+INTL_PATH Ścieżka
+INTL_PORT Port
+INTL_USER Nazwa użytkownika
+INTL_PASSWORD Hasło
+INTL_SEND_TO Wysyłaj dane do {v}
+INTL_READ_FROM Czytaj z {v}
+INTL_SENSOR_IS_REBOOTING Ponowne uruchamianie czujnika.
+INTL_RESTART_DEVICE Uruchom ponownie urządzenie
+INTL_DELETE_CONFIG Usuń zapisaną konfigurację
+INTL_RESTART_SENSOR Uruchom ponownie czujnik
+INTL_HOME Strona startowa
+INTL_BACK_TO_HOME Powrót do strony startowej
+INTL_CURRENT_DATA Obecne wskazania
+INTL_ACTIVE_SENSORS_MAP Mapa aktywnych czujników (link zewnętrzny)
+INTL_CONFIGURATION_DELETE Usunięcie konfiguracji
+INTL_CONFIGURATION_REALLY_DELETE Czy na pewno chcesz usunąć konfigurację?
+INTL_DELETE Usuń
+INTL_CANCEL Anuluj
+INTL_REALLY_RESTART_SENSOR Czy na pewno chcesz uruchomić czujnik ponownie?
+INTL_RESTART Uruchom ponownie
+INTL_SAVE_AND_RESTART Zapisz i zrestartuj
+INTL_FIRMWARE Wersja FW
+INTL_DEBUG_SETTING_TO Ustawiono poziom debugowania na 
+INTL_NONE wyłączony
+INTL_ERROR tylko błędy
+INTL_WARNING ostrzeżenia
+INTL_MIN_INFO min. info
+INTL_MED_INFO śr. info
+INTL_MAX_INFO maks. info
+INTL_CONFIG_DELETED Usunięto konfigurację
+INTL_CONFIG_CAN_NOT_BE_DELETED Konfiguracja nie może zostać usunięta
+INTL_CONFIG_NOT_FOUND Nie znaleziono konfiguracji
+INTL_TIME_TO_FIRST_MEASUREMENT Pozostało {v} sekund do pierwszego pomiaru.
+INTL_TIME_SINCE_LAST_MEASUREMENT  sekund od ostatniego pomiaru.
+INTL_PARTICLES_PER_LITER cząsteczek/litr
+INTL_PARTICULATE_MATTER pył zawieszony
+INTL_TEMPERATURE temperatura
+INTL_HUMIDITY wilgotność
+INTL_PRESSURE ciśnienie
+INTL_LATITUDE Szerokość geograficzna
+INTL_LONGITUDE Długość geograficzna
+INTL_ALTITUDE Wysokość
+INTL_DATE Data
+INTL_TIME Czas
+INTL_SIGNAL_STRENGTH siła sygnału
+INTL_SIGNAL_QUALITY jakość sygnału
+INTL_NUMBER_OF_MEASUREMENTS Liczba pomiarów:
+INTL_SENSOR Czujnik
+INTL_PARAMETER Parametr
+INTL_VALUE Wartość
+
+LUFTDATEN_INFO_LOGO_SVG <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120px\" height=\"90px\" version=\"1.0\" style=\"shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd\" viewBox=\"0 0 120 90\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g id=\"NAM Logo\"><path fill=\"#fff\" d=\"M50 27c0,1 -1,2 -2,2 -1,0 -2,-1 -2,-2 0,-8 6,-14 14,-14 7,0 13,6 13,14 0,7 -6,13 -13,13l-32 0c-12,0 -21,10 -21,21 0,14 13,23 26,20 2,-1 3,-1 5,-2 1,-1 2,0 3,1 1,1 0,2 -1,3 -10,6 -22,4 -30,-4 -10,-10 -10,-26 0,-36 4,-4 11,-7 18,-7l32 0c8,0 12,-10 6,-16 -6,-6 -16,-1 -16,7zm5 52c0,0 -1,0 -1,0l0 0 -1 -2 -3 0c0,1 0,2 0,2 -1,0 -1,0 -2,0 0,0 0,0 0,0l3 -8c0,0 0,0 0,0l0 0c1,0 2,0 2,0l3 8c0,0 0,0 -1,0l0 0zm6 -13c0,0 0,-8 0,-10 0,-2 1,-2 1,-2l6 0 0 2 -4 0 0 3 4 0 0 2 -4 0 0 3 4 0 0 2 -7 0zm11 0l0 -10 -4 0c0,0 0,-2 2,-2l17 0 0 2 -3 0 0 10 -3 0 0 -10c-2,0 -4,0 -6,0l0 10 -3 0zm16 0c0,0 0,-8 0,-10 0,-2 3,-2 3,-2l0 12 -3 0zm22 -12c2,0 3,0 5,1 1,2 2,3 2,5 0,2 -1,4 -2,5 -2,1 -3,2 -5,2 -1,0 -3,-1 -4,-2 -2,-1 -2,-3 -2,-5 0,-2 0,-3 2,-5 1,-1 3,-1 4,-1zm0 2c-1,0 -1,0 -2,1 -1,1 -1,2 -1,3 0,2 0,3 1,3 0,1 1,2 2,2 1,0 2,-1 3,-2 0,-1 1,-2 1,-3 0,-1 -1,-2 -1,-3 -1,-1 -2,-1 -3,-1zm-62 10c0,0 0,-8 0,-10 0,-2 2,-2 2,-2l7 8c0,0 0,-4 0,-6 0,-2 2,-2 2,-2l0 12 -2 0 -7 -8 0 6 0 2 -2 0 0 0zm55 -6c0,0 -3,0 -3,0 -2,0 -2,2 -2,2l3 0c0,2 0,2 0,2 -1,0 -1,1 -2,1 -1,0 -2,-1 -3,-2 -1,0 -1,-2 -1,-3 0,-1 0,-2 1,-3 1,-1 2,-1 3,-1 1,0 2,0 3,0l1 -1c-2,-1 -3,-1 -4,-1 -1,0 -2,0 -3,0 -1,1 -2,1 -3,2 -1,1 -1,3 -1,4 0,1 0,2 0,3 1,1 1,2 2,2 2,1 3,2 5,2 1,0 3,-1 4,-1l0 -6 0 0zm-52 16l2 0 -1 -2 -1 2zm6 3c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm4 -3l0 3c0,0 -1,0 -1,0 -1,0 -1,0 -1,0l0 -8c0,0 0,0 1,0 1,0 2,0 3,0 1,0 1,1 2,1l0 0c0,2 0,3 -2,4l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm11 1l3 -5c0,0 0,0 0,0l0 0c0,0 0,0 0,0l0 0 1 0c0,0 0,0 0,0l0 8c0,0 0,0 -1,0 0,0 0,0 0,0l0 -4 -2 3c0,0 -1,0 -2,0l-1 -3 0 4c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0 0,0 1,0 1,0l2 5zm13 -1c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm4 -4c0,0 0,0 0,0l4 5 0 -5c0,0 1,0 1,0 0,0 1,0 1,0l0 8c0,1 -1,0 -2,0l0 0 0 0 -3 -5 0 5c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0zm8 8c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm8 -8c0,2 0,2 -3,2l0 6c0,0 0,0 -1,0 0,0 -1,0 -1,0l0 -6c-2,0 -2,0 -2,-2 0,0 0,0 1,0l5 0c1,0 1,0 1,0zm7 4c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm5 1l0 3c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 0,0 1,0 3,0 4,0 2,1 2,4 0,5l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm-85 -18c-3,0 -6,2 -7,4 1,2 4,4 7,4 3,0 5,-2 7,-4 -2,-2 -4,-4 -7,-4zm0 2c1,0 2,1 2,2 0,1 -1,2 -2,2 -2,0 -3,-1 -3,-2 0,-1 1,-2 3,-2zm22 -48c-1,0 -2,0 -3,-1 0,-1 0,-2 1,-3 9,-5 20,-4 28,4 9,8 9,23 0,32 -4,4 -10,7 -16,7l-32 0c-7,0 -12,5 -12,11 0,6 5,11 12,11 7,0 13,-7 11,-14 -1,-1 0,-2 1,-3 2,0 3,1 3,2 3,10 -5,20 -15,20 -9,0 -16,-7 -16,-16 0,-9 7,-16 16,-16l32 0c10,0 18,-8 18,-18 0,-12 -12,-21 -23,-18 -2,0 -3,1 -5,2z\"/></g></svg>
+
+INTL_MHZ14A Winsen MH-Z14A CO2 sensor
+INTL_MHZ14A_VAL WINSEN MH-Z14A
