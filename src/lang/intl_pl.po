@@ -1,3 +1,4 @@
+INTL_LANG PL
 INTL_PM_SENSOR Czujnik pyłu zawieszonego
 INTL_CONFIGURATION Konfiguracja
 INTL_WIFI_SETTINGS Ustawienia WiFi

@@ -55,6 +55,7 @@ following directories:
 /* ./src/lang/intl_en.po */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
 /* ./src/lang/intl_en.po */ const char INTL_HOME[] PROGMEM = "Home";
 /* ./src/lang/intl_en.po */ const char INTL_HUMIDITY[] PROGMEM = "humidity";
+/* ./src/lang/intl_en.po */ const char INTL_LANG[] PROGMEM = "EN";
 /* ./src/lang/intl_en.po */ const char INTL_LANGUAGE[] PROGMEM = "Language";
 /* ./src/lang/intl_en.po */ const char INTL_LATITUDE[] PROGMEM = "Latitude";
 /* ./src/lang/intl_en.po */ const char INTL_LCD[] PROGMEM = "Has character LCD";
