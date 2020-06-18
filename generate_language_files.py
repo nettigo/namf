@@ -12,6 +12,7 @@ import filecmp
 import tempfile
 
 translations = {}
+keys_index = {}
 for filepath in glob.iglob(r'./src/lang/intl_*.h'):
     name = os.path.basename(filepath)
     m = re.search('_(\w\w).h', name)
@@ -33,11 +34,13 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
                     continue
                 # print(entries[0])
                 translations[lang][entries[0]] = {"body": entries[2], "src": lang_file}
+                keys_index[entries[0]] = True
 
 # pp = pprint.PrettyPrinter(indent=4)
 # pprint.pprint(translations)
 
 for lang in translations:
+    unprocessed_keys = list(keys_index.keys())
     f, temp_file = tempfile.mkstemp()
 
     os.write(f, str.encode("""
@@ -71,6 +74,14 @@ following directories:
             body=translations[lang][key]['body'],
             src=translations[lang][key]['src'],
             key=key)))
+        unprocessed_keys.remove(key)
+    if len(unprocessed_keys) > 0:
+        print("UNTRANSLATED ENTRIES for lang {l}".format(l=lang))
+        for key in unprocessed_keys:
+            print(key)
+            os.write(f, str.encode(' const char {key}[] PROGMEM = "TRANSLATE ME PLIZ &#x1F431;";\n'.format(
+                key=key)))
+
     os.close(f)
     final_file = "./src/lang/intl_{lang}.h".format(lang=lang)
     if not (filecmp.cmp(final_file, temp_file, shallow=True)):

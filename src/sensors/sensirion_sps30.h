@@ -140,12 +140,12 @@ namespace SPS30 {
             page_content += table_row_from_value(FPSTR("SPS30"), F("PM4.0"), String(sum.mc_4p0/measurement_count), unit_PM);
             page_content += table_row_from_value(FPSTR("SPS30"), F("PM10.0"), String(sum.mc_10p0/measurement_count), unit_PM);
             page_content += FPSTR(EMPTY_ROW);
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC0.5"), String(sum.nc_0p5/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC1.0"), String(sum.nc_1p0/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC2.5"), String(sum.nc_2p5/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC4.0"), String(sum.nc_4p0/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC10.0"), String(sum.nc_10p0/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("TS"), String(sum.typical_particle_size/measurement_count), "");
+            page_content += table_row_from_value(FPSTR("SPS30"), F("NC0.5"), String(sum.nc_0p5/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(FPSTR("SPS30"), F("NC1.0"), String(sum.nc_1p0/measurement_count),FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(FPSTR("SPS30"), F("NC2.5"), String(sum.nc_2p5/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(FPSTR("SPS30"), F("NC4.0"), String(sum.nc_4p0/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(FPSTR("SPS30"), F("NC10.0"), String(sum.nc_10p0/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(FPSTR("SPS30"), F("TS"), String(sum.typical_particle_size/measurement_count), FPSTR(INTL_SPS30_SIZE));
 
         }
 
