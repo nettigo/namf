@@ -124,4 +124,6 @@ following directories:
  const char INTL_SPS30_CONCENTRATION[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATION 🐱;";
  const char INTL_SPS30_SIZE[] PROGMEM = "Translate HU: INTL_SPS30_SIZE 🐱;";
  const char INTL_SPS30_NO_RESULT[] PROGMEM = "Translate HU: INTL_SPS30_NO_RESULT 🐱;";
+ const char INTL_SPS30_CONCENTRATIONS[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATIONS 🐱;";
+ const char INTL_SPS30_COUNTS[] PROGMEM = "Translate HU: INTL_SPS30_COUNTS 🐱;";
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
