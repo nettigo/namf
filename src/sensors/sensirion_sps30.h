@@ -130,9 +130,9 @@ namespace SPS30 {
         const String unit_H = "%";
         const String unit_P = "hPa";
 
-        page_content += FPSTR(EMPTY_ROW);
+        page_content += FPSTR(TABLE_HDR_ROW("SPS30"));
         if (measurement_count == 0) {
-            page_content += table_row_from_value(FPSTR("SPS30"), F("brak odczytów"), F(""), unit_PM);
+            page_content += table_row_from_value(FPSTR("SPS30"), FPSTR(INTL_SPS30_NO_RESULT), F(""), unit_PM);
 
         }else {
             page_content += table_row_from_value(FPSTR("SPS30"), F("PM1.0"), String(sum.mc_1p0/measurement_count), unit_PM);
