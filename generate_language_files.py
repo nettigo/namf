@@ -18,11 +18,11 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
     m = re.search('_(\w\w).h', name)
     lang = m.group(1)
     translations[lang] = {}
-    locations = ('./src/sensors/*_{l}.lang', './src/lang/*_{l}.lang')
+    locations = ('./src/sensors/**/*_{l}.lang', './src/lang/*_{l}.lang')
     print("Looking for language files for {l}".format(l=lang.upper()))
     files = []
     for i in locations:
-        files.extend(glob.glob(i.format(l=m.group(1))))
+        files.extend(glob.glob(i.format(l=m.group(1)),recursive=True))
     for lang_file in files:
         print(lang_file)
         with open(lang_file) as f:
@@ -79,8 +79,9 @@ following directories:
         print("UNTRANSLATED ENTRIES for lang {l}".format(l=lang))
         for key in unprocessed_keys:
             print(key)
-            os.write(f, str.encode(' const char {key}[] PROGMEM = "TRANSLATE ME PLIZ &#x1F431;";\n'.format(
-                key=key)))
+            os.write(f, str.encode(' const char {key}[] PROGMEM = "Translate {lang}: {key} 🐱;";\n'.format(
+                key=key,
+                lang=lang.upper())))
 
     os.close(f)
     final_file = "./src/lang/intl_{lang}.h".format(lang=lang)
