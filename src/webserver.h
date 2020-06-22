@@ -6,13 +6,19 @@
 #define NAMF_WEBSERVER_H
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include "defines.h"
 #include "variables.h"
 #include "helpers.h"
+#include "display/commons.h"
+#include "system/scheduler.h"
+#include "system/components.h"
 #include "html-content.h"
-String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
+
+extern String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
 extern void updateFW(const String host, const String port, const String path);
 extern void updateFW();
+
 //latest stack dump
 void webserver_dump_stack();
 
@@ -51,4 +57,39 @@ void webserver_config_force_update();
 void webserver_config_json_save();
 void webserver_config();
 
+/*****************************************************************
+ * Webserver wifi: show available wifi networks                  *
+ *****************************************************************/
+void webserver_wifi();
+
+/*****************************************************************
+ * Webserver root: show latest values                            *
+ *****************************************************************/
+void webserver_values();
+
+/*****************************************************************
+ * Webserver set debug level                                     *
+ *****************************************************************/
+void webserver_debug_level();
+
+/*****************************************************************
+ * Webserver remove config                                       *
+ *****************************************************************/
+void webserver_removeConfig();
+/*****************************************************************
+ * Webserver reset NodeMCU                                       *
+ *****************************************************************/
+void webserver_reset();
+/*****************************************************************
+ * Webserver data.json                                           *
+ *****************************************************************/
+void webserver_data_json();
+/*****************************************************************
+ * Webserver prometheus metrics endpoint                         *
+ *****************************************************************/
+void webserver_prometheus_endpoint();
+/*****************************************************************
+ * Webserver setup                                               *
+ *****************************************************************/
+void setup_webserver();
 #endif //NAMF_WEBSERVER_H

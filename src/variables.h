@@ -234,6 +234,13 @@ extern unsigned long count_sends ;
 extern unsigned long next_display_millis ;
 extern unsigned long next_display_count ;
 
+struct struct_wifiInfo {
+    char ssid[35];
+    uint8_t encryptionType;
+    int32_t RSSI;
+    int32_t channel;
+    bool isHidden;
+};
 extern struct struct_wifiInfo *wifiInfo;
 extern uint8_t count_wifiInfo;
 

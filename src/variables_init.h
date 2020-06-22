@@ -212,13 +212,6 @@ unsigned long count_sends = 0;
 unsigned long next_display_millis = 0;
 unsigned long next_display_count = 0;
 
-struct struct_wifiInfo {
-    char ssid[35];
-    uint8_t encryptionType;
-    int32_t RSSI;
-    int32_t channel;
-    bool isHidden;
-};
 
 struct struct_wifiInfo *wifiInfo;
 uint8_t count_wifiInfo;
