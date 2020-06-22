@@ -5,7 +5,7 @@
 #ifndef NAMF_COMPONENTS_H
 #define NAMF_COMPONENTS_H
 #include <Arduino.h>
-#include "sensors/sensirion_sps30.h"
+#include "sensors/sps30/main.h"
 
 namespace SimpleScheduler {
 

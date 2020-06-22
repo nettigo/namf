@@ -65,7 +65,7 @@ void updateFW(const String host, const String port, const String path) {
     debug_out(path,DEBUG_MIN_INFO,1);
     Serial.println(SOFTWARE_VERSION);
     String ver = String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                 String(cfg::current_lang) + String(" ") + String(INTL_LANG);
+                 String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG));
     t_httpUpdate_return ret = tryUpdate( host, port, path, ver);
     verifyUpdate(ret);
 };
@@ -76,7 +76,7 @@ void updateFW() {
     Serial.println(SOFTWARE_VERSION);
 
     t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
+                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) );
     verifyUpdate(ret);
 };
 

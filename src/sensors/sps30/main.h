@@ -2,15 +2,15 @@
 // Created by viciu on 08.06.2020.
 //
 
-#ifndef NAMF_SENSIRION_SPS30_H
-#define NAMF_SENSIRION_SPS30_H
+#ifndef NAMF_MAIN_H
+#define NAMF_MAIN_H
 
-#include "variables.h"
-#include "system/scheduler.h"
-#include "helpers.h"
-#include "html-content.h"
-#include "webserver.h"
-#include <sps30.h>
+#include "../../variables.h"
+#include "../../system/scheduler.h"
+#include "../../helpers.h"
+#include "../../html-content.h"
+#include "../../webserver.h"
+#include "../../../.pio/libdeps/nodemcuv2/sensirion-sps/sps30.h"
 
 #define SPS_MAX_SERIAL_LEN 32
 
@@ -132,20 +132,28 @@ namespace SPS30 {
 
         page_content += FPSTR(EMPTY_ROW);
         if (measurement_count == 0) {
-            page_content += table_row_from_value(FPSTR("SPS30"), F("brak odczytów"), F(""), unit_PM);
+            page_content += table_row_from_value(FPSTR("SPS30"), FPSTR(INTL_SPS30_NO_RESULT), F(""), unit_PM);
 
         }else {
-            page_content += table_row_from_value(FPSTR("SPS30"), F("PM1.0"), String(sum.mc_1p0/measurement_count), unit_PM);
-            page_content += table_row_from_value(FPSTR("SPS30"), F("PM2.5"), String(sum.mc_2p5/measurement_count), unit_PM);
-            page_content += table_row_from_value(FPSTR("SPS30"), F("PM4.0"), String(sum.mc_4p0/measurement_count), unit_PM);
-            page_content += table_row_from_value(FPSTR("SPS30"), F("PM10.0"), String(sum.mc_10p0/measurement_count), unit_PM);
-            page_content += FPSTR(EMPTY_ROW);
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC0.5"), String(sum.nc_0p5/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC1.0"), String(sum.nc_1p0/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC2.5"), String(sum.nc_2p5/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC4.0"), String(sum.nc_4p0/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("NC10.0"), String(sum.nc_10p0/measurement_count), "");
-            page_content += table_row_from_value(FPSTR("SPS30"), F("TS"), String(sum.typical_particle_size/measurement_count), "");
+            page_content += F("<tr><td colspan='3'>");
+            page_content += FPSTR(INTL_SPS30_CONCENTRATIONS);
+            page_content += F("</td></tr>\n");
+
+            page_content += table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0/measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5/measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0/measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0/measurement_count), unit_PM);
+
+            page_content += F("<tr><td colspan='3'>");
+            page_content += FPSTR(INTL_SPS30_COUNTS);
+            page_content += F("</td></tr>\n");
+
+            page_content += table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc_0p5/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc_1p0/measurement_count),FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc_2p5/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc_4p0/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc_10p0/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("TS"), String(sum.typical_particle_size/measurement_count), FPSTR(INTL_SPS30_SIZE));
 
         }
 
@@ -153,4 +161,4 @@ namespace SPS30 {
 
 }
 
-#endif //NAMF_SENSIRION_SPS30_H
+#endif //NAMF_MAIN_H
