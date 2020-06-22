@@ -2,15 +2,15 @@
 // Created by viciu on 08.06.2020.
 //
 
-#ifndef NAMF_SENSIRION_SPS30_H
-#define NAMF_SENSIRION_SPS30_H
+#ifndef NAMF_MAIN_H
+#define NAMF_MAIN_H
 
-#include "variables.h"
-#include "system/scheduler.h"
-#include "helpers.h"
-#include "html-content.h"
-#include "webserver.h"
-#include <sps30.h>
+#include "../../variables.h"
+#include "../../system/scheduler.h"
+#include "../../helpers.h"
+#include "../../html-content.h"
+#include "../../webserver.h"
+#include "../../../.pio/libdeps/nodemcuv2/sensirion-sps/sps30.h"
 
 #define SPS_MAX_SERIAL_LEN 32
 
@@ -161,4 +161,4 @@ namespace SPS30 {
 
 }
 
-#endif //NAMF_SENSIRION_SPS30_H
+#endif //NAMF_MAIN_H

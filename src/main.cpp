@@ -24,7 +24,7 @@
 #include "html-content.h"
 #include "webserver.h"
 #include "sensors/sds011.h"
-#include "sensors/sensirion_sps30.h"
+#include "sensors/sps30/main.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"

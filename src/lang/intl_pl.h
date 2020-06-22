@@ -104,8 +104,8 @@ following directories:
 /* ./src/lang/intl_pl.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Pokaż status WiFi na LCD";
 /* ./src/lang/intl_pl.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "jakość sygnału";
 /* ./src/lang/intl_pl.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "siła sygnału";
-/* ./src/sensors/sensirion_sps30_pl.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "szt/cm³";
-/* ./src/sensors/sensirion_sps30_pl.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
+/* ./src/sensors/sps30/main_pl.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "szt/cm³";
+/* ./src/sensors/sps30/main_pl.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_pl.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperatura";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME[] PROGMEM = "Czas";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " sekund od ostatniego pomiaru.";

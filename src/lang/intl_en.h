@@ -104,11 +104,11 @@ following directories:
 /* ./src/lang/intl_en.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Display WiFi connection info on LCD";
 /* ./src/lang/intl_en.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "signal quality";
 /* ./src/lang/intl_en.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "signal strength";
-/* ./src/sensors/sensirion_sps30_en.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "pcs/cm³";
-/* ./src/sensors/sensirion_sps30_en.lang */ const char INTL_SPS30_CONCENTRATIONS[] PROGMEM = "Particle matter concentration";
-/* ./src/sensors/sensirion_sps30_en.lang */ const char INTL_SPS30_COUNTS[] PROGMEM = "Particle matters counts";
-/* ./src/sensors/sensirion_sps30_en.lang */ const char INTL_SPS30_NO_RESULT[] PROGMEM = "no results";
-/* ./src/sensors/sensirion_sps30_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
+/* ./src/sensors/sps30/main_en.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "pcs/cm³";
+/* ./src/sensors/sps30/main_en.lang */ const char INTL_SPS30_CONCENTRATIONS[] PROGMEM = "Particle matter concentration";
+/* ./src/sensors/sps30/main_en.lang */ const char INTL_SPS30_COUNTS[] PROGMEM = "Particle matter counts";
+/* ./src/sensors/sps30/main_en.lang */ const char INTL_SPS30_NO_RESULT[] PROGMEM = "no results";
+/* ./src/sensors/sps30/main_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_en.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperature";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME[] PROGMEM = "Time";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " seconds since last measurement.";
