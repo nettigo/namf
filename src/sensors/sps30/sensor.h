@@ -2,8 +2,8 @@
 // Created by viciu on 08.06.2020.
 //
 
-#ifndef NAMF_MAIN_H
-#define NAMF_MAIN_H
+#ifndef NAMF_SENSOR_H
+#define NAMF_SENSOR_H
 
 #include "variables.h"
 #include "system/scheduler.h"
@@ -41,4 +41,4 @@ namespace SPS30 {
 
 }
 
-#endif //NAMF_MAIN_H
+#endif //NAMF_SENSOR_H

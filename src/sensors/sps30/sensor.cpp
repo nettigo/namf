@@ -1,4 +1,4 @@
-#include "main.h"
+#include "sensor.h"
 
 extern String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
 
