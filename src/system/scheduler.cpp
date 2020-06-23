@@ -46,12 +46,13 @@ namespace SimpleScheduler {
 
     }
 
-    int NAMFScheduler::registerSensor(byte slot, loopTimerFunc processF) {
+    int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF) {
         {
             if (loopSize + 1 >= SCHEDULER_SIZE)
                 return -1;
             _tasks[loopSize].nextRun = 0;
             _tasks[loopSize].process = processF;
+            _tasks[loopSize].slotID = slot;
 
             loopSize += 1;
             //return idx

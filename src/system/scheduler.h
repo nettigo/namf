@@ -54,7 +54,7 @@ namespace SimpleScheduler {
 
         void init(void);
 
-        int registerSensor(byte slot,loopTimerFunc processF);
+        int registerSensor(LoopEntryType slot,loopTimerFunc processF);
 
         void runIn(byte slot, unsigned long time, loopTimerFunc func);
 
