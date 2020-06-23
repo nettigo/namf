@@ -346,9 +346,14 @@ void writeConfig(){
 }
 
 unsigned long  parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
-//    String n = name;
     if (server.hasArg(name)) {
         value = server.arg(name).toInt();
+    }
+};
+
+unsigned long  parseHTTP(const __FlashStringHelper *name, bool &value ){
+    if (server.hasArg(name)) {
+        value = server.arg(name) == "1";
     }
 };
 
