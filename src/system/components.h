@@ -5,7 +5,7 @@
 #ifndef NAMF_COMPONENTS_H
 #define NAMF_COMPONENTS_H
 #include <Arduino.h>
-#include "sensors/sps30/sensor.h"
+#include "../sensors/sps30/sensor.h"
 
 namespace SimpleScheduler {
 
@@ -17,6 +17,9 @@ namespace SimpleScheduler {
 
     //collect HTML table with current results
     void getResultsAsHTML( String &res);
+
+    String parseHTTPConfig (LoopEntryType sensor);
+
 
 }
 

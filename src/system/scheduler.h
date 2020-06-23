@@ -5,7 +5,6 @@
 #ifndef NAMF_SCHEDULER_H
 #define NAMF_SCHEDULER_H
 #include <Arduino.h>
-
 #define SCHEDULER_SIZE  10
 
 namespace SimpleScheduler {
@@ -15,6 +14,8 @@ namespace SimpleScheduler {
         SPS30,
         NAMF_LOOP_SIZE
     } LoopEntryType;
+
+    LoopEntryType operator++(LoopEntryType &entry, int);
 
     typedef enum {
         INIT,
@@ -43,8 +44,14 @@ namespace SimpleScheduler {
         loopTimerFunc process;
         unsigned long nextRun;
         LoopEntryType slotID;
+        const __FlashStringHelper *slotCode;
     };
 
+    String selectConfigForm(LoopEntryType sensor);
+
+    void getConfigForms(String &page);
+
+    const __FlashStringHelper *findSlotDescription(LoopEntryType sensor);
 
     class NAMFScheduler {
     public:
@@ -54,7 +61,16 @@ namespace SimpleScheduler {
 
         void init(void);
 
-        int registerSensor(LoopEntryType slot,loopTimerFunc processF);
+        /******************************************************
+         * register sensor/subsytem to to be run by SimpleScheduler
+         * slot - enum from SimpleScheduler::LoopEntryType - identifies sensor
+         * processF - function called by scheduler with current status (init/normal run)
+         * code - key used to store configuration in JSON, suggested practice - use the same name as for enum LoopEntryType, just lowercase
+         * name - name of sensor/subsytem. Will be used to display configuration checkbox to enable/disable subsystem
+         */
+        int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
+
+        void getConfigForms(String &page);
 
         void runIn(byte slot, unsigned long time, loopTimerFunc func);
 

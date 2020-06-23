@@ -345,6 +345,13 @@ void writeConfig(){
     writeConfigRaw(json_string);
 }
 
+unsigned long  parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
+//    String n = name;
+    if (server.hasArg(name)) {
+        value = server.arg(name).toInt();
+    }
+};
+
 //Form helpers
 //
 String form_input(const String& name, const String& info, const String& value, const int length) {

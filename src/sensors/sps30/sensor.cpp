@@ -1,15 +1,17 @@
+#include <Arduino.h>
 #include "sensor.h"
+#include "../../helpers.h"
 
 extern String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
 
 
 namespace SPS30 {
     bool started = false;
-
+    unsigned long refresh = 10;
     int16_t ret;
     uint8_t auto_clean_days = 4;
     uint32_t auto_clean;
-    struct sps30_measurement sum ;
+    struct sps30_measurement sum;
     unsigned int measurement_count;
     char serial[SPS_MAX_SERIAL_LEN];
 
@@ -18,7 +20,20 @@ namespace SPS30 {
         str = zero;
     }
 
-    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading){
+    String getConfigHTML(void) {
+        String ret = F("<h1>SPS30</h1>");
+        ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
+        return ret;
+    }
+
+    String parseHTTPRequest(void) {
+        parseHTTP(F("refresh"), refresh);
+        String ret = F("{");
+        ret += Value2Json(F("refresh"), String(refresh));
+        return ret;
+    }
+
+    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
         storage.mc_1p0 += reading.mc_1p0;
         storage.mc_2p5 += reading.mc_2p5;
         storage.mc_4p0 += reading.mc_4p0;

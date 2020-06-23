@@ -2,6 +2,7 @@
 // Created by viciu on 08.06.2020.
 //
 #include "scheduler.h"
+#include "helpers.h"
 
 
 namespace SimpleScheduler {
@@ -46,13 +47,41 @@ namespace SimpleScheduler {
 
     }
 
-    int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF) {
+    void NAMFScheduler::getConfigForms(String &page) {
+        String s = F("");
+        LoopEntryType i = EMPTY;
+        i++;
+        for (; i < NAMF_LOOP_SIZE; i++) {
+            String templ = F(
+                    "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
+            );
+
+            boolean enabled = findSlot(i) >= 0; // check if sensor is enabled
+            templ += form_checkbox(F("enable"), findSlotDescription(i), enabled, true);
+            //HTML to enable/disable given sensor
+            if (enabled) {
+                s = SimpleScheduler::selectConfigForm(i);
+                if (s.length() > 0) {
+                    templ += F("{body}<input type='submit' value='zapisz'/></form>\n"
+                    );
+                    templ.replace(F("{sensor}"), String(i));
+                    templ.replace(F("{body}"), s);
+                    page += templ;
+                }
+
+            }
+        }
+    }
+
+
+    int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code) {
         {
             if (loopSize + 1 >= SCHEDULER_SIZE)
                 return -1;
             _tasks[loopSize].nextRun = 0;
             _tasks[loopSize].process = processF;
             _tasks[loopSize].slotID = slot;
+            _tasks[loopSize].slotCode = code;
 
             loopSize += 1;
             //return idx
@@ -95,6 +124,13 @@ namespace SimpleScheduler {
             _tasks[idx].nextRun = 0;
         }
 
+    }
+
+    LoopEntryType operator++(LoopEntryType &entry, int) {
+        LoopEntryType current = entry;
+        if (NAMF_LOOP_SIZE < entry + 1) entry = NAMF_LOOP_SIZE;
+        else entry = static_cast<LoopEntryType>( entry + 1);
+        return (current);
     }
 
 }

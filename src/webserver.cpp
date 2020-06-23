@@ -446,6 +446,8 @@ void webserver_config() {
             page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("<br/></form>");
+
+            scheduler.getConfigForms(page_content);
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content += FPSTR(TABLE_TAG_OPEN);
@@ -641,12 +643,50 @@ void webserver_config() {
         ESP.restart();
     }
 }
-String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit) {
-    String s = F(	"<tr>"
-                     "<td>{s}</td>"
-                     "<td>{p}</td>"
-                     "<td class='r'>{v}&nbsp;{u}</td>"
-                     "</tr>");
+
+/**************************************************************************
+ * Parse sensor config - new, simple scheduler
+ **************************************************************************/
+
+void webserver_simple_config() {
+
+    if (!webserver_request_auth()) { return; }
+
+    String page_content = make_header(FPSTR(INTL_CONFIGURATION));
+    last_page_load = millis();
+
+    debug_out(F("output config page ..."), DEBUG_MIN_INFO, 1);
+
+//    if (server.method() == HTTP_POST) {
+
+        if (server.hasArg(F("sensor"))) {
+            SimpleScheduler::LoopEntryType sensor;
+            sensor = static_cast<SimpleScheduler::LoopEntryType>(server.arg(F("sensor")).toInt());
+            page_content += F("Sensor val: ");
+            page_content += String(sensor);
+            page_content += F("<br>");
+            page_content += SimpleScheduler::parseHTTPConfig(sensor);
+
+        }
+
+        page_content += make_footer();
+
+        server.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+        server.sendHeader(F("Pragma"), F("no-cache"));
+        server.sendHeader(F("Expires"), F("0"));
+        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+//    } else {
+//        webserver_not_found();
+//    }
+}
+
+
+String table_row_from_value(const String &sensor, const String &param, const String &value, const String &unit) {
+    String s = F("<tr>"
+                 "<td>{s}</td>"
+                 "<td>{p}</td>"
+                 "<td class='r'>{v}&nbsp;{u}</td>"
+                 "</tr>");
     s.replace("{s}", sensor);
     s.replace("{p}", param);
     s.replace("{v}", value);
@@ -821,8 +861,7 @@ void webserver_values() {
  * Webserver set debug level                                     *
  *****************************************************************/
 void webserver_debug_level() {
-    if (!webserver_request_auth())
-    { return; }
+    if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_DEBUG_LEVEL));
     last_page_load = millis();
@@ -852,8 +891,7 @@ void webserver_debug_level() {
  * Webserver remove config                                       *
  *****************************************************************/
 void webserver_removeConfig() {
-    if (!webserver_request_auth())
-    { return; }
+    if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_DELETE_CONFIG));
     String message_string = F("<h3>{v}.</h3>");
@@ -886,8 +924,7 @@ void webserver_removeConfig() {
  * Webserver reset NodeMCU                                       *
  *****************************************************************/
 void webserver_reset() {
-    if (!webserver_request_auth())
-    { return; }
+    if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_RESTART_SENSOR));
     last_page_load = millis();
@@ -982,6 +1019,7 @@ void webserver_prometheus_endpoint() {
 void setup_webserver() {
     server.on("/", webserver_root);
     server.on("/config", webserver_config);
+    server.on("/simple_config", webserver_simple_config);
     server.on("/config.json", HTTP_GET, webserver_config_json);
     server.on("/configSave.json", webserver_config_json_save);
     server.on("/forceUpdate", webserver_config_force_update);

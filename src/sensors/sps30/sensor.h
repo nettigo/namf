@@ -16,6 +16,7 @@
 namespace SPS30 {
     extern bool started;
 
+    extern unsigned long refresh;
     extern int16_t ret;
     extern uint8_t auto_clean_days;
     extern uint32_t auto_clean;
@@ -33,6 +34,8 @@ namespace SPS30 {
 
     //we will reset average even on API failure
     extern void afterSend(bool success);
+    extern String getConfigHTML(void);
+    extern String parseHTTPRequest(void);
 
     //return JSON with results
     extern void results(String &s);

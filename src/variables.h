@@ -11,6 +11,7 @@
 #define SOFTWARE_VERSION  "NAMF-2020-30"
 #endif
 #include "defines.h"
+#include "system/scheduler.h"
 #include <SoftwareSerial.h>
 #include <ESP8266WebServer.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
@@ -31,6 +32,8 @@
 #else
 #include "lang/intl_en.h"
 #endif
+
+extern SimpleScheduler::NAMFScheduler scheduler;
 
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
