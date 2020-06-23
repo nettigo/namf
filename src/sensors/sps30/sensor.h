@@ -23,7 +23,7 @@ namespace SPS30 {
     extern unsigned int measurement_count;
     extern char serial[SPS_MAX_SERIAL_LEN];
 
-    extern void zeroMeasurmentStruct(sps30_measurement &str);
+    extern void zeroMeasurementStruct(sps30_measurement &str);
 
     extern void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading);
 

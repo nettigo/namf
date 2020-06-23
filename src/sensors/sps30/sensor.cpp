@@ -13,7 +13,7 @@ namespace SPS30 {
     unsigned int measurement_count;
     char serial[SPS_MAX_SERIAL_LEN];
 
-    void zeroMeasurmentStruct(sps30_measurement &str) {
+    void zeroMeasurementStruct(sps30_measurement &str) {
         sps30_measurement zero = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         str = zero;
     }
@@ -32,7 +32,7 @@ namespace SPS30 {
 
     unsigned long init() {
         debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
-        zeroMeasurmentStruct(sum);
+        zeroMeasurementStruct(sum);
         sensirion_i2c_init();
         while ((ret = sps30_probe()) != 0) {
             Serial.print("SPS sensor probing failed\n");
@@ -91,7 +91,7 @@ namespace SPS30 {
 
     //we will reset average even on API failure
     void afterSend(bool success) {
-        zeroMeasurmentStruct(sum);
+        zeroMeasurementStruct(sum);
         measurement_count = 0;
     }
 
