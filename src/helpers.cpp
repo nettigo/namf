@@ -478,6 +478,22 @@ void collectMemStats() {
 
 
 }
+void dumpCurrentMemStats() {
+    memory_stat_t memoryStats;
+    ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
+    debug_out(F("Memory stats: "),DEBUG_MIN_INFO,true);
+    debug_out(F("Free heap: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(memoryStats.freeHeap),DEBUG_MIN_INFO,true);
+    debug_out(F("Mx free blk: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(memoryStats.maxFreeBlock),DEBUG_MIN_INFO,true);
+    debug_out(F("Frag: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(memoryStats.frag),DEBUG_MIN_INFO,true);
+    debug_out(F("Free cont stack: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(ESP.getFreeContStack()),DEBUG_MIN_INFO,true);
+
+
+
+}
 
 /*****************************************************************
  * display values                                                *
