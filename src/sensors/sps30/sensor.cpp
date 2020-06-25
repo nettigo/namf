@@ -103,6 +103,7 @@ namespace SPS30 {
                 init();
                 break;
             case SimpleScheduler::RUN:
+                debug_out(F("SPS30: process"), DEBUG_MIN_INFO, true);
                 ret = sps30_read_measurement(&m);
                 if (ret < 0) {
                     //Error reading
@@ -110,7 +111,7 @@ namespace SPS30 {
                     addMeasurementStruct(sum, m);
                     measurement_count++;
                 }
-                return 5 * 1000;
+                return refresh * 1000;
         }
         return 15 * 1000;
     }
@@ -124,7 +125,7 @@ namespace SPS30 {
     //return JSON string with config
     String getConfigJSON(void) {
         String ret = F("");
-        ret += Var2Json(F("e"), enabled);
+        ret += Var2JsonInt(F("e"), enabled);
         ret += Var2Json(F("refresh"), refresh);
         return ret;
     }

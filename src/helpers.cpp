@@ -75,7 +75,12 @@ String Var2Json(const String& name, const bool value) {
     s.replace("{v}", (value ? "true" : "false"));
     return s;
 }
-
+String Var2JsonInt(const String& name, const bool value) {
+    String s = F("\"{n}\":{v},");
+    s.replace("{n}", name);
+    s.replace("{v}", (value ? "1" : "0"));
+    return s;
+}
 /*****************************************************************
  * convert boolean value to json string                          *
  *****************************************************************/
