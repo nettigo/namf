@@ -6,7 +6,9 @@ extern String table_row_from_value(const String& sensor, const String& param, co
 
 
 namespace SPS30 {
+    const char KEY[] PROGMEM = "SPS30";
     bool started = false;
+    bool enabled = false;
     unsigned long refresh = 10;
     int16_t ret;
     uint8_t auto_clean_days = 4;
@@ -110,13 +112,27 @@ namespace SPS30 {
         measurement_count = 0;
     }
 
+    //return JSON string with config
+    String getConfigJSON(void) {
+        String ret = F("");
+        ret += Var2Json(F("enabled"), enabled);
+        ret += Var2Json(F("refresh"), refresh);
+        return ret;
+    }
+
+    void readConfigJSON(JsonObject &json){
+        enabled = json[F("enabled")];
+        refresh = json.get<int>(F("refresh"));
+    }
+
     //return JSON with results
     void results(String &s) {
         if (!started || measurement_count == 0) return;
-        String tmp; tmp.reserve(512);
-        tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0/measurement_count));
-        tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5/measurement_count));
-        tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0/measurement_count));
+        String tmp;
+        tmp.reserve(512);
+        tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count));
+        tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count));
+        tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count));
         tmp += Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count));
         tmp += Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count));
         tmp += Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count));

@@ -15,7 +15,7 @@
 
 namespace SPS30 {
     extern bool started;
-
+    extern const char KEY[] PROGMEM;
     extern unsigned long refresh;
     extern int16_t ret;
     extern uint8_t auto_clean_days;
@@ -36,6 +36,9 @@ namespace SPS30 {
     extern void afterSend(bool success);
     extern String getConfigHTML(void);
     extern String parseHTTPRequest(void);
+
+    extern String getConfigJSON(void);
+    extern void readConfigJSON( JsonObject &);
 
     //return JSON with results
     extern void results(String &s);

@@ -5,6 +5,7 @@
 #ifndef NAMF_HELPERS_H
 #define NAMF_HELPERS_H
 #include "Arduino.h"
+#include <ArduinoJson.h>
 #include <FS.h>                     // must be first
 
 int32_t calcWiFiSignalQuality(int32_t rssi);
@@ -25,6 +26,7 @@ String Value2Json(const __FlashStringHelper *, const String& value);
 String Var2Json(const String& name, const bool value);
 String Var2Json(const String& name, const int value);
 String Var2Json(const String& name, const float value);
+String Var2Json(const String& name, const unsigned long value);
 //Nettigo NAM 0.3.2 factory firmware - test
 
 unsigned long parseHTTP(const __FlashStringHelper *, unsigned long & );

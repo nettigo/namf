@@ -20,7 +20,7 @@ namespace SimpleScheduler {
 
     String parseHTTPConfig (LoopEntryType sensor);
 
-
+    String getConfigJSON( LoopEntryType sensor);
 }
 
 

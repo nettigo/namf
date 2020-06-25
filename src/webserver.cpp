@@ -262,7 +262,7 @@ void webserver_config_json_save() {
             writeConfig();
             server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
-            Serial.println("RESET");
+            Serial.println(F("RESET"));
             ESP.restart();
         }
         else {

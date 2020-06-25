@@ -1,9 +1,9 @@
 //
 // Created by viciu on 28.01.2020.
 //
-#include <ArduinoJson.h>
 #include "variables.h"
 #include "helpers.h"
+#include "system/scheduler.h"
 
 int32_t calcWiFiSignalQuality(int32_t rssi) {
     if (rssi > -50) {
@@ -83,6 +83,12 @@ String Var2Json(const String& name, const int value) {
     String s = F("\"{n}\":\"{v}\",");
     s.replace("{n}", name);
     s.replace("{v}", String(value));
+    return s;
+}
+String Var2Json(const String& name, const unsigned long value) {
+    String s = F("\"{n}\":\"{v}\",");
+    s.replace(F("{n}"), name);
+    s.replace(F("{v}"), String(value));
     return s;
 }
 
@@ -195,8 +201,7 @@ String getConfigString(boolean maskPwd = false) {
 #undef copyToJSON_Bool
 #undef copyToJSON_Int
 #undef copyToJSON_String
-
-    json_string.remove(json_string.length() - 1);
+    SimpleScheduler::getConfigJSON(json_string);
     json_string += "}";
 
     return json_string;
@@ -304,6 +309,11 @@ int readAndParseConfigFile(File configFile) {
             }
 #undef setFromJSON
 #undef strcpyFromJSON
+            //Sensor configs from simple scheduler
+            if (json.containsKey(F("sensors"))) {
+                JsonObject& item = json[F("sensors")];
+                SimpleScheduler::readConfigJSON(item);
+            }
             return 0;
         } else {
             debug_out(F("failed to load json config"), DEBUG_ERROR, 1);

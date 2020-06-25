@@ -5,6 +5,7 @@
 #ifndef NAMF_SCHEDULER_H
 #define NAMF_SCHEDULER_H
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #define SCHEDULER_SIZE  10
 
 namespace SimpleScheduler {
@@ -50,8 +51,12 @@ namespace SimpleScheduler {
     String selectConfigForm(LoopEntryType sensor);
 
     void getConfigForms(String &page);
+    void getConfigJSON(String &json);
+    void readConfigJSON(LoopEntryType sensor, JsonObject& json);
+    void readConfigJSON(JsonObject& json);
 
     const __FlashStringHelper *findSlotDescription(LoopEntryType sensor);
+    const __FlashStringHelper *findSlotKey(LoopEntryType sensor);
 
     class NAMFScheduler {
     public:
@@ -71,6 +76,8 @@ namespace SimpleScheduler {
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
 
         void getConfigForms(String &page);
+        void getConfigJSON(LoopEntryType);
+        void getConfigJSON(String &json);
 
         void runIn(byte slot, unsigned long time, loopTimerFunc func);
 
