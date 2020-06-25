@@ -21,6 +21,7 @@ namespace SimpleScheduler {
     typedef enum {
         INIT,
         RUN,
+        STOP,
         LOOP_EVENT_TYPE_SIZE
     } LoopEventType;
 
@@ -65,6 +66,7 @@ namespace SimpleScheduler {
         void process(void);
 
         void init(void);
+        void init(LoopEntryType);
 
         /******************************************************
          * register sensor/subsytem to to be run by SimpleScheduler
@@ -74,6 +76,7 @@ namespace SimpleScheduler {
          * name - name of sensor/subsytem. Will be used to display configuration checkbox to enable/disable subsystem
          */
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
+        int unregisterSensor(LoopEntryType slot);
 
         void getConfigForms(String &page);
         void getConfigJSON(LoopEntryType);

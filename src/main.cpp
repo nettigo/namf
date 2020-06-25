@@ -1116,8 +1116,6 @@ void setup() {
     Serial.print(F("Chip ID: "));
     Serial.println(esp_chipid());
 
-    scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, F("SPS30"));
-    scheduler.init();
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);

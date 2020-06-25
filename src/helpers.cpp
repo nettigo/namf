@@ -362,6 +362,7 @@ unsigned long  parseHTTP(const __FlashStringHelper *name, unsigned long &value )
 };
 
 unsigned long  parseHTTP(const __FlashStringHelper *name, bool &value ){
+    value = false;
     if (server.hasArg(name)) {
         value = server.arg(name) == "1";
     }

@@ -34,15 +34,23 @@ namespace SimpleScheduler {
 
     }
 
+    void NAMFScheduler::init(LoopEntryType slot) {
+        if (slot == EMPTY) return;
+        int i = findSlot(slot);
+        if (i < 0) return;
+        unsigned long nextRun = _tasks[i].process(INIT);
+        if (nextRun) {
+            _tasks[i].nextRun = millis() + nextRun;
+        } else {
+            _tasks[i].nextRun = 0;
+        }
+
+
+    }
+
     void NAMFScheduler::init() {
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            unsigned long nextRun = _tasks[i].process(INIT);
-            if (nextRun) {
-                _tasks[i].nextRun = millis() + nextRun;
-            } else {
-                _tasks[i].nextRun = 0;
-            }
-
+            init(_tasks[i].slotID);
         }
 
     }
@@ -57,31 +65,39 @@ namespace SimpleScheduler {
             );
 
             boolean enabled = findSlot(i) >= 0; // check if sensor is enabled
-            templ += form_checkbox(F("enable"), findSlotDescription(i), enabled, true);
+            templ += form_checkbox(F("enabled"), findSlotDescription(i), enabled, true);
             //HTML to enable/disable given sensor
-            if (enabled) {
-                s = SimpleScheduler::selectConfigForm(i);
-                if (s.length() > 0) {
-                    templ += F("{body}<input type='submit' value='zapisz'/></form>\n"
-                    );
-                    templ.replace(F("{sensor}"), String(i));
-                    templ.replace(F("{body}"), s);
-                    page += templ;
-                }
 
-            }
+            s = SimpleScheduler::selectConfigForm(i);
+            templ += F("{body}<input type='submit' value='zapisz'/></form>\n");
+            templ.replace(F("{sensor}"), String(i));
+            templ.replace(F("{body}"), s);
+            page += templ;
+
         }
     }
 
+    int NAMFScheduler::unregisterSensor(LoopEntryType slot) {
+        int i = findSlot(slot);
+        if (i < 0) return 0;
+        loopSize--;
+        _tasks[i].slotID = EMPTY;
+        _tasks[i].process(STOP);
+
+    }
 
     int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code) {
         {
             if (loopSize + 1 >= SCHEDULER_SIZE)
                 return -1;
-            _tasks[loopSize].nextRun = 0;
-            _tasks[loopSize].process = processF;
-            _tasks[loopSize].slotID = slot;
-            _tasks[loopSize].slotCode = code;
+            int i = findSlot(slot);
+            //no sensor yet
+            if (i < 0) i = findSlot(EMPTY);
+            if (i < 0) { return -1; };
+            _tasks[i].nextRun = 0;
+            _tasks[i].process = processF;
+            _tasks[i].slotID = slot;
+            _tasks[i].slotCode = code;
 
             loopSize += 1;
             //return idx

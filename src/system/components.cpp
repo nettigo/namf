@@ -30,13 +30,15 @@ namespace SimpleScheduler {
         }
     }
 
-    String parseHTTPConfig(LoopEntryType sensor) {
-        String s = F("");
+    JsonObject& parseHTTPConfig(LoopEntryType sensor) {
+
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return SPS30::parseHTTPRequest();
             default:
-                return s;
+                StaticJsonBuffer<16> jsonBuffer;    //empty response
+                JsonObject & ret = jsonBuffer.createObject();
+                return ret;
         }
     }
 

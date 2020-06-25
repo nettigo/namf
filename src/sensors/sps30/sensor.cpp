@@ -28,10 +28,13 @@ namespace SPS30 {
         return ret;
     }
 
-    String parseHTTPRequest(void) {
+    JsonObject& parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
-        String ret = F("{");
-        ret += Value2Json(F("refresh"), String(refresh));
+        parseHTTP(F("enabled"), enabled);
+        StaticJsonBuffer<256> jsonBuffer;
+        JsonObject & ret = jsonBuffer.createObject();
+        ret[F("refresh")] = refresh;
+        ret[F("e")] = enabled;
         return ret;
     }
 
@@ -90,6 +93,12 @@ namespace SPS30 {
         struct sps30_measurement m;
 
         switch (e) {
+            case SimpleScheduler::STOP:
+                zeroMeasurementStruct(sum);
+                measurement_count = 0;
+                started = false;
+                sps30_stop_measurement();
+                return 0;
             case SimpleScheduler::INIT:
                 init();
                 break;
@@ -115,19 +124,27 @@ namespace SPS30 {
     //return JSON string with config
     String getConfigJSON(void) {
         String ret = F("");
-        ret += Var2Json(F("enabled"), enabled);
+        ret += Var2Json(F("e"), enabled);
         ret += Var2Json(F("refresh"), refresh);
         return ret;
     }
 
     void readConfigJSON(JsonObject &json){
-        enabled = json[F("enabled")];
+        enabled = json.get<bool>(F("e"));
         refresh = json.get<int>(F("refresh"));
+
+        if (enabled) {
+            scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
+            scheduler.init(SimpleScheduler::SPS30);
+//            Serial.println(F("SPS30 init"));
+        } else {
+            scheduler.unregisterSensor(SimpleScheduler::SPS30);
+        }
     }
 
     //return JSON with results
     void results(String &s) {
-        if (!started || measurement_count == 0) return;
+        if (!enabled || !started || measurement_count == 0) return;
         String tmp;
         tmp.reserve(512);
         tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count));
@@ -145,6 +162,7 @@ namespace SPS30 {
     }
 
     void resultsAsHTML(String &page_content) {
+        if (!enabled) {return;}
         const String unit_PM = "µg/m³";
         const String unit_T = "°C";
         const String unit_H = "%";

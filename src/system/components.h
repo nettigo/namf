@@ -18,7 +18,7 @@ namespace SimpleScheduler {
     //collect HTML table with current results
     void getResultsAsHTML( String &res);
 
-    String parseHTTPConfig (LoopEntryType sensor);
+    JsonObject& parseHTTPConfig (LoopEntryType sensor);
 
     String getConfigJSON( LoopEntryType sensor);
 }

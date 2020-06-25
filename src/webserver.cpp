@@ -665,7 +665,10 @@ void webserver_simple_config() {
             page_content += F("Sensor val: ");
             page_content += String(sensor);
             page_content += F("<br>");
-            page_content += SimpleScheduler::parseHTTPConfig(sensor);
+            JsonObject &ret = SimpleScheduler::parseHTTPConfig(sensor);
+            SimpleScheduler::readConfigJSON(sensor, ret);
+
+            writeConfig();
 
         }
 
