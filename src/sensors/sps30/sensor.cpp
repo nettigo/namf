@@ -134,7 +134,7 @@ namespace SPS30 {
         enabled = json.get<bool>(F("e"));
         refresh = json.get<int>(F("refresh"));
 
-        if (enabled) {
+        if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30) ) {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
             scheduler.init(SimpleScheduler::SPS30);
 //            Serial.println(F("SPS30 init"));

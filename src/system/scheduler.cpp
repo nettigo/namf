@@ -86,6 +86,10 @@ namespace SimpleScheduler {
 
     }
 
+    bool NAMFScheduler::isRegistered(LoopEntryType slot) {
+        return findSlot(slot) >= 0;
+    }
+
     int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code) {
         {
             if (loopSize + 1 >= SCHEDULER_SIZE)
