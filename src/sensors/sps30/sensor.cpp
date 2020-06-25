@@ -17,17 +17,21 @@ namespace SPS30 {
     unsigned int measurement_count;
     char serial[SPS_MAX_SERIAL_LEN];
 
+    //helper function to zero measurements struct (for averaging)
     void zeroMeasurementStruct(sps30_measurement &str) {
         sps30_measurement zero = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         str = zero;
     }
 
+    //return string with HTML used to configure SPS30 sensor. Right now it only takes number of seconds to wait between measurements
+    //taken to average
     String getConfigHTML(void) {
         String ret = F("<h1>SPS30</h1>");
         ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
         return ret;
     }
 
+    //callback to parse HTML form sent from `getConfigHTML`
     JsonObject& parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
         parseHTTP(F("enabled"), enabled);
@@ -38,6 +42,7 @@ namespace SPS30 {
         return ret;
     }
 
+    //helper function to sum current measurement with previous results - for averaging
     void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
         storage.mc_1p0 += reading.mc_1p0;
         storage.mc_2p5 += reading.mc_2p5;
@@ -50,6 +55,7 @@ namespace SPS30 {
         storage.typical_particle_size += reading.typical_particle_size;
     }
 
+    //Start SPS30 sensor
     unsigned long init() {
         debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
         zeroMeasurementStruct(sum);
@@ -89,6 +95,13 @@ namespace SPS30 {
         return 10 * 1000;
     }
 
+    /************************************************************************
+     * main function called periodically. It is called by scheduler with single param taking values:
+     * INIT - first run (aka start of sensor)
+     * RUN - regular call during work
+     * STOP - sensor is being deactivated
+     */
+
     unsigned long process(SimpleScheduler::LoopEventType e) {
         struct sps30_measurement m;
 
@@ -116,13 +129,14 @@ namespace SPS30 {
         return 15 * 1000;
     }
 
-    //we will reset average even on API failure
+    //callback called after each sending data to APIs Bool parameter tell if there was success, or some API call failed
+    //in SPS30 it is being used start averaging results
     void afterSend(bool success) {
         zeroMeasurementStruct(sum);
         measurement_count = 0;
     }
 
-    //return JSON string with config
+    //return JSON string with config (for save in SPIFFS)
     String getConfigJSON(void) {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
@@ -130,6 +144,8 @@ namespace SPS30 {
         return ret;
     }
 
+    //get configuration data from JsonObject and save in own config
+    // if sensor is enabled then run init. On shutdown
     void readConfigJSON(JsonObject &json){
         enabled = json.get<bool>(F("e"));
         refresh = json.get<int>(F("refresh"));
@@ -137,13 +153,16 @@ namespace SPS30 {
         if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30) ) {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
             scheduler.init(SimpleScheduler::SPS30);
-//            Serial.println(F("SPS30 init"));
-        } else {
+            enabled = true;
+            Serial.println(F("SPS30 enabled"));
+        } else if(scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
+            Serial.println(F("SPS30: stop"));
             scheduler.unregisterSensor(SimpleScheduler::SPS30);
+            enabled = false;
         }
     }
 
-    //return JSON with results
+    //append current readings (averaged) to JSON string
     void results(String &s) {
         if (!enabled || !started || measurement_count == 0) return;
         String tmp;
@@ -162,6 +181,7 @@ namespace SPS30 {
         s += tmp;
     }
 
+    //display table elements for current values page
     void resultsAsHTML(String &page_content) {
         if (!enabled) {return;}
         const String unit_PM = "µg/m³";
