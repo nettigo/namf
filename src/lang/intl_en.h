@@ -78,6 +78,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_NETWORKS_FOUND[] PROGMEM = "Found Networks:";
 /* ./src/lang/intl_en.lang */ const char INTL_NONE[] PROGMEM = "off";
 /* ./src/lang/intl_en.lang */ const char INTL_NO_NETWORKS[] PROGMEM = "No WiFi Network Found";
+/* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_DESC[] PROGMEM = "Network watchdog - restart sensor in case lack of connectivity";
+/* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "This is not proper IP";
+/* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "Address to ping (IP)";
 /* ./src/lang/intl_en.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Number of measurements:";
 /* ./src/lang/intl_en.lang */ const char INTL_PARAMETER[] PROGMEM = "Parameter";
 /* ./src/lang/intl_en.lang */ const char INTL_PARTICLES_PER_LITER[] PROGMEM = "particles/liter";

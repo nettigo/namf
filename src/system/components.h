@@ -6,6 +6,7 @@
 #define NAMF_COMPONENTS_H
 #include <Arduino.h>
 #include "../sensors/sps30/sensor.h"
+#include "../sensors/network_watchdog/tester.h"
 
 namespace SimpleScheduler {
 

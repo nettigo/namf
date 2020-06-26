@@ -25,6 +25,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return SPS30::getConfigHTML();
+            case SimpleScheduler::NTW_WTD:
+                return NetworkWatchdog::getConfigHTML();
             default:
                 return s;
         }
@@ -35,6 +37,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return SPS30::parseHTTPRequest();
+            case SimpleScheduler::NTW_WTD:
+                return NetworkWatchdog::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
@@ -106,6 +110,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return FPSTR(INTL_SPS30_SENSOR_DESC);
+            case SimpleScheduler::NTW_WTD:
+                return FPSTR(INTL_NTW_WTD_DESC);
             default:
                 return F("");
         }

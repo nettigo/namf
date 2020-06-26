@@ -1,0 +1,3 @@
+INTL_NTW_WTD_DESC Network watchdog - restart sensor in case lack of connectivity
+INTL_NTW_WTD_HOST Address to ping (IP)
+INTL_NTW_WTD_ERROR This is not proper IP

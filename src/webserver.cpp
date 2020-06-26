@@ -667,7 +667,14 @@ void webserver_simple_config() {
             page_content += F("<br>");
             JsonObject &ret = SimpleScheduler::parseHTTPConfig(sensor);
             ret.printTo(Serial);
-            SimpleScheduler::readConfigJSON(sensor, ret);
+            if (ret.containsKey(F("err"))){
+                page_content += F("<h2>");
+                page_content += String(ret.get<char *>(F("err")) );//ret.get<char *>(F("err"));
+                page_content += F("</h2>");
+
+            } else {
+                SimpleScheduler::readConfigJSON(sensor, ret);
+            }
 
             writeConfig();
 

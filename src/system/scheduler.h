@@ -13,6 +13,7 @@ namespace SimpleScheduler {
     typedef enum {
         EMPTY,
         SPS30,
+        NTW_WTD,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
