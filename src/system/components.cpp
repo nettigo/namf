@@ -84,6 +84,7 @@ namespace SimpleScheduler {
         i++;
         for (; i < NAMF_LOOP_SIZE; i++) {
             s = getConfigJSON(i);
+            if (s.length() < 1) continue;    //
             s.remove(s.length() - 1);
 
             s1 = F("\"{k}\":{{r}},");
