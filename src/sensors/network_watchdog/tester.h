@@ -9,6 +9,9 @@
 #include "../../variables.h"
 #include "../../defines.h"
 #include "../../helpers.h"
+#include "../../html-content.h"
+#include "../../webserver.h"
+
 #include <ESP8266WiFi.h>
 #include "AsyncPing.h"
 
@@ -17,6 +20,10 @@ namespace NetworkWatchdog {
     extern const char KEY[] PROGMEM;
     extern String getConfigHTML(void);
     extern JsonObject & parseHTTPRequest(void);
+    extern void readConfigJSON (JsonObject & );
+    unsigned long process (SimpleScheduler::LoopEventType);
+    String getConfigJSON(void);
+    void resultsAsHTML(String &page_content);
 }
 
 #endif //NAMF_TESTER_H

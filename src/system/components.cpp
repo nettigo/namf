@@ -7,6 +7,7 @@ namespace SimpleScheduler {
     //collect results as JSON
     void getResults(String &res) {
         SPS30::results(res);
+
     }
 
     //did all API collect data?
@@ -17,6 +18,7 @@ namespace SimpleScheduler {
     //collect HTML table with current results
     void getResultsAsHTML(String &res) {
         SPS30::resultsAsHTML(res);
+        NetworkWatchdog::resultsAsHTML(res);
     }
 
     //prepare forms with configuration
@@ -51,6 +53,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return SPS30::getConfigJSON();
+            case SimpleScheduler::NTW_WTD:
+                return NetworkWatchdog::getConfigJSON();
             default:
                 return s;
         }
@@ -60,6 +64,9 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 SPS30::readConfigJSON(json);
+                return;
+            case SimpleScheduler::NTW_WTD:
+                NetworkWatchdog::readConfigJSON(json);
                 return;
             default:
                 return;
@@ -100,7 +107,11 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return FPSTR(SPS30::KEY);
+            case SimpleScheduler::NTW_WTD:
+                return FPSTR(NetworkWatchdog::KEY);
             default:
+                debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
+                debug_out(String(sensor), DEBUG_MIN_INFO, true);
                 return F("");
         }
 

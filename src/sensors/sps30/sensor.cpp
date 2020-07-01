@@ -115,7 +115,7 @@ namespace SPS30 {
                 init();
                 break;
             case SimpleScheduler::RUN:
-                debug_out(F("SPS30: process"), DEBUG_MIN_INFO, true);
+                debug_out(F("SPS30: process"), DEBUG_MAX_INFO, true);
                 ret = sps30_read_measurement(&m);
                 if (ret < 0) {
                     //Error reading

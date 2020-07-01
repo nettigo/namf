@@ -151,19 +151,19 @@ String getConfigString(boolean maskPwd = false) {
 #define copyToJSON_Bool(varname) json_string += Var2Json(#varname,varname);
 #define copyToJSON_Int(varname) json_string += Var2Json(#varname,varname);
 
-    Var2Json(F("current_lang"), current_lang);
-    Var2Json(F(SOFTWARE_VERSION), SOFTWARE_VERSION);
-    Var2Json(F("wlanssid"), wlanssid);
+    json_string += Var2Json(F("current_lang"), current_lang);
+    json_string += Var2Json(F("SOFTWARE_VERSION"), SOFTWARE_VERSION);
+    json_string += Var2Json(F("wlanssid"), wlanssid);
     //mask WiFi password?
     if (maskPwd) {
         json_string += Var2Json(F("wlanpwd"), String("***"));
     } else {
-        Var2Json(F("wlanpwd"), wlanpwd);
+        json_string += Var2Json(F("wlanpwd"), wlanpwd);
     }
-    Var2Json(F("www_username"), www_username);
-    Var2Json(F("www_password"), www_password);
-    Var2Json(F("fs_ssid"), fs_ssid);
-    Var2Json(F("fs_pwd"), fs_pwd);
+    json_string += Var2Json(F("www_username"), www_username);
+    json_string += Var2Json(F("www_password"), www_password);
+    json_string += Var2Json(F("fs_ssid"), fs_ssid);
+    json_string += Var2Json(F("fs_pwd"), fs_pwd);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
     copyToJSON_Bool(sds_read);
@@ -191,18 +191,18 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(has_lcd2004_3f);
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(has_ledbar_32);
-    Var2Json(F("debug"), debug);
-    Var2Json(F("sending_intervall_ms"), sending_intervall_ms);
-    Var2Json(F("time_for_wifi_config"), time_for_wifi_config);
+    json_string += Var2Json(F("debug"), debug);
+    json_string += Var2Json(F("sending_intervall_ms"), sending_intervall_ms);
+    json_string += Var2Json(F("time_for_wifi_config"), time_for_wifi_config);
     copyToJSON_Int(outputPower);
     copyToJSON_Int(phyMode);
-    Var2Json(F("senseboxid"), senseboxid);
+    json_string += Var2Json(F("senseboxid"), senseboxid);
     copyToJSON_Bool(send2custom);
-    Var2Json(F("host_custom"), host_custom);
-    Var2Json(F("url_custom"), url_custom);
+    json_string += Var2Json(F("host_custom"), host_custom);
+    json_string += Var2Json(F("url_custom"), url_custom);
     copyToJSON_Int(port_custom);
-    Var2Json(F("user_custom"), user_custom);
-    Var2Json(F("pwd_custom"), pwd_custom);
+    json_string += Var2Json(F("user_custom"), user_custom);
+    json_string += Var2Json(F("pwd_custom"), pwd_custom);
 
     copyToJSON_Bool(send2influx);
     Var2Json(F("host_influx"), host_influx);
@@ -240,10 +240,10 @@ int readAndParseConfigFile(File configFile) {
         StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
         json.printTo(json_string);
-        debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
-        debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
-        debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
-        debug_out(json_string, DEBUG_MAX_INFO, 1);
+        debug_out(F("File content: "), DEBUG_MIN_INFO, 0);
+        debug_out(String(buf.get()), DEBUG_MIN_INFO, 1);
+        debug_out(F("JSON Buffer content: "), DEBUG_MIN_INFO, 0);
+        debug_out(json_string, DEBUG_MIN_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
             if (json.containsKey("SOFTWARE_VERSION")) {
