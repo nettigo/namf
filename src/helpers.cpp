@@ -69,28 +69,35 @@ String Var2Json(const String& name, const String& value) {
 /*****************************************************************
  * convert boolean value to json string                          *
  *****************************************************************/
-String Var2Json(const String& name, const bool value) {
+String Var2Json(const String &name, const bool value) {
     String s = F("\"{n}\":\"{v}\",");
     s.replace("{n}", name);
     s.replace("{v}", (value ? "true" : "false"));
     return s;
 }
-String Var2JsonInt(const String& name, const bool value) {
+
+String Var2Json(const String &name, const char *value) {
+    return Var2Json(name, String(value));
+}
+
+String Var2JsonInt(const String &name, const bool value) {
     String s = F("\"{n}\":{v},");
     s.replace("{n}", name);
     s.replace("{v}", (value ? "1" : "0"));
     return s;
 }
+
 /*****************************************************************
  * convert boolean value to json string                          *
  *****************************************************************/
-String Var2Json(const String& name, const int value) {
+String Var2Json(const String &name, const int value) {
     String s = F("\"{n}\":\"{v}\",");
     s.replace("{n}", name);
     s.replace("{v}", String(value));
     return s;
 }
-String Var2Json(const String& name, const unsigned long value) {
+
+String Var2Json(const String &name, const unsigned long value) {
     String s = F("\"{n}\":\"{v}\",");
     s.replace(F("{n}"), name);
     s.replace(F("{v}"), String(value));
@@ -143,20 +150,20 @@ String getConfigString(boolean maskPwd = false) {
 
 #define copyToJSON_Bool(varname) json_string += Var2Json(#varname,varname);
 #define copyToJSON_Int(varname) json_string += Var2Json(#varname,varname);
-#define copyToJSON_String(varname) json_string += Var2Json(#varname,String(varname));
-    copyToJSON_String(current_lang);
-    copyToJSON_String(SOFTWARE_VERSION);
-    copyToJSON_String(wlanssid);
+
+    Var2Json(F("current_lang"), current_lang);
+    Var2Json(F(SOFTWARE_VERSION), SOFTWARE_VERSION);
+    Var2Json(F("wlanssid"), wlanssid);
     //mask WiFi password?
     if (maskPwd) {
-        json_string += Var2Json("wlanpwd",String("***"));
+        json_string += Var2Json(F("wlanpwd"), String("***"));
     } else {
-        copyToJSON_String(wlanpwd);
+        Var2Json(F("wlanpwd"), wlanpwd);
     }
-    copyToJSON_String(www_username);
-    copyToJSON_String(www_password);
-    copyToJSON_String(fs_ssid);
-    copyToJSON_String(fs_pwd);
+    Var2Json(F("www_username"), www_username);
+    Var2Json(F("www_password"), www_password);
+    Var2Json(F("fs_ssid"), fs_ssid);
+    Var2Json(F("fs_pwd"), fs_pwd);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
     copyToJSON_Bool(sds_read);
@@ -184,28 +191,28 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(has_lcd2004_3f);
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(has_ledbar_32);
-    copyToJSON_String(debug);
-    copyToJSON_String(sending_intervall_ms);
-    copyToJSON_String(time_for_wifi_config);
+    Var2Json(F("debug"), debug);
+    Var2Json(F("sending_intervall_ms"), sending_intervall_ms);
+    Var2Json(F("time_for_wifi_config"), time_for_wifi_config);
     copyToJSON_Int(outputPower);
     copyToJSON_Int(phyMode);
-    copyToJSON_String(senseboxid);
+    Var2Json(F("senseboxid"), senseboxid);
     copyToJSON_Bool(send2custom);
-    copyToJSON_String(host_custom);
-    copyToJSON_String(url_custom);
+    Var2Json(F("host_custom"), host_custom);
+    Var2Json(F("url_custom"), url_custom);
     copyToJSON_Int(port_custom);
-    copyToJSON_String(user_custom);
-    copyToJSON_String(pwd_custom);
+    Var2Json(F("user_custom"), user_custom);
+    Var2Json(F("pwd_custom"), pwd_custom);
 
     copyToJSON_Bool(send2influx);
-    copyToJSON_String(host_influx);
-    copyToJSON_String(url_influx);
+    Var2Json(F("host_influx"), host_influx);
+    Var2Json(F("url_influx"), url_influx);
     copyToJSON_Int(port_influx);
-    copyToJSON_String(user_influx);
-    copyToJSON_String(pwd_influx);
+    Var2Json(F("user_influx"), user_influx);
+    Var2Json(F("pwd_influx"), pwd_influx);
 #undef copyToJSON_Bool
 #undef copyToJSON_Int
-#undef copyToJSON_String
+#undef Var2Json
     SimpleScheduler::getConfigJSON(json_string);
     json_string += "}";
 

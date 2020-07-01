@@ -26,6 +26,8 @@ String Value2Json(const __FlashStringHelper *, const String& value);
 String Var2Json(const String& name, const bool value);
 String Var2JsonInt(const String& name, const bool value);
 String Var2Json(const String& name, const int value);
+String Var2Json(const String& name, const String & value);
+String Var2Json(const String& name, const char * value);
 String Var2Json(const String& name, const float value);
 String Var2Json(const String& name, const unsigned long value);
 //Nettigo NAM 0.3.2 factory firmware - test
