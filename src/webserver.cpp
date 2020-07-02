@@ -421,10 +421,8 @@ void webserver_config() {
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += form_checkbox("send2custom", FPSTR(INTL_SEND_TO_OWN_API), send2custom);
             page_content += FPSTR(TABLE_TAG_OPEN);
-            page_content += form_input("host_custom", FPSTR(INTL_SERVER), host_custom,
-                                       capacity_null_terminated_char_array(host_custom));
-            page_content += form_input("url_custom", FPSTR(INTL_PATH), url_custom,
-                                       capacity_null_terminated_char_array(url_custom));
+            page_content += form_input(F("host_custom"), FPSTR(INTL_SERVER), host_custom, 60);
+            page_content += form_input(F("url_custom"), FPSTR(INTL_PATH), url_custom, 60);
             constexpr int max_port_digits = constexprstrlen("65535");
             page_content += form_input("port_custom", FPSTR(INTL_PORT), String(port_custom), max_port_digits);
             page_content += form_input("user_custom", FPSTR(INTL_USER), user_custom,
@@ -434,10 +432,8 @@ void webserver_config() {
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += form_checkbox("send2influx", tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")), send2influx);
             page_content += FPSTR(TABLE_TAG_OPEN);
-            page_content += form_input("host_influx", FPSTR(INTL_SERVER), host_influx,
-                                       capacity_null_terminated_char_array(host_influx));
-            page_content += form_input("url_influx", FPSTR(INTL_PATH), url_influx,
-                                       capacity_null_terminated_char_array(url_influx));
+            page_content += form_input(F("host_influx"), FPSTR(INTL_SERVER), host_influx, 60);
+            page_content += form_input(F("url_influx"), FPSTR(INTL_PATH), url_influx, 60);
             page_content += form_input("port_influx", FPSTR(INTL_PORT), String(port_influx), max_port_digits);
             page_content += form_input("user_influx", FPSTR(INTL_USER), user_influx,
                                        capacity_null_terminated_char_array(user_influx));
@@ -538,15 +534,18 @@ void webserver_config() {
             readCharParam(senseboxid);
 
             readBoolParam(send2custom);
-            readCharParam(host_custom);
-            readCharParam(url_custom);
+            parseHTTP(F("host_custom"), host_custom);
+            parseHTTP(F("url_custom"), url_custom);
+
             readIntParam(port_custom);
             readCharParam(user_custom);
             readPasswdParam(pwd_custom);
 
             readBoolParam(send2influx);
-            readCharParam(host_influx);
-            readCharParam(url_influx);
+
+            parseHTTP(F("host_influx"), host_influx);
+            parseHTTP(F("url_influx"), url_influx);
+
             readIntParam(port_influx);
             readCharParam(user_influx);
             readPasswdParam(pwd_influx);

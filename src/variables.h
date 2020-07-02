@@ -96,14 +96,14 @@ namespace cfg {
     extern char user_influx[65];
     extern char pwd_influx[65];
 
-    extern char host_custom[100];
-    extern char url_custom[100];
+    extern String host_custom;
+    extern String url_custom;
     extern int port_custom;
     extern char user_custom[65];
     extern char pwd_custom[65];
 
-    extern char host_influx[100];
-    extern char url_influx[100];
+    extern String host_influx;
+    extern String url_influx;
 
     extern unsigned long time_for_wifi_config;
     extern unsigned long sending_intervall_ms;

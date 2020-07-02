@@ -336,7 +336,7 @@ static void configureCACertTrustAnchor(WiFiClientSecure* client) {
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
-void sendData(const LoggerEntry logger, const String &data, const int pin, const char *host, const int httpPort, const char *url, const bool verify) {
+void sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify) {
     WiFiClient *client;
 	const __FlashStringHelper *contentType;
     bool ssl = false;

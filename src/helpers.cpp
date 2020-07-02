@@ -239,6 +239,9 @@ int readAndParseConfigFile(File configFile) {
         configFile.readBytes(buf.get(), size);
         StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
+        debug_out(F("Config - JSON object memory used:"),DEBUG_MIN_INFO, false);
+        debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
+
         json.printTo(json_string);
         debug_out(F("File content: "), DEBUG_MED_INFO, 0);
         debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
@@ -299,19 +302,20 @@ int readAndParseConfigFile(File configFile) {
                 send2sensemap = 0;
             }
             setFromJSON(send2custom);
-            strcpyFromJSON(host_custom);
-            strcpyFromJSON(url_custom);
+//            strcpyFromJSON(host_custom);
+            if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
+            if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
             strcpyFromJSON(user_custom);
             strcpyFromJSON(pwd_custom);
             setFromJSON(send2influx);
-            strcpyFromJSON(host_influx);
-            strcpyFromJSON(url_influx);
+            if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
+            if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
             setFromJSON(port_influx);
             strcpyFromJSON(user_influx);
             strcpyFromJSON(pwd_influx);
-            if (strcmp(host_influx, "api.luftdaten.info") == 0) {
-                strcpy(host_influx, "");
+            if (host_influx.equals(F("api.luftdaten.info"))) {
+                host_influx = F("");
                 send2influx = 0;
             }
             configFile.close();
