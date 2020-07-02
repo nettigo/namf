@@ -205,11 +205,11 @@ String getConfigString(boolean maskPwd = false) {
     json_string += Var2Json(F("pwd_custom"), pwd_custom);
 
     copyToJSON_Bool(send2influx);
-    Var2Json(F("host_influx"), host_influx);
-    Var2Json(F("url_influx"), url_influx);
+    json_string += Var2Json(F("host_influx"), host_influx);
+    json_string += Var2Json(F("url_influx"), url_influx);
     copyToJSON_Int(port_influx);
-    Var2Json(F("user_influx"), user_influx);
-    Var2Json(F("pwd_influx"), pwd_influx);
+    json_string += Var2Json(F("user_influx"), user_influx);
+    json_string += Var2Json(F("pwd_influx"), pwd_influx);
 #undef copyToJSON_Bool
 #undef copyToJSON_Int
 #undef Var2Json
