@@ -32,7 +32,9 @@ namespace NetworkWatchdog {
     JsonObject &parseHTTPRequest(void) {
         String host;
         parseHTTP(F("host"), host);
-        parseHTTP(F("enabled"), enabled);
+        String sensorID = F("enabled-{s}");
+        sensorID.replace(F("{s}"),String(SimpleScheduler::NTW_WTD));
+        parseHTTP(sensorID, enabled);
         StaticJsonBuffer<256> jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         if (addr.isValid(host)) {

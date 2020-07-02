@@ -65,7 +65,7 @@ namespace SimpleScheduler {
             );
 
             boolean enabled = findSlot(i) >= 0; // check if sensor is enabled
-            templ += form_checkbox(F("enabled"), findSlotDescription(i), enabled, true);
+            templ += form_checkbox(F("enabled-{sensor}"), findSlotDescription(i), enabled, true);
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);

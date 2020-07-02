@@ -33,7 +33,10 @@ namespace SPS30 {
     //callback to parse HTML form sent from `getConfigHTML`
     JsonObject& parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
-        parseHTTP(F("enabled"), enabled);
+        String sensorID = F("enabled-{s}");
+        sensorID.replace(F("{s}"),String(SimpleScheduler::SPS30));
+        parseHTTP(sensorID, enabled);
+
         StaticJsonBuffer<256> jsonBuffer;
         JsonObject & ret = jsonBuffer.createObject();
         ret[F("refresh")] = refresh;

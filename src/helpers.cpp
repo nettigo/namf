@@ -387,6 +387,13 @@ unsigned long  parseHTTP(const __FlashStringHelper *name, bool &value ){
     }
 };
 
+unsigned long  parseHTTP(const String &name, bool &value ){
+    value = false;
+    if (server.hasArg(name)) {
+        value = server.arg(name) == "1";
+    }
+};
+
 //Form helpers
 //
 String form_input(const String& name, const String& info, const String& value, const int length) {
