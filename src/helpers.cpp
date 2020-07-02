@@ -240,10 +240,10 @@ int readAndParseConfigFile(File configFile) {
         StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
         json.printTo(json_string);
-        debug_out(F("File content: "), DEBUG_MIN_INFO, 0);
-        debug_out(String(buf.get()), DEBUG_MIN_INFO, 1);
-        debug_out(F("JSON Buffer content: "), DEBUG_MIN_INFO, 0);
-        debug_out(json_string, DEBUG_MIN_INFO, 1);
+        debug_out(F("File content: "), DEBUG_MED_INFO, 0);
+        debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
+        debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
+        debug_out(json_string, DEBUG_MED_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
             if (json.containsKey("SOFTWARE_VERSION")) {
