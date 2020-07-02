@@ -604,7 +604,7 @@ void webserver_config() {
         page_content += line_from_value(FPSTR(INTL_SHOW_WIFI_INFO), String(show_wifi_info));
         page_content += line_from_value(FPSTR(INTL_LEDBAR_32), String(has_ledbar_32));
         page_content += line_from_value(FPSTR(INTL_DEBUG_LEVEL), String(debug));
-        page_content += line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms));
+        page_content += line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms/1000));
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("CSV")), String(send2csv));
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Feinstaub-App")), String(send2fsapp));
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("opensensemap")), String(send2sensemap));
