@@ -115,7 +115,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " sekund od ostatniego pomiaru.";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_TO_FIRST_MEASUREMENT[] PROGMEM = "Pozostało {v} sekund do pierwszego pomiaru.";
 /* ./src/lang/intl_pl.lang */ const char INTL_USER[] PROGMEM = "Nazwa użytkownika";
-/* ./src/lang/intl_pl.lang */ const char INTL_USE_BETA[] PROGMEM = "Załaduj firmware beta";
 /* ./src/lang/intl_pl.lang */ const char INTL_VALUE[] PROGMEM = "Wartość";
 /* ./src/lang/intl_pl.lang */ const char INTL_WARNING[] PROGMEM = "ostrzeżenia";
 /* ./src/lang/intl_pl.lang */ const char INTL_WIFI_NETWORKS[] PROGMEM = "Ładowanie sieci WiFi...";

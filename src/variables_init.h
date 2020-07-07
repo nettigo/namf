@@ -45,7 +45,6 @@ namespace cfg {
     bool send2influx = SEND2INFLUX;
     bool send2csv = SEND2CSV;
     bool auto_update = AUTO_UPDATE;
-    bool use_beta = USE_BETA;
     bool has_display = HAS_DISPLAY;
     bool has_lcd1602 = HAS_LCD1602;
     bool has_lcd1602_27 = HAS_LCD1602_27;

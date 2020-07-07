@@ -76,7 +76,6 @@ namespace cfg {
     extern bool send2influx;
     extern bool send2csv;
     extern bool auto_update;
-    extern bool use_beta;
     extern bool has_display;
     extern bool has_lcd1602;
     extern bool has_lcd1602_27;

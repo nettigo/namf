@@ -377,7 +377,6 @@ void webserver_config() {
         page_content += FPSTR(INTL_MORE_SETTINGS);
         page_content += F("</b><br/>");
         page_content += form_checkbox("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update);
-        page_content += form_checkbox("use_beta", FPSTR(INTL_USE_BETA), use_beta);
         page_content += form_checkbox("has_display", FPSTR(INTL_DISPLAY), has_display);
         page_content += form_checkbox("has_lcd", FPSTR(INTL_LCD),
                                       has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27, false);
@@ -553,7 +552,6 @@ void webserver_config() {
         }
 
         readBoolParam(auto_update);
-        readBoolParam(use_beta);
         readBoolParam(has_display);
         has_lcd1602 = false;
         has_lcd1602_27 = false;
@@ -595,7 +593,6 @@ void webserver_config() {
         page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read));
         page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("GPS")), String(gps_read));
         page_content += line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update));
-        page_content += line_from_value(FPSTR(INTL_USE_BETA), String(use_beta));
         page_content += line_from_value(FPSTR(INTL_DISPLAY), String(has_display));
         page_content += line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27));
         page_content += line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602));

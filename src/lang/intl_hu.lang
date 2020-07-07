@@ -29,7 +29,6 @@ INTL_FS_WIFI_DESCRIPTION WiFi Szenzor konfigurációs módban
 INTL_FS_WIFI_NAME Név
 INTL_MORE_SETTINGS További beállítások
 INTL_AUTO_UPDATE Firmware automatikus frissítése
-INTL_USE_BETA Béta firmware letöltése
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Has character LCD
 INTL_LCD1602_27 LCD 1602 (I2C: 0x27)

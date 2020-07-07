@@ -183,7 +183,6 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(send2lora);
     copyToJSON_Bool(send2csv);
     copyToJSON_Bool(auto_update);
-    copyToJSON_Bool(use_beta);
     copyToJSON_Bool(has_display);
     copyToJSON_Bool(has_lcd1602);
     copyToJSON_Bool(has_lcd1602_27);
@@ -283,7 +282,6 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(send2lora);
             setFromJSON(send2csv);
             setFromJSON(auto_update);
-            setFromJSON(use_beta);
             setFromJSON(has_display);
             setFromJSON(has_lcd1602);
             setFromJSON(has_lcd1602_27);

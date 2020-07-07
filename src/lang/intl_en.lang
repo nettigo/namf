@@ -25,7 +25,6 @@ INTL_FS_WIFI_DESCRIPTION WiFi Sensor in configuration mode
 INTL_FS_WIFI_NAME Name
 INTL_MORE_SETTINGS More settings
 INTL_AUTO_UPDATE Auto update firmware
-INTL_USE_BETA Load beta firmware
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Has character LCD
 INTL_LCD1602_27 LCD 1602 (I2C: 0x27)
