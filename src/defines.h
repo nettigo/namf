@@ -30,6 +30,11 @@ extern String tmpl(const String& patt, const String& value1, const String& value
 extern String tmpl(const String& patt, const String& value1, const String& value2);
 extern String tmpl(const String& patt, const String& value);
 
+#define UPDATE_CHANNEL_ALFA 0
+#define UPDATE_CHANNEL_BETA 1
+#define UPDATE_CHANNEL_STABLE 2
+
+
 #define HOST_MADAVI "api-rrd.madavi.de"
 #define URL_MADAVI "/data.php"
 #define PORT_MADAVI 80

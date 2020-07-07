@@ -76,6 +76,7 @@ namespace cfg {
     unsigned long time_for_wifi_config = 600000;
     unsigned long sending_intervall_ms = 145000;
 
+    byte update_channel = UPDATE_CHANNEL_STABLE;
     void initNonTrivials(const char *id) {
         strcpy(cfg::current_lang, CURRENT_LANG);
         if (fs_ssid[0] == '\0') {

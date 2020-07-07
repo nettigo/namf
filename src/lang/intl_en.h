@@ -26,7 +26,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Advanced settings";
 /* ./src/lang/intl_en.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Active sensors map(external link)";
 /* ./src/lang/intl_en.lang */ const char INTL_ALTITUDE[] PROGMEM = "Altitude";
-/* ./src/lang/intl_en.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Auto update firmware";
+/* ./src/lang/intl_en.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Auto update firmware, using channel";
 /* ./src/lang/intl_en.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Back to home page";
 /* ./src/lang/intl_en.lang */ const char INTL_BASICAUTH[] PROGMEM = "Authorization";
 /* ./src/lang/intl_en.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
@@ -119,6 +119,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_TIME[] PROGMEM = "Time";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " seconds since last measurement.";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME_TO_FIRST_MEASUREMENT[] PROGMEM = "Still {v} seconds until first measurement.";
+/* ./src/lang/intl_en.lang */ const char INTL_UPDATE_ALFA[] PROGMEM = "alfa (experimental fw, do not use unless You can recover sensor)";
+/* ./src/lang/intl_en.lang */ const char INTL_UPDATE_BETA[] PROGMEM = "beta (stability testing for new features)";
+/* ./src/lang/intl_en.lang */ const char INTL_UPDATE_STABLE[] PROGMEM = "stable (use if in doubt)";
 /* ./src/lang/intl_en.lang */ const char INTL_USER[] PROGMEM = "User";
 /* ./src/lang/intl_en.lang */ const char INTL_VALUE[] PROGMEM = "Value";
 /* ./src/lang/intl_en.lang */ const char INTL_WARNING[] PROGMEM = "warnings";

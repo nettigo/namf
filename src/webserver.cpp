@@ -376,7 +376,12 @@ void webserver_config() {
 
         page_content += FPSTR(INTL_MORE_SETTINGS);
         page_content += F("</b><br/>");
-        page_content += form_checkbox("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update);
+        page_content += form_checkbox("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update, false);
+        page_content += F(" <select name=\"channel\">");
+        page_content += form_option(String(UPDATE_CHANNEL_STABLE), FPSTR(INTL_UPDATE_STABLE), update_channel == UPDATE_CHANNEL_STABLE);
+        page_content += form_option(String(UPDATE_CHANNEL_BETA), FPSTR(INTL_UPDATE_BETA), update_channel == UPDATE_CHANNEL_BETA);
+        page_content += form_option(String(UPDATE_CHANNEL_ALFA), FPSTR(INTL_UPDATE_ALFA), update_channel == UPDATE_CHANNEL_ALFA);
+        page_content += F("</select></br>");
         page_content += form_checkbox("has_display", FPSTR(INTL_DISPLAY), has_display);
         page_content += form_checkbox("has_lcd", FPSTR(INTL_LCD),
                                       has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27, false);
@@ -552,6 +557,8 @@ void webserver_config() {
         }
 
         readBoolParam(auto_update);
+        parseHTTP(F("channel"), update_channel);
+
         readBoolParam(has_display);
         has_lcd1602 = false;
         has_lcd1602_27 = false;
@@ -593,6 +600,7 @@ void webserver_config() {
         page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read));
         page_content += line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("GPS")), String(gps_read));
         page_content += line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update));
+        page_content += String(update_channel);
         page_content += line_from_value(FPSTR(INTL_DISPLAY), String(has_display));
         page_content += line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27));
         page_content += line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602));
