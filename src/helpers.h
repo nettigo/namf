@@ -36,6 +36,7 @@ unsigned long parseHTTP(const __FlashStringHelper *, unsigned long & );
 unsigned long parseHTTP(const __FlashStringHelper *, bool & );
 unsigned long parseHTTP(const __FlashStringHelper *, String & );
 unsigned long parseHTTP(const String &name, bool &value );
+void parseHTTP(const __FlashStringHelper * , byte &value );
 
 String form_option(String const &name, const String & info, const bool checked = false);
 String form_input(const String& name, const String& info, const String& value, const int length);

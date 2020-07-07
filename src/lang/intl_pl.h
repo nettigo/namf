@@ -115,7 +115,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " sekund od ostatniego pomiaru.";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_TO_FIRST_MEASUREMENT[] PROGMEM = "Pozostało {v} sekund do pierwszego pomiaru.";
 /* ./src/lang/intl_pl.lang */ const char INTL_USER[] PROGMEM = "Nazwa użytkownika";
-/* ./src/lang/intl_pl.lang */ const char INTL_USE_BETA[] PROGMEM = "Załaduj firmware beta";
 /* ./src/lang/intl_pl.lang */ const char INTL_VALUE[] PROGMEM = "Wartość";
 /* ./src/lang/intl_pl.lang */ const char INTL_WARNING[] PROGMEM = "ostrzeżenia";
 /* ./src/lang/intl_pl.lang */ const char INTL_WIFI_NETWORKS[] PROGMEM = "Ładowanie sieci WiFi...";
@@ -128,6 +127,9 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate PL: INTL_NTW_WTD_ERROR 🐱;";
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate PL: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate PL: INTL_SPS30_REFRESH 🐱;";
+ const char INTL_UPDATE_ALFA[] PROGMEM = "Translate PL: INTL_UPDATE_ALFA 🐱;";
+ const char INTL_UPDATE_BETA[] PROGMEM = "Translate PL: INTL_UPDATE_BETA 🐱;";
+ const char INTL_UPDATE_STABLE[] PROGMEM = "Translate PL: INTL_UPDATE_STABLE 🐱;";
  const char INTL_NO_NETWORKSNem[] PROGMEM = "Translate PL: INTL_NO_NETWORKSNem 🐱;";
  const char INTL_HPM[] PROGMEM = "Translate PL: INTL_HPM 🐱;";
  const char INTL_PPD42NS[] PROGMEM = "Translate PL: INTL_PPD42NS 🐱;";

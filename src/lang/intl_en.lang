@@ -1,3 +1,6 @@
+INTL_UPDATE_ALFA alfa (experimental fw, do not use unless You can recover sensor)
+INTL_UPDATE_BETA beta (stability testing for new features)
+INTL_UPDATE_STABLE stable (use if in doubt)
 INTL_LANG EN
 INTL_PM_SENSOR Particulate matter sensor
 INTL_CONFIGURATION Configuration
@@ -24,8 +27,7 @@ INTL_FS_WIFI WiFi Sensor
 INTL_FS_WIFI_DESCRIPTION WiFi Sensor in configuration mode
 INTL_FS_WIFI_NAME Name
 INTL_MORE_SETTINGS More settings
-INTL_AUTO_UPDATE Auto update firmware
-INTL_USE_BETA Load beta firmware
+INTL_AUTO_UPDATE Auto update firmware, using channel
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Has character LCD
 INTL_LCD1602_27 LCD 1602 (I2C: 0x27)

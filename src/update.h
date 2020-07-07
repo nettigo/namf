@@ -34,7 +34,23 @@ t_httpUpdate_return tryUpdate(const String host, const String port, const String
 #endif
 
 t_httpUpdate_return tryUpdate(String const ver) {
-    return tryUpdate(String(UPDATE_HOST),String(UPDATE_PORT), String(UPDATE_URL), ver);
+    String host;
+    String url;
+    switch(cfg::update_channel) {
+        case UPDATE_CHANNEL_ALFA:
+            host = String(UPDATE_HOST_ALFA);
+            url = String(UPDATE_URL_ALFA);
+            break;
+        case UPDATE_CHANNEL_BETA:
+            host = String(UPDATE_HOST_BETA);
+            url = String(UPDATE_URL_BETA);
+            break;
+        default:
+            host = String(UPDATE_HOST);
+            url = String(UPDATE_URL);
+            break;
+    }
+    return tryUpdate(host,String(UPDATE_PORT), url, ver);
 };
 
 void verifyUpdate (t_httpUpdate_return result) {

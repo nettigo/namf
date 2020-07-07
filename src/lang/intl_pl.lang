@@ -25,7 +25,6 @@ INTL_FS_WIFI_DESCRIPTION Parametry WiFi w trybie konfiguracji czujnika
 INTL_FS_WIFI_NAME Nazwa sieci
 INTL_MORE_SETTINGS Więcej ustawień
 INTL_AUTO_UPDATE Aktualizuj firmware automatycznie
-INTL_USE_BETA Załaduj firmware beta
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Ma wyświetlacz
 INTL_LCD1602_27 LCD 1602 (I2C: 0x27)

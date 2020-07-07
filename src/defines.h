@@ -30,6 +30,11 @@ extern String tmpl(const String& patt, const String& value1, const String& value
 extern String tmpl(const String& patt, const String& value1, const String& value2);
 extern String tmpl(const String& patt, const String& value);
 
+#define UPDATE_CHANNEL_ALFA 0
+#define UPDATE_CHANNEL_BETA 1
+#define UPDATE_CHANNEL_STABLE 2
+
+
 #define HOST_MADAVI "api-rrd.madavi.de"
 #define URL_MADAVI "/data.php"
 #define PORT_MADAVI 80
@@ -46,8 +51,12 @@ extern String tmpl(const String& patt, const String& value);
 #define URL_FSAPP "/data.php"
 #define PORT_FSAPP 80
 
-#define UPDATE_HOST F("beta.fw.nettigo.pl")
+#define UPDATE_HOST F("fw.nettigo.pl")
 #define UPDATE_URL F("/NAMF/index.php")
+#define UPDATE_HOST_ALFA F("alfa.fw.nettigo.pl")
+#define UPDATE_URL_ALFA F("/NAMF/index.php")
+#define UPDATE_HOST_BETA F("alfa.fw.nettigo.pl")
+#define UPDATE_URL_BETA F("/NAMF/index.php")
 #define UPDATE_PORT 80
 
 #define JSON_BUFFER_SIZE 2000

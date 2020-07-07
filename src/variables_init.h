@@ -45,7 +45,6 @@ namespace cfg {
     bool send2influx = SEND2INFLUX;
     bool send2csv = SEND2CSV;
     bool auto_update = AUTO_UPDATE;
-    bool use_beta = USE_BETA;
     bool has_display = HAS_DISPLAY;
     bool has_lcd1602 = HAS_LCD1602;
     bool has_lcd1602_27 = HAS_LCD1602_27;
@@ -77,6 +76,7 @@ namespace cfg {
     unsigned long time_for_wifi_config = 600000;
     unsigned long sending_intervall_ms = 145000;
 
+    byte update_channel = UPDATE_CHANNEL_STABLE;
     void initNonTrivials(const char *id) {
         strcpy(cfg::current_lang, CURRENT_LANG);
         if (fs_ssid[0] == '\0') {
