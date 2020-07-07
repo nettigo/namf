@@ -11,6 +11,7 @@
 #define SOFTWARE_VERSION  "NAMF-2020-30"
 #endif
 #include "defines.h"
+#include "system/scheduler.h"
 #include <SoftwareSerial.h>
 #include <ESP8266WebServer.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
@@ -31,6 +32,8 @@
 #else
 #include "lang/intl_en.h"
 #endif
+
+extern SimpleScheduler::NAMFScheduler scheduler;
 
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
@@ -93,14 +96,14 @@ namespace cfg {
     extern char user_influx[65];
     extern char pwd_influx[65];
 
-    extern char host_custom[100];
-    extern char url_custom[100];
+    extern String host_custom;
+    extern String url_custom;
     extern int port_custom;
     extern char user_custom[65];
     extern char pwd_custom[65];
 
-    extern char host_influx[100];
-    extern char url_influx[100];
+    extern String host_influx;
+    extern String url_influx;
 
     extern unsigned long time_for_wifi_config;
     extern unsigned long sending_intervall_ms;
@@ -234,6 +237,13 @@ extern unsigned long count_sends ;
 extern unsigned long next_display_millis ;
 extern unsigned long next_display_count ;
 
+struct struct_wifiInfo {
+    char ssid[35];
+    uint8_t encryptionType;
+    int32_t RSSI;
+    int32_t channel;
+    bool isHidden;
+};
 extern struct struct_wifiInfo *wifiInfo;
 extern uint8_t count_wifiInfo;
 

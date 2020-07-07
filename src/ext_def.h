@@ -48,15 +48,15 @@ enum LoggerEntry
 // IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
 
 // Definition eigene API
-#define HOST_CUSTOM "192.168.234.1"
-#define URL_CUSTOM "/data.php"
+const char HOST_CUSTOM[] PROGMEM = "192.168.234.1";
+const char URL_CUSTOM[] PROGMEM = "/data.php";
 #define PORT_CUSTOM 80
 #define USER_CUSTOM ""
 #define PWD_CUSTOM ""
 
 // Definition eigene InfluxDB
-#define HOST_INFLUX "influx.server"
-#define URL_INFLUX "/write?db=luftdaten"
+const char HOST_INFLUX[] PROGMEM = "influx.server";
+const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
 #define USER_INFLUX ""
 #define PWD_INFLUX ""

@@ -1,0 +1,100 @@
+INTL_LANG HU
+INTL_PM_SENSOR Szálló por szenzor
+INTL_CONFIGURATION Konfiguráció
+INTL_WIFI_SETTINGS WiFi beállítások
+INTL_WIFI_TX_PWR TX power 0-20.5(dBm)
+INTL_WIFI_PHY_MODE WiFi Phy Mode (1=B / 2=G / 3=N)
+INTL_WIFI_NETWORKS WiFi hálózatok keresése...
+INTL_LANGUAGE Nyelv
+INTL_NO_NETWORKSNem találtam WiFi hálózatot
+INTL_NETWORKS_FOUND Talált WiFi hálózatok:
+INTL_AB_HIER_NUR_ANDERN Haladó beállítások
+INTL_SAVE Mentés
+INTL_SENSORS Szenzorok
+INTL_SDS011 SDS011 ({pm})
+INTL_PMS Plantower PMS(1,3,5,6,7)003 ({pm})
+INTL_HPM Honeywell PM sensor
+INTL_PPD42NS PPD42NS
+INTL_DHT22 DHT22 ({t}, {h})
+INTL_HTU21D HTU21D ({t}, {h})
+INTL_BMP180 BMP180 ({t}, {p})
+INTL_BMP280 BMP280 ({t}, {p})
+INTL_BME280 BME280 ({t}, {h}, {p})
+INTL_HECA HECA (SHT30) ({t}, {h})
+INTL_DS18B20 DS18B20 ({t})
+INTL_NEO6M GPS (NEO 6M)
+INTL_BASICAUTH Azonosítás
+INTL_FS_WIFI WiFi Szenzor
+INTL_FS_WIFI_DESCRIPTION WiFi Szenzor konfigurációs módban
+INTL_FS_WIFI_NAME Név
+INTL_MORE_SETTINGS További beállítások
+INTL_AUTO_UPDATE Firmware automatikus frissítése
+INTL_USE_BETA Béta firmware letöltése
+INTL_DISPLAY OLED SSD1306
+INTL_LCD Has character LCD
+INTL_LCD1602_27 LCD 1602 (I2C: 0x27)
+INTL_LCD1602_3F LCD 1602 (I2C: 0x3F)
+INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
+INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
+INTL_LEDBAR_32 RGB LED BAR (I2C: 0x32)
+INTL_SHOW_WIFI_INFO A Wi-Fi kapcsolat adatainak megjelenítése az LCD-n
+INTL_DEBUG_LEVEL Debug&nbsp;Level
+INTL_MEASUREMENT_INTERVAL Mérési intervallum
+INTL_DURATION_ROUTER_MODE Hotspot mód időtartama
+INTL_MORE_APIS További API-k
+INTL_SEND_TO_OWN_API Adatok küldése saját API-nak
+INTL_SERVER Szerver
+INTL_PATH Útvonal
+INTL_PORT Port
+INTL_USER Felhasználónév
+INTL_PASSWORD Jelszó
+INTL_SEND_TO Send to {v}
+INTL_READ_FROM Read from {v}
+INTL_SENSOR_IS_REBOOTING A Szenzor újraindul...
+INTL_RESTART_DEVICE Eszköz újraindítása
+INTL_DELETE_CONFIG A mentett beállítások törlése
+INTL_RESTART_SENSOR A szenzor újraindítása
+INTL_HOME Főoldal
+INTL_BACK_TO_HOME Vissza a főoldalra
+INTL_CURRENT_DATA Aktuális adatok
+INTL_ACTIVE_SENSORS_MAP Aktív szenzorok térképe (külső link)
+INTL_CONFIGURATION_DELETE Beállítások törlése
+INTL_CONFIGURATION_REALLY_DELETE Biztosan törölni akarod a beállításokat?
+INTL_DELETE Törlés
+INTL_CANCEL Mégse
+INTL_REALLY_RESTART_SENSOR Biztosan újraindítod a szenzort?
+INTL_RESTART Újraindítás
+INTL_SAVE_AND_RESTART Mentés és újraindítás
+INTL_FIRMWARE Firmware verzió
+INTL_DEBUG_SETTING_TO Debug beállítás
+INTL_NONE off
+INTL_ERROR only errors
+INTL_WARNING warnings
+INTL_MIN_INFO min. info
+INTL_MED_INFO mid. info
+INTL_MAX_INFO max. info
+INTL_CONFIG_DELETED Beállítások törölve
+INTL_CONFIG_CAN_NOT_BE_DELETED A beállítások törlése sikertelen.
+INTL_CONFIG_NOT_FOUND Beállítások nem találhatóak
+INTL_TIME_TO_FIRST_MEASUREMENT Még {v} másodperc van hátra az első mérésig.
+INTL_TIME_SINCE_LAST_MEASUREMENT  másodperc telt el az utolsó mérés óta.
+INTL_PARTICLES_PER_LITER részecske/liter
+INTL_PARTICULATE_MATTER szálló por
+INTL_TEMPERATURE hőmérséklet
+INTL_HUMIDITY relatív páratartalom
+INTL_PRESSURE légnyomás
+INTL_LATITUDE Földrajzi szélesség
+INTL_LONGITUDE Földrajzi hosszúság
+INTL_ALTITUDE Tengerszint feletti magasság
+INTL_DATE Dátum
+INTL_TIME Idő
+INTL_SIGNAL_STRENGTH Jelerősség
+INTL_SIGNAL_QUALITY Jelminőség
+INTL_NUMBER_OF_MEASUREMENTS Mérések száma:
+INTL_SENSOR Szenzor
+INTL_PARAMETER Paraméter
+INTL_VALUE Érték
+
+LUFTDATEN_INFO_LOGO_SVG <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120px\" height=\"90px\" version=\"1.0\" style=\"shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd\" viewBox=\"0 0 120 90\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g id=\"NAM Logo\"><path fill=\"#fff\" d=\"M50 27c0,1 -1,2 -2,2 -1,0 -2,-1 -2,-2 0,-8 6,-14 14,-14 7,0 13,6 13,14 0,7 -6,13 -13,13l-32 0c-12,0 -21,10 -21,21 0,14 13,23 26,20 2,-1 3,-1 5,-2 1,-1 2,0 3,1 1,1 0,2 -1,3 -10,6 -22,4 -30,-4 -10,-10 -10,-26 0,-36 4,-4 11,-7 18,-7l32 0c8,0 12,-10 6,-16 -6,-6 -16,-1 -16,7zm5 52c0,0 -1,0 -1,0l0 0 -1 -2 -3 0c0,1 0,2 0,2 -1,0 -1,0 -2,0 0,0 0,0 0,0l3 -8c0,0 0,0 0,0l0 0c1,0 2,0 2,0l3 8c0,0 0,0 -1,0l0 0zm6 -13c0,0 0,-8 0,-10 0,-2 1,-2 1,-2l6 0 0 2 -4 0 0 3 4 0 0 2 -4 0 0 3 4 0 0 2 -7 0zm11 0l0 -10 -4 0c0,0 0,-2 2,-2l17 0 0 2 -3 0 0 10 -3 0 0 -10c-2,0 -4,0 -6,0l0 10 -3 0zm16 0c0,0 0,-8 0,-10 0,-2 3,-2 3,-2l0 12 -3 0zm22 -12c2,0 3,0 5,1 1,2 2,3 2,5 0,2 -1,4 -2,5 -2,1 -3,2 -5,2 -1,0 -3,-1 -4,-2 -2,-1 -2,-3 -2,-5 0,-2 0,-3 2,-5 1,-1 3,-1 4,-1zm0 2c-1,0 -1,0 -2,1 -1,1 -1,2 -1,3 0,2 0,3 1,3 0,1 1,2 2,2 1,0 2,-1 3,-2 0,-1 1,-2 1,-3 0,-1 -1,-2 -1,-3 -1,-1 -2,-1 -3,-1zm-62 10c0,0 0,-8 0,-10 0,-2 2,-2 2,-2l7 8c0,0 0,-4 0,-6 0,-2 2,-2 2,-2l0 12 -2 0 -7 -8 0 6 0 2 -2 0 0 0zm55 -6c0,0 -3,0 -3,0 -2,0 -2,2 -2,2l3 0c0,2 0,2 0,2 -1,0 -1,1 -2,1 -1,0 -2,-1 -3,-2 -1,0 -1,-2 -1,-3 0,-1 0,-2 1,-3 1,-1 2,-1 3,-1 1,0 2,0 3,0l1 -1c-2,-1 -3,-1 -4,-1 -1,0 -2,0 -3,0 -1,1 -2,1 -3,2 -1,1 -1,3 -1,4 0,1 0,2 0,3 1,1 1,2 2,2 2,1 3,2 5,2 1,0 3,-1 4,-1l0 -6 0 0zm-52 16l2 0 -1 -2 -1 2zm6 3c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm4 -3l0 3c0,0 -1,0 -1,0 -1,0 -1,0 -1,0l0 -8c0,0 0,0 1,0 1,0 2,0 3,0 1,0 1,1 2,1l0 0c0,2 0,3 -2,4l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm11 1l3 -5c0,0 0,0 0,0l0 0c0,0 0,0 0,0l0 0 1 0c0,0 0,0 0,0l0 8c0,0 0,0 -1,0 0,0 0,0 0,0l0 -4 -2 3c0,0 -1,0 -2,0l-1 -3 0 4c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0 0,0 1,0 1,0l2 5zm13 -1c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm4 -4c0,0 0,0 0,0l4 5 0 -5c0,0 1,0 1,0 0,0 1,0 1,0l0 8c0,1 -1,0 -2,0l0 0 0 0 -3 -5 0 5c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0zm8 8c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm8 -8c0,2 0,2 -3,2l0 6c0,0 0,0 -1,0 0,0 -1,0 -1,0l0 -6c-2,0 -2,0 -2,-2 0,0 0,0 1,0l5 0c1,0 1,0 1,0zm7 4c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm5 1l0 3c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 0,0 1,0 3,0 4,0 2,1 2,4 0,5l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm-85 -18c-3,0 -6,2 -7,4 1,2 4,4 7,4 3,0 5,-2 7,-4 -2,-2 -4,-4 -7,-4zm0 2c1,0 2,1 2,2 0,1 -1,2 -2,2 -2,0 -3,-1 -3,-2 0,-1 1,-2 3,-2zm22 -48c-1,0 -2,0 -3,-1 0,-1 0,-2 1,-3 9,-5 20,-4 28,4 9,8 9,23 0,32 -4,4 -10,7 -16,7l-32 0c-7,0 -12,5 -12,11 0,6 5,11 12,11 7,0 13,-7 11,-14 -1,-1 0,-2 1,-3 2,0 3,1 3,2 3,10 -5,20 -15,20 -9,0 -16,-7 -16,-16 0,-9 7,-16 16,-16l32 0c10,0 18,-8 18,-18 0,-12 -12,-21 -23,-18 -2,0 -3,1 -5,2z\"/></g></svg>
+INTL_MHZ14A Winsen MH-Z14A CO2 Sensor
+INTL_MHZ14A_VAL WINSEN

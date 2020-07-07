@@ -1,9 +1,9 @@
 //
 // Created by viciu on 28.01.2020.
 //
-#include <ArduinoJson.h>
 #include "variables.h"
 #include "helpers.h"
+#include "system/scheduler.h"
 
 int32_t calcWiFiSignalQuality(int32_t rssi) {
     if (rssi > -50) {
@@ -69,20 +69,38 @@ String Var2Json(const String& name, const String& value) {
 /*****************************************************************
  * convert boolean value to json string                          *
  *****************************************************************/
-String Var2Json(const String& name, const bool value) {
+String Var2Json(const String &name, const bool value) {
     String s = F("\"{n}\":\"{v}\",");
     s.replace("{n}", name);
     s.replace("{v}", (value ? "true" : "false"));
     return s;
 }
 
+String Var2Json(const String &name, const char *value) {
+    return Var2Json(name, String(value));
+}
+
+String Var2JsonInt(const String &name, const bool value) {
+    String s = F("\"{n}\":{v},");
+    s.replace("{n}", name);
+    s.replace("{v}", (value ? "1" : "0"));
+    return s;
+}
+
 /*****************************************************************
  * convert boolean value to json string                          *
  *****************************************************************/
-String Var2Json(const String& name, const int value) {
+String Var2Json(const String &name, const int value) {
     String s = F("\"{n}\":\"{v}\",");
     s.replace("{n}", name);
     s.replace("{v}", String(value));
+    return s;
+}
+
+String Var2Json(const String &name, const unsigned long value) {
+    String s = F("\"{n}\":\"{v}\",");
+    s.replace(F("{n}"), name);
+    s.replace(F("{v}"), String(value));
     return s;
 }
 
@@ -132,20 +150,20 @@ String getConfigString(boolean maskPwd = false) {
 
 #define copyToJSON_Bool(varname) json_string += Var2Json(#varname,varname);
 #define copyToJSON_Int(varname) json_string += Var2Json(#varname,varname);
-#define copyToJSON_String(varname) json_string += Var2Json(#varname,String(varname));
-    copyToJSON_String(current_lang);
-    copyToJSON_String(SOFTWARE_VERSION);
-    copyToJSON_String(wlanssid);
+
+    json_string += Var2Json(F("current_lang"), current_lang);
+    json_string += Var2Json(F("SOFTWARE_VERSION"), SOFTWARE_VERSION);
+    json_string += Var2Json(F("wlanssid"), wlanssid);
     //mask WiFi password?
     if (maskPwd) {
-        json_string += Var2Json("wlanpwd",String("***"));
+        json_string += Var2Json(F("wlanpwd"), String("***"));
     } else {
-        copyToJSON_String(wlanpwd);
+        json_string += Var2Json(F("wlanpwd"), wlanpwd);
     }
-    copyToJSON_String(www_username);
-    copyToJSON_String(www_password);
-    copyToJSON_String(fs_ssid);
-    copyToJSON_String(fs_pwd);
+    json_string += Var2Json(F("www_username"), www_username);
+    json_string += Var2Json(F("www_password"), www_password);
+    json_string += Var2Json(F("fs_ssid"), fs_ssid);
+    json_string += Var2Json(F("fs_pwd"), fs_pwd);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
     copyToJSON_Bool(sds_read);
@@ -173,30 +191,29 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(has_lcd2004_3f);
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(has_ledbar_32);
-    copyToJSON_String(debug);
-    copyToJSON_String(sending_intervall_ms);
-    copyToJSON_String(time_for_wifi_config);
+    json_string += Var2Json(F("debug"), debug);
+    json_string += Var2Json(F("sending_intervall_ms"), sending_intervall_ms);
+    json_string += Var2Json(F("time_for_wifi_config"), time_for_wifi_config);
     copyToJSON_Int(outputPower);
     copyToJSON_Int(phyMode);
-    copyToJSON_String(senseboxid);
+    json_string += Var2Json(F("senseboxid"), senseboxid);
     copyToJSON_Bool(send2custom);
-    copyToJSON_String(host_custom);
-    copyToJSON_String(url_custom);
+    json_string += Var2Json(F("host_custom"), host_custom);
+    json_string += Var2Json(F("url_custom"), url_custom);
     copyToJSON_Int(port_custom);
-    copyToJSON_String(user_custom);
-    copyToJSON_String(pwd_custom);
+    json_string += Var2Json(F("user_custom"), user_custom);
+    json_string += Var2Json(F("pwd_custom"), pwd_custom);
 
     copyToJSON_Bool(send2influx);
-    copyToJSON_String(host_influx);
-    copyToJSON_String(url_influx);
+    json_string += Var2Json(F("host_influx"), host_influx);
+    json_string += Var2Json(F("url_influx"), url_influx);
     copyToJSON_Int(port_influx);
-    copyToJSON_String(user_influx);
-    copyToJSON_String(pwd_influx);
+    json_string += Var2Json(F("user_influx"), user_influx);
+    json_string += Var2Json(F("pwd_influx"), pwd_influx);
 #undef copyToJSON_Bool
 #undef copyToJSON_Int
-#undef copyToJSON_String
-
-    json_string.remove(json_string.length() - 1);
+#undef Var2Json
+    SimpleScheduler::getConfigJSON(json_string);
     json_string += "}";
 
     return json_string;
@@ -222,11 +239,14 @@ int readAndParseConfigFile(File configFile) {
         configFile.readBytes(buf.get(), size);
         StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
+        debug_out(F("Config - JSON object memory used:"),DEBUG_MIN_INFO, false);
+        debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
+
         json.printTo(json_string);
-        debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
-        debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
-        debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
-        debug_out(json_string, DEBUG_MAX_INFO, 1);
+        debug_out(F("File content: "), DEBUG_MED_INFO, 0);
+        debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
+        debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
+        debug_out(json_string, DEBUG_MED_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
             if (json.containsKey("SOFTWARE_VERSION")) {
@@ -282,19 +302,20 @@ int readAndParseConfigFile(File configFile) {
                 send2sensemap = 0;
             }
             setFromJSON(send2custom);
-            strcpyFromJSON(host_custom);
-            strcpyFromJSON(url_custom);
+//            strcpyFromJSON(host_custom);
+            if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
+            if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
             strcpyFromJSON(user_custom);
             strcpyFromJSON(pwd_custom);
             setFromJSON(send2influx);
-            strcpyFromJSON(host_influx);
-            strcpyFromJSON(url_influx);
+            if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
+            if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
             setFromJSON(port_influx);
             strcpyFromJSON(user_influx);
             strcpyFromJSON(pwd_influx);
-            if (strcmp(host_influx, "api.luftdaten.info") == 0) {
-                strcpy(host_influx, "");
+            if (host_influx.equals(F("api.luftdaten.info"))) {
+                host_influx = F("");
                 send2influx = 0;
             }
             configFile.close();
@@ -304,6 +325,11 @@ int readAndParseConfigFile(File configFile) {
             }
 #undef setFromJSON
 #undef strcpyFromJSON
+            //Sensor configs from simple scheduler
+            if (json.containsKey(F("sensors"))) {
+                JsonObject& item = json[F("sensors")];
+                SimpleScheduler::readConfigJSON(item);
+            }
             return 0;
         } else {
             debug_out(F("failed to load json config"), DEBUG_ERROR, 1);
@@ -344,6 +370,33 @@ void writeConfig(){
     String json_string  = getConfigString();
     writeConfigRaw(json_string);
 }
+
+unsigned long  parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
+    if (server.hasArg(name)) {
+        value = server.arg(name).toInt();
+    }
+};
+
+unsigned long  parseHTTP(const __FlashStringHelper *name, String &value ){
+    value = F("");
+    if (server.hasArg(name)) {
+        value = server.arg(name);
+    }
+};
+
+unsigned long  parseHTTP(const __FlashStringHelper *name, bool &value ){
+    value = false;
+    if (server.hasArg(name)) {
+        value = server.arg(name) == "1";
+    }
+};
+
+unsigned long  parseHTTP(const String &name, bool &value ){
+    value = false;
+    if (server.hasArg(name)) {
+        value = server.arg(name) == "1";
+    }
+};
 
 //Form helpers
 //
@@ -475,6 +528,22 @@ void collectMemStats() {
     uint32_t cont = ESP.getFreeContStack();
     if (cont > memoryStatsMax.freeContStack)                     memoryStatsMax.freeContStack  = cont;
     if (cont < memoryStatsMin.freeContStack)                     memoryStatsMin.freeContStack  = cont;
+
+
+}
+void dumpCurrentMemStats() {
+    memory_stat_t memoryStats;
+    ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
+    debug_out(F("Memory stats: "),DEBUG_MIN_INFO,true);
+    debug_out(F("Free heap: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(memoryStats.freeHeap),DEBUG_MIN_INFO,true);
+    debug_out(F("Mx free blk: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(memoryStats.maxFreeBlock),DEBUG_MIN_INFO,true);
+    debug_out(F("Frag: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(memoryStats.frag),DEBUG_MIN_INFO,true);
+    debug_out(F("Free cont stack: \t"),DEBUG_MIN_INFO,false);
+    debug_out(String(ESP.getFreeContStack()),DEBUG_MIN_INFO,true);
+
 
 
 }

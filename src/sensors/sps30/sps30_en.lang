@@ -1,0 +1,7 @@
+INTL_SPS30_CONCENTRATION pcs/cm³
+INTL_SPS30_SIZE µm
+INTL_SPS30_NO_RESULT no results
+INTL_SPS30_CONCENTRATIONS Particle matter concentration
+INTL_SPS30_COUNTS Particle matter counts
+INTL_SPS30_SENSOR_DESC Sensirion SPS30 - high precision particle matter sensor
+INTL_SPS30_REFRESH Pause between saving measurements

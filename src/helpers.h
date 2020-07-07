@@ -5,6 +5,7 @@
 #ifndef NAMF_HELPERS_H
 #define NAMF_HELPERS_H
 #include "Arduino.h"
+#include <ArduinoJson.h>
 #include <FS.h>                     // must be first
 
 int32_t calcWiFiSignalQuality(int32_t rssi);
@@ -23,9 +24,18 @@ String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
 String Value2Json(const __FlashStringHelper *, const String& value);
 String Var2Json(const String& name, const bool value);
+String Var2JsonInt(const String& name, const bool value);
 String Var2Json(const String& name, const int value);
+String Var2Json(const String& name, const String & value);
+String Var2Json(const String& name, const char * value);
 String Var2Json(const String& name, const float value);
+String Var2Json(const String& name, const unsigned long value);
 //Nettigo NAM 0.3.2 factory firmware - test
+
+unsigned long parseHTTP(const __FlashStringHelper *, unsigned long & );
+unsigned long parseHTTP(const __FlashStringHelper *, bool & );
+unsigned long parseHTTP(const __FlashStringHelper *, String & );
+unsigned long parseHTTP(const String &name, bool &value );
 
 String form_option(String const &name, const String & info, const bool checked = false);
 String form_input(const String& name, const String& info, const String& value, const int length);
@@ -36,6 +46,7 @@ String form_submit(const String& value);
 String form_select_lang();
 void resetMemoryStats();
 void collectMemStats();
+void dumpCurrentMemStats();
 void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
 void debugData(const String&, const String&);

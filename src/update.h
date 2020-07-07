@@ -60,12 +60,13 @@ void verifyUpdate (t_httpUpdate_return result) {
 
 void updateFW(const String host, const String port, const String path) {
     debug_out(F("Check for update with "),DEBUG_MIN_INFO,1);
+    display_debug(F("Update - check"), F(""));
     debug_out(host,DEBUG_MIN_INFO,1);
     debug_out(port,DEBUG_MIN_INFO,1);
     debug_out(path,DEBUG_MIN_INFO,1);
     Serial.println(SOFTWARE_VERSION);
     String ver = String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                 String(cfg::current_lang) + String(" ") + String(INTL_LANG);
+                 String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG));
     t_httpUpdate_return ret = tryUpdate( host, port, path, ver);
     verifyUpdate(ret);
 };
@@ -74,9 +75,10 @@ void updateFW(const String host, const String port, const String path) {
 void updateFW() {
     Serial.print(F("Check for update with default URL"));
     Serial.println(SOFTWARE_VERSION);
+    display_debug(F("Update - check"), F(""));
 
     t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(INTL_LANG) );
+                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) );
     verifyUpdate(ret);
 };
 

@@ -65,14 +65,14 @@ namespace cfg {
     char user_influx[65] = USER_INFLUX;
     char pwd_influx[65] = PWD_INFLUX;
 
-    char host_custom[100] = HOST_CUSTOM;
-    char url_custom[100] = URL_CUSTOM;
+    String host_custom = FPSTR(HOST_CUSTOM);
+    String url_custom = FPSTR(URL_CUSTOM);
     int port_custom = PORT_CUSTOM;
     char user_custom[65] = USER_CUSTOM;
     char pwd_custom[65] = PWD_CUSTOM;
 
-    char host_influx[100] = HOST_INFLUX;
-    char url_influx[100] = URL_INFLUX;
+    String host_influx = FPSTR(HOST_INFLUX);
+    String url_influx = FPSTR(URL_INFLUX);
 
     unsigned long time_for_wifi_config = 600000;
     unsigned long sending_intervall_ms = 145000;
@@ -212,13 +212,6 @@ unsigned long count_sends = 0;
 unsigned long next_display_millis = 0;
 unsigned long next_display_count = 0;
 
-struct struct_wifiInfo {
-    char ssid[35];
-    uint8_t encryptionType;
-    int32_t RSSI;
-    int32_t channel;
-    bool isHidden;
-};
 
 struct struct_wifiInfo *wifiInfo;
 uint8_t count_wifiInfo;

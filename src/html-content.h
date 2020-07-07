@@ -62,8 +62,7 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 const char BR_TAG[] PROGMEM = "<br/>";
 const char TABLE_TAG_OPEN[] PROGMEM = "<table>";
 const char TABLE_TAG_CLOSE_BR[] PROGMEM = "</table>";
-const char EMPTY_ROW[] PROGMEM = "<tr><td colspan='3'>&nbsp;</td></tr>";
-
+const char EMPTY_ROW[] PROGMEM = "<tr><td colspan='3' align='center'>&nbsp;</td></tr>";
 const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inline;'>{t}</a><br/><br/><br/>\
 <b><a href='https://air.nettigo.pl/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Nettigo Air Monitor (Koduj dla Polski)</a></b><br/><br/>\
 <small>Firmware based on luftdaten.info project by<br/><a href='https://codefor.de/stuttgart/' target='_blank' style='display:inline;background:none;color:black;padding:0'>Open Knowledge Lab Stuttgart a.o. (Code for Germany)</a></small>\
