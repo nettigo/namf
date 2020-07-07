@@ -21,6 +21,7 @@ Detailed changelog is in [Versions](Versions.md).
   * /metrics - measured values in Prometheus format
 * Configuration related:
   * /config - configuration
+  * /simple_config - interface for new scheduler subsystems configuration  
   * /removeConfig - remove configuration files
   * /config.json - current configure file in JSON format
   * /configSave.json - form for pasting configuration file
