@@ -50,6 +50,9 @@ t_httpUpdate_return tryUpdate(String const ver) {
             url = String(UPDATE_URL);
             break;
     }
+    debug_out(F("Update checked:"), DEBUG_MIN_INFO,true);
+    debug_out(host, DEBUG_MIN_INFO,true);
+    debug_out(url, DEBUG_MIN_INFO,true);
     return tryUpdate(host,String(UPDATE_PORT), url, ver);
 };
 

@@ -1,4 +1,9 @@
-NAMF 2020-31 ()
+NAMF 2020-32 ()
+
+NAMF 2020-31 (2020-07-08)
+* new scheduler
+* SPS30 support (high precision particular matter sensor from Sensirion)
+* network watchdog - restart sensor if can not ping given IP for three times in row (10 pings each time)
 
 NAMF 2020-30 (2020-06-02)
 * CPU clock boosted to 160 MHz
