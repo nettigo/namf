@@ -1,3 +1,6 @@
+INTL_UPDATE_ALFA alfa (eksperymentalne firmware)
+INTL_UPDATE_BETA beta (testowanie stabilności nowych rozwiązań)
+INTL_UPDATE_STABLE stable (najlepiej przetestowany kod)
 INTL_LANG PL
 INTL_PM_SENSOR Czujnik pyłu zawieszonego
 INTL_CONFIGURATION Konfiguracja
