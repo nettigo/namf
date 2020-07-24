@@ -12,6 +12,8 @@ The code base has roots in [Luftdaten.info firmware](https://github.com/opendata
 
 Detailed changelog is in [Versions](Versions.md).
 
+To build this project You need Platformio installed with python 3.
+
 ### Firmware web interface
 
 * / - main menu
