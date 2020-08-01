@@ -1,4 +1,4 @@
-NAMF 2020-32 ()
+NAMF 2020-32 (2020-08-01)
 Updated missing translations in Polish
 
 NAMF 2020-31 (2020-07-08)
