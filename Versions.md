@@ -1,4 +1,5 @@
 NAMF 2020-32 ()
+Updated missing translations in Polish
 
 NAMF 2020-31 (2020-07-08)
 * new scheduler
