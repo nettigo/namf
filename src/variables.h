@@ -234,6 +234,8 @@ extern bool sntp_time_is_set ;
 
 extern bool got_ntp ;
 
+extern unsigned long enable_ota_time ;
+
 extern unsigned long count_sends ;
 extern unsigned long next_display_millis ;
 extern unsigned long next_display_count ;

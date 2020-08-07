@@ -208,6 +208,8 @@ bool sntp_time_is_set = false;
 
 bool got_ntp = false;
 
+unsigned long enable_ota_time = 0;
+
 unsigned long count_sends = 0;
 unsigned long next_display_millis = 0;
 unsigned long next_display_count = 0;

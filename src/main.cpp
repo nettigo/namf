@@ -14,6 +14,7 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ArduinoOTA.h>
 #include <LiquidCrystal_I2C.h>
 #include <base64.h>
 #include <ArduinoJson.h>
@@ -1187,8 +1188,7 @@ void setup() {
 	starttime_SDS = starttime;
 	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
 
-
-
+	ArduinoOTA.begin(true);
 }
 
 static void checkForceRestart() {
@@ -1284,7 +1284,9 @@ void loop() {
     sample_count++;
 
     MDNS.update();
-
+    if (enable_ota_time > act_milli) {
+        ArduinoOTA.handle();
+    }
 	wdt_reset(); // nodemcu is alive
 
 	scheduler.process();
