@@ -1146,7 +1146,9 @@ void setup() {
         got_ntp = acquireNetworkTime();
         debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
         debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
-        updateFW();
+        if(cfg::auto_update) {
+            updateFW();
+        }
     } else {
         startAP();
     }
@@ -1487,7 +1489,7 @@ void loop() {
 
 		checkForceRestart();
 
-		if (msSince(last_update_attempt) > PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS) {
+		if (cfg::auto_update && msSince(last_update_attempt) > PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS) {
 			updateFW();
 		}
 
