@@ -1,3 +1,7 @@
+NAMF-2020-33rc2 (2020-08-14)
+* version bump to check autoupdate software option
+* increased update check interval from 1h to 6h
+
 NAMF-2020-33rc1 (2020-08-13)
 * respect autoupdate option
 
