@@ -1,3 +1,6 @@
+NAMF-2020-33rc1 (2020-08-13)
+* respect autoupdate option
+
 NAMF 2020-32 (2020-08-01)
 * Updated missing translations in Polish
 
