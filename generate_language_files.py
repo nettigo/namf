@@ -25,7 +25,7 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
         files.extend(glob.glob(i.format(l=m.group(1)),recursive=True))
     for lang_file in files:
         print(lang_file)
-        with open(lang_file) as f:
+        with open(lang_file, encoding="utf-8") as f:
             for row in f:
                 if re.match("^\W*[$#]", row):
                     continue

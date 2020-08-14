@@ -1,7 +1,8 @@
 NAMF-2020-33rc2 (2020-08-14)
 * version bump to check autoupdate software option
 * increased update check interval from 1h to 6h
-* enabling SPS30 w/o connected hardware should not stop whole sensor 
+* enabling SPS30 w/o connected hardware should not stop whole sensor
+* use UTF-8 explict when open language files (required on Windows to compile) 
 
 NAMF-2020-33rc1 (2020-08-13)
 * respect autoupdate option
