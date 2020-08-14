@@ -33,7 +33,7 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
                 if len(entries[0]) == 0:
                     continue
                 # print(entries[0])
-                translations[lang][entries[0]] = {"body": entries[2], "src": lang_file}
+                translations[lang][entries[0]] = {"body": entries[2], "src": lang_file.replace('\\', '/')}
                 keys_index[entries[0]] = True
 
 # pp = pprint.PrettyPrinter(indent=4)
