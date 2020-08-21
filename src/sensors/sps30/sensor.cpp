@@ -50,6 +50,7 @@ namespace SPS30 {
         storage.mc_2p5 += reading.mc_2p5;
         storage.mc_4p0 += reading.mc_4p0;
         storage.mc_10p0 += reading.mc_10p0;
+        storage.nc_0p5 += reading.nc_0p5;
         storage.nc_1p0 += reading.nc_1p0;
         storage.nc_2p5 += reading.nc_2p5;
         storage.nc_4p0 += reading.nc_4p0;

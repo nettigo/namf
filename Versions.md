@@ -1,3 +1,6 @@
+NAMF-2020-33rc3 (2020-08-21)
+* SPS30 - added missing 0.5 particles count reading 
+
 NAMF-2020-33rc2 (2020-08-14)
 * version bump to check autoupdate software option
 * increased update check interval from 1h to 6h
