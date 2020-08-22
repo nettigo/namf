@@ -50,6 +50,7 @@ namespace SPS30 {
         storage.mc_2p5 += reading.mc_2p5;
         storage.mc_4p0 += reading.mc_4p0;
         storage.mc_10p0 += reading.mc_10p0;
+        storage.nc_0p5 += reading.nc_0p5;
         storage.nc_1p0 += reading.nc_1p0;
         storage.nc_2p5 += reading.nc_2p5;
         storage.nc_4p0 += reading.nc_4p0;
@@ -62,15 +63,21 @@ namespace SPS30 {
         debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
         zeroMeasurementStruct(sum);
         sensirion_i2c_init();
-        while ((ret = sps30_probe()) != 0) {
-            Serial.print("SPS sensor probing failed\n");
-            Serial.println(ret);
+        byte cnt = 0;
+        while (
+                ((ret = sps30_probe()) != 0) &&
+                (cnt++ < 15)
+                ) {
             delay(500);
+            if (cnt == 10) {
+                debug_out(F("SPS30 probing failed, disabling sensor"), DEBUG_ERROR, true);
+                return 0;
+            }
         }
         sps30_reset();
         delay(200);
         if (sps30_get_serial(serial) != 0) {
-            Serial.println("Error getting SPS serial");
+            debug_out(F("Error getting SPS30 serial"), DEBUG_ERROR, true);
             return 0;
         }
         debug_out("SPS30 serial: ", DEBUG_MIN_INFO, false);
@@ -84,16 +91,15 @@ namespace SPS30 {
 
         ret = sps30_set_fan_auto_cleaning_interval_days(auto_clean_days);
         if (ret) {
-            Serial.print("error setting the auto-clean interval: ");
+            debug_out(F("error setting the auto-clean interval: "), DEBUG_ERROR, true);
             Serial.println(ret);
         }
         ret = sps30_start_measurement();
         if (ret < 0) {
-            Serial.print("error starting measurement\n");
+            debug_out(F("error starting measurement"), DEBUG_ERROR, true);
         } else {
             started = true;
         }
-
         return 10 * 1000;
     }
 

@@ -25,7 +25,7 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
         files.extend(glob.glob(i.format(l=m.group(1)),recursive=True))
     for lang_file in files:
         print(lang_file)
-        with open(lang_file) as f:
+        with open(lang_file, encoding="utf-8") as f:
             for row in f:
                 if re.match("^\W*[$#]", row):
                     continue
@@ -33,7 +33,7 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
                 if len(entries[0]) == 0:
                     continue
                 # print(entries[0])
-                translations[lang][entries[0]] = {"body": entries[2], "src": lang_file}
+                translations[lang][entries[0]] = {"body": entries[2], "src": lang_file.replace('\\', '/')}
                 keys_index[entries[0]] = True
 
 # pp = pprint.PrettyPrinter(indent=4)
@@ -90,7 +90,7 @@ Files with .lang extension are searched in following directories and it's subdir
         print('Changes detected, generating new {f}'.format(f=final_file))
         shutil.copy(temp_file, final_file)
     else:
-        print('identyczne {f} i {t}'.format(t=temp_file,f=final_file))
+        # print('Identical {f} and {t}'.format(t=temp_file,f=final_file))
         pass
 
     os.remove(temp_file)

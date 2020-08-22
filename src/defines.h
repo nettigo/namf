@@ -16,7 +16,7 @@ const unsigned long READINGTIME_SDS_MS = 5000;
 const unsigned long SAMPLETIME_GPS_MS = 50;
 const unsigned long DISPLAY_UPDATE_INTERVAL_MS = 5000;
 const unsigned long ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
-const unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 3600*1000;        // check for firmware updates once a day
+const unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 6*3600*1000;        // check for firmware updates once a 6 hours
 const unsigned long DURATION_BEFORE_FORCED_RESTART_MS = ONE_DAY_IN_MS * 28;  // force a reboot every ~4 weeks
 
 typedef struct memory_stat_t {
