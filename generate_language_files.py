@@ -90,7 +90,7 @@ Files with .lang extension are searched in following directories and it's subdir
         print('Changes detected, generating new {f}'.format(f=final_file))
         shutil.copy(temp_file, final_file)
     else:
-        print('identyczne {f} i {t}'.format(t=temp_file,f=final_file))
+        # print('Identical {f} and {t}'.format(t=temp_file,f=final_file))
         pass
 
     os.remove(temp_file)
