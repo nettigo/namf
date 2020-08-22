@@ -1,3 +1,6 @@
+NAMF-2020-33 (2020-08-22)
+* stable relase based on rc3
+
 NAMF-2020-33rc3 (2020-08-21)
 * SPS30 - added missing 0.5 particles count reading 
 
