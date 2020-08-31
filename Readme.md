@@ -31,7 +31,7 @@ To build this project You need Platformio installed with python 3.
   * /wifi - list of wifi networks (active only in AP mode)
 * /stack_dump - show stack dump from last exception with timestamp, FW version, language and MD5 sum of image  
 * /reset - sensor reboot
-* /ota - enable OTA firmware update for 60 seconds
+* /ota - enable OTA firmware update for 60 seconds. Will work only if admin password is set and enabled
 * /debug?lvl=x - sets debug serial messages info level to x:
   * 0 - no debug
   * 1 - errors
@@ -39,4 +39,4 @@ To build this project You need Platformio installed with python 3.
   * 3 - errors, warnings & min. info
   * 4 - errors, warnings, min. info & med. info
   * 5 - all debug messages
-* /images - serving images - used for the NAM logo
+* /images - serving images - used for the NAM logo 
