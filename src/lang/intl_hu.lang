@@ -66,6 +66,9 @@ INTL_RESTART Újraindítás
 INTL_SAVE_AND_RESTART Mentés és újraindítás
 INTL_FIRMWARE Firmware verzió
 INTL_DEBUG_SETTING_TO Debug beállítás
+INTL_ENABLE_OTA Enable OTA
+INTL_ENABLE_OTA_INFO OTA enabled for 60 seconds.
+INTL_ENABLE_OTA_REFUSE Enable authorization in config panel in order to allow code upload
 INTL_NONE off
 INTL_ERROR only errors
 INTL_WARNING warnings
