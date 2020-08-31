@@ -903,6 +903,22 @@ void webserver_debug_level() {
 }
 
 /*****************************************************************
+ * Webserver enable ota                                          *
+ *****************************************************************/
+ void webserver_enable_ota() {
+    if (!webserver_request_auth()) { return; }
+    String page_content = make_header(FPSTR(INTL_ENABLE_OTA));
+
+    last_page_load = millis();
+    enable_ota_time = millis() + 60 * 1000;
+
+    page_content += FPSTR(INTL_ENABLE_OTA_INFO);
+
+    page_content += make_footer();
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+}
+
+/*****************************************************************
  * Webserver remove config                                       *
  *****************************************************************/
 void webserver_removeConfig() {
@@ -1041,6 +1057,7 @@ void setup_webserver() {
     server.on("/wifi", webserver_wifi);
     server.on("/values", webserver_values);
     server.on("/debug", webserver_debug_level);
+    server.on("/ota", webserver_enable_ota);
     server.on("/removeConfig", webserver_removeConfig);
     server.on("/reset", webserver_reset);
     server.on("/data.json", webserver_data_json);
