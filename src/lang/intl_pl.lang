@@ -66,6 +66,7 @@ INTL_SAVE_AND_RESTART Zapisz i zrestartuj
 INTL_FIRMWARE Wersja FW
 INTL_DEBUG_SETTING_TO Ustawiono poziom debugowania na
 INTL_ENABLE_OTA Włącz OTA
+INTL_ENABLE_OTA_REFUSE Włącz autoryzację w panelu konfiguracyjnym, by móc włączyć zdalne ładowanie kodu
 INTL_ENABLE_OTA_INFO OTA włączone na 60 sekund.
 INTL_NONE wyłączony
 INTL_ERROR tylko błędy

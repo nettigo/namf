@@ -906,15 +906,23 @@ void webserver_debug_level() {
  * Webserver enable ota                                          *
  *****************************************************************/
  void webserver_enable_ota() {
-    if (!webserver_request_auth()) { return; }
-    String page_content = make_header(FPSTR(INTL_ENABLE_OTA));
+    String page_content;
+    if (cfg::www_basicauth_enabled) {
+        if (!webserver_request_auth()) { return; }
+        page_content = make_header(FPSTR(INTL_ENABLE_OTA));
 
-    last_page_load = millis();
-    enable_ota_time = millis() + 60 * 1000;
+        last_page_load = millis();
+        enable_ota_time = millis() + 60 * 1000;
 
-    page_content += FPSTR(INTL_ENABLE_OTA_INFO);
+        page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
-    page_content += make_footer();
+        page_content += make_footer();
+    } else {
+        page_content = make_header(FPSTR(INTL_ENABLE_OTA));
+        page_content += FPSTR(INTL_ENABLE_OTA_REFUSE);
+        page_content += make_footer();
+
+    }
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 

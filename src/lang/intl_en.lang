@@ -38,6 +38,7 @@ INTL_LEDBAR_32 RGB LED BAR (I2C: 0x32)
 INTL_SHOW_WIFI_INFO Display WiFi connection info on LCD
 INTL_DEBUG_LEVEL Debug&nbsp;Level
 INTL_ENABLE_OTA Enable OTA
+INTL_ENABLE_OTA_REFUSE Enable authorization in config panel in order to allow code upload
 INTL_ENABLE_OTA_INFO OTA enabled for 60 seconds.
 INTL_MEASUREMENT_INTERVAL Measuring interval
 INTL_DURATION_ROUTER_MODE Duration router mode
