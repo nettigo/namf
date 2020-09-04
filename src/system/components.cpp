@@ -29,6 +29,8 @@ namespace SimpleScheduler {
                 return SPS30::getConfigHTML();
             case SimpleScheduler::NTW_WTD:
                 return NetworkWatchdog::getConfigHTML();
+            case SimpleScheduler::SHT3x:
+                return SHT3x::getConfigHTML();
             default:
                 return s;
         }
@@ -41,6 +43,8 @@ namespace SimpleScheduler {
                 return SPS30::parseHTTPRequest();
             case SimpleScheduler::NTW_WTD:
                 return NetworkWatchdog::parseHTTPRequest();
+            case SimpleScheduler::SHT3x:
+                return SHT3x::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
@@ -55,6 +59,8 @@ namespace SimpleScheduler {
                 return SPS30::getConfigJSON();
             case SimpleScheduler::NTW_WTD:
                 return NetworkWatchdog::getConfigJSON();
+            case SimpleScheduler::SHT3x:
+                return SHT3x::getConfigJSON();
             default:
                 return s;
         }
@@ -67,6 +73,8 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::NTW_WTD:
                 NetworkWatchdog::readConfigJSON(json);
+            case SimpleScheduler::SHT3x:
+                SHT3x::readConfigJSON(json);
                 return;
             default:
                 return;
@@ -109,6 +117,8 @@ namespace SimpleScheduler {
                 return FPSTR(SPS30::KEY);
             case SimpleScheduler::NTW_WTD:
                 return FPSTR(NetworkWatchdog::KEY);
+            case SimpleScheduler::SHT3x:
+                return FPSTR(SHT3x::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
@@ -118,12 +128,15 @@ namespace SimpleScheduler {
 
     }
 
+    //convert sensor/subsytem type to string with code
     const __FlashStringHelper *findSlotDescription(LoopEntryType sensor) {
         switch (sensor) {
             case SimpleScheduler::SPS30:
                 return FPSTR(INTL_SPS30_SENSOR_DESC);
             case SimpleScheduler::NTW_WTD:
                 return FPSTR(INTL_NTW_WTD_DESC);
+            case SimpleScheduler::SHT3x:
+                return FPSTR(INTL_SHT3X_DESC);
             default:
                 return F("");
         }

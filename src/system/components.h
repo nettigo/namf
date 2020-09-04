@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include "../sensors/sps30/sensor.h"
 #include "../sensors/network_watchdog/tester.h"
+#include "../sensors/sht3x/sht3x.h"
 
 namespace SimpleScheduler {
 
