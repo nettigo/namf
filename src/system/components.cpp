@@ -7,17 +7,21 @@ namespace SimpleScheduler {
     //collect results as JSON
     void getResults(String &res) {
         SPS30::results(res);
+        SHT3x::results(res);
 
     }
 
     //did all API collect data?
     void afterSendData(bool status) {
         SPS30::afterSend(status);
+        SHT3x::afterSend(status);
+
     }
 
     //collect HTML table with current results
     void getResultsAsHTML(String &res) {
         SPS30::resultsAsHTML(res);
+        SHT3x::resultsAsHTML(res);
         NetworkWatchdog::resultsAsHTML(res);
     }
 

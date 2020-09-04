@@ -110,6 +110,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_SERVER[] PROGMEM = "Adres serwera";
 /* ./src/lang/intl_pl.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Pokaż status WiFi na LCD";
 /* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - czujnik temperatury i wilgotności";
+/* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Temperatura i wilgotność";
 /* ./src/lang/intl_pl.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "jakość sygnału";
 /* ./src/lang/intl_pl.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "siła sygnału";
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "szt/cm³";

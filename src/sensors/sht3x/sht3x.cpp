@@ -2,15 +2,36 @@
 // Created by viciu on 04.09.2020.
 //
 #include "sht3x.h"
+#include <Arduino.h>
+#include "ClosedCube_SHT31D.h"
 
 
-
+ClosedCube_SHT31D sht30;
 
 namespace SHT3x {
-    const char KEY[] PROGMEM = "SHT3x" ;
+    const char KEY[] PROGMEM = "SHT3x";
     bool enabled = false;
-    unsigned long temp;
+    long temp;
     unsigned long rh;
+    unsigned cnt;
+
+    bool initSensor() {
+        sht30.begin(0x45);  //on 0x44 is HECA, which uses SHT30 internally
+        if (sht30.periodicStart(SHT3XD_REPEATABILITY_HIGH, SHT3XD_FREQUENCY_10HZ) != SHT3XD_NO_ERROR) {
+            return false;
+        }
+        return true;
+    }
+    float currentTemp(void) {
+        if (cnt == 0) { return -128;}
+        return ((float)temp/100.0)/(float)cnt;
+    }
+
+    float currentRH(void) {
+        if (cnt == 0) { return -1;}
+        return (float)rh/10.0/(float)cnt;
+    }
+
 
     String getConfigHTML() {
         String s = F("<h1>SHT3x - czujnik temperatury i wilgotności</h1>Nic nie konfigurujemy. Just works :)");
@@ -50,10 +71,60 @@ namespace SHT3x {
     unsigned long process (SimpleScheduler::LoopEventType event){
         switch(event) {
             case SimpleScheduler::INIT:
-                return 200;
+                temp = 0;
+                rh = 0;
+                cnt = 0;
+                if (initSensor()) {
+                    return 1000;
+                } else {
+                    return 0;
+                }
+            case SimpleScheduler::RUN:
+                SHT31D result = sht30.periodicFetchData();
+                if (result.error == SHT3XD_NO_ERROR) {
+//                    Serial.print (F("SHT3x:   "));
+//                    Serial.print ((int) (result.t * 100));
+//                    Serial.print (F(", "));
+//                    Serial.println (result.rh);
+
+                    temp += (int) (result.t * 100);
+                    rh += (int) (result.rh * 10);
+                    cnt++;
+//                    Serial.println(currentTemp());
+                }
+                return (15 * 1000);
         }
         return 1000;
     };
 
+    void resultsAsHTML(String &page_content) {
+        page_content += FPSTR(EMPTY_ROW);
+        if (cnt == 0) {
+            page_content += table_row_from_value(FPSTR("SHT3X"), FPSTR(INTL_SPS30_NO_RESULT), F(""), "");
+        } else {
+            page_content += F("<tr><td colspan='3'>");
+            page_content += FPSTR(INTL_SHT3X_RESULTS);
+            page_content += F("</td></tr>\n");
+
+            page_content += table_row_from_value(F("SHT30"), F("Temp"), String(currentTemp()), F(" °C"));
+            page_content += table_row_from_value(F("SHT30"), F("Wilgotność wzgl."), String(currentRH()), F(" %"));
+
+        }
+    }
+
+    void results(String &s) {
+        if (cnt == 0) { return; }
+        String tmp;
+        tmp.reserve(64);
+        tmp = Value2Json(F("SHT30_T"), String(float(temp / cnt)));
+        tmp = Value2Json(F("SHT30_RH"), String(float(rh / cnt)));
+        s += tmp;
+    }
+
+    void afterSend(bool success) {
+        temp = 0;
+        rh = 0;
+        cnt = 0;
+    }
 
 }
