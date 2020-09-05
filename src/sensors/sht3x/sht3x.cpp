@@ -116,8 +116,8 @@ namespace SHT3x {
         if (cnt == 0) { return; }
         String tmp;
         tmp.reserve(64);
-        tmp = Value2Json(F("SHT30_T"), String(float(temp / cnt)));
-        tmp = Value2Json(F("SHT30_RH"), String(float(rh / cnt)));
+        tmp = Value2Json(F("SHT30_T"), String(currentTemp()));
+        tmp += Value2Json(F("SHT30_RH"), String(currentRH()));
         s += tmp;
     }
 
