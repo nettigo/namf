@@ -57,6 +57,7 @@ namespace SimpleScheduler {
 
     void NAMFScheduler::getConfigForms(String &page) {
         String s = F("");
+        page += F("<div id='ncf'>");
         LoopEntryType i = EMPTY;
         i++;
         for (; i < NAMF_LOOP_SIZE; i++) {
@@ -65,6 +66,7 @@ namespace SimpleScheduler {
             );
 
             boolean enabled = findSlot(i) >= 0; // check if sensor is enabled
+            templ += F("<hr/>");
             templ += form_checkbox(F("enabled-{sensor}"), findSlotDescription(i), enabled, true);
             //HTML to enable/disable given sensor
 
@@ -75,6 +77,7 @@ namespace SimpleScheduler {
             page += templ;
 
         }
+        page += F("</div>");
     }
 
     int NAMFScheduler::unregisterSensor(LoopEntryType slot) {

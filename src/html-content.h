@@ -52,6 +52,7 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 .s_red:hover {background:#E33;}\
 .s_orange{background:#F80;}\
 .s_orange:hover{background:#E70;}\
+#ncf hr{margin:25px 10px;}\
 </style>\
 </head><body>\
 <div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
