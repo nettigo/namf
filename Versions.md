@@ -1,3 +1,7 @@
+NAMF-2020-34rc2 (2020-09-12)
+- support for SHT3x sensor as temperature/humidity (fixed 0x45 I2C address, since 0x44 is being used by HECA)
+- a bit more separation between forms on config page
+
 NAMF-2020-34rc1 (2020-08-31)
 * merged PR#16 - allows upload code via OTA, for dev purposes, requires to have password
 
