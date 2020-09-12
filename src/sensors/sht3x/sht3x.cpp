@@ -106,8 +106,8 @@ namespace SHT3x {
             page_content += FPSTR(INTL_SHT3X_RESULTS);
             page_content += F("</td></tr>\n");
 
-            page_content += table_row_from_value(F("SHT30"), F("Temp"), String(currentTemp()), F(" °C"));
-            page_content += table_row_from_value(F("SHT30"), F("Wilgotność wzgl."), String(currentRH()), F(" %"));
+            page_content += table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_TEMP), String(currentTemp()), F(" °C"));
+            page_content += table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_HUM), String(currentRH()), F(" %"));
 
         }
     }

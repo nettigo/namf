@@ -110,6 +110,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "A Szenzor újraindul...";
 /* ./src/lang/intl_hu.lang */ const char INTL_SERVER[] PROGMEM = "Szerver";
 /* ./src/lang/intl_hu.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "A Wi-Fi kapcsolat adatainak megjelenítése az LCD-n";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - temperature and humidity sensor";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Humidity and temperature";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3x_HUM[] PROGMEM = "Relative humidity";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3x_TEMP[] PROGMEM = "Temperature";
 /* ./src/lang/intl_hu.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "Jelminőség";
 /* ./src/lang/intl_hu.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "Jelerősség";
 /* ./src/lang/intl_hu.lang */ const char INTL_TEMPERATURE[] PROGMEM = "hőmérséklet";
@@ -138,5 +142,3 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_UPDATE_BETA[] PROGMEM = "Translate HU: INTL_UPDATE_BETA 🐱;";
  const char INTL_UPDATE_STABLE[] PROGMEM = "Translate HU: INTL_UPDATE_STABLE 🐱;";
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
- const char INTL_SHT3X_DESC[] PROGMEM = "Translate HU: INTL_SHT3X_DESC 🐱;";
- const char INTL_SHT3X_RESULTS[] PROGMEM = "Translate HU: INTL_SHT3X_RESULTS 🐱;";
