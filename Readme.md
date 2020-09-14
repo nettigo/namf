@@ -19,7 +19,7 @@ To build this project You need Platformio installed with python 3.
 * / - main menu
 * Data related:
   * /values - current measured values and basic debug information
-  * /data.json - measured values in JSON format
+  * /data.json - measured values in JSON format (this is snapshot of last data set sent to APIs not current values as shown on /values page)
   * /metrics - measured values in Prometheus format
 * Configuration related:
   * /config - configuration
