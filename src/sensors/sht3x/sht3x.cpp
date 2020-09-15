@@ -98,6 +98,7 @@ namespace SHT3x {
     };
 
     void resultsAsHTML(String &page_content) {
+        if (!enabled) {return;}
         page_content += FPSTR(EMPTY_ROW);
         if (cnt == 0) {
             page_content += table_row_from_value(FPSTR("SHT3X"), FPSTR(INTL_SPS30_NO_RESULT), F(""), "");
