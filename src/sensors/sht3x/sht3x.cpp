@@ -114,7 +114,7 @@ namespace SHT3x {
     }
 
     void results(String &s) {
-        if (cnt == 0) { return; }
+        if (!enabled || cnt == 0) { return; }
         String tmp;
         tmp.reserve(64);
         tmp = Value2Json(F("SHT30_T"), String(currentTemp()));
