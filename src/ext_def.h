@@ -12,6 +12,10 @@
 #define WWW_PASSWORD "admin"
 #define WWW_BASICAUTH_ENABLED 0
 
+// Initial name
+
+#define INITIAL_NAME_PART "NAM-"
+
 // Sensor Wifi config (config mode)
 #define FS_SSID ""
 #define FS_PWD ""
@@ -60,6 +64,15 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
 #define USER_INFLUX ""
 #define PWD_INFLUX ""
+
+// Definitions for MQTT
+const char HOST_MQTT[] PROGMEM = "mqtt.server";
+const char SENSORS_TOPIC_MQTT[] PROGMEM = "/write?db=luftdaten";
+#define PORT_MQTT 1883
+#define USER_MQTT ""
+#define PWD_MQTT ""
+#define CLIENT_ID_MQTT ""
+#define SENSOR_TOPIC_PREFIX_MQTT ""
 
 // define pins for I2C
 #define I2C_PIN_SCL D4

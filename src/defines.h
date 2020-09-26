@@ -61,6 +61,10 @@ extern String tmpl(const String& patt, const String& value);
 
 #define JSON_BUFFER_SIZE 2000
 
+#define MQTT_MAX_PACKET_SIZE 256
+//limit sensor topic prefix size to leave space for payload
+#define SENSOR_TOPIC_PREFIX_MQTT_SIZE MQTT_MAX_PACKET_SIZE-192
+
 #define msSince(timestamp_before) (act_milli - (timestamp_before))
 
 

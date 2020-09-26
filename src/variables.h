@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-34rc3"
+#define SOFTWARE_VERSION  "NAMF-2020-32-MQTT"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -75,10 +75,10 @@ namespace cfg {
     extern bool send2lora;
     extern bool send2influx;
     extern bool send2csv;
+    extern bool send2mqtt;
     extern bool auto_update;
     extern bool has_display;
     extern u8_t update_channel;
-    extern bool has_display;
     extern bool has_lcd1602;
     extern bool has_lcd1602_27;
     extern bool has_lcd2004_27;
@@ -105,6 +105,13 @@ namespace cfg {
 
     extern String host_influx;
     extern String url_influx;
+
+    extern String host_mqtt;
+    extern int port_mqtt;
+    extern char client_id_mqtt[24];
+    extern String user_mqtt;
+    extern String pwd_mqtt;
+    extern String sensors_topic_mqtt;
 
     extern unsigned long time_for_wifi_config;
     extern unsigned long sending_intervall_ms;

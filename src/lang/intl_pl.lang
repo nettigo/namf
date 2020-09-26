@@ -34,7 +34,6 @@ INTL_LCD1602_27 LCD 1602 (I2C: 0x27)
 INTL_LCD1602_3F LCD 1602 (I2C: 0x3F)
 INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
 INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
-INTL_LEDBAR_32 Linijka diodowa RGB (I2C: 0x32)
 INTL_SHOW_WIFI_INFO Pokaż status WiFi na LCD
 INTL_DEBUG_LEVEL Poziom&nbsp;debugowania
 INTL_MEASUREMENT_INTERVAL Czas między pomiarami (sek.)
@@ -46,6 +45,8 @@ INTL_PATH Ścieżka
 INTL_PORT Port
 INTL_USER Nazwa użytkownika
 INTL_PASSWORD Hasło
+INTL_CLIENT_ID Nazwa klienta
+INTL_SENSORS_TOPIC_MQTT Prefiks tematu sensorów
 INTL_SEND_TO Wysyłaj dane do {v}
 INTL_READ_FROM Czytaj z {v}
 INTL_SENSOR_IS_REBOOTING Ponowne uruchamianie czujnika.

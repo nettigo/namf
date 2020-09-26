@@ -47,6 +47,8 @@ INTL_PATH Útvonal
 INTL_PORT Port
 INTL_USER Felhasználónév
 INTL_PASSWORD Jelszó
+INTL_CLIENT_ID Client Id
+INTL_SENSORS_TOPIC_MQTT Sensors topic prefix
 INTL_SEND_TO Send to {v}
 INTL_READ_FROM Read from {v}
 INTL_SENSOR_IS_REBOOTING A Szenzor újraindul...

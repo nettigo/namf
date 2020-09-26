@@ -43,6 +43,7 @@ namespace cfg {
     bool send2custom = SEND2CUSTOM;
     bool send2lora = SEND2LORA;
     bool send2influx = SEND2INFLUX;
+    bool send2mqtt = SEND2MQTT;
     bool send2csv = SEND2CSV;
     bool auto_update = AUTO_UPDATE;
     bool has_display = HAS_DISPLAY;
@@ -73,6 +74,13 @@ namespace cfg {
     String host_influx = FPSTR(HOST_INFLUX);
     String url_influx = FPSTR(URL_INFLUX);
 
+    String host_mqtt = FPSTR(HOST_MQTT);
+    int port_mqtt = PORT_MQTT;
+    String user_mqtt = FPSTR(USER_MQTT);
+    String pwd_mqtt = FPSTR(PWD_MQTT);
+    char client_id_mqtt[24] = CLIENT_ID_MQTT;
+    String sensors_topic_mqtt = SENSOR_TOPIC_PREFIX_MQTT;
+
     unsigned long time_for_wifi_config = 600000;
     unsigned long sending_intervall_ms = 145000;
 
@@ -80,8 +88,16 @@ namespace cfg {
     void initNonTrivials(const char *id) {
         strcpy(cfg::current_lang, CURRENT_LANG);
         if (fs_ssid[0] == '\0') {
-            strcpy(fs_ssid, "NAM-");
+            strcpy(fs_ssid, INITIAL_NAME_PART);
             strcat(fs_ssid, id);
+        }
+        if (client_id_mqtt[0] == '\0') {
+            strcpy(client_id_mqtt, INITIAL_NAME_PART);
+            strcat(client_id_mqtt, id);
+        }
+
+        if (sensors_topic_mqtt.isEmpty()) {
+            sensors_topic_mqtt = String(F("/")) + client_id_mqtt + F("/sensors/");
         }
     }
 }
