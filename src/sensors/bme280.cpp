@@ -59,7 +59,7 @@ String sensorBME280() {
             last_value_BME280_T = t;
             last_value_BME280_H = h;
             last_value_BME280_P = p;
-            s += Value2Json(F("BME280_temperature"), Float2String(last_value_BME280_T), F("C"));
+            s += Value2Json(F("BME280_temperature"), Float2String(last_value_BME280_T), F("°C"));
             s += Value2Json(F("BME280_humidity"), Float2String(last_value_BME280_H), F("%"));
             s += Value2Json(F("BME280_pressure"), Float2String(last_value_BME280_P), F("Pa"));
         }

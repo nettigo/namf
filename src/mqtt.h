@@ -17,6 +17,8 @@ namespace mqtt {
     void publish(const String& mqtt_topic, const String &data, bool retained);
 
     void send_mqtt(const String& data);
+
+    bool loop();
 }
 
 #endif //NAMF_MQTT_H

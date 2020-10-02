@@ -38,7 +38,7 @@ String sensorDHT() {
             debug_out(String(h) + "%", DEBUG_MIN_INFO, 1);
             last_value_DHT_T = t;
             last_value_DHT_H = h;
-            s += Value2Json(F("temperature"), Float2String(last_value_DHT_T), F("C"));
+            s += Value2Json(F("temperature"), Float2String(last_value_DHT_T), F("°C"));
             s += Value2Json(F("humidity"), Float2String(last_value_DHT_H), F("%"));
         }
     }

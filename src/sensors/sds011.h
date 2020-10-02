@@ -264,6 +264,7 @@ String sensorSDS() {
         readSingleSDSPacket(&pm10_serial, &pm25_serial);
     }
     if (send_now) {
+
         last_value_SDS_P1 = -1;
         last_value_SDS_P2 = -1;
         if (sds_val_count > 2) {
@@ -277,8 +278,9 @@ String sensorSDS() {
             debug_out("PM10:  " + Float2String(last_value_SDS_P1), DEBUG_MIN_INFO, 1);
             debug_out("PM2.5: " + Float2String(last_value_SDS_P2), DEBUG_MIN_INFO, 1);
             debug_out("----", DEBUG_MIN_INFO, 1);
-            s += Value2Json("SDS_P1", Float2String(last_value_SDS_P1));
-            s += Value2Json("SDS_P2", Float2String(last_value_SDS_P2));
+            s += Value2Json(F("SDS_P1"), Float2String(last_value_SDS_P1), F("µg/m³"));
+            s += Value2Json(F("SDS_P2"), Float2String(last_value_SDS_P2), F("µg/m³"));
+
         }
         sds_pm10_sum = 0;
         sds_pm25_sum = 0;

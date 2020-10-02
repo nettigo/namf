@@ -450,7 +450,7 @@ void webserver_config() {
             page_content += form_input(F("host_mqtt"), FPSTR(INTL_SERVER), host_mqtt, 60);
             page_content += form_input("port_mqtt", FPSTR(INTL_PORT), String(port_mqtt), max_port_digits);
             page_content += form_input("user_mqtt", FPSTR(INTL_USER), user_mqtt, 128);
-            page_content += form_password("pwd_mqtt", FPSTR(INTL_PASSWORD), pwd_mqtt, 128);
+            page_content += form_password("pwd_mqtt", FPSTR(INTL_PASSWORD), pwd_mqtt, 256);
             page_content += form_input("client_id_mqtt", FPSTR(INTL_CLIENT_ID), client_id_mqtt,
                                        capacity_null_terminated_char_array(client_id_mqtt));
             page_content += form_input("sensors_topic_mqtt", FPSTR(INTL_SENSORS_TOPIC_MQTT), sensors_topic_mqtt, SENSOR_TOPIC_PREFIX_MQTT_SIZE);
@@ -503,6 +503,16 @@ void webserver_config() {
                 masked_pwd += "*"; \
             if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
                 server.arg(#param).toCharArray(param, sizeof(param)); \
+            }\
+        }
+
+#define readPasswdStringParam(param) \
+        if (server.hasArg(#param)){ \
+            masked_pwd = ""; \
+            for (uint8_t i=0;i<server.arg(#param).length();i++) \
+                masked_pwd += "*";   \
+            if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
+                param = server.arg(#param); \
             }\
         }
 
@@ -570,7 +580,7 @@ void webserver_config() {
             parseHTTP(F("host_mqtt"), host_mqtt);
             readIntParam(port_mqtt);
             parseHTTP(F("user_mqtt"), user_mqtt);
-            parseHTTP(F("pwd_mqtt"), pwd_mqtt);
+            readPasswdStringParam(pwd_mqtt);
             readCharParam(client_id_mqtt);
             sensors_topic_mqtt.replace(F(" "), F(""));
             if(!sensors_topic_mqtt.endsWith(FPSTR("/"))) {
@@ -614,6 +624,7 @@ void webserver_config() {
 #undef readIntParam
 #undef readTimeParam
 #undef readPasswdParam
+#undef readPasswdStringParam
 
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Luftdaten.info")), String(send2dusti));
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Madavi")), String(send2madavi));

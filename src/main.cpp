@@ -561,7 +561,7 @@ static String sensorBMP280() {
 		last_value_BMP280_T = t;
 		last_value_BMP280_P = p;
 		s += Value2Json(F("BMP280_pressure"), Float2String(last_value_BMP280_P), F("Pa"));
-		s += Value2Json(F("BMP280_temperature"), Float2String(last_value_BMP280_T), F("C"));
+		s += Value2Json(F("BMP280_temperature"), Float2String(last_value_BMP280_T), F("°C"));
 	}
 	debug_out("----", DEBUG_MIN_INFO, 1);
 
@@ -599,7 +599,7 @@ static String sensorDS18B20() {
 		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
 		debug_out(Float2String(t) + " C", DEBUG_MIN_INFO, 1);
 		last_value_DS18B20_T = t;
-		s += Value2Json(F("DS18B20_temperature"), Float2String(last_value_DS18B20_T), F("C"));
+		s += Value2Json(F("DS18B20_temperature"), Float2String(last_value_DS18B20_T), F("°C"));
 	}
 	debug_out("----", DEBUG_MIN_INFO, 1);
 	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_DS18B20), DEBUG_MED_INFO, 1);
@@ -1184,8 +1184,7 @@ void setup() {
 	if (cfg::send2mqtt) {
         display_debug(F("Connecting to"), F("MQTT..."));
         mqtt::setup(wifi_client);
-        mqtt::reconnect(3);
-
+        mqtt::reconnect(2);
 	    if (!mqtt::client.connected()) {
 	        display_debug(F("Failed to connect"), F("to MQTT server"));
 	    }
@@ -1341,6 +1340,10 @@ void loop() {
 
 	server.handleClient();
 
+	if (cfg::send2mqtt) {
+	    mqtt::loop();
+	}
+
 	if (send_now) {
         debugData(String(F("****************** Upload data to APIs*****************************")));
         if (cfg::dht_read) {
@@ -1387,11 +1390,6 @@ void loop() {
 
 	if ((cfg::has_ledbar_32) && (send_now)) {
 		displayLEDBar();
-	}
-
-	if (cfg::send2mqtt) {
-	    mqtt::reconnect(1);
-	    mqtt::client.loop();
 	}
 
 	if (send_now) {
