@@ -582,6 +582,7 @@ void webserver_config() {
             parseHTTP(F("user_mqtt"), user_mqtt);
             readPasswdStringParam(pwd_mqtt);
             readCharParam(client_id_mqtt);
+            parseHTTP(F("sensors_topic_mqtt"), sensors_topic_mqtt);
             sensors_topic_mqtt.replace(F(" "), F(""));
             if(!sensors_topic_mqtt.endsWith(FPSTR("/"))) {
                 debug_out(F("Missing ending slash in mqtt topic prefix"), DEBUG_MIN_INFO, true);
