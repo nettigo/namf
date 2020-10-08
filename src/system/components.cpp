@@ -77,6 +77,7 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::NTW_WTD:
                 NetworkWatchdog::readConfigJSON(json);
+                return;
             case SimpleScheduler::SHT3x:
                 SHT3x::readConfigJSON(json);
                 return;
