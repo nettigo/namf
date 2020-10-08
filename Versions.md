@@ -1,3 +1,6 @@
+NAMF-2020-34rc4 (2020-10-08)
+- fix for core dump when enabling Network Watchdog
+
 NAMF-2020-34rc3 (2020-09-12)
 - don't show empty SHT3x results when sensor is not enabled
 
