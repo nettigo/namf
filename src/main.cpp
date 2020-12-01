@@ -475,13 +475,19 @@ String create_influxdb_string(const String& data) {
 		data_4_influxdb += esp_chipid() + " ";
 		for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = "";
-		    if (first_line)
-		        first_line = false;
-		    else
-		        tmp_str += ",";
-		    tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char*>();
-			tmp_str += "=";
-			tmp_str += json2data["sensordatavalues"][i]["value"].as<char*>();
+            if (first_line)
+                first_line = false;
+            else
+                tmp_str += ",";
+            tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char *>();
+            tmp_str += "=";
+            if (
+                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_date")) ||
+                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_time"))
+                    )
+                tmp_str += String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\""));
+            else
+                tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
             data_4_influxdb += tmp_str;
         }
         data_4_influxdb += F(",measurements=");
