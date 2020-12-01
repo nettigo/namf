@@ -2,6 +2,7 @@
 // Created by viciu on 17.02.2020.
 //
 
+#include "defines.h"
 #include "webserver.h"
 template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminated_char_array(const T(&)[N]) {
     return N - 1;
@@ -443,6 +444,17 @@ void webserver_config() {
                                        capacity_null_terminated_char_array(user_influx));
             page_content += form_password("pwd_influx", FPSTR(INTL_PASSWORD), pwd_influx,
                                           capacity_null_terminated_char_array(pwd_influx));
+            page_content += FPSTR(TABLE_TAG_CLOSE_BR);
+            page_content += form_checkbox("send2mqtt", tmpl(FPSTR(INTL_SEND_TO), F("MQTT")), send2mqtt);
+            page_content += FPSTR(TABLE_TAG_OPEN);
+            page_content += form_input(F("host_mqtt"), FPSTR(INTL_SERVER), host_mqtt, 60);
+            page_content += form_input("port_mqtt", FPSTR(INTL_PORT), String(port_mqtt), max_port_digits);
+            page_content += form_input("user_mqtt", FPSTR(INTL_USER), user_mqtt, 128);
+            page_content += form_password("pwd_mqtt", FPSTR(INTL_PASSWORD), pwd_mqtt, 256);
+            page_content += form_input("client_id_mqtt", FPSTR(INTL_CLIENT_ID), client_id_mqtt,
+                                       capacity_null_terminated_char_array(client_id_mqtt));
+            page_content += form_input("sensors_topic_mqtt", FPSTR(INTL_SENSORS_TOPIC_MQTT), sensors_topic_mqtt, SENSOR_TOPIC_PREFIX_MQTT_SIZE);
+
             page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("<br/></form>");
@@ -491,6 +503,16 @@ void webserver_config() {
                 masked_pwd += "*"; \
             if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
                 server.arg(#param).toCharArray(param, sizeof(param)); \
+            }\
+        }
+
+#define readPasswdStringParam(param) \
+        if (server.hasArg(#param)){ \
+            masked_pwd = ""; \
+            for (uint8_t i=0;i<server.arg(#param).length();i++) \
+                masked_pwd += "*";   \
+            if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
+                param = server.arg(#param); \
             }\
         }
 
@@ -554,6 +576,21 @@ void webserver_config() {
             readCharParam(user_influx);
             readPasswdParam(pwd_influx);
 
+            readBoolParam(send2mqtt)
+            parseHTTP(F("host_mqtt"), host_mqtt);
+            readIntParam(port_mqtt);
+            parseHTTP(F("user_mqtt"), user_mqtt);
+            readPasswdStringParam(pwd_mqtt);
+            readCharParam(client_id_mqtt);
+            parseHTTP(F("sensors_topic_mqtt"), sensors_topic_mqtt);
+            sensors_topic_mqtt.replace(F(" "), F(""));
+            if(!sensors_topic_mqtt.endsWith(FPSTR("/"))) {
+                debug_out(F("Missing ending slash in mqtt topic prefix"), DEBUG_MIN_INFO, true);
+                if (sensors_topic_mqtt.length() == SENSOR_TOPIC_PREFIX_MQTT_SIZE) {
+                    sensors_topic_mqtt.remove(SENSOR_TOPIC_PREFIX_MQTT_SIZE-1);
+                }
+                sensors_topic_mqtt += FPSTR("/");
+            }
         }
 
         readBoolParam(auto_update);
@@ -588,6 +625,7 @@ void webserver_config() {
 #undef readIntParam
 #undef readTimeParam
 #undef readPasswdParam
+#undef readPasswdStringParam
 
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Luftdaten.info")), String(send2dusti));
         page_content += line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Madavi")), String(send2madavi));
@@ -629,6 +667,15 @@ void webserver_config() {
         page_content += line_from_value(FPSTR(INTL_PORT), String(port_influx));
         page_content += line_from_value(FPSTR(INTL_USER), user_influx);
         page_content += line_from_value(FPSTR(INTL_PASSWORD), pwd_influx);
+        page_content += F("<br/><br/>MQTT: ");
+        page_content += String(send2mqtt);
+        page_content += line_from_value(FPSTR(INTL_SERVER), host_mqtt);
+        page_content += line_from_value(FPSTR(INTL_PORT), String(port_mqtt));
+        page_content += line_from_value(FPSTR(INTL_CLIENT_ID), client_id_mqtt);
+        page_content += line_from_value(FPSTR(INTL_USER), user_mqtt);
+        page_content += line_from_value(FPSTR(INTL_PASSWORD), pwd_mqtt);
+        page_content += line_from_value(FPSTR(INTL_SENSORS_TOPIC_MQTT), sensors_topic_mqtt);
+
         page_content += F("<br/><br/>");
         page_content += FPSTR(INTL_SENSOR_IS_REBOOTING);
     }

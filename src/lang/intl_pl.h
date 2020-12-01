@@ -32,6 +32,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/lang/intl_pl.lang */ const char INTL_BMP280[] PROGMEM = "BMP280 ({t}, {p})";
 /* ./src/lang/intl_pl.lang */ const char INTL_CANCEL[] PROGMEM = "Anuluj";
+/* ./src/lang/intl_pl.lang */ const char INTL_CLIENT_ID[] PROGMEM = "Nazwa klienta";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Konfiguracja";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION_DELETE[] PROGMEM = "Usunięcie konfiguracji";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION_REALLY_DELETE[] PROGMEM = "Czy na pewno chcesz usunąć konfigurację?";
@@ -67,7 +68,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_LCD1602_3F[] PROGMEM = "LCD 1602 (I2C: 0x3F)";
 /* ./src/lang/intl_pl.lang */ const char INTL_LCD2004_27[] PROGMEM = "LCD 2004 (I2C: 0x27)";
 /* ./src/lang/intl_pl.lang */ const char INTL_LCD2004_3F[] PROGMEM = "LCD 2004 (I2C: 0x3F)";
-/* ./src/lang/intl_pl.lang */ const char INTL_LEDBAR_32[] PROGMEM = "Linijka diodowa RGB (I2C: 0x32)";
 /* ./src/lang/intl_pl.lang */ const char INTL_LONGITUDE[] PROGMEM = "Długość geograficzna";
 /* ./src/lang/intl_pl.lang */ const char INTL_MAX_INFO[] PROGMEM = "maks. info";
 /* ./src/lang/intl_pl.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Czas między pomiarami (sek.)";
@@ -106,6 +106,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Wysyłaj dane do własnego API";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR[] PROGMEM = "Czujnik";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSORS[] PROGMEM = "Sensory";
+/* ./src/lang/intl_pl.lang */ const char INTL_SENSORS_TOPIC_MQTT[] PROGMEM = "Prefiks tematu sensorów";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Ponowne uruchamianie czujnika.";
 /* ./src/lang/intl_pl.lang */ const char INTL_SERVER[] PROGMEM = "Adres serwera";
 /* ./src/lang/intl_pl.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Pokaż status WiFi na LCD";
@@ -142,3 +143,4 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate PL: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate PL: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate PL: INTL_BMP180 🐱;";
+ const char INTL_LEDBAR_32[] PROGMEM = "Translate PL: INTL_LEDBAR_32 🐱;";

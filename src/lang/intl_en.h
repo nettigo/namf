@@ -32,6 +32,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/lang/intl_en.lang */ const char INTL_BMP280[] PROGMEM = "BMP280 ({t}, {p})";
 /* ./src/lang/intl_en.lang */ const char INTL_CANCEL[] PROGMEM = "Cancel";
+/* ./src/lang/intl_en.lang */ const char INTL_CLIENT_ID[] PROGMEM = "Client Id";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Configuration";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIGURATION_DELETE[] PROGMEM = "Configuration delete";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIGURATION_REALLY_DELETE[] PROGMEM = "Are you sure you want to delete the configuration?";
@@ -106,6 +107,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Send data to own API";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR[] PROGMEM = "Sensor";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSORS[] PROGMEM = "Sensors";
+/* ./src/lang/intl_en.lang */ const char INTL_SENSORS_TOPIC_MQTT[] PROGMEM = "Sensors topic prefix";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Sensor is rebooting.";
 /* ./src/lang/intl_en.lang */ const char INTL_SERVER[] PROGMEM = "Server";
 /* ./src/lang/intl_en.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Display WiFi connection info on LCD";

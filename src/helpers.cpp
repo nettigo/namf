@@ -54,6 +54,15 @@ String Value2Json( const __FlashStringHelper * t, const String& value) {
     return s;
 }
 
+String Value2Json( const __FlashStringHelper * t, const String& value, const __FlashStringHelper * unit) {
+    String type(t);
+    String s = F("{\"value_type\":\"{t}\",\"value\":\"{v}\", \"unit\":\"{u}\"},");
+    s.replace("{t}", type);
+    s.replace("{v}", value);
+    s.replace("{u}", unit);
+    return s;
+}
+
 /*****************************************************************
  * convert string value to json string                           *
  *****************************************************************/
@@ -210,6 +219,14 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Int(port_influx);
     json_string += Var2Json(F("user_influx"), user_influx);
     json_string += Var2Json(F("pwd_influx"), pwd_influx);
+
+    copyToJSON_Bool(send2mqtt);
+    json_string += Var2Json(F("host_mqtt"), host_mqtt);
+    json_string += Var2Json(F("port_mqtt"), port_mqtt);
+    json_string += Var2Json(F("client_id_mqtt"), client_id_mqtt);
+    json_string += Var2Json(F("user_mqtt"), user_mqtt);
+    json_string += Var2Json(F("pwd_mqtt"), pwd_mqtt);
+    json_string += Var2Json(F("sensors_topic_mqtt"), sensors_topic_mqtt);
 #undef copyToJSON_Bool
 #undef copyToJSON_Int
 #undef Var2Json
@@ -318,6 +335,14 @@ int readAndParseConfigFile(File configFile) {
                 host_influx = F("");
                 send2influx = 0;
             }
+
+            setFromJSON(send2mqtt);
+            if (json.containsKey(F("host_mqtt"))) host_mqtt = json.get<String>(F("host_mqtt"));
+            setFromJSON(port_mqtt);
+            strcpyFromJSON(client_id_mqtt);
+            if (json.containsKey(F("user_mqtt"))) user_mqtt = json.get<String>(F("user_mqtt"));
+            if (json.containsKey(F("pwd_mqtt"))) pwd_mqtt = json.get<String>(F("pwd_mqtt"));
+            if (json.containsKey(F("sensors_topic_mqtt"))) sensors_topic_mqtt = json.get<String>(F("sensors_topic_mqtt"));
             configFile.close();
             if (pms24_read || pms32_read) {
                 pms_read = 1;

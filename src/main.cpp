@@ -32,9 +32,11 @@
 #include "sensors/winsen-mhz.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
+#include "mqtt.h"
 
 SimpleScheduler::NAMFScheduler scheduler;
 
+WiFiClient wifi_client;
 
 /*****************************************************************
  * send Plantower PMS sensor command start, stop, cont. mode     *
@@ -564,8 +566,8 @@ static String sensorBMP280() {
 		debug_out(Float2String(p / 100) + " hPa", DEBUG_MIN_INFO, 1);
 		last_value_BMP280_T = t;
 		last_value_BMP280_P = p;
-		s += Value2Json(F("BMP280_pressure"), Float2String(last_value_BMP280_P));
-		s += Value2Json(F("BMP280_temperature"), Float2String(last_value_BMP280_T));
+		s += Value2Json(F("BMP280_pressure"), Float2String(last_value_BMP280_P), F("Pa"));
+		s += Value2Json(F("BMP280_temperature"), Float2String(last_value_BMP280_T), F("°C"));
 	}
 	debug_out("----", DEBUG_MIN_INFO, 1);
 
@@ -603,7 +605,7 @@ static String sensorDS18B20() {
 		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
 		debug_out(Float2String(t) + " C", DEBUG_MIN_INFO, 1);
 		last_value_DS18B20_T = t;
-		s += Value2Json(F("DS18B20_temperature"), Float2String(last_value_DS18B20_T));
+		s += Value2Json(F("DS18B20_temperature"), Float2String(last_value_DS18B20_T), F("°C"));
 	}
 	debug_out("----", DEBUG_MIN_INFO, 1);
 	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_DS18B20), DEBUG_MED_INFO, 1);
@@ -1185,6 +1187,15 @@ void setup() {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
 
+	if (cfg::send2mqtt) {
+        display_debug(F("Connecting to"), F("MQTT..."));
+        mqtt::setup(wifi_client);
+        mqtt::reconnect(2);
+	    if (!mqtt::client.connected()) {
+	        display_debug(F("Failed to connect"), F("to MQTT server"));
+	    }
+	}
+
     delay(50);
 
 	// sometimes parallel sending data and web page will stop nodemcu, watchdogtimer set to 30 seconds
@@ -1266,6 +1277,10 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	}
     debugData(data,F("po custom "));
 
+	if (cfg::send2mqtt) {
+	    mqtt::send_mqtt(data);
+	}
+
     return sum_send_time;
 }
 
@@ -1330,6 +1345,10 @@ void loop() {
 	    readWinsenMHZ(serialGPS);
 
 	server.handleClient();
+
+	if (cfg::send2mqtt) {
+	    mqtt::loop();
+	}
 
 	if (send_now) {
         debugData(String(F("****************** Upload data to APIs*****************************")));
