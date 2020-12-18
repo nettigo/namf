@@ -1,3 +1,6 @@
+NAMF-2020-34 (2020-12-18)
+- new stable release, includes all 34rcx from beta
+
 NAMF-2020-34rc5 (2020-10-08)
 - bigger memory buffer for JSON data
 - send GPS_date and GPS_time to influx as strings
