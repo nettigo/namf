@@ -1,3 +1,20 @@
+NAMF-2020-34rc5 (2020-10-08)
+- bigger memory buffer for JSON data
+- send GPS_date and GPS_time to influx as strings
+
+NAMF-2020-34rc4 (2020-10-08)
+- fix for core dump when enabling Network Watchdog
+
+NAMF-2020-34rc3 (2020-09-12)
+- don't show empty SHT3x results when sensor is not enabled
+
+NAMF-2020-34rc2 (2020-09-12)
+- support for SHT3x sensor as temperature/humidity (fixed 0x45 I2C address, since 0x44 is being used by HECA)
+- a bit more separation between forms on config page
+
+NAMF-2020-34rc1 (2020-08-31)
+* merged PR#16 - allows upload code via OTA, for dev purposes, requires to have password
+
 NAMF-2020-33 (2020-08-22)
 * stable relase based on rc3
 

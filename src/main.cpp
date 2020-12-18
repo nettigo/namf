@@ -14,6 +14,7 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ArduinoOTA.h>
 #include <LiquidCrystal_I2C.h>
 #include <base64.h>
 #include <ArduinoJson.h>
@@ -474,13 +475,19 @@ String create_influxdb_string(const String& data) {
 		data_4_influxdb += esp_chipid() + " ";
 		for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = "";
-		    if (first_line)
-		        first_line = false;
-		    else
-		        tmp_str += ",";
-		    tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char*>();
-			tmp_str += "=";
-			tmp_str += json2data["sensordatavalues"][i]["value"].as<char*>();
+            if (first_line)
+                first_line = false;
+            else
+                tmp_str += ",";
+            tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char *>();
+            tmp_str += "=";
+            if (
+                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_date")) ||
+                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_time"))
+                    )
+                tmp_str += String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\""));
+            else
+                tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
             data_4_influxdb += tmp_str;
         }
         data_4_influxdb += F(",measurements=");
@@ -1189,8 +1196,7 @@ void setup() {
 	starttime_SDS = starttime;
 	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
 
-
-
+	ArduinoOTA.begin(true);
 }
 
 static void checkForceRestart() {
@@ -1286,7 +1292,9 @@ void loop() {
     sample_count++;
 
     MDNS.update();
-
+    if (enable_ota_time > act_milli) {
+        ArduinoOTA.handle();
+    }
 	wdt_reset(); // nodemcu is alive
 
 	scheduler.process();

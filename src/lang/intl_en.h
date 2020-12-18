@@ -48,6 +48,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_DISPLAY[] PROGMEM = "OLED SSD1306";
 /* ./src/lang/intl_en.lang */ const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 /* ./src/lang/intl_en.lang */ const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Duration router mode";
+/* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA[] PROGMEM = "Enable OTA";
+/* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA enabled for 60 seconds.";
+/* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Enable authorization in config panel in order to allow code upload";
 /* ./src/lang/intl_en.lang */ const char INTL_ERROR[] PROGMEM = "only errors";
 /* ./src/lang/intl_en.lang */ const char INTL_FIRMWARE[] PROGMEM = "Firmware version";
 /* ./src/lang/intl_en.lang */ const char INTL_FS_WIFI[] PROGMEM = "WiFi Sensor";
@@ -106,6 +109,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Sensor is rebooting.";
 /* ./src/lang/intl_en.lang */ const char INTL_SERVER[] PROGMEM = "Server";
 /* ./src/lang/intl_en.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Display WiFi connection info on LCD";
+/* ./src/sensors/sht3x/sht3x_en.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - temperature and humidity sensor";
+/* ./src/sensors/sht3x/sht3x_en.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Humidity and temperature";
+/* ./src/sensors/sht3x/sht3x_en.lang */ const char INTL_SHT3x_HUM[] PROGMEM = "Relative humidity";
+/* ./src/sensors/sht3x/sht3x_en.lang */ const char INTL_SHT3x_TEMP[] PROGMEM = "Temperature";
 /* ./src/lang/intl_en.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "signal quality";
 /* ./src/lang/intl_en.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "signal strength";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "pcs/cm³";

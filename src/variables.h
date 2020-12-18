@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-33"
+#define SOFTWARE_VERSION  "NAMF-2020-34rc5"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -233,6 +233,8 @@ extern bool first_cycle ;
 extern bool sntp_time_is_set ;
 
 extern bool got_ntp ;
+
+extern unsigned long enable_ota_time ;
 
 extern unsigned long count_sends ;
 extern unsigned long next_display_millis ;

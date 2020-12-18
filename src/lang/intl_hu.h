@@ -49,6 +49,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_DISPLAY[] PROGMEM = "OLED SSD1306";
 /* ./src/lang/intl_hu.lang */ const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 /* ./src/lang/intl_hu.lang */ const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Hotspot mód időtartama";
+/* ./src/lang/intl_hu.lang */ const char INTL_ENABLE_OTA[] PROGMEM = "Enable OTA";
+/* ./src/lang/intl_hu.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA enabled for 60 seconds.";
+/* ./src/lang/intl_hu.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Enable authorization in config panel in order to allow code upload";
 /* ./src/lang/intl_hu.lang */ const char INTL_ERROR[] PROGMEM = "only errors";
 /* ./src/lang/intl_hu.lang */ const char INTL_FIRMWARE[] PROGMEM = "Firmware verzió";
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI[] PROGMEM = "WiFi Szenzor";
@@ -107,6 +110,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "A Szenzor újraindul...";
 /* ./src/lang/intl_hu.lang */ const char INTL_SERVER[] PROGMEM = "Szerver";
 /* ./src/lang/intl_hu.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "A Wi-Fi kapcsolat adatainak megjelenítése az LCD-n";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - temperature and humidity sensor";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Humidity and temperature";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3x_HUM[] PROGMEM = "Relative humidity";
+/* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3x_TEMP[] PROGMEM = "Temperature";
 /* ./src/lang/intl_hu.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "Jelminőség";
 /* ./src/lang/intl_hu.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "Jelerősség";
 /* ./src/lang/intl_hu.lang */ const char INTL_TEMPERATURE[] PROGMEM = "hőmérséklet";
