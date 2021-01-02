@@ -1,7 +1,7 @@
 import argparse
 import os.path
 
-parser = argparse.ArgumentParser('Serach for default options')
+parser = argparse.ArgumentParser(description="Check if filename exists and output it's content, if not - output -d value. ")
 
 parser.add_argument('filename', help='File with options')
 parser.add_argument('-d', '--default', nargs='?')
