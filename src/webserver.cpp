@@ -913,7 +913,8 @@ void webserver_debug_level() {
 
         last_page_load = millis();
         enable_ota_time = millis() + 60 * 1000;
-
+        ArduinoOTA.setPassword(cfg::www_password);
+        ArduinoOTA.begin(true);
         page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
         page_content += make_footer();

@@ -1196,7 +1196,6 @@ void setup() {
 	starttime_SDS = starttime;
 	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
 
-	ArduinoOTA.begin(true);
 }
 
 static void checkForceRestart() {

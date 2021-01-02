@@ -1,3 +1,7 @@
+NAMF-2020-35rc1 ()
+- Dont broadcast OTA service, until it is not enabled via /ota
+- You can use upload_opts.txt file to provide upload password (see `platformio.ini`)
+
 NAMF-2020-34 (2020-12-18)
 - new stable release, includes all 34rcx from beta
 

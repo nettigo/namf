@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <ArduinoOTA.h>
 #include "defines.h"
 #include "variables.h"
 #include "helpers.h"
