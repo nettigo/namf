@@ -115,7 +115,7 @@ namespace SPS30 {
                     scheduler.registerDisplay(SimpleScheduler::SPS30, 2);
                     break;
                 case 2:
-                    scheduler.registerDisplay(SimpleScheduler::SPS30, 4);
+                    scheduler.registerDisplay(SimpleScheduler::SPS30, 5);
                     break;
                 default:
                     break;
@@ -294,9 +294,11 @@ namespace SPS30 {
                     lcd->setCursor(0,1);
                     lcd->print(F("NC10:"));
                     lcd->print(String(sum.nc_10p0/measurement_count,1));
-                    lcd->print(F("TS"));
-                    lcd->print(String(sum.typical_particle_size/measurement_count,1));
                     break;
+                case 4:
+                    lcd->print(F("TS:"));
+                    lcd->print(String(sum.typical_particle_size/measurement_count,2));
+
             }
 
         } else {
