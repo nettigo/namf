@@ -23,6 +23,8 @@ namespace SimpleScheduler {
     JsonObject& parseHTTPConfig (LoopEntryType sensor);
 
     String getConfigJSON( LoopEntryType sensor);
+    bool display(SimpleScheduler::LoopEntryType, LiquidCrystal_I2C * = NULL);
+
 }
 
 

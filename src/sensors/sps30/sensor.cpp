@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "sensor.h"
+#include "display/commons.h"
 
 extern String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
 
@@ -225,5 +226,12 @@ namespace SPS30 {
         }
 
     }
+ bool display(LiquidCrystal_I2C *lcd){
+        if (lcd == NULL) return true;   //I'm here, ready to display
+        if (getLCDRows() == 2) {    //16x2
+            lcd -> clear();
+
+        }
+    };
 
 }

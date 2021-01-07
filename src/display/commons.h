@@ -5,6 +5,7 @@
 #ifndef NAMF_DISPLAY_COMMONS_H
 #define NAMF_DISPLAY_COMMONS_H
 #include <Arduino.h>
+#include <LiquidCrystal_I2C.h>
 #include "variables.h"
 #include "defines.h"
 #include "helpers.h"

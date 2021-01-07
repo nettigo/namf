@@ -15,7 +15,6 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoOTA.h>
-#include <LiquidCrystal_I2C.h>
 #include <base64.h>
 #include <ArduinoJson.h>
 #include <time.h>

@@ -6,6 +6,8 @@
 #define NAMF_SCHEDULER_H
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal_I2C.h>
+
 #define SCHEDULER_SIZE  10
 
 namespace SimpleScheduler {
@@ -92,6 +94,8 @@ namespace SimpleScheduler {
         //inform scheduler this sensor wants to display to LCD if availabe
         int registerDisplay(LoopEntryType);
         bool sensorWantsDisplay(LoopEntryType);
+        //call/check display subroutines for sensor
+
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];
         byte loopSize;

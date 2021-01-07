@@ -3,6 +3,7 @@
 //
 #include "scheduler.h"
 #include "helpers.h"
+#include "components.h"
 #include "lang/select_lang.h"
 
 
@@ -73,10 +74,11 @@ namespace SimpleScheduler {
             boolean checked =  findSlot(i) >= 0; // check if sensor is enabled
             templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
             templ += F("<br/>");
-            checked = sensorWantsDisplay(i);
-            templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
-            templ += F("<div class='spacer'></div>");
-
+            if (SimpleScheduler::display(i)) {
+                checked = sensorWantsDisplay(i);
+                templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
+                templ += F("<div class='spacer'></div>");
+            }
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
@@ -149,6 +151,9 @@ namespace SimpleScheduler {
         if (i<0) return false;  //sensor is not registered at all
         return _tasks[i].hasDisplay;
     }
+
+
+
 
     void NAMFScheduler::runIn(byte slot, unsigned long time, loopTimerFunc func) {
         int idx;

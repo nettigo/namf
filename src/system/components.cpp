@@ -148,6 +148,14 @@ namespace SimpleScheduler {
 
     }
 
-
+//check if senor has display subroutine. TODO - second parameter with LCD object
+    bool display(SimpleScheduler::LoopEntryType sensor, LiquidCrystal_I2C *lcd){
+        switch (sensor) {
+            case SPS30:
+                return SPS30::display(lcd);
+            default:
+                return false;
+        }
+    };
 }
 
