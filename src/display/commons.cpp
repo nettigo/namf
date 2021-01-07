@@ -249,3 +249,17 @@ void display_values() {
     next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
 }
 
+//get LCD screen sizes. returns 0 if no LCD or graphical one (SSD1306)
+byte getLCDCols(){
+    if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 16;
+    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) return 20;
+    return 0;
+};
+
+byte getLCDRows(){
+    if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 2;
+    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) return 4;
+    return 0;
+
+};
+
