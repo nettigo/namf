@@ -18,7 +18,7 @@ for filepath in glob.iglob(r'./src/lang/intl_*.h'):
     m = re.search('_(\w\w).h', name)
     lang = m.group(1)
     translations[lang] = {}
-    locations = ('./src/sensors/**/*_{l}.lang', './src/lang/*_{l}.lang')
+    locations = ('./src/sensors/**/*_{l}.lang', './src/lang/*_{l}.lang', './src/system/*_{l}.lang')
     print("Looking for language files for {l}".format(l=lang.upper()))
     files = []
     for i in locations:
@@ -66,9 +66,10 @@ Files with .lang extension are searched in following directories and it's subdir
 
 ./src/lang/
 ./src/sensors/
+./src/system/
 */ 
-
 """))
+    os.write(f,str.encode("\n\n#ifndef LANG_DEF_{l}_H\n#define LANG_DEF_{l}_H\n\n".format(l=lang)))
 
     for key in sorted(translations[lang]):
         os.write(f, str.encode('/* {src} */ const char {key}[] PROGMEM = "{body}";\n'.format(
@@ -84,6 +85,7 @@ Files with .lang extension are searched in following directories and it's subdir
                 key=key,
                 lang=lang.upper())))
 
+    os.write(f,str.encode("\n\n#endif\n"))
     os.close(f)
     final_file = "./src/lang/intl_{lang}.h".format(lang=lang)
     if not (filecmp.cmp(final_file, temp_file, shallow=True)):

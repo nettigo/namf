@@ -25,7 +25,7 @@ namespace SPS30 {
     //return string with HTML used to configure SPS30 sensor. Right now it only takes number of seconds to wait between measurements
     //taken to average
     String getConfigHTML(void) {
-        String ret = F("<h1>SPS30</h1>");
+        String ret = F("");
         ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
         return ret;
     }

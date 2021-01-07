@@ -34,7 +34,7 @@ namespace SHT3x {
 
 
     String getConfigHTML() {
-        String s = F("<h1>SHT3x - czujnik temperatury i wilgotności</h1>Nic nie konfigurujemy. Just works :)");
+        String s = F("");
 
     }
 

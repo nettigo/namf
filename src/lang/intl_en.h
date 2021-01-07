@@ -21,7 +21,12 @@ Files with .lang extension are searched in following directories and it's subdir
 
 ./src/lang/
 ./src/sensors/
+./src/system/
 */ 
+
+
+#ifndef LANG_DEF_en_H
+#define LANG_DEF_en_H
 
 /* ./src/lang/intl_en.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Advanced settings";
 /* ./src/lang/intl_en.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Active sensors map(external link)";
@@ -142,3 +147,8 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate EN: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate EN: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate EN: INTL_BMP180 🐱;";
+ const char INTL_DISPLAY_NEW[] PROGMEM = "Translate EN: INTL_DISPLAY_NEW 🐱;";
+ const char INTL_ENABLE[] PROGMEM = "Translate EN: INTL_ENABLE 🐱;";
+
+
+#endif

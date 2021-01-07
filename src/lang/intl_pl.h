@@ -21,7 +21,12 @@ Files with .lang extension are searched in following directories and it's subdir
 
 ./src/lang/
 ./src/sensors/
+./src/system/
 */ 
+
+
+#ifndef LANG_DEF_pl_H
+#define LANG_DEF_pl_H
 
 /* ./src/lang/intl_pl.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Ustawienia zaawansowane";
 /* ./src/lang/intl_pl.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Mapa aktywnych czujników (link zewnętrzny)";
@@ -46,8 +51,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_DELETE_CONFIG[] PROGMEM = "Usuń zapisaną konfigurację";
 /* ./src/lang/intl_pl.lang */ const char INTL_DHT22[] PROGMEM = "DHT22 ({t}, {h})";
 /* ./src/lang/intl_pl.lang */ const char INTL_DISPLAY[] PROGMEM = "OLED SSD1306";
+/* ./src/system/system_pl.lang */ const char INTL_DISPLAY_NEW[] PROGMEM = "Wyświetl dane na ekranie jeśli NAM go posiada a sensor wspiera";
 /* ./src/lang/intl_pl.lang */ const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 /* ./src/lang/intl_pl.lang */ const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Czas trwania w trybie routera (sek.)";
+/* ./src/system/system_pl.lang */ const char INTL_ENABLE[] PROGMEM = "Włącz";
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA[] PROGMEM = "Włącz OTA";
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA włączone na 60 sekund.";
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Włącz autoryzację w panelu konfiguracyjnym, by móc włączyć zdalne ładowanie kodu";
@@ -142,3 +149,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate PL: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate PL: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate PL: INTL_BMP180 🐱;";
+
+
+#endif

@@ -40,6 +40,7 @@ const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <style type='text/css'>\
 body{font-family:Arial;margin:0;}\
 .content{margin:10px;}\
+.spacer{padding:10px;}\
 .r{text-align:right;}\
 td{vertical-align:top;}\
 a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\

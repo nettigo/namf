@@ -3,6 +3,7 @@
 //
 #include "scheduler.h"
 #include "helpers.h"
+#include "lang/select_lang.h"
 
 
 namespace SimpleScheduler {
@@ -11,6 +12,7 @@ namespace SimpleScheduler {
 
     NAMFScheduler::NAMFScheduler() {
         loopSize = 0;
+        sensorsWithDisplays = 0;
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             _tasks[i].process = nullF;
             _tasks[i].nextRun = 0;
@@ -44,6 +46,7 @@ namespace SimpleScheduler {
         } else {
             _tasks[i].nextRun = 0;
         }
+        _tasks[i].hasDisplay = false;
 
 
     }
@@ -64,10 +67,16 @@ namespace SimpleScheduler {
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
+            templ += F("<hr/><h2>");
+            templ += findSlotDescription(i);
+            templ += F("</h2>");
+            boolean checked =  findSlot(i) >= 0; // check if sensor is enabled
+            templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
+            templ += F("<br/>");
+            checked = sensorWantsDisplay(i);
+            templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
+            templ += F("<div class='spacer'></div>");
 
-            boolean enabled = findSlot(i) >= 0; // check if sensor is enabled
-            templ += F("<hr/>");
-            templ += form_checkbox(F("enabled-{sensor}"), findSlotDescription(i), enabled, true);
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
@@ -93,6 +102,18 @@ namespace SimpleScheduler {
         return findSlot(slot) >= 0;
     }
 
+    //inform scheduler that we want to display data on LCD
+    int NAMFScheduler::registerDisplay(LoopEntryType slot) {
+        int i = findSlot(slot);
+        if (i < 0) return -1;
+        if (!_tasks[i].hasDisplay) {
+            //only when first time enabled increase number of sensors with display
+            _tasks[i].hasDisplay = true;
+            sensorsWithDisplays++;
+        }
+    }
+
+    //register new sensor
     int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code) {
         {
             if (loopSize + 1 >= SCHEDULER_SIZE)
@@ -121,6 +142,12 @@ namespace SimpleScheduler {
         //no match
         return -1;
 
+    }
+
+    bool NAMFScheduler::sensorWantsDisplay(LoopEntryType sensor) {
+        int i = findSlot(sensor);
+        if (i<0) return false;  //sensor is not registered at all
+        return _tasks[i].hasDisplay;
     }
 
     void NAMFScheduler::runIn(byte slot, unsigned long time, loopTimerFunc func) {

@@ -224,7 +224,7 @@ namespace NetworkWatchdog {
     }
 
     String getConfigHTML(void) {
-        String ret = F("<h1>Network Watchdog</h1>");
+        String ret = F("");
         ret += form_input(F("host"), FPSTR(INTL_NTW_WTD_HOST), addr.toString(), 16);
         return ret;
     }
