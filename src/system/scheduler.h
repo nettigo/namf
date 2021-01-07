@@ -51,7 +51,7 @@ namespace SimpleScheduler {
         unsigned long nextRun;
         LoopEntryType slotID;
         const __FlashStringHelper *slotCode;
-        boolean hasDisplay;
+        byte hasDisplay;
     };
 
     String selectConfigForm(LoopEntryType sensor);
@@ -91,15 +91,14 @@ namespace SimpleScheduler {
         void runIn(byte slot, unsigned long time, loopTimerFunc func);
 
         void runIn(byte slot, unsigned long time);
-        //inform scheduler this sensor wants to display to LCD if availabe
-        int registerDisplay(LoopEntryType);
+        //inform scheduler this sensor wants to display to LCD if available
+        int registerDisplay(LoopEntryType, byte);
         bool sensorWantsDisplay(LoopEntryType);
         //call/check display subroutines for sensor
 
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];
         byte loopSize;
-        byte sensorsWithDisplays;
 
         int findSlot(byte id);
     };

@@ -47,7 +47,7 @@ namespace SimpleScheduler {
         } else {
             _tasks[i].nextRun = 0;
         }
-        _tasks[i].hasDisplay = false;
+        _tasks[i].hasDisplay = 0;
 
 
     }
@@ -105,13 +105,12 @@ namespace SimpleScheduler {
     }
 
     //inform scheduler that we want to display data on LCD
-    int NAMFScheduler::registerDisplay(LoopEntryType slot) {
+    int NAMFScheduler::registerDisplay(LoopEntryType slot, byte screens) {
         int i = findSlot(slot);
         if (i < 0) return -1;
         if (!_tasks[i].hasDisplay) {
             //only when first time enabled increase number of sensors with display
-            _tasks[i].hasDisplay = true;
-            sensorsWithDisplays++;
+            _tasks[i].hasDisplay = screens;
         }
     }
 
