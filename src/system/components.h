@@ -5,6 +5,7 @@
 #ifndef NAMF_COMPONENTS_H
 #define NAMF_COMPONENTS_H
 #include <Arduino.h>
+#include "variables.h"
 #include "../sensors/sps30/sensor.h"
 #include "../sensors/network_watchdog/tester.h"
 #include "../sensors/sht3x/sht3x.h"
@@ -18,12 +19,13 @@ namespace SimpleScheduler {
     void afterSendData(bool status);
 
     //collect HTML table with current results
-    void getResultsAsHTML( String &res);
+    void getResultsAsHTML(String &res);
 
-    JsonObject& parseHTTPConfig (LoopEntryType sensor);
+    JsonObject &parseHTTPConfig(LoopEntryType sensor);
 
-    String getConfigJSON( LoopEntryType sensor);
-    bool display(SimpleScheduler::LoopEntryType, LiquidCrystal_I2C * = NULL);
+    String getConfigJSON(LoopEntryType sensor);
+
+    bool displaySensor(SimpleScheduler::LoopEntryType, LiquidCrystal_I2C * = NULL, byte= 0);
 
 }
 

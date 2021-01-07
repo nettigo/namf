@@ -91,9 +91,13 @@ namespace SimpleScheduler {
         void runIn(byte slot, unsigned long time, loopTimerFunc func);
 
         void runIn(byte slot, unsigned long time);
+
+        //
+        LoopEntryType selectSensorToDisplay(byte current_pos, byte &minor);
         //inform scheduler this sensor wants to display to LCD if available
         int registerDisplay(LoopEntryType, byte);
         bool sensorWantsDisplay(LoopEntryType);
+        void dumpTable();
         //call/check display subroutines for sensor
 
     private:

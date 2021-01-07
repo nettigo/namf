@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 #include "variables.h"
+#include "system/components.h"
 #include "defines.h"
 #include "helpers.h"
 #include "html-content.h"

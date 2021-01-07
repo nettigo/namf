@@ -122,130 +122,159 @@ void display_values() {
         screens[screen_count++] = DisplayPages::PageGPS;
     }
     if (cfg::show_wifi_info) {
-        screens[screen_count++] = DisplayPages::PageWIFI;	// Wifi info
+        screens[screen_count++] = DisplayPages::PageWIFI;    // Wifi info
     }
-    screens[screen_count++] = DisplayPages::PageInfo;	// chipID, firmware and count of measurements
-    if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
-        switch (screens[next_display_count % screen_count]) {
-            case (DisplayPages::PagePM):
-                display_header = pm25_sensor;
-                if (pm25_sensor != pm10_sensor) {
-                    display_header += " / " + pm25_sensor;
-                }
-                display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6) + " µg/m³";
-                display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6) + " µg/m³";
-                display_lines[2] = "";
-                break;
-            case (DisplayPages::PageTemp):
-                display_header = t_sensor;
-                if (h_sensor != "" && t_sensor != h_sensor) {
-                    display_header += " / " + h_sensor;
-                }
-                if ((h_sensor != "" && p_sensor != "" && (h_sensor != p_sensor)) || (h_sensor == "" && p_sensor != "" && (t_sensor != p_sensor))) {
-                    display_header += " / " + p_sensor;
-                }
-                if (t_sensor != "") { display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C"; }
-                if (h_sensor != "") { display_lines[line_count++] = "Hum.:  " + check_display_value(h_value, -1, 1, 6) + " %"; }
-                if (p_sensor != "") { display_lines[line_count++] = "Pres.: " + check_display_value(p_value / 100, (-1 / 100.0), 1, 6) + " hPa"; }
-                while (line_count < 3) { display_lines[line_count++] = ""; }
-                break;
-            case (DisplayPages::PageHECA):
-                display_header = F("NAM HECA (SHT30)");
-                display_lines[0] = "Temp.: " + check_display_value(t_hc_value, -128, 1, 6) + " °C";
-                display_lines[1] = "Hum.:  " + check_display_value(h_hc_value, -1, 1, 6) + " %";
-                display_lines[2] = "PTC HE: Soon :)"; // PTC heater status
-                break;
-            case (DisplayPages::PageGPS):
-                display_header = gps_sensor;
-                display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 10);
-                display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 10);
-                display_lines[2] = "Alt: " + check_display_value(alt_value, -1000.0, 2, 10);
-                break;
-            case (DisplayPages::PageWIFI):
-                display_header = F("Wifi info");
-                display_lines[0] = "IP: " + WiFi.localIP().toString();
-                display_lines[1] = "SSID:" + WiFi.SSID();
-                display_lines[2] = "Signal: " + String(calcWiFiSignalQuality(WiFi.RSSI())) + "%";
-                break;
-            case (DisplayPages::PageInfo):
-                display_header = F("Device Info");
-                display_lines[0] = "ID: " + esp_chipid();
-                display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
-                display_lines[2] = "Measurements: " + String(count_sends);
-                break;
+    screens[screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
+    Serial.println("***** display");
+    Serial.println(next_display_count);
+    Serial.println(screen_count);
+    bool skipOldDisplay = false;
+    if (next_display_count+1 > screen_count) {
+        byte diff = next_display_count - screen_count;
+        byte minor;
+        SimpleScheduler::LoopEntryType sensor = scheduler.selectSensorToDisplay(diff, minor);
+        if (sensor == SimpleScheduler::EMPTY) {
+            next_display_count = 0;
+        } else {
+            Serial.print("Test new display: ");
+            Serial.println(sensor);
+            Serial.println(minor);
+            SimpleScheduler::displaySensor(sensor, char_lcd, minor);
+            next_display_count++;
+            skipOldDisplay = true;
         }
 
-        if (display) {
-            display->clear();
-            display->displayOn();
-            display->setTextAlignment(TEXT_ALIGN_CENTER);
-            display->drawString(64, 1, display_header);
-            display->setTextAlignment(TEXT_ALIGN_LEFT);
-            display->drawString(0, 16, display_lines[0]);
-            display->drawString(0, 28, display_lines[1]);
-            display->drawString(0, 40, display_lines[2]);
-            display->setTextAlignment(TEXT_ALIGN_CENTER);
-            display->drawString(64, 52, displayGenerateFooter(screen_count));
-            display->display();
+
+    }
+    if (!skipOldDisplay) {
+
+        if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+            switch (screens[next_display_count % screen_count]) {
+                case (DisplayPages::PagePM):
+                    display_header = pm25_sensor;
+                    if (pm25_sensor != pm10_sensor) {
+                        display_header += " / " + pm25_sensor;
+                    }
+                    display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6) + " µg/m³";
+                    display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6) + " µg/m³";
+                    display_lines[2] = "";
+                    break;
+                case (DisplayPages::PageTemp):
+                    display_header = t_sensor;
+                    if (h_sensor != "" && t_sensor != h_sensor) {
+                        display_header += " / " + h_sensor;
+                    }
+                    if ((h_sensor != "" && p_sensor != "" && (h_sensor != p_sensor)) ||
+                        (h_sensor == "" && p_sensor != "" && (t_sensor != p_sensor))) {
+                        display_header += " / " + p_sensor;
+                    }
+                    if (t_sensor != "") {
+                        display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
+                    }
+                    if (h_sensor != "") {
+                        display_lines[line_count++] = "Hum.:  " + check_display_value(h_value, -1, 1, 6) + " %";
+                    }
+                    if (p_sensor != "") {
+                        display_lines[line_count++] =
+                                "Pres.: " + check_display_value(p_value / 100, (-1 / 100.0), 1, 6) + " hPa";
+                    }
+                    while (line_count < 3) { display_lines[line_count++] = ""; }
+                    break;
+                case (DisplayPages::PageHECA):
+                    display_header = F("NAM HECA (SHT30)");
+                    display_lines[0] = "Temp.: " + check_display_value(t_hc_value, -128, 1, 6) + " °C";
+                    display_lines[1] = "Hum.:  " + check_display_value(h_hc_value, -1, 1, 6) + " %";
+                    display_lines[2] = "PTC HE: Soon :)"; // PTC heater status
+                    break;
+                case (DisplayPages::PageGPS):
+                    display_header = gps_sensor;
+                    display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 10);
+                    display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 10);
+                    display_lines[2] = "Alt: " + check_display_value(alt_value, -1000.0, 2, 10);
+                    break;
+                case (DisplayPages::PageWIFI):
+                    display_header = F("Wifi info");
+                    display_lines[0] = "IP: " + WiFi.localIP().toString();
+                    display_lines[1] = "SSID:" + WiFi.SSID();
+                    display_lines[2] = "Signal: " + String(calcWiFiSignalQuality(WiFi.RSSI())) + "%";
+                    break;
+                case (DisplayPages::PageInfo):
+                    display_header = F("Device Info");
+                    display_lines[0] = "ID: " + esp_chipid();
+                    display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
+                    display_lines[2] = "Measurements: " + String(count_sends);
+                    break;
+            }
+
+            if (display) {
+                display->clear();
+                display->displayOn();
+                display->setTextAlignment(TEXT_ALIGN_CENTER);
+                display->drawString(64, 1, display_header);
+                display->setTextAlignment(TEXT_ALIGN_LEFT);
+                display->drawString(0, 16, display_lines[0]);
+                display->drawString(0, 28, display_lines[1]);
+                display->drawString(0, 40, display_lines[2]);
+                display->setTextAlignment(TEXT_ALIGN_CENTER);
+                display->drawString(64, 52, displayGenerateFooter(screen_count));
+                display->display();
+            }
+            if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+                display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " +
+                                 display_header;
+                display_lines[0].replace(" µg/m³", "");
+                display_lines[0].replace("°", String(char(223)));
+                display_lines[1].replace(" µg/m³", "");
+                char_lcd->clear();
+                char_lcd->setCursor(0, 0);
+                char_lcd->print(display_header);
+                char_lcd->setCursor(0, 1);
+                char_lcd->print(display_lines[0]);
+                char_lcd->setCursor(0, 2);
+                char_lcd->print(display_lines[1]);
+                char_lcd->setCursor(0, 3);
+                char_lcd->print(display_lines[2]);
+            }
         }
-        if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
-            display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " + display_header;
-            display_lines[0].replace(" µg/m³", "");
-            display_lines[0].replace("°", String(char(223)));
-            display_lines[1].replace(" µg/m³", "");
+
+
+        if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
+            switch (screens[next_display_count % screen_count]) {
+                case (DisplayPages::PagePM):
+                    display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
+                    display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6);
+                    break;
+                case (DisplayPages::PageTemp):
+                    display_lines[0] = "T: " + check_display_value(t_value, -128, 1, 6) + char(223) + "C";
+                    display_lines[1] = "H: " + check_display_value(h_value, -1, 1, 6) + "%";
+                    break;
+                case (DisplayPages::PageHECA):
+                    display_lines[0] = "Th: " + check_display_value(t_hc_value, -128, 1, 6) + char(223) + "C";
+                    display_lines[1] = "Hh: " + check_display_value(h_hc_value, -1, 1, 6) + "%";
+                    break;
+                case (DisplayPages::PageGPS):
+                    display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 11);
+                    display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 11);
+                    break;
+                case (DisplayPages::PageWIFI):
+                    display_lines[0] = WiFi.localIP().toString();
+                    display_lines[1] = WiFi.SSID();
+                    break;
+                case (DisplayPages::PageInfo):
+                    display_lines[0] = esp_chipid() + " " + String(count_sends);
+                    display_lines[1] = String(SOFTWARE_VERSION);
+                    break;
+            }
+
             char_lcd->clear();
             char_lcd->setCursor(0, 0);
-            char_lcd->print(display_header);
-            char_lcd->setCursor(0, 1);
             char_lcd->print(display_lines[0]);
-            char_lcd->setCursor(0, 2);
+            char_lcd->setCursor(0, 1);
             char_lcd->print(display_lines[1]);
-            char_lcd->setCursor(0, 3);
-            char_lcd->print(display_lines[2]);
         }
-    }
-
-// ----5----0----5----0
-// PM10/2.5: 1999/999
-// T/H: -10.0°C/100.0%
-// T/P: -10.0°C/1000hPa
-
-    if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
-        switch (screens[next_display_count % screen_count]) {
-            case (DisplayPages::PagePM):
-                display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
-                display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6);
-                break;
-            case (DisplayPages::PageTemp):
-                display_lines[0] = "T: " + check_display_value(t_value, -128, 1, 6) + char(223) + "C";
-                display_lines[1] = "H: " + check_display_value(h_value, -1, 1, 6) + "%";
-                break;
-            case (DisplayPages::PageHECA):
-                display_lines[0] = "Th: " + check_display_value(t_hc_value, -128, 1, 6) + char(223) + "C";
-                display_lines[1] = "Hh: " + check_display_value(h_hc_value, -1, 1, 6) + "%";
-                break;
-            case (DisplayPages::PageGPS):
-                display_lines[0] = "Lat: " + check_display_value(lat_value, -200.0, 6, 11);
-                display_lines[1] = "Lon: " + check_display_value(lon_value, -200.0, 6, 11);
-                break;
-            case (DisplayPages::PageWIFI):
-                display_lines[0] = WiFi.localIP().toString();
-                display_lines[1] = WiFi.SSID();
-                break;
-            case (DisplayPages::PageInfo):
-                display_lines[0] = esp_chipid()+" "+String(count_sends);
-                display_lines[1] = String(SOFTWARE_VERSION);
-                break;
-        }
-
-        char_lcd->clear();
-        char_lcd->setCursor(0, 0);
-        char_lcd->print(display_lines[0]);
-        char_lcd->setCursor(0, 1);
-        char_lcd->print(display_lines[1]);
+    next_display_count += 1;
     }
     yield();
-    next_display_count += 1;
     next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
 }
 
