@@ -143,11 +143,11 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_COUNTS[] PROGMEM = "Translate HU: INTL_SPS30_COUNTS 🐱;";
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
+ const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
  const char INTL_UPDATE_ALFA[] PROGMEM = "Translate HU: INTL_UPDATE_ALFA 🐱;";
  const char INTL_UPDATE_BETA[] PROGMEM = "Translate HU: INTL_UPDATE_BETA 🐱;";
  const char INTL_UPDATE_STABLE[] PROGMEM = "Translate HU: INTL_UPDATE_STABLE 🐱;";
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
- const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
  const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
  const char INTL_ENABLE[] PROGMEM = "Translate HU: INTL_ENABLE 🐱;";
 
