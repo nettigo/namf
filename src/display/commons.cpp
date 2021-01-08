@@ -125,9 +125,6 @@ void display_values() {
         screens[screen_count++] = DisplayPages::PageWIFI;    // Wifi info
     }
     screens[screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
-    Serial.println("***** display");
-    Serial.println(next_display_count);
-    Serial.println(screen_count);
     bool skipOldDisplay = false;
     if (next_display_count+1 > screen_count) {
         byte diff = next_display_count - screen_count;
@@ -136,9 +133,6 @@ void display_values() {
         if (sensor == SimpleScheduler::EMPTY) {
             next_display_count = 0;
         } else {
-            Serial.print("Test new display: ");
-            Serial.println(sensor);
-            Serial.println(minor);
             SimpleScheduler::displaySensor(sensor, char_lcd, minor);
             next_display_count++;
             skipOldDisplay = true;
