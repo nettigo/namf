@@ -2,7 +2,8 @@
 #include "sensor.h"
 #include "display/commons.h"
 #include "system/scheduler.h"
-extern String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
+
+extern String table_row_from_value(const String &sensor, const String &param, const String &value, const String &unit);
 
 
 namespace SPS30 {
@@ -33,19 +34,19 @@ namespace SPS30 {
     }
 
     //callback to parse HTML form sent from `getConfigHTML`
-    JsonObject& parseHTTPRequest(void) {
+    JsonObject &parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
         //enabled?
         String sensorID = F("enabled-{s}");
-        sensorID.replace(F("{s}"),String(SimpleScheduler::SPS30));
+        sensorID.replace(F("{s}"), String(SimpleScheduler::SPS30));
         parseHTTP(sensorID, enabled);
         //use display?
         sensorID = F("display-{s}");
-        sensorID.replace(F("{s}"),String(SimpleScheduler::SPS30));
+        sensorID.replace(F("{s}"), String(SimpleScheduler::SPS30));
         parseHTTP(sensorID, printOnLCD);
 
         StaticJsonBuffer<256> jsonBuffer;
-        JsonObject & ret = jsonBuffer.createObject();
+        JsonObject &ret = jsonBuffer.createObject();
         ret[F("refresh")] = refresh;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
@@ -178,17 +179,17 @@ namespace SPS30 {
 
     //get configuration data from JsonObject and save in own config
     // if sensor is enabled then run init. On shutdown
-    void readConfigJSON(JsonObject &json){
+    void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
         refresh = json.get<int>(F("refresh"));
 
-        if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30) ) {
+        if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30)) {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
             scheduler.init(SimpleScheduler::SPS30);
             enabled = true;
             Serial.println(F("SPS30 enabled"));
-        } else if(!enabled && scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
+        } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
             Serial.println(F("SPS30: stop"));
             scheduler.unregisterSensor(SimpleScheduler::SPS30);
         }
@@ -215,7 +216,7 @@ namespace SPS30 {
 
     //display table elements for current values page
     void resultsAsHTML(String &page_content) {
-        if (!enabled) {return;}
+        if (!enabled) { return; }
         const String unit_PM = "µg/m³";
         const String unit_T = "°C";
         const String unit_H = "%";
@@ -225,15 +226,17 @@ namespace SPS30 {
         if (measurement_count == 0) {
             page_content += table_row_from_value(FPSTR("SPS30"), FPSTR(INTL_SPS30_NO_RESULT), F(""), unit_PM);
 
-        }else {
+        } else {
             page_content += F("<tr><td colspan='3'>");
             page_content += FPSTR(INTL_SPS30_CONCENTRATIONS);
             page_content += F("</td></tr>\n");
 
-            page_content += table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0/measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5/measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0/measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0/measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0 / measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5 / measurement_count),
+                                                 unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0 / measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0 / measurement_count),
+                                                 unit_PM);
 
             page_content += F("<tr><td colspan='3'>");
             page_content += FPSTR(INTL_SPS30_COUNTS);
@@ -264,44 +267,48 @@ namespace SPS30 {
             lcd->println(F("SPS30"));
             lcd->println(FPSTR(INTL_SPS30_NOT_STARTED));
         }
+        if (measurement_count == 0) {
+            lcd->print(INTL_SPS30_NO_RESULT);
+            return true;
+        }
         if (getLCDRows() == 2) {    //16x2
             lcd->clear();
             switch (minor) {
                 case 0:
                     lcd->print(F("SPS: PM1:"));
-                    lcd->print(String(sum.mc_1p0/measurement_count,1));
-                    lcd->setCursor(0,1);
+                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
                     lcd->print(F("PM2.5:"));
-                    lcd->print(String(sum.mc_2p5/measurement_count,1));
+                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
                     break;
                 case 1:
                     lcd->print(F("SPS: PM4:"));
-                    lcd->print(String(sum.mc_4p0/measurement_count,1));
-                    lcd->setCursor(0,1);
+                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
                     lcd->print(F("PM10:"));
-                    lcd->print(String(sum.mc_10p0/measurement_count,1));
+                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 2:
                     lcd->print(F("SPS: NC1:"));
-                    lcd->print(String(sum.nc_1p0/measurement_count,1));
-                    lcd->setCursor(0,1);
+                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
                     lcd->print(F("NC2.5: "));
-                    lcd->print(String(sum.nc_2p5/measurement_count,1));
+                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
                     break;
                 case 3:
                     lcd->print(F("SPS: NC4:"));
-                    lcd->print(String(sum.nc_4p0/measurement_count,1));
-                    lcd->setCursor(0,1);
+                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
                     lcd->print(F("NC10:"));
-                    lcd->print(String(sum.nc_10p0/measurement_count,1));
+                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
                     break;
                 case 4:
                     lcd->print(F("TS:"));
-                    lcd->print(String(sum.typical_particle_size/measurement_count,2));
+                    lcd->print(String(sum.typical_particle_size / measurement_count, 2));
 
             }
 
-        } else {
+        } else {    //LCD 20x4, more real estate
             lcd->clear();
             switch (minor) {
                 case 0:
