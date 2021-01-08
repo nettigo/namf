@@ -1,3 +1,9 @@
+NAMF-2020-35rc2 (2021-01-08)
+- display data on LCD for sensors managed by new scheduler
+- support for custom upload options like OTA password (see platformio.ini, search for uplaod_options.ini)
+- fixed error when enabling sensors managed by new scheduler (it was toggle more than enable)
+- more readable sensors description on config page (new scheduler)
+
 NAMF-2020-35rc1 ()
 - Dont broadcast OTA service, until it is not enabled via /ota
 - You can use upload_opts.txt file to provide upload password (see `platformio.ini`)
