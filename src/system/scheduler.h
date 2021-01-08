@@ -96,6 +96,8 @@ namespace SimpleScheduler {
         LoopEntryType selectSensorToDisplay(byte current_pos, byte &minor);
         //inform scheduler this sensor wants to display to LCD if available
         int registerDisplay(LoopEntryType, byte);
+        //active sensors - how many screens are allocated
+        unsigned countScreens(void);
         bool sensorWantsDisplay(LoopEntryType);
         void dumpTable();
         //call/check display subroutines for sensor

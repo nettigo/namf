@@ -1193,7 +1193,7 @@ void setup() {
 	starttime = millis();                                   // store the start time
 	time_point_device_start_ms = starttime;
 	starttime_SDS = starttime;
-	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
+//	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
 
 }
 
@@ -1368,10 +1368,7 @@ void loop() {
 		starttime_GPS = act_milli;
 	}
 
-	if ((cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
-			cfg::has_lcd1602_27) && (act_milli > next_display_millis)) {
-		display_values();
-	}
+    cycleDisplay();
 
 	if ((cfg::has_ledbar_32) && (send_now)) {
 		displayLEDBar();

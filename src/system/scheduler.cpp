@@ -69,7 +69,7 @@ namespace SimpleScheduler {
             templ += F("<hr/><h2>");
             templ += findSlotDescription(i);
             templ += F("</h2>");
-            boolean checked =  findSlot(i) >= 0; // check if sensor is enabled
+            boolean checked = findSlot(i) >= 0; // check if sensor is enabled
             templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
             templ += F("<br/>");
             if (SimpleScheduler::displaySensor(i)) {
@@ -138,6 +138,19 @@ namespace SimpleScheduler {
         Serial.println(i);
         _tasks[i].hasDisplay = screens;
         dumpTable();
+    }
+
+    //how many screens is being registered
+    unsigned NAMFScheduler::countScreens(void) {
+        unsigned sum = 0;
+        scheduler.dumpTable();
+        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
+            if (_tasks[i].slotID == EMPTY) continue;
+            sum += _tasks[i].hasDisplay;
+
+        }
+        Serial.println(sum);
+        return sum;
     }
 
     //register new sensor

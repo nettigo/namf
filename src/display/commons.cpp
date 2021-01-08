@@ -13,6 +13,9 @@ enum class DisplayPages {
     PageInfo
 };
 
+unsigned long next_display_millis = 0;
+unsigned long next_display_count = 0;
+unsigned static_screen_count = 0;
 
 
 /*****************************************************************
@@ -59,9 +62,9 @@ void display_values() {
     String gps_sensor = "";
     String display_header = "";
     String display_lines[3] = { "", "", ""};
-    int screen_count = 0;
     DisplayPages screens[5];
     int line_count = 0;
+    static_screen_count = 0;
 //	debug_out(F("output values to display..."), DEBUG_MAX_INFO, 1);
     if (cfg::pms_read) {
         pm10_value = last_value_PMS_P1;
@@ -110,24 +113,24 @@ void display_values() {
         gps_sensor = "NEO6M";
     }
     if (cfg::pms_read || cfg::sds_read) {
-        screens[screen_count++] = DisplayPages::PagePM;
+        screens[static_screen_count++] = DisplayPages::PagePM;
     }
     if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
-        screens[screen_count++] = DisplayPages::PageTemp;
+        screens[static_screen_count++] = DisplayPages::PageTemp;
     }
     if (cfg::heca_read) {
-        screens[screen_count++] = DisplayPages::PageHECA;
+        screens[static_screen_count++] = DisplayPages::PageHECA;
     }
     if (cfg::gps_read) {
-        screens[screen_count++] = DisplayPages::PageGPS;
+        screens[static_screen_count++] = DisplayPages::PageGPS;
     }
     if (cfg::show_wifi_info) {
-        screens[screen_count++] = DisplayPages::PageWIFI;    // Wifi info
+        screens[static_screen_count++] = DisplayPages::PageWIFI;    // Wifi info
     }
-    screens[screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
+    screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
     bool skipOldDisplay = false;
-    if (next_display_count+1 > screen_count) {
-        byte diff = next_display_count - screen_count;
+    if (next_display_count+1 > static_screen_count) {
+        byte diff = next_display_count - static_screen_count;
         byte minor;
         SimpleScheduler::LoopEntryType sensor = scheduler.selectSensorToDisplay(diff, minor);
         if (sensor == SimpleScheduler::EMPTY) {
@@ -143,7 +146,7 @@ void display_values() {
     if (!skipOldDisplay) {
 
         if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
-            switch (screens[next_display_count % screen_count]) {
+            switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
                     display_header = pm25_sensor;
                     if (pm25_sensor != pm10_sensor) {
@@ -210,12 +213,11 @@ void display_values() {
                 display->drawString(0, 28, display_lines[1]);
                 display->drawString(0, 40, display_lines[2]);
                 display->setTextAlignment(TEXT_ALIGN_CENTER);
-                display->drawString(64, 52, displayGenerateFooter(screen_count));
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count));
                 display->display();
             }
             if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
-                display_header = String((next_display_count % screen_count) + 1) + "/" + String(screen_count) + " " +
-                                 display_header;
+                display_header = getLCDHeader() + " " + display_header;
                 display_lines[0].replace(" µg/m³", "");
                 display_lines[0].replace("°", String(char(223)));
                 display_lines[1].replace(" µg/m³", "");
@@ -233,7 +235,7 @@ void display_values() {
 
 
         if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
-            switch (screens[next_display_count % screen_count]) {
+            switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
                     display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
                     display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6);
@@ -286,3 +288,15 @@ byte getLCDRows(){
 
 };
 
+String getLCDHeader(){
+    String ret = String(next_display_count+1)+F("/")+String(static_screen_count+scheduler.countScreens());
+    return ret;
+};
+
+void cycleDisplay(void){
+    if ((cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
+         cfg::has_lcd1602_27) && (act_milli > next_display_millis)) {
+        display_values();
+    }
+
+}

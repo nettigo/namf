@@ -228,8 +228,6 @@ extern bool got_ntp ;
 extern unsigned long enable_ota_time ;
 
 extern unsigned long count_sends ;
-extern unsigned long next_display_millis ;
-extern unsigned long next_display_count ;
 
 struct struct_wifiInfo {
     char ssid[35];
