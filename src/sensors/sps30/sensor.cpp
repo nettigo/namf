@@ -268,6 +268,7 @@ namespace SPS30 {
             lcd->println(FPSTR(INTL_SPS30_NOT_STARTED));
         }
         if (measurement_count == 0) {
+            lcd->clear();
             lcd->print(INTL_SPS30_NO_RESULT);
             return true;
         }
