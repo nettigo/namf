@@ -278,14 +278,14 @@ namespace SPS30 {
                     lcd->print(F("SPS: PM1:"));
                     lcd->print(String(sum.mc_1p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
-                    lcd->print(F("PM2.5:"));
+                    lcd->print(F("PM2.5: "));
                     lcd->print(String(sum.mc_2p5 / measurement_count, 1));
                     break;
                 case 1:
                     lcd->print(F("SPS: PM4:"));
                     lcd->print(String(sum.mc_4p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
-                    lcd->print(F("PM10:"));
+                    lcd->print(F("PM10: "));
                     lcd->print(String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 2:
@@ -299,11 +299,12 @@ namespace SPS30 {
                     lcd->print(F("SPS: NC4:"));
                     lcd->print(String(sum.nc_4p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
-                    lcd->print(F("NC10:"));
+                    lcd->print(F("NC10: "));
                     lcd->print(String(sum.nc_10p0 / measurement_count, 1));
                     break;
                 case 4:
-                    lcd->print(F("TS:"));
+                    lcd->print(F("Typical size:"));
+                    lcd->setCursor(0, 1);
                     lcd->print(String(sum.typical_particle_size / measurement_count, 2));
 
             }
@@ -313,28 +314,35 @@ namespace SPS30 {
             switch (minor) {
                 case 0:
                     lcd->print(F("SPS: PM1:"));
-                    lcd->println(String(sum.mc_1p0 / measurement_count, 1));
+                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
                     lcd->print(F("PM2.5:"));
-                    lcd->println(String(sum.mc_2p5 / measurement_count, 1));
-                    lcd->print(F(" PM4:"));
-                    lcd->println(String(sum.mc_4p0 / measurement_count, 1));
+                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
+                    lcd->setCursor(0, 2);
+                    lcd->print(F("PM4: "));
+                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 3);
                     lcd->print(F("PM10:"));
-                    lcd->println(String(sum.mc_10p0 / measurement_count, 1));
+                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 1:
                     lcd->print(F("SPS: NC1:"));
-                    lcd->println(String(sum.nc_1p0 / measurement_count, 1));
+                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
                     lcd->print(F("NC2.5:"));
-                    lcd->println(String(sum.nc_2p5 / measurement_count, 1));
+                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
+                    lcd->setCursor(0, 2);
                     lcd->print(F("NC4:"));
                     lcd->print(String(sum.nc_4p0 / measurement_count, 1));
-                    lcd->print(F(" NC10:"));
+                    lcd->setCursor(0, 3);
+                    lcd->print(F("NC10:"));
                     lcd->print(String(sum.nc_10p0 / measurement_count, 1));
                     lcd->print(F(" TS:"));
                     lcd->print(String(sum.typical_particle_size / measurement_count, 1));
                     break;
             }
         }
+        return true;
     };
 
 }
