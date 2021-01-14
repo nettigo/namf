@@ -8,6 +8,8 @@
 #include <stdbool.h>
 
 namespace MHZ14A {
+    const char KEY[] PROGMEM = "MHZ14A";
+    bool enabled = false;
 
 #define CMD_SIZE 9
 

@@ -12,8 +12,8 @@
 #include "helpers.h"
 
 namespace MHZ14A {
-    const char KEY[] PROGMEM = "MHZ14A";
-    bool enabled = false;
+    extern const char KEY[] PROGMEM;
+    extern bool enabled;
     typedef enum {
         RANGE_2K,
         RANGE_10K
