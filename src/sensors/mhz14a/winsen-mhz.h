@@ -11,8 +11,8 @@
 #include "variables.h"
 #include "helpers.h"
 
-namespace SHT3x {
-    const char KEY[] PROGMEM = "SHT3x";
+namespace MHZ14A {
+    const char KEY[] PROGMEM = "MHZ14A";
     bool enabled = false;
     typedef enum {
         RANGE_2K,
