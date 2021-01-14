@@ -83,6 +83,8 @@ namespace SimpleScheduler {
          */
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
         int unregisterSensor(LoopEntryType slot);
+
+        void enableSubsystem(LoopEntryType, bool, loopTimerFunc, const __FlashStringHelper *);
         bool isRegistered(LoopEntryType);
 
         void getConfigForms(String &page);

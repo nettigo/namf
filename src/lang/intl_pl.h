@@ -79,9 +79,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_MAX_INFO[] PROGMEM = "maks. info";
 /* ./src/lang/intl_pl.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Czas między pomiarami (sek.)";
 /* ./src/lang/intl_pl.lang */ const char INTL_MED_INFO[] PROGMEM = "śr. info";
-/* ./src/lang/intl_pl.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 sensor";
+/* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 sensor";
 /* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A - CO2 sensor";
-/* ./src/lang/intl_pl.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN MH-Z14A";
+/* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN MH-Z14A";
 /* ./src/lang/intl_pl.lang */ const char INTL_MIN_INFO[] PROGMEM = "min. info";
 /* ./src/lang/intl_pl.lang */ const char INTL_MORE_APIS[] PROGMEM = "Kolejne API";
 /* ./src/lang/intl_pl.lang */ const char INTL_MORE_SETTINGS[] PROGMEM = "Więcej ustawień";

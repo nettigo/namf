@@ -49,6 +49,8 @@ namespace SimpleScheduler {
                 return NetworkWatchdog::parseHTTPRequest();
             case SimpleScheduler::SHT3x:
                 return SHT3x::parseHTTPRequest();
+            case SimpleScheduler::MHZ14A:
+                return MHZ14A::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
@@ -80,6 +82,8 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::SHT3x:
                 SHT3x::readConfigJSON(json);
+            case SimpleScheduler::MHZ14A:
+                MHZ14A::readConfigJSON(json);
                 return;
             default:
                 return;

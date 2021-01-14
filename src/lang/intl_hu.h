@@ -80,8 +80,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_MAX_INFO[] PROGMEM = "max. info";
 /* ./src/lang/intl_hu.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Mérési intervallum";
 /* ./src/lang/intl_hu.lang */ const char INTL_MED_INFO[] PROGMEM = "mid. info";
-/* ./src/lang/intl_hu.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 Sensor";
-/* ./src/lang/intl_hu.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN";
+/* ./src/sensors/mhz14a/mhz14a_hu.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 Sensor";
+/* ./src/sensors/mhz14a/mhz14a_hu.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A - CO2 sensor";
+/* ./src/sensors/mhz14a/mhz14a_hu.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN";
 /* ./src/lang/intl_hu.lang */ const char INTL_MIN_INFO[] PROGMEM = "min. info";
 /* ./src/lang/intl_hu.lang */ const char INTL_MORE_APIS[] PROGMEM = "További API-k";
 /* ./src/lang/intl_hu.lang */ const char INTL_MORE_SETTINGS[] PROGMEM = "További beállítások";
@@ -150,7 +151,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
  const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
  const char INTL_ENABLE[] PROGMEM = "Translate HU: INTL_ENABLE 🐱;";
- const char INTL_MHZ14A_DESC[] PROGMEM = "Translate HU: INTL_MHZ14A_DESC 🐱;";
 
 
 #endif

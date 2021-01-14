@@ -98,6 +98,17 @@ namespace SimpleScheduler {
 
     }
 
+    void NAMFScheduler::enableSubsystem(LoopEntryType subsyst, bool enabled, loopTimerFunc initFunc, const __FlashStringHelper *code){
+        if (enabled && !scheduler.isRegistered(subsyst)) {
+            scheduler.registerSensor(subsyst, initFunc, code);
+            scheduler.init(subsyst);
+
+        } else if (scheduler.isRegistered(subsyst)) {
+            scheduler.unregisterSensor(subsyst);
+        }
+
+    };
+
     bool NAMFScheduler::isRegistered(LoopEntryType slot) {
         return findSlot(slot) >= 0;
     }

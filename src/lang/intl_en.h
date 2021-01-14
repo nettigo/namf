@@ -80,6 +80,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Measuring interval";
 /* ./src/lang/intl_en.lang */ const char INTL_MED_INFO[] PROGMEM = "mid. info";
 /* ./src/lang/intl_en.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 Sensor";
+/* ./src/sensors/mhz14a/mhz14a_en.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A - CO2 sensor";
 /* ./src/lang/intl_en.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN";
 /* ./src/lang/intl_en.lang */ const char INTL_MIN_INFO[] PROGMEM = "min. info";
 /* ./src/lang/intl_en.lang */ const char INTL_MORE_APIS[] PROGMEM = "More APIs";
@@ -150,7 +151,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate EN: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate EN: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate EN: INTL_BMP180 🐱;";
- const char INTL_MHZ14A_DESC[] PROGMEM = "Translate EN: INTL_MHZ14A_DESC 🐱;";
 
 
 #endif

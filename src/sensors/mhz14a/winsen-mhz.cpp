@@ -20,6 +20,28 @@ namespace MHZ14A {
         CHECK
     } state_t;
 
+    JsonObject& parseHTTPRequest(){
+        setBoolVariableFromHTTP(String(F("enable")), enabled, SimpleScheduler::SHT3x);
+    };
+    void readConfigJSON(JsonObject &json){
+            enabled = json.get<bool>(F("e"));
+            scheduler.enableSubsystem(SimpleScheduler::MHZ14A, enabled, MHZ14A::process, FPSTR(MHZ14A::KEY));
+
+    };
+
+    unsigned long process (SimpleScheduler::LoopEventType event){
+        switch(event) {
+            case SimpleScheduler::INIT:
+                setupWinsenMHZ(serialGPS);
+                return 1000;
+            case SimpleScheduler::RUN:
+                readWinsenMHZ(serialGPS);
+                return 1000;
+            default:
+                return 1000;
+        }
+    };
+
 /**
     Prepares a command buffer to send to an mhz19.
     @param data tx data

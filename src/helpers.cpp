@@ -400,6 +400,20 @@ unsigned long  parseHTTP(const String &name, bool &value ){
     }
 };
 
+/* get read and set bool variables for new scheduler. Works with checkbox
+ named var_name-SENSOR_ID (var name it is enable or display currently
+ Geting enable val from client is code done by each sensor, to make it easier this
+ helper was created. It supports any bool var.
+*/
+void setBoolVariableFromHTTP(String const name, bool &v, byte i){
+    String sensorID = F("{n}-{s}");
+    sensorID.replace(F("{s}"), String(i));
+    sensorID.replace(F("{n}"), name);
+    parseHTTP(sensorID, v);
+
+
+}
+
 //Form helpers
 //
 String form_input(const String& name, const String& info, const String& value, const int length) {
