@@ -28,7 +28,7 @@
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
-#include "sensors/winsen-mhz.h"
+#include "sensors/mhz14a/winsen-mhz.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
 
