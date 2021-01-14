@@ -17,6 +17,7 @@ namespace SimpleScheduler {
         SPS30,
         NTW_WTD,
         SHT3x,
+        MHZ14A,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 

@@ -9,6 +9,10 @@
 #include <stdbool.h>
 #include "variables.h"
 #include "helpers.h"
+
+namespace SHT3x {
+    const char KEY[] PROGMEM = "SHT3x";
+    bool enabled = false;
 typedef enum {
     RANGE_2K,
     RANGE_10K
@@ -22,4 +26,5 @@ static bool read_temp_co2(SoftwareSerial&,unsigned int *co2, unsigned int *temp)
 void setupWinsenMHZ(SoftwareSerial&);
 void readWinsenMHZ(SoftwareSerial&);
 String sensorMHZ();
+}
 #endif //NAMF_WINSEN_MHZ_H
