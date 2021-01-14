@@ -142,6 +142,8 @@ namespace SimpleScheduler {
                 return FPSTR(INTL_NTW_WTD_DESC);
             case SimpleScheduler::SHT3x:
                 return FPSTR(INTL_SHT3X_DESC);
+            case SimpleScheduler::MHZ14A:
+                return FPSTR(INTL_MHZ14A_DESC);
             default:
                 return F("");
         }
