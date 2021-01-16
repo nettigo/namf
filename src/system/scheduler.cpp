@@ -120,7 +120,6 @@ namespace SimpleScheduler {
         byte sum = 0;
         minor = 0;
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            Serial.println(_tasks[i].hasDisplay);
 
             if (sum + _tasks[i].hasDisplay > current_pos) {
                 minor = current_pos - sum;
@@ -134,7 +133,6 @@ namespace SimpleScheduler {
 
     //inform scheduler that we want to display data on LCD
     int NAMFScheduler::registerDisplay(LoopEntryType slot, byte screens) {
-        Serial.println(F("REGISTER DISPLAY ********************************"));
         int i = findSlot(slot);
         if (i < 0) return -1;
         Serial.println(screens);
