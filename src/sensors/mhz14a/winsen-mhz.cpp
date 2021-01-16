@@ -78,7 +78,7 @@ namespace MHZ14A {
         switch (event) {
             case SimpleScheduler::INIT:
                 setupWinsenMHZ(serialGPS);
-                scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
+                if (printOnLCD) scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
                 return 1000;
             case SimpleScheduler::RUN:
                 readWinsenMHZ(serialGPS);
