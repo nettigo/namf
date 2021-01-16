@@ -27,6 +27,7 @@ namespace MHZ14A {
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
+        ret[F("d")] = printOnLCD;
         ret.printTo(Serial);
         return ret;
 
