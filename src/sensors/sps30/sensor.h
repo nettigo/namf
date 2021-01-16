@@ -46,7 +46,7 @@ namespace SPS30 {
     extern void resultsAsHTML(String &page_content);
     //display on LCD
     extern bool display(LiquidCrystal_I2C*, byte);
-
+    bool getDisplaySetting();
 }
 
 #endif //NAMF_SENSOR_H

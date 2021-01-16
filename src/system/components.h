@@ -13,6 +13,9 @@
 
 namespace SimpleScheduler {
 
+    //has sensor enabled dispalying in config?
+    bool sensorWantsDisplay(LoopEntryType);
+
     //collect results as JSON
     void getResults( String &res);
 

@@ -64,6 +64,8 @@ namespace SimpleScheduler {
         i++;
         scheduler.dumpTable();
         for (; i < NAMF_LOOP_SIZE; i++) {
+            Serial.print("Get config form for sensor:");
+            Serial.println(i);
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
@@ -178,12 +180,6 @@ namespace SimpleScheduler {
         //no match
         return -1;
 
-    }
-
-    bool NAMFScheduler::sensorWantsDisplay(LoopEntryType sensor) {
-        int i = findSlot(sensor);
-        if (i < 0) return false;  //sensor is not registered at all
-        return _tasks[i].hasDisplay;
     }
 
     void NAMFScheduler::dumpTable() {

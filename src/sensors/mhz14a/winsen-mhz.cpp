@@ -69,6 +69,11 @@ namespace MHZ14A {
         }
     };
 
+    bool getDisplaySetting(){
+        return printOnLCD;
+    };
+
+
     unsigned long process(SimpleScheduler::LoopEventType event) {
         switch (event) {
             case SimpleScheduler::INIT:

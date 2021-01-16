@@ -4,6 +4,15 @@
 
 namespace SimpleScheduler {
 
+    bool sensorWantsDisplay(LoopEntryType sensor){
+        switch (sensor) {
+            case SimpleScheduler::SPS30:
+                return SPS30::getDisplaySetting();
+            case SimpleScheduler::MHZ14A:
+                return MHZ14A::getDisplaySetting();
+        }
+    };
+
     //collect results as JSON
     void getResults(String &res) {
         SPS30::results(res);

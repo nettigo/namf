@@ -343,4 +343,8 @@ namespace SPS30 {
         return true;
     };
 
+    bool getDisplaySetting(){
+        return printOnLCD;
+    };
+
 }

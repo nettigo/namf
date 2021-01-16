@@ -33,6 +33,8 @@ namespace MHZ14A {
 
     bool display(LiquidCrystal_I2C *lcd, byte minor);
 
+    bool getDisplaySetting();
+
     unsigned long process(SimpleScheduler::LoopEventType);
 
     bool process_rx(uint8_t b, uint8_t cmd, uint8_t data[]);
