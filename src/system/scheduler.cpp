@@ -117,17 +117,9 @@ namespace SimpleScheduler {
     //counting which one is current. *minor* returns which screen from singe sensor should
     //be displayed (sensor can register more than one screen to display)
     LoopEntryType NAMFScheduler::selectSensorToDisplay(byte current_pos, byte &minor) {
-        Serial.println("SelectSensor");
-        Serial.println(current_pos);
         byte sum = 0;
         minor = 0;
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            Serial.print(i);
-            Serial.print(",");
-            Serial.print(_tasks[i].slotID);
-            Serial.print(",");
-            Serial.print(sum);
-            Serial.print(",");
             Serial.println(_tasks[i].hasDisplay);
 
             if (sum + _tasks[i].hasDisplay > current_pos) {
