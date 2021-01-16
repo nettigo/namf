@@ -123,7 +123,6 @@ namespace SimpleScheduler {
 
             if (sum + _tasks[i].hasDisplay > current_pos) {
                 minor = current_pos - sum;
-                Serial.println(minor);
                 return _tasks[i].slotID;
             }
         };
@@ -135,22 +134,17 @@ namespace SimpleScheduler {
     int NAMFScheduler::registerDisplay(LoopEntryType slot, byte screens) {
         int i = findSlot(slot);
         if (i < 0) return -1;
-        Serial.println(screens);
-        Serial.println(i);
         _tasks[i].hasDisplay = screens;
-        dumpTable();
     }
 
     //how many screens is being registered
     unsigned NAMFScheduler::countScreens(void) {
         unsigned sum = 0;
-        scheduler.dumpTable();
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID == EMPTY) continue;
             sum += _tasks[i].hasDisplay;
 
         }
-        Serial.println(sum);
         return sum;
     }
 
