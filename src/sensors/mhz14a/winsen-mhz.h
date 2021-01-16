@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include "variables.h"
 #include "helpers.h"
+#include "webserver.h"
 
 namespace MHZ14A {
     extern const char KEY[] PROGMEM;
@@ -21,7 +22,13 @@ namespace MHZ14A {
 
     JsonObject &parseHTTPRequest();
 
+    void getResults (String &);
+
+    void resultsAsHTML (String &);
+
     void readConfigJSON(JsonObject &);
+
+    String getConfigJSON(void);
 
     unsigned long process(SimpleScheduler::LoopEventType);
 

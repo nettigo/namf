@@ -20,17 +20,42 @@ namespace MHZ14A {
         CHECK
     } state_t;
 
-    JsonObject& parseHTTPRequest(){
-        setBoolVariableFromHTTP(String(F("enable")), enabled, SimpleScheduler::SHT3x);
-    };
-    void readConfigJSON(JsonObject &json){
-            enabled = json.get<bool>(F("e"));
-            scheduler.enableSubsystem(SimpleScheduler::MHZ14A, enabled, MHZ14A::process, FPSTR(MHZ14A::KEY));
+    JsonObject &parseHTTPRequest() {
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::MHZ14A);
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject &ret = jsonBuffer.createObject();
+        ret[F("e")] = enabled;
+        ret.printTo(Serial);
+        return ret;
 
     };
 
-    unsigned long process (SimpleScheduler::LoopEventType event){
-        switch(event) {
+    void getResults (String &str){
+        if (!enabled) return;
+        str += sensorMHZ();
+    };
+
+    void resultsAsHTML(String &page_content) {
+        if (!enabled) {return;}
+        page_content += FPSTR(EMPTY_ROW);
+        page_content += table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
+                                             F("ppm"));    }
+
+    void readConfigJSON(JsonObject &json) {
+        enabled = json.get<bool>(F("e"));
+        scheduler.enableSubsystem(SimpleScheduler::MHZ14A, enabled, MHZ14A::process, FPSTR(MHZ14A::KEY));
+
+    };
+
+    String getConfigJSON(void) {
+        String ret = F("");
+        ret += Var2JsonInt(F("e"), enabled);
+        return ret;
+    }
+
+
+    unsigned long process(SimpleScheduler::LoopEventType event) {
+        switch (event) {
             case SimpleScheduler::INIT:
                 setupWinsenMHZ(serialGPS);
                 return 1000;
@@ -174,8 +199,8 @@ namespace MHZ14A {
         uint8_t data[] = {0, 0, 0, 0, 0, 0};
         bool result = exchange_command(serial, 0x86, data, 3000);
         if (result) {
-            *co2 = (data[0] << 8) + data[1];
             *temp = data[2] - 40;
+            *co2 = (data[0] << 8) + data[1];
 #if 0
             char raw[32];
             sprintf(raw, "RAW: %02X %02X %02X %02X %02X %02X", data[0], data[1], data[2], data[3],
@@ -191,6 +216,7 @@ namespace MHZ14A {
     unsigned int *samples = nullptr;
 
     void setupWinsenMHZ(SoftwareSerial &serial) {
+        serial.begin(9600);
         set_range(serial, RANGE_2K);
         samples = new unsigned int[WINSEN_AVG_SAMPLE];
     }

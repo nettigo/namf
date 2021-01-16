@@ -35,7 +35,7 @@ namespace NetworkWatchdog {
         String sensorID = F("enabled-{s}");
         sensorID.replace(F("{s}"),String(SimpleScheduler::NTW_WTD));
         parseHTTP(sensorID, enabled);
-        StaticJsonBuffer<256> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         if (addr.isValid(host)) {
             addr.fromString(host);

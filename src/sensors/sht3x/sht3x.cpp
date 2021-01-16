@@ -43,10 +43,12 @@ namespace SHT3x {
 //        parseHTTP(F("host"), host);
         String sensorID = F("enabled-{s}");
         sensorID.replace(F("{s}"),String(SimpleScheduler::SHT3x));
+        Serial.println(sensorID);
         parseHTTP(sensorID, enabled);
-        StaticJsonBuffer<16> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
+        ret.printTo(Serial);
         return ret;
     }
 

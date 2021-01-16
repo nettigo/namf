@@ -38,11 +38,11 @@ namespace SPS30 {
     JsonObject &parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
         //enabled?
-        setBoolVariableFromHTTP(String(F("enable")), enabled, SimpleScheduler::SHT3x);
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
         //use display?
-        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SHT3x);
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
 
-        StaticJsonBuffer<256> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("refresh")] = refresh;
         ret[F("e")] = enabled;

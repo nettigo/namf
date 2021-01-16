@@ -8,6 +8,7 @@ namespace SimpleScheduler {
     void getResults(String &res) {
         SPS30::results(res);
         SHT3x::results(res);
+        MHZ14A::getResults(res);
 
     }
 
@@ -22,6 +23,7 @@ namespace SimpleScheduler {
     void getResultsAsHTML(String &res) {
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
+        MHZ14A::resultsAsHTML(res);
         NetworkWatchdog::resultsAsHTML(res);
     }
 
@@ -67,6 +69,8 @@ namespace SimpleScheduler {
                 return NetworkWatchdog::getConfigJSON();
             case SimpleScheduler::SHT3x:
                 return SHT3x::getConfigJSON();
+            case SimpleScheduler::MHZ14A:
+                return MHZ14A::getConfigJSON();
             default:
                 return s;
         }
@@ -128,6 +132,8 @@ namespace SimpleScheduler {
                 return FPSTR(NetworkWatchdog::KEY);
             case SimpleScheduler::SHT3x:
                 return FPSTR(SHT3x::KEY);
+            case SimpleScheduler::MHZ14A:
+                return FPSTR(MHZ14A::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
