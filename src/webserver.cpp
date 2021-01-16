@@ -449,8 +449,6 @@ void webserver_config() {
             page_content += F("<br/></form>");
 
             scheduler.getConfigForms(page_content);
-            Serial.print(F("Page size:"));
-            Serial.println(page_content.length());
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content += FPSTR(TABLE_TAG_OPEN);

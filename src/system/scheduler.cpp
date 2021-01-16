@@ -55,10 +55,7 @@ namespace SimpleScheduler {
         page += F("<div id='ncf'>");
         LoopEntryType i = EMPTY;
         i++;
-        scheduler.dumpTable();
         for (; i < NAMF_LOOP_SIZE; i++) {
-            Serial.print("Get config form for sensor:");
-            Serial.println(i);
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
@@ -168,12 +165,10 @@ namespace SimpleScheduler {
 //find scheduler entry based on sensor type (slot ID)
     int NAMFScheduler::findSlot(byte id) {
         dumpTable();
-        Serial.println(id);
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID == id)
                 return i;
         }
-        Serial.println("no match");
         //no match
         return -1;
 
