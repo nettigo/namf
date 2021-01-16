@@ -33,7 +33,6 @@ namespace cfg {
     bool bmp280_read = BMP280_READ;
     bool bme280_read = BME280_READ;
     bool heca_read = HECA_READ;
-    bool winsen_mhz14a_read = WINSEN_MHZ14A_READ;
     bool ds18b20_read = DS18B20_READ;
     bool gps_read = GPS_READ;
     bool send2dusti = SEND2DUSTI;

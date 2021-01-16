@@ -17,6 +17,7 @@ namespace SimpleScheduler {
         SPS30,
         NTW_WTD,
         SHT3x,
+        MHZ14A,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
@@ -82,6 +83,8 @@ namespace SimpleScheduler {
          */
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
         int unregisterSensor(LoopEntryType slot);
+
+        void enableSubsystem(LoopEntryType, bool, loopTimerFunc, const __FlashStringHelper *);
         bool isRegistered(LoopEntryType);
 
         void getConfigForms(String &page);
@@ -98,7 +101,6 @@ namespace SimpleScheduler {
         int registerDisplay(LoopEntryType, byte);
         //active sensors - how many screens are allocated
         unsigned countScreens(void);
-        bool sensorWantsDisplay(LoopEntryType);
         void dumpTable();
         //call/check display subroutines for sensor
 

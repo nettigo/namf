@@ -43,10 +43,12 @@ namespace SHT3x {
 //        parseHTTP(F("host"), host);
         String sensorID = F("enabled-{s}");
         sensorID.replace(F("{s}"),String(SimpleScheduler::SHT3x));
+        Serial.println(sensorID);
         parseHTTP(sensorID, enabled);
-        StaticJsonBuffer<16> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
+        ret.printTo(Serial);
         return ret;
     }
 
@@ -58,14 +60,7 @@ namespace SHT3x {
 
     void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
-
-        if (enabled && !scheduler.isRegistered(SimpleScheduler::SHT3x)) {
-            scheduler.registerSensor(SimpleScheduler::SHT3x, SHT3x::process, FPSTR(KEY));
-            scheduler.init(SimpleScheduler::SHT3x);
-
-        } else if (scheduler.isRegistered(SimpleScheduler::SHT3x)) {
-            scheduler.unregisterSensor(SimpleScheduler::SHT3x);
-        }
+        scheduler.enableSubsystem(SimpleScheduler::SHT3x, enabled, SHT3x::process, FPSTR(SHT3x::KEY));
     }
 
     unsigned long process (SimpleScheduler::LoopEventType event){

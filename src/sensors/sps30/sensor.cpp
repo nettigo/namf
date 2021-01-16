@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "sensor.h"
+#include "helpers.h"
 #include "display/commons.h"
 #include "system/scheduler.h"
 
@@ -37,15 +38,11 @@ namespace SPS30 {
     JsonObject &parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
         //enabled?
-        String sensorID = F("enabled-{s}");
-        sensorID.replace(F("{s}"), String(SimpleScheduler::SPS30));
-        parseHTTP(sensorID, enabled);
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
         //use display?
-        sensorID = F("display-{s}");
-        sensorID.replace(F("{s}"), String(SimpleScheduler::SPS30));
-        parseHTTP(sensorID, printOnLCD);
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
 
-        StaticJsonBuffer<256> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("refresh")] = refresh;
         ret[F("e")] = enabled;
@@ -344,6 +341,10 @@ namespace SPS30 {
             }
         }
         return true;
+    };
+
+    bool getDisplaySetting(){
+        return printOnLCD;
     };
 
 }

@@ -24,11 +24,9 @@
 #include "html-content.h"
 #include "webserver.h"
 #include "sensors/sds011.h"
-#include "sensors/sps30/sensor.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
-#include "sensors/winsen-mhz.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
 
@@ -1159,11 +1157,6 @@ void setup() {
         startAP();
     }
 
-    if (cfg::winsen_mhz14a_read) {
-        serialGPS.begin(9600);
-        setupWinsenMHZ(serialGPS);
-    }
-
     if (cfg::gps_read) {
         serialGPS.begin(9600);
         debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
@@ -1324,8 +1317,6 @@ void loop() {
 		}
 
 	}
-    if (cfg::winsen_mhz14a_read)
-	    readWinsenMHZ(serialGPS);
 
 	server.handleClient();
 
@@ -1470,8 +1461,6 @@ void loop() {
 			}
 		}
 
-        if(cfg::winsen_mhz14a_read)
-		    data += sensorMHZ();
 
         //add results from new scheduler
         SimpleScheduler::getResults(data);

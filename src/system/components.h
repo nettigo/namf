@@ -9,8 +9,12 @@
 #include "../sensors/sps30/sensor.h"
 #include "../sensors/network_watchdog/tester.h"
 #include "../sensors/sht3x/sht3x.h"
+#include "../sensors/mhz14a/winsen-mhz.h"
 
 namespace SimpleScheduler {
+
+    //has sensor enabled dispalying in config?
+    bool sensorWantsDisplay(LoopEntryType);
 
     //collect results as JSON
     void getResults( String &res);

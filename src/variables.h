@@ -55,7 +55,6 @@ namespace cfg {
     extern bool bmp280_read;
     extern bool bme280_read;
     extern bool heca_read;
-    extern bool winsen_mhz14a_read;
     extern bool ds18b20_read;
     extern bool gps_read;
     extern bool send2dusti;

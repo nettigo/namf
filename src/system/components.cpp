@@ -4,10 +4,20 @@
 
 namespace SimpleScheduler {
 
+    bool sensorWantsDisplay(LoopEntryType sensor){
+        switch (sensor) {
+            case SimpleScheduler::SPS30:
+                return SPS30::getDisplaySetting();
+            case SimpleScheduler::MHZ14A:
+                return MHZ14A::getDisplaySetting();
+        }
+    };
+
     //collect results as JSON
     void getResults(String &res) {
         SPS30::results(res);
         SHT3x::results(res);
+        MHZ14A::getResults(res);
 
     }
 
@@ -22,6 +32,7 @@ namespace SimpleScheduler {
     void getResultsAsHTML(String &res) {
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
+        MHZ14A::resultsAsHTML(res);
         NetworkWatchdog::resultsAsHTML(res);
     }
 
@@ -49,6 +60,8 @@ namespace SimpleScheduler {
                 return NetworkWatchdog::parseHTTPRequest();
             case SimpleScheduler::SHT3x:
                 return SHT3x::parseHTTPRequest();
+            case SimpleScheduler::MHZ14A:
+                return MHZ14A::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
@@ -65,6 +78,8 @@ namespace SimpleScheduler {
                 return NetworkWatchdog::getConfigJSON();
             case SimpleScheduler::SHT3x:
                 return SHT3x::getConfigJSON();
+            case SimpleScheduler::MHZ14A:
+                return MHZ14A::getConfigJSON();
             default:
                 return s;
         }
@@ -80,6 +95,8 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::SHT3x:
                 SHT3x::readConfigJSON(json);
+            case SimpleScheduler::MHZ14A:
+                MHZ14A::readConfigJSON(json);
                 return;
             default:
                 return;
@@ -124,6 +141,8 @@ namespace SimpleScheduler {
                 return FPSTR(NetworkWatchdog::KEY);
             case SimpleScheduler::SHT3x:
                 return FPSTR(SHT3x::KEY);
+            case SimpleScheduler::MHZ14A:
+                return FPSTR(MHZ14A::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
@@ -142,6 +161,8 @@ namespace SimpleScheduler {
                 return FPSTR(INTL_NTW_WTD_DESC);
             case SimpleScheduler::SHT3x:
                 return FPSTR(INTL_SHT3X_DESC);
+            case SimpleScheduler::MHZ14A:
+                return FPSTR(INTL_MHZ14A_DESC);
             default:
                 return F("");
         }
@@ -153,6 +174,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SPS30:
                 return SPS30::display(lcd, minor);
+            case MHZ14A:
+                return MHZ14A::display(lcd, minor);
             default:
                 return false;
         }
