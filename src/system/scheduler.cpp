@@ -50,13 +50,6 @@ namespace SimpleScheduler {
 
     }
 
-    void NAMFScheduler::init() {
-        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            init(_tasks[i].slotID);
-        }
-
-    }
-
     void NAMFScheduler::getConfigForms(String &page) {
         String s = F("");
         page += F("<div id='ncf'>");
@@ -173,10 +166,13 @@ namespace SimpleScheduler {
 
 //find scheduler entry based on sensor type (slot ID)
     int NAMFScheduler::findSlot(byte id) {
+        dumpTable();
+        Serial.println(id);
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID == id)
                 return i;
         }
+        Serial.println("no match");
         //no match
         return -1;
 
