@@ -1,3 +1,7 @@
+NAMF-2020-35rc3 (2021-01-16)
+- MHZ14A support moved to new scheduler
+- display CO2 concentration on LCD
+
 NAMF-2020-35rc2 (2021-01-08)
 - display data on LCD for sensors managed by new scheduler
 - support for custom upload options like OTA password (see platformio.ini, search for uplaod_options.ini)
