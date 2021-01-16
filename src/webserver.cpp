@@ -291,7 +291,9 @@ void webserver_config_json_save() {
 void webserver_config() {
     if (!webserver_request_auth()) { return; }
 
-    String page_content = make_header(FPSTR(INTL_CONFIGURATION));
+    String page_content;
+    page_content.reserve(20000);
+    page_content = make_header(FPSTR(INTL_CONFIGURATION));
     String masked_pwd = "";
     last_page_load = millis();
 
@@ -447,6 +449,8 @@ void webserver_config() {
             page_content += F("<br/></form>");
 
             scheduler.getConfigForms(page_content);
+            Serial.print(F("Page size:"));
+            Serial.println(page_content.length());
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content += FPSTR(TABLE_TAG_OPEN);
