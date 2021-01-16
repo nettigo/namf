@@ -165,6 +165,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SPS30:
                 return SPS30::display(lcd, minor);
+            case MHZ14A:
+                return MHZ14A::display(lcd, minor);
             default:
                 return false;
         }

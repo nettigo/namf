@@ -62,6 +62,7 @@ namespace SimpleScheduler {
         page += F("<div id='ncf'>");
         LoopEntryType i = EMPTY;
         i++;
+        scheduler.dumpTable();
         for (; i < NAMF_LOOP_SIZE; i++) {
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"

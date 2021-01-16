@@ -15,6 +15,7 @@
 namespace MHZ14A {
     extern const char KEY[] PROGMEM;
     extern bool enabled;
+    extern bool printOnLCD;
     typedef enum {
         RANGE_2K,
         RANGE_10K
@@ -29,6 +30,8 @@ namespace MHZ14A {
     void readConfigJSON(JsonObject &);
 
     String getConfigJSON(void);
+
+    bool display(LiquidCrystal_I2C *lcd, byte minor);
 
     unsigned long process(SimpleScheduler::LoopEventType);
 

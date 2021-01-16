@@ -10,6 +10,7 @@
 namespace MHZ14A {
     const char KEY[] PROGMEM = "MHZ14A";
     bool enabled = false;
+    bool printOnLCD = false;
 
 #define CMD_SIZE 9
 
@@ -22,6 +23,7 @@ namespace MHZ14A {
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::MHZ14A);
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::MHZ14A);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
@@ -30,19 +32,21 @@ namespace MHZ14A {
 
     };
 
-    void getResults (String &str){
+    void getResults(String &str) {
         if (!enabled) return;
         str += sensorMHZ();
     };
 
     void resultsAsHTML(String &page_content) {
-        if (!enabled) {return;}
+        if (!enabled) { return; }
         page_content += FPSTR(EMPTY_ROW);
         page_content += table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
-                                             F("ppm"));    }
+                                             F("ppm"));
+    }
 
     void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
+        printOnLCD = json.get<bool>(F("d"));
         scheduler.enableSubsystem(SimpleScheduler::MHZ14A, enabled, MHZ14A::process, FPSTR(MHZ14A::KEY));
 
     };
@@ -50,14 +54,26 @@ namespace MHZ14A {
     String getConfigJSON(void) {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
+        ret += Var2JsonInt(F("d"), printOnLCD);
         return ret;
     }
 
+    bool display(LiquidCrystal_I2C *lcd, byte minor) {
+        if (lcd == NULL) return true;
+        if (getLCDRows() == 2 || getLCDRows() == 4) {    // any LCD
+            lcd->clear();
+            lcd->print(F("CO2 (MHZ14A)"));
+            lcd->setCursor(0,1);
+            lcd->print(last_value_WINSEN_CO2);
+            lcd->print(F(" ppm"));
+        }
+    };
 
     unsigned long process(SimpleScheduler::LoopEventType event) {
         switch (event) {
             case SimpleScheduler::INIT:
                 setupWinsenMHZ(serialGPS);
+                scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
                 return 1000;
             case SimpleScheduler::RUN:
                 readWinsenMHZ(serialGPS);
