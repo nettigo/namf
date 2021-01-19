@@ -164,7 +164,6 @@ namespace SimpleScheduler {
 
 //find scheduler entry based on sensor type (slot ID)
     int NAMFScheduler::findSlot(byte id) {
-        dumpTable();
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID == id)
                 return i;
