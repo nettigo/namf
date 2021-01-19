@@ -21,6 +21,14 @@ namespace MHZ14A {
         CHECK
     } state_t;
 
+    //for internal use - register/deregister display
+    void registerDisplayMHZ(){
+        if (enabled && printOnLCD)
+            scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
+        else
+            scheduler.registerDisplay(SimpleScheduler::MHZ14A, 0);  // disable
+    }
+
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::MHZ14A);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::MHZ14A);
@@ -28,6 +36,7 @@ namespace MHZ14A {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplayMHZ();
         ret.printTo(Serial);
         return ret;
 
@@ -49,6 +58,7 @@ namespace MHZ14A {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
         scheduler.enableSubsystem(SimpleScheduler::MHZ14A, enabled, MHZ14A::process, FPSTR(MHZ14A::KEY));
+        registerDisplayMHZ();
 
     };
 
@@ -83,7 +93,6 @@ namespace MHZ14A {
         switch (event) {
             case SimpleScheduler::INIT:
                 setupWinsenMHZ(serialGPS);
-                if (printOnLCD) scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
                 return 1000;
             case SimpleScheduler::RUN:
                 readWinsenMHZ(serialGPS);
