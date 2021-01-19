@@ -34,6 +34,30 @@ namespace SPS30 {
         return ret;
     }
 
+    //register LCD display, for internal SPS30 use
+    void registerDisplaySPS() {
+        // register display
+        if (printOnLCD) {
+            if (started) {
+                switch (getLCDRows()) {
+                    case 4:
+                        scheduler.registerDisplay(SimpleScheduler::SPS30, 2);
+                        break;
+                    case 2:
+                        scheduler.registerDisplay(SimpleScheduler::SPS30, 5);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                scheduler.registerDisplay(SimpleScheduler::SPS30, 1);
+            }
+        } else {    //disable display if changed state in runtime
+            scheduler.registerDisplay(SimpleScheduler::SPS30,0);
+        }
+
+    }
+
     //Start SPS30 sensor
     unsigned long init() {
         debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
@@ -75,26 +99,10 @@ namespace SPS30 {
         } else {
             started = true;
         }
-
-        // register display
-        if (printOnLCD) {
-            if (started) {
-                switch (getLCDRows()) {
-                    case 4:
-                        scheduler.registerDisplay(SimpleScheduler::SPS30, 2);
-                        break;
-                    case 2:
-                        scheduler.registerDisplay(SimpleScheduler::SPS30, 5);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                scheduler.registerDisplay(SimpleScheduler::SPS30, 1);
-            }
-        }
+        registerDisplaySPS();
         return 10 * 1000;
     }
+
 
     //callback to parse HTML form sent from `getConfigHTML`
     JsonObject &parseHTTPRequest(void) {
@@ -103,6 +111,7 @@ namespace SPS30 {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
+        registerDisplaySPS();  //register display if enabled on runtime
 
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
@@ -313,7 +322,7 @@ namespace SPS30 {
             lcd->clear();
             switch (minor) {
                 case 0:
-                    lcd->print(getLCDHeader()+F(" SPS: PM1:"));
+                    lcd->print(getLCDHeader() + F(" SPS: PM1:"));
                     lcd->print(String(sum.mc_1p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
                     lcd->print(F("PM2.5: "));
@@ -326,7 +335,7 @@ namespace SPS30 {
                     lcd->print(String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 1:
-                    lcd->print(getLCDHeader()+F(" SPS: NC1:"));
+                    lcd->print(getLCDHeader() + F(" SPS: NC1:"));
                     lcd->print(String(sum.nc_1p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
                     lcd->print(F("NC2.5: "));
@@ -345,7 +354,7 @@ namespace SPS30 {
         return true;
     };
 
-    bool getDisplaySetting(){
+    bool getDisplaySetting() {
         Serial.print("printOnLCD SPS:");
         Serial.println(printOnLCD);
         return printOnLCD;
