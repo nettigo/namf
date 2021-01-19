@@ -34,36 +34,6 @@ namespace SPS30 {
         return ret;
     }
 
-    //callback to parse HTML form sent from `getConfigHTML`
-    JsonObject &parseHTTPRequest(void) {
-        parseHTTP(F("refresh"), refresh);
-        //enabled?
-        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
-        //use display?
-        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
-
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
-        ret[F("refresh")] = refresh;
-        ret[F("e")] = enabled;
-        ret[F("d")] = printOnLCD;
-        return ret;
-    }
-
-    //helper function to sum current measurement with previous results - for averaging
-    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
-        storage.mc_1p0 += reading.mc_1p0;
-        storage.mc_2p5 += reading.mc_2p5;
-        storage.mc_4p0 += reading.mc_4p0;
-        storage.mc_10p0 += reading.mc_10p0;
-        storage.nc_0p5 += reading.nc_0p5;
-        storage.nc_1p0 += reading.nc_1p0;
-        storage.nc_2p5 += reading.nc_2p5;
-        storage.nc_4p0 += reading.nc_4p0;
-        storage.nc_10p0 += reading.nc_10p0;
-        storage.typical_particle_size += reading.typical_particle_size;
-    }
-
     //Start SPS30 sensor
     unsigned long init() {
         debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
@@ -107,21 +77,53 @@ namespace SPS30 {
         }
 
         // register display
-        if (started) {
-            switch (getLCDRows()) {
-                case 4:
-                    scheduler.registerDisplay(SimpleScheduler::SPS30, 2);
-                    break;
-                case 2:
-                    scheduler.registerDisplay(SimpleScheduler::SPS30, 5);
-                    break;
-                default:
-                    break;
+        if (printOnLCD) {
+            if (started) {
+                switch (getLCDRows()) {
+                    case 4:
+                        scheduler.registerDisplay(SimpleScheduler::SPS30, 2);
+                        break;
+                    case 2:
+                        scheduler.registerDisplay(SimpleScheduler::SPS30, 5);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                scheduler.registerDisplay(SimpleScheduler::SPS30, 1);
             }
-        } else {
-            scheduler.registerDisplay(SimpleScheduler::SPS30, 1);
         }
         return 10 * 1000;
+    }
+
+    //callback to parse HTML form sent from `getConfigHTML`
+    JsonObject &parseHTTPRequest(void) {
+        parseHTTP(F("refresh"), refresh);
+        //enabled?
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
+        //use display?
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
+
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject &ret = jsonBuffer.createObject();
+        ret[F("refresh")] = refresh;
+        ret[F("e")] = enabled;
+        ret[F("d")] = printOnLCD;
+        return ret;
+    }
+
+    //helper function to sum current measurement with previous results - for averaging
+    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
+        storage.mc_1p0 += reading.mc_1p0;
+        storage.mc_2p5 += reading.mc_2p5;
+        storage.mc_4p0 += reading.mc_4p0;
+        storage.mc_10p0 += reading.mc_10p0;
+        storage.nc_0p5 += reading.nc_0p5;
+        storage.nc_1p0 += reading.nc_1p0;
+        storage.nc_2p5 += reading.nc_2p5;
+        storage.nc_4p0 += reading.nc_4p0;
+        storage.nc_10p0 += reading.nc_10p0;
+        storage.typical_particle_size += reading.typical_particle_size;
     }
 
     /************************************************************************
@@ -344,6 +346,8 @@ namespace SPS30 {
     };
 
     bool getDisplaySetting(){
+        Serial.print("printOnLCD SPS:");
+        Serial.println(printOnLCD);
         return printOnLCD;
     };
 
