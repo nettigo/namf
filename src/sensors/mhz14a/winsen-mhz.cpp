@@ -22,7 +22,7 @@ namespace MHZ14A {
     } state_t;
 
     //for internal use - register/deregister display
-    void registerDisplayMHZ(){
+    void registerDisplayMHZ() {
         if (enabled && printOnLCD)
             scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
         else
@@ -65,7 +65,7 @@ namespace MHZ14A {
     String getConfigJSON(void) {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
-        ret += Var2JsonInt(F("d"), printOnLCD);
+        if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
         return ret;
     }
 
@@ -74,17 +74,17 @@ namespace MHZ14A {
         if (getLCDRows() == 2 || getLCDRows() == 4) {    // any LCD
             lcd->clear();
             if (getLCDRows() == 4) {
-                Serial.print(getLCDHeader());
-                Serial.print(F(" "));
+                lcd->print(getLCDHeader());
+                lcd->print(F(" "));
             }
             lcd->print(F("CO2 (MHZ14A)"));
-            lcd->setCursor(0,1);
+            lcd->setCursor(0, 1);
             lcd->print(last_value_WINSEN_CO2);
             lcd->print(F(" ppm"));
         }
     };
 
-    bool getDisplaySetting(){
+    bool getDisplaySetting() {
         return printOnLCD;
     };
 
