@@ -314,23 +314,23 @@ namespace SPS30 {
                     lcd->print(getLCDHeader()+F(" SPS: PM1:"));
                     lcd->print(String(sum.mc_1p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
-                    lcd->print(F("PM2.5:"));
+                    lcd->print(F("PM2.5: "));
                     lcd->print(String(sum.mc_2p5 / measurement_count, 1));
                     lcd->setCursor(0, 2);
-                    lcd->print(F("PM4: "));
+                    lcd->print(F("PM4:   "));
                     lcd->print(String(sum.mc_4p0 / measurement_count, 1));
                     lcd->setCursor(0, 3);
-                    lcd->print(F("PM10:"));
+                    lcd->print(F("PM10:  "));
                     lcd->print(String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 1:
                     lcd->print(getLCDHeader()+F(" SPS: NC1:"));
                     lcd->print(String(sum.nc_1p0 / measurement_count, 1));
                     lcd->setCursor(0, 1);
-                    lcd->print(F("NC2.5:"));
+                    lcd->print(F("NC2.5: "));
                     lcd->print(String(sum.nc_2p5 / measurement_count, 1));
                     lcd->setCursor(0, 2);
-                    lcd->print(F("NC4:"));
+                    lcd->print(F("NC4:   "));
                     lcd->print(String(sum.nc_4p0 / measurement_count, 1));
                     lcd->setCursor(0, 3);
                     lcd->print(F("NC10:"));
