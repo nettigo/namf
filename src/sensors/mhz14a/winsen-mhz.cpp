@@ -63,6 +63,10 @@ namespace MHZ14A {
         if (lcd == NULL) return true;
         if (getLCDRows() == 2 || getLCDRows() == 4) {    // any LCD
             lcd->clear();
+            if (getLCDRows() == 4) {
+                Serial.print(getLCDHeader());
+                Serial.print(F(" "));
+            }
             lcd->print(F("CO2 (MHZ14A)"));
             lcd->setCursor(0,1);
             lcd->print(last_value_WINSEN_CO2);
