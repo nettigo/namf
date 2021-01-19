@@ -1,3 +1,7 @@
+NAMF-2020-35rc4 (2021-01-19)
+- enabling/disabling LCDs for Winsen and SPS30 should now work
+- changed  SPS30 20x4 screens layout a bit
+
 NAMF-2020-35rc3 (2021-01-16)
 - MHZ14A support moved to new scheduler
 - display CO2 concentration on LCD
