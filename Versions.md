@@ -1,3 +1,6 @@
+NAMF-2020-35rc5 (2021-01-20)
+- fix for two or more sensors having access to display 
+
 NAMF-2020-35rc4 (2021-01-19)
 - enabling/disabling LCDs for Winsen and SPS30 should now work
 - changed  SPS30 20x4 screens layout a bit
