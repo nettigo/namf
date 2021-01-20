@@ -119,6 +119,7 @@ namespace SimpleScheduler {
                 minor = current_pos - sum;
                 return _tasks[i].slotID;
             }
+            sum += _tasks[i].hasDisplay;
         };
         return EMPTY;
 
