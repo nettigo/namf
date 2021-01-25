@@ -33,7 +33,6 @@ namespace cfg {
     bool bmp280_read = BMP280_READ;
     bool bme280_read = BME280_READ;
     bool heca_read = HECA_READ;
-    bool winsen_mhz14a_read = WINSEN_MHZ14A_READ;
     bool ds18b20_read = DS18B20_READ;
     bool gps_read = GPS_READ;
     bool send2dusti = SEND2DUSTI;
@@ -211,9 +210,6 @@ bool got_ntp = false;
 unsigned long enable_ota_time = 0;
 
 unsigned long count_sends = 0;
-unsigned long next_display_millis = 0;
-unsigned long next_display_count = 0;
-
 
 struct struct_wifiInfo *wifiInfo;
 uint8_t count_wifiInfo;

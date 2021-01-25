@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-34"
+#define SOFTWARE_VERSION  "NAMF-2020-35rc5"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -23,16 +23,7 @@
 #include <TinyGPS++.h>
 
 #include "ext_def.h"
-#if defined(INTL_EN)
-#include "lang/intl_en.h"
-#elif defined(INTL_PL)
-#include "lang/intl_pl.h"
-#elif defined(INTL_HU)
-#include "lang/intl_hu.h"
-#else
-#include "lang/intl_en.h"
-#endif
-
+#include "lang/select_lang.h"
 extern SimpleScheduler::NAMFScheduler scheduler;
 
 /******************************************************************
@@ -64,7 +55,6 @@ namespace cfg {
     extern bool bmp280_read;
     extern bool bme280_read;
     extern bool heca_read;
-    extern bool winsen_mhz14a_read;
     extern bool ds18b20_read;
     extern bool gps_read;
     extern bool send2dusti;
@@ -237,8 +227,6 @@ extern bool got_ntp ;
 extern unsigned long enable_ota_time ;
 
 extern unsigned long count_sends ;
-extern unsigned long next_display_millis ;
-extern unsigned long next_display_count ;
 
 struct struct_wifiInfo {
     char ssid[35];

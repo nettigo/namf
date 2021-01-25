@@ -6,6 +6,8 @@
 #define NAMF_SCHEDULER_H
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal_I2C.h>
+
 #define SCHEDULER_SIZE  10
 
 namespace SimpleScheduler {
@@ -15,6 +17,7 @@ namespace SimpleScheduler {
         SPS30,
         NTW_WTD,
         SHT3x,
+        MHZ14A,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
@@ -49,6 +52,7 @@ namespace SimpleScheduler {
         unsigned long nextRun;
         LoopEntryType slotID;
         const __FlashStringHelper *slotCode;
+        byte hasDisplay;
     };
 
     String selectConfigForm(LoopEntryType sensor);
@@ -79,6 +83,8 @@ namespace SimpleScheduler {
          */
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
         int unregisterSensor(LoopEntryType slot);
+
+        void enableSubsystem(LoopEntryType, bool, loopTimerFunc, const __FlashStringHelper *);
         bool isRegistered(LoopEntryType);
 
         void getConfigForms(String &page);
@@ -88,6 +94,15 @@ namespace SimpleScheduler {
         void runIn(byte slot, unsigned long time, loopTimerFunc func);
 
         void runIn(byte slot, unsigned long time);
+
+        //
+        LoopEntryType selectSensorToDisplay(byte current_pos, byte &minor);
+        //inform scheduler this sensor wants to display to LCD if available
+        int registerDisplay(LoopEntryType, byte);
+        //active sensors - how many screens are allocated
+        unsigned countScreens(void);
+        void dumpTable();
+        //call/check display subroutines for sensor
 
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];

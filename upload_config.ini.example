@@ -1,0 +1,4 @@
+[env]
+upload_flags = --auth=PASSWORD
+upload_port = HOSTNAME or IP ADDRESS
+upload_protocol = espota

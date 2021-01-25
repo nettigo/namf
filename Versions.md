@@ -1,3 +1,24 @@
+NAMF-2020-35rc5 (2021-01-20)
+- fix for two or more sensors having access to display 
+
+NAMF-2020-35rc4 (2021-01-19)
+- enabling/disabling LCDs for Winsen and SPS30 should now work
+- changed  SPS30 20x4 screens layout a bit
+
+NAMF-2020-35rc3 (2021-01-16)
+- MHZ14A support moved to new scheduler
+- display CO2 concentration on LCD
+
+NAMF-2020-35rc2 (2021-01-08)
+- display data on LCD for sensors managed by new scheduler
+- support for custom upload options like OTA password (see platformio.ini, search for uplaod_options.ini)
+- fixed error when enabling sensors managed by new scheduler (it was toggle more than enable)
+- more readable sensors description on config page (new scheduler)
+
+NAMF-2020-35rc1 ()
+- Dont broadcast OTA service, until it is not enabled via /ota
+- You can use upload_opts.txt file to provide upload password (see `platformio.ini`)
+
 NAMF-2020-34 (2020-12-18)
 - new stable release, includes all 34rcx from beta
 

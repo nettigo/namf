@@ -21,7 +21,12 @@ Files with .lang extension are searched in following directories and it's subdir
 
 ./src/lang/
 ./src/sensors/
+./src/system/
 */ 
+
+
+#ifndef LANG_DEF_hu_H
+#define LANG_DEF_hu_H
 
 /* ./src/lang/intl_hu.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Haladó beállítások";
 /* ./src/lang/intl_hu.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Aktív szenzorok térképe (külső link)";
@@ -75,8 +80,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_MAX_INFO[] PROGMEM = "max. info";
 /* ./src/lang/intl_hu.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Mérési intervallum";
 /* ./src/lang/intl_hu.lang */ const char INTL_MED_INFO[] PROGMEM = "mid. info";
-/* ./src/lang/intl_hu.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 Sensor";
-/* ./src/lang/intl_hu.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN";
+/* ./src/sensors/mhz14a/mhz14a_hu.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 Sensor";
+/* ./src/sensors/mhz14a/mhz14a_hu.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A - CO2 sensor";
+/* ./src/sensors/mhz14a/mhz14a_hu.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN";
 /* ./src/lang/intl_hu.lang */ const char INTL_MIN_INFO[] PROGMEM = "min. info";
 /* ./src/lang/intl_hu.lang */ const char INTL_MORE_APIS[] PROGMEM = "További API-k";
 /* ./src/lang/intl_hu.lang */ const char INTL_MORE_SETTINGS[] PROGMEM = "További beállítások";
@@ -138,7 +144,13 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_COUNTS[] PROGMEM = "Translate HU: INTL_SPS30_COUNTS 🐱;";
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
+ const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
  const char INTL_UPDATE_ALFA[] PROGMEM = "Translate HU: INTL_UPDATE_ALFA 🐱;";
  const char INTL_UPDATE_BETA[] PROGMEM = "Translate HU: INTL_UPDATE_BETA 🐱;";
  const char INTL_UPDATE_STABLE[] PROGMEM = "Translate HU: INTL_UPDATE_STABLE 🐱;";
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
+ const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
+ const char INTL_ENABLE[] PROGMEM = "Translate HU: INTL_ENABLE 🐱;";
+
+
+#endif

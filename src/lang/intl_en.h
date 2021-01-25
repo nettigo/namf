@@ -21,7 +21,12 @@ Files with .lang extension are searched in following directories and it's subdir
 
 ./src/lang/
 ./src/sensors/
+./src/system/
 */ 
+
+
+#ifndef LANG_DEF_en_H
+#define LANG_DEF_en_H
 
 /* ./src/lang/intl_en.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Advanced settings";
 /* ./src/lang/intl_en.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Active sensors map(external link)";
@@ -46,8 +51,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_DELETE_CONFIG[] PROGMEM = "delete saved configuration";
 /* ./src/lang/intl_en.lang */ const char INTL_DHT22[] PROGMEM = "DHT22 ({t}, {h})";
 /* ./src/lang/intl_en.lang */ const char INTL_DISPLAY[] PROGMEM = "OLED SSD1306";
+/* ./src/system/system_en.lang */ const char INTL_DISPLAY_NEW[] PROGMEM = "Display on LCD";
 /* ./src/lang/intl_en.lang */ const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 /* ./src/lang/intl_en.lang */ const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Duration router mode";
+/* ./src/system/system_en.lang */ const char INTL_ENABLE[] PROGMEM = "Enable";
 /* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA[] PROGMEM = "Enable OTA";
 /* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA enabled for 60 seconds.";
 /* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Enable authorization in config panel in order to allow code upload";
@@ -73,6 +80,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Measuring interval";
 /* ./src/lang/intl_en.lang */ const char INTL_MED_INFO[] PROGMEM = "mid. info";
 /* ./src/lang/intl_en.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 Sensor";
+/* ./src/sensors/mhz14a/mhz14a_en.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A - CO2 sensor";
 /* ./src/lang/intl_en.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN";
 /* ./src/lang/intl_en.lang */ const char INTL_MIN_INFO[] PROGMEM = "min. info";
 /* ./src/lang/intl_en.lang */ const char INTL_MORE_APIS[] PROGMEM = "More APIs";
@@ -118,6 +126,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "pcs/cm³";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_CONCENTRATIONS[] PROGMEM = "Particle matter concentration";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_COUNTS[] PROGMEM = "Particle matter counts";
+/* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Not started";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_NO_RESULT[] PROGMEM = "no results";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_REFRESH[] PROGMEM = "Pause between saving measurements";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - high precision particle matter sensor";
@@ -142,3 +151,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate EN: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate EN: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate EN: INTL_BMP180 🐱;";
+
+
+#endif

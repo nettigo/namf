@@ -173,7 +173,6 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(heca_read);
     copyToJSON_Bool(ds18b20_read);
     copyToJSON_Bool(gps_read);
-    copyToJSON_Bool(winsen_mhz14a_read);
     copyToJSON_Bool(send2dusti);
     copyToJSON_Bool(ssl_dusti);
     copyToJSON_Bool(send2madavi);
@@ -273,7 +272,6 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(heca_read);
             setFromJSON(ds18b20_read);
             setFromJSON(gps_read);
-            setFromJSON(winsen_mhz14a_read);
             setFromJSON(send2dusti);
             setFromJSON(ssl_dusti);
             setFromJSON(send2madavi);
@@ -401,6 +399,20 @@ unsigned long  parseHTTP(const String &name, bool &value ){
         value = server.arg(name) == "1";
     }
 };
+
+/* get read and set bool variables for new scheduler. Works with checkbox
+ named var_name-SENSOR_ID (var name it is enable or display currently
+ Geting enable val from client is code done by each sensor, to make it easier this
+ helper was created. It supports any bool var.
+*/
+void setBoolVariableFromHTTP(String const name, bool &v, byte i){
+    String sensorID = F("{n}-{s}");
+    sensorID.replace(F("{s}"), String(i));
+    sensorID.replace(F("{n}"), name);
+    parseHTTP(sensorID, v);
+
+
+}
 
 //Form helpers
 //

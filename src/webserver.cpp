@@ -291,7 +291,9 @@ void webserver_config_json_save() {
 void webserver_config() {
     if (!webserver_request_auth()) { return; }
 
-    String page_content = make_header(FPSTR(INTL_CONFIGURATION));
+    String page_content;
+    page_content.reserve(20000);
+    page_content = make_header(FPSTR(INTL_CONFIGURATION));
     String masked_pwd = "";
     last_page_load = millis();
 
@@ -369,7 +371,6 @@ void webserver_config() {
             page_content += form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read);
             page_content += form_checkbox_sensor("heca_read", FPSTR(INTL_HECA), heca_read);
             page_content += form_checkbox_sensor("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read);
-            page_content += form_checkbox("winsen_mhz14a_read", FPSTR(INTL_MHZ14A), winsen_mhz14a_read);
             page_content += form_checkbox("gps_read", FPSTR(INTL_NEO6M), gps_read);
             page_content += F("<br/><br/>\n<b>");
         }
@@ -524,7 +525,6 @@ void webserver_config() {
             readBoolParam(heca_read);
             readBoolParam(ds18b20_read);
             readBoolParam(gps_read);
-            readBoolParam(winsen_mhz14a_read);
 
             readIntParam(debug);
             readTimeParam(sending_intervall_ms);
@@ -796,11 +796,6 @@ void webserver_values() {
             page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5", check_display_value(last_value_SDS_P2, -1, 1, 0), unit_PM);
             page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM10", check_display_value(last_value_SDS_P1, -1, 1, 0), unit_PM);
         }
-        if (cfg::winsen_mhz14a_read) {
-            page_content += FPSTR(EMPTY_ROW);
-            page_content += table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
-                                                 F("ppm"));
-        }
         if (cfg::pms_read) {
             page_content += FPSTR(EMPTY_ROW);
             page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0), unit_PM);
@@ -913,7 +908,8 @@ void webserver_debug_level() {
 
         last_page_load = millis();
         enable_ota_time = millis() + 60 * 1000;
-
+        ArduinoOTA.setPassword(cfg::www_password);
+        ArduinoOTA.begin(true);
         page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
         page_content += make_footer();

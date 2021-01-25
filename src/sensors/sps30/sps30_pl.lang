@@ -5,3 +5,4 @@ INTL_SPS30_CONCENTRATIONS Stężenie pyłów
 INTL_SPS30_COUNTS Liczba cząstek
 INTL_SPS30_SENSOR_DESC Sensirion SPS30 - precyzyjny czujnik pyłów zawieszonych
 INTL_SPS30_REFRESH Odstęp w sek. między pomiarami
+INTL_SPS30_NOT_STARTED Nie działa

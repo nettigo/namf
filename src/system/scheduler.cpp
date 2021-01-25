@@ -3,6 +3,8 @@
 //
 #include "scheduler.h"
 #include "helpers.h"
+#include "components.h"
+#include "lang/select_lang.h"
 
 
 namespace SimpleScheduler {
@@ -48,13 +50,6 @@ namespace SimpleScheduler {
 
     }
 
-    void NAMFScheduler::init() {
-        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            init(_tasks[i].slotID);
-        }
-
-    }
-
     void NAMFScheduler::getConfigForms(String &page) {
         String s = F("");
         page += F("<div id='ncf'>");
@@ -64,10 +59,17 @@ namespace SimpleScheduler {
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
-
-            boolean enabled = findSlot(i) >= 0; // check if sensor is enabled
-            templ += F("<hr/>");
-            templ += form_checkbox(F("enabled-{sensor}"), findSlotDescription(i), enabled, true);
+            templ += F("<hr/><h2>");
+            templ += findSlotDescription(i);
+            templ += F("</h2>");
+            boolean checked = findSlot(i) >= 0; // check if sensor is enabled
+            templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
+            templ += F("<br/>");
+            if (SimpleScheduler::displaySensor(i)) {
+                checked = sensorWantsDisplay(i);
+                templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
+                templ += F("<div class='spacer'></div>");
+            }
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
@@ -89,10 +91,59 @@ namespace SimpleScheduler {
 
     }
 
+    void NAMFScheduler::enableSubsystem(LoopEntryType subsyst, bool enabled, loopTimerFunc initFunc,
+                                        const __FlashStringHelper *code) {
+        if (enabled) {
+            if (!scheduler.isRegistered(subsyst)) {
+                scheduler.registerSensor(subsyst, initFunc, code);
+                scheduler.init(subsyst);
+            }
+        } else {
+            scheduler.unregisterSensor(subsyst);
+        }
+    };
+
     bool NAMFScheduler::isRegistered(LoopEntryType slot) {
         return findSlot(slot) >= 0;
     }
 
+    //takes which screen to display and goes through list of all "display" sensor,
+    //counting which one is current. *minor* returns which screen from singe sensor should
+    //be displayed (sensor can register more than one screen to display)
+    LoopEntryType NAMFScheduler::selectSensorToDisplay(byte current_pos, byte &minor) {
+        byte sum = 0;
+        minor = 0;
+        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
+
+            if (sum + _tasks[i].hasDisplay > current_pos) {
+                minor = current_pos - sum;
+                return _tasks[i].slotID;
+            }
+            sum += _tasks[i].hasDisplay;
+        };
+        return EMPTY;
+
+    }
+
+    //inform scheduler that we want to display data on LCD
+    int NAMFScheduler::registerDisplay(LoopEntryType slot, byte screens) {
+        int i = findSlot(slot);
+        if (i < 0) return -1;
+        _tasks[i].hasDisplay = screens;
+    }
+
+    //how many screens is being registered
+    unsigned NAMFScheduler::countScreens(void) {
+        unsigned sum = 0;
+        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
+            if (_tasks[i].slotID == EMPTY) continue;
+            sum += _tasks[i].hasDisplay;
+
+        }
+        return sum;
+    }
+
+    //register new sensor
     int NAMFScheduler::registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code) {
         {
             if (loopSize + 1 >= SCHEDULER_SIZE)
@@ -122,6 +173,19 @@ namespace SimpleScheduler {
         return -1;
 
     }
+
+    void NAMFScheduler::dumpTable() {
+        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
+            Serial.print(i);
+            Serial.print(",");
+            Serial.print(_tasks[i].slotID);
+            Serial.print(",");
+            Serial.print(_tasks[i].nextRun);
+            Serial.print(",");
+            Serial.println(_tasks[i].hasDisplay);
+        }
+    }
+
 
     void NAMFScheduler::runIn(byte slot, unsigned long time, loopTimerFunc func) {
         int idx;

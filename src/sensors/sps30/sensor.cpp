@@ -1,13 +1,17 @@
 #include <Arduino.h>
 #include "sensor.h"
+#include "helpers.h"
+#include "display/commons.h"
+#include "system/scheduler.h"
 
-extern String table_row_from_value(const String& sensor, const String& param, const String& value, const String& unit);
+extern String table_row_from_value(const String &sensor, const String &param, const String &value, const String &unit);
 
 
 namespace SPS30 {
     const char KEY[] PROGMEM = "SPS30";
     bool started = false;
     bool enabled = false;
+    bool printOnLCD = false;
     unsigned long refresh = 10;
     int16_t ret;
     uint8_t auto_clean_days = 4;
@@ -25,37 +29,33 @@ namespace SPS30 {
     //return string with HTML used to configure SPS30 sensor. Right now it only takes number of seconds to wait between measurements
     //taken to average
     String getConfigHTML(void) {
-        String ret = F("<h1>SPS30</h1>");
+        String ret = F("");
         ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
         return ret;
     }
 
-    //callback to parse HTML form sent from `getConfigHTML`
-    JsonObject& parseHTTPRequest(void) {
-        parseHTTP(F("refresh"), refresh);
-        String sensorID = F("enabled-{s}");
-        sensorID.replace(F("{s}"),String(SimpleScheduler::SPS30));
-        parseHTTP(sensorID, enabled);
+    //register LCD display, for internal SPS30 use
+    void registerDisplaySPS() {
+        // register display
+        if (printOnLCD) {
+            if (started) {
+                switch (getLCDRows()) {
+                    case 4:
+                        scheduler.registerDisplay(SimpleScheduler::SPS30, 2);
+                        break;
+                    case 2:
+                        scheduler.registerDisplay(SimpleScheduler::SPS30, 5);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                scheduler.registerDisplay(SimpleScheduler::SPS30, 1);
+            }
+        } else {    //disable display if changed state in runtime
+            scheduler.registerDisplay(SimpleScheduler::SPS30,0);
+        }
 
-        StaticJsonBuffer<256> jsonBuffer;
-        JsonObject & ret = jsonBuffer.createObject();
-        ret[F("refresh")] = refresh;
-        ret[F("e")] = enabled;
-        return ret;
-    }
-
-    //helper function to sum current measurement with previous results - for averaging
-    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
-        storage.mc_1p0 += reading.mc_1p0;
-        storage.mc_2p5 += reading.mc_2p5;
-        storage.mc_4p0 += reading.mc_4p0;
-        storage.mc_10p0 += reading.mc_10p0;
-        storage.nc_0p5 += reading.nc_0p5;
-        storage.nc_1p0 += reading.nc_1p0;
-        storage.nc_2p5 += reading.nc_2p5;
-        storage.nc_4p0 += reading.nc_4p0;
-        storage.nc_10p0 += reading.nc_10p0;
-        storage.typical_particle_size += reading.typical_particle_size;
     }
 
     //Start SPS30 sensor
@@ -92,7 +92,6 @@ namespace SPS30 {
         ret = sps30_set_fan_auto_cleaning_interval_days(auto_clean_days);
         if (ret) {
             debug_out(F("error setting the auto-clean interval: "), DEBUG_ERROR, true);
-            Serial.println(ret);
         }
         ret = sps30_start_measurement();
         if (ret < 0) {
@@ -100,7 +99,40 @@ namespace SPS30 {
         } else {
             started = true;
         }
+        registerDisplaySPS();
         return 10 * 1000;
+    }
+
+
+    //callback to parse HTML form sent from `getConfigHTML`
+    JsonObject &parseHTTPRequest(void) {
+        parseHTTP(F("refresh"), refresh);
+        //enabled?
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
+        //use display?
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
+        registerDisplaySPS();  //register display if enabled on runtime
+
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject &ret = jsonBuffer.createObject();
+        ret[F("refresh")] = refresh;
+        ret[F("e")] = enabled;
+        ret[F("d")] = printOnLCD;
+        return ret;
+    }
+
+    //helper function to sum current measurement with previous results - for averaging
+    void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
+        storage.mc_1p0 += reading.mc_1p0;
+        storage.mc_2p5 += reading.mc_2p5;
+        storage.mc_4p0 += reading.mc_4p0;
+        storage.mc_10p0 += reading.mc_10p0;
+        storage.nc_0p5 += reading.nc_0p5;
+        storage.nc_1p0 += reading.nc_1p0;
+        storage.nc_2p5 += reading.nc_2p5;
+        storage.nc_4p0 += reading.nc_4p0;
+        storage.nc_10p0 += reading.nc_10p0;
+        storage.typical_particle_size += reading.typical_particle_size;
     }
 
     /************************************************************************
@@ -148,25 +180,26 @@ namespace SPS30 {
     String getConfigJSON(void) {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
+        if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
         ret += Var2Json(F("refresh"), refresh);
         return ret;
     }
 
     //get configuration data from JsonObject and save in own config
     // if sensor is enabled then run init. On shutdown
-    void readConfigJSON(JsonObject &json){
+    void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
+        printOnLCD = json.get<bool>(F("d"));
         refresh = json.get<int>(F("refresh"));
 
-        if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30) ) {
+        if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30)) {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
             scheduler.init(SimpleScheduler::SPS30);
             enabled = true;
             Serial.println(F("SPS30 enabled"));
-        } else if(scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
+        } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
             Serial.println(F("SPS30: stop"));
             scheduler.unregisterSensor(SimpleScheduler::SPS30);
-            enabled = false;
         }
     }
 
@@ -191,7 +224,7 @@ namespace SPS30 {
 
     //display table elements for current values page
     void resultsAsHTML(String &page_content) {
-        if (!enabled) {return;}
+        if (!enabled) { return; }
         const String unit_PM = "µg/m³";
         const String unit_T = "°C";
         const String unit_H = "%";
@@ -201,29 +234,130 @@ namespace SPS30 {
         if (measurement_count == 0) {
             page_content += table_row_from_value(FPSTR("SPS30"), FPSTR(INTL_SPS30_NO_RESULT), F(""), unit_PM);
 
-        }else {
+        } else {
             page_content += F("<tr><td colspan='3'>");
             page_content += FPSTR(INTL_SPS30_CONCENTRATIONS);
             page_content += F("</td></tr>\n");
 
-            page_content += table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0/measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5/measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0/measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0/measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0 / measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5 / measurement_count),
+                                                 unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0 / measurement_count), unit_PM);
+            page_content += table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0 / measurement_count),
+                                                 unit_PM);
 
             page_content += F("<tr><td colspan='3'>");
             page_content += FPSTR(INTL_SPS30_COUNTS);
             page_content += F("</td></tr>\n");
 
-            page_content += table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc_0p5/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc_1p0/measurement_count),FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc_2p5/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc_4p0/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc_10p0/measurement_count), FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("TS"), String(sum.typical_particle_size/measurement_count), FPSTR(INTL_SPS30_SIZE));
+            page_content += table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc_0p5 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc_1p0 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc_2p5 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc_4p0 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc_10p0 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION));
+            page_content += table_row_from_value(F("SPS30"), F("TS"),
+                                                 String(sum.typical_particle_size / measurement_count),
+                                                 FPSTR(INTL_SPS30_SIZE));
 
         }
 
     }
+
+    bool display(LiquidCrystal_I2C *lcd, byte minor) {
+        if (lcd == NULL) return true;   //I'm here, ready to display
+        if (!started) {
+            lcd->clear();
+            lcd->println(F("SPS30"));
+            lcd->println(FPSTR(INTL_SPS30_NOT_STARTED));
+        }
+        if (measurement_count == 0) {
+            lcd->clear();
+            lcd->print(INTL_SPS30_NO_RESULT);
+            return true;
+        }
+        if (getLCDRows() == 2) {    //16x2
+            lcd->clear();
+            switch (minor) {
+                case 0:
+                    lcd->print(F("SPS: PM1:"));
+                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
+                    lcd->print(F("PM2.5: "));
+                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
+                    break;
+                case 1:
+                    lcd->print(F("SPS: PM4:"));
+                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
+                    lcd->print(F("PM10: "));
+                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
+                    break;
+                case 2:
+                    lcd->print(F("SPS: NC1:"));
+                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
+                    lcd->print(F("NC2.5: "));
+                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
+                    break;
+                case 3:
+                    lcd->print(F("SPS: NC4:"));
+                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
+                    lcd->print(F("NC10: "));
+                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
+                    break;
+                case 4:
+                    lcd->print(F("Typical size:"));
+                    lcd->setCursor(0, 1);
+                    lcd->print(String(sum.typical_particle_size / measurement_count, 2));
+
+            }
+
+        } else {    //LCD 20x4, more real estate
+            lcd->clear();
+            switch (minor) {
+                case 0:
+                    lcd->print(getLCDHeader() + F(" SPS: PM1:"));
+                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
+                    lcd->print(F("PM2.5: "));
+                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
+                    lcd->setCursor(0, 2);
+                    lcd->print(F("PM4:   "));
+                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 3);
+                    lcd->print(F("PM10:  "));
+                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
+                    break;
+                case 1:
+                    lcd->print(getLCDHeader() + F(" SPS: NC1:"));
+                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
+                    lcd->setCursor(0, 1);
+                    lcd->print(F("NC2.5: "));
+                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
+                    lcd->setCursor(0, 2);
+                    lcd->print(F("NC4:   "));
+                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
+                    lcd->setCursor(0, 3);
+                    lcd->print(F("NC10:"));
+                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
+                    lcd->print(F(" TS:"));
+                    lcd->print(String(sum.typical_particle_size / measurement_count, 1));
+                    break;
+            }
+        }
+        return true;
+    };
+
+    bool getDisplaySetting() {
+        Serial.print("printOnLCD SPS:");
+        Serial.println(printOnLCD);
+        return printOnLCD;
+    };
 
 }

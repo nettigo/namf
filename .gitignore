@@ -22,3 +22,4 @@ cmake-build*
 src/lang/bckps/*
 .add_build_time
 .vscode/*
+upload_config.ini
