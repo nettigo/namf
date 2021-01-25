@@ -1,3 +1,12 @@
+NAMF-2020-35 (2021-01-25)
+
+Merged NAMF-2020-35rc5:
+
+* Winsen MHZ14A support moved to new scheduler
+* SPS30 and MHZ14A can now display results on LCD
+* fixes to config pages (new scheduler)
+* `upload_config.ini` allows to setup custom Platformio options for developers and not interfere with main .ini file
+
 NAMF-2020-35rc5 (2021-01-20)
 - fix for two or more sensors having access to display 
 
