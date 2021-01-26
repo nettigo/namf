@@ -1,3 +1,6 @@
+NAMF-2020-36rc1
+- Espressif8266 platform upgrade (2.6.2) - Arduino Core 2.7.4
+
 NAMF-2020-35 (2021-01-25)
 
 Merged NAMF-2020-35rc5:
