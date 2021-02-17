@@ -108,6 +108,11 @@ namespace SHT3x {
         }
     }
 
+    //send data to LD API...
+    void sendToLD(){
+
+    };
+
     void results(String &s) {
         if (!enabled || cnt == 0) { return; }
         String tmp;

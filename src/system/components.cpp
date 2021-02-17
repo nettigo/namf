@@ -21,6 +21,14 @@ namespace SimpleScheduler {
 
     }
 
+    //push results to Luftdaten/SensorCommunity
+    void sendToSC(void) {
+        SPS30::sendToLD();
+        SHT3x::sendToLD();
+        MHZ14A::sendToLD();
+
+    }
+
     //did all API collect data?
     void afterSendData(bool status) {
         SPS30::afterSend(status);

@@ -42,6 +42,11 @@ namespace MHZ14A {
 
     };
 
+    //send data to LD API...
+    void sendToLD(){
+
+    };
+
     void getResults(String &str) {
         if (!enabled) return;
         str += sensorMHZ();

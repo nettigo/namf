@@ -222,6 +222,17 @@ namespace SPS30 {
         s += tmp;
     }
 
+    //send data to LD API...
+    void sendToLD(){
+        const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
+        //do data if SDS is sending
+        if (cfg::sds_read) {return;}
+
+        String data;
+        results(data);
+        sendLuftdaten(data, 1 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SPS30_");
+    };
+
     //display table elements for current values page
     void resultsAsHTML(String &page_content) {
         if (!enabled) { return; }

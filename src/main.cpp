@@ -1465,6 +1465,9 @@ void loop() {
         //add results from new scheduler
         SimpleScheduler::getResults(data);
 
+		if (cfg::send2dusti) {
+		    SimpleScheduler::sendToSC();
+		}
 		data_sample_times += Value2Json("signal", signal_strength);
         data_sample_times.remove(data_sample_times.length()-1);
 		data += data_sample_times;
