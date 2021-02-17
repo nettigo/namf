@@ -1,3 +1,6 @@
+NAMF-2020-36rc2 (2021-02-17)
+- Sending data to LuftDaten/SensorCommunity from SPS30 and SHT3x
+
 NAMF-2020-36rc1
 - Espressif8266 platform upgrade (2.6.2) - Arduino Core 2.7.4
 
