@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "sending.h"
 #include "system/scheduler.h"
 #include "system/components.h"
 

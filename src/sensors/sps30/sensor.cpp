@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "sensor.h"
 #include "helpers.h"
+#include "sending.h"
 #include "display/commons.h"
 #include "system/scheduler.h"
 

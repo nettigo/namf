@@ -1,0 +1,227 @@
+#include "sending.h"
+
+#if defined(ESP8266)
+BearSSL::X509List x509_dst_root_ca(dst_root_ca_x3);
+
+void configureCACertTrustAnchor(WiFiClientSecure* client) {
+    constexpr time_t fw_built_year = (__DATE__[ 7] - '0') * 1000 + \
+							  (__DATE__[ 8] - '0') *  100 + \
+							  (__DATE__[ 9] - '0') *   10 + \
+							  (__DATE__[10] - '0');
+    if (time(nullptr) < (fw_built_year - 1970) * 365 * 24 * 3600) {
+        debug_out(F("Time incorrect; Disabling CA verification."), DEBUG_MIN_INFO,1);
+        client->setInsecure();
+    }
+    else {
+        client->setTrustAnchors(&x509_dst_root_ca);
+    }
+}
+#endif
+
+/*****************************************************************
+ * send data to rest api                                         *
+ *****************************************************************/
+void sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify) {
+    WiFiClient *client;
+    const __FlashStringHelper *contentType;
+    bool ssl = false;
+    if (httpPort == 443) {
+        client = new WiFiClientSecure;
+        ssl = true;
+        configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
+        static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+    } else {
+        client = new WiFiClient;
+    }
+    client->setTimeout(20000);
+    int result = 0;
+
+    switch (logger)
+    {
+        case LoggerInflux:
+            contentType = FPSTR(TXT_CONTENT_TYPE_INFLUXDB);
+            break;
+        default:
+            contentType = FPSTR(TXT_CONTENT_TYPE_JSON);
+            break;
+    }
+
+    debug_out(F("Start connecting to "), DEBUG_MIN_INFO, 0);
+    debug_out(host, DEBUG_MIN_INFO, 1);
+
+    HTTPClient *http;
+    http = new HTTPClient;
+    http->setTimeout(20 * 1000);
+    http->setUserAgent(String(SOFTWARE_VERSION) + "/" + esp_chipid());
+    http->setReuse(false);
+    bool send_success = false;
+    debug_out(String(host), DEBUG_MIN_INFO, 1);
+    debug_out(String(httpPort), DEBUG_MIN_INFO, 1);
+    debug_out(String(url), DEBUG_MIN_INFO, 1);
+    if (http->begin(*client, host, httpPort, url, ssl)) {
+        if (logger == LoggerCustom && (*cfg::user_custom || *cfg::pwd_custom))
+        {
+            http->setAuthorization(cfg::user_custom, cfg::pwd_custom);
+        }
+        if (logger == LoggerInflux && (*cfg::user_influx || *cfg::pwd_influx))
+        {
+            http->setAuthorization(cfg::user_influx, cfg::pwd_influx);
+        }
+
+        http->addHeader(F("Content-Type"), contentType);
+        http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
+        if (pin) {
+            http->addHeader(F("X-PIN"), String(pin));
+        }
+
+        result = http->POST(data);
+
+        if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
+            debug_out(F("Succeeded - "), DEBUG_MIN_INFO, 1);
+            send_success = true;
+        } else {
+            debug_out(F("Not succeeded "), DEBUG_MIN_INFO, 1);
+        }
+        debug_out(F("Request result: "), DEBUG_MIN_INFO, 0);
+        debug_out(String(result), DEBUG_MIN_INFO, 1);
+        if (result != 204 && http->getString().length() > 0) {
+            debug_out(F("Details:"), DEBUG_MIN_INFO, 1);
+            debug_out(http->getString(), DEBUG_MIN_INFO, 1);
+        }
+
+
+    } else {
+        debug_out(F("Failed connecting"), DEBUG_MIN_INFO, 1);
+    }
+    http->end();
+    debug_out(F("End connecting to "), DEBUG_MIN_INFO, 0);
+    debug_out(host, DEBUG_MIN_INFO, 1);
+    delete (http);
+    delete (client);
+
+    wdt_reset(); // nodemcu is alive
+    yield();
+}
+
+/*****************************************************************
+ * send single sensor data to luftdaten.info api                 *
+ *****************************************************************/
+void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
+    debugData(data,F("sendLuftdaten data in:"));
+    String data_4_dusti = FPSTR(data_first_part);
+    debugData(data_4_dusti,String(__LINE__));
+    data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
+    debugData(data_4_dusti,String(__LINE__));
+    data_4_dusti += data;
+    debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
+    data_4_dusti.remove(data_4_dusti.length() - 1);
+    debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
+    data_4_dusti.replace(replace_str, String(""));
+    debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
+    data_4_dusti += String("]}");
+    debugData(data_4_dusti,String(__LINE__));
+    debugData(data,String(__LINE__));
+    if (data != "") {
+        sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
+    } else {
+        debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
+    }
+    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
+    debugData(data,F("sendLuftdaten data out:"));
+}
+
+/*****************************************************************
+ * send data to LoRa gateway                                     *
+ *****************************************************************/
+// void send_lora(const String& data) {
+// }
+
+/*****************************************************************
+ * send data to mqtt api                                         *
+ *****************************************************************/
+// rejected (see issue #33)
+
+/*****************************************************************
+ * send data to influxdb                                         *
+ *****************************************************************/
+String create_influxdb_string(const String& data) {
+    String data_4_influxdb = "";
+    debug_out(F("Parse JSON for influx DB"), DEBUG_MIN_INFO, 1);
+    debug_out(data, DEBUG_MIN_INFO, 1);
+    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    JsonObject& json2data = jsonBuffer.parseObject(data);
+    if (json2data.success()) {
+        bool first_line = true;
+        data_4_influxdb += F("feinstaub,node=esp8266-");
+        data_4_influxdb += esp_chipid() + " ";
+        for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
+            String tmp_str = "";
+            if (first_line)
+                first_line = false;
+            else
+                tmp_str += ",";
+            tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char *>();
+            tmp_str += "=";
+            if (
+                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_date")) ||
+                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_time"))
+                    )
+                tmp_str += String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\""));
+            else
+                tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
+            data_4_influxdb += tmp_str;
+        }
+        data_4_influxdb += F(",measurements=");
+        data_4_influxdb += String(count_sends+1);
+        data_4_influxdb += F(",free=");
+        data_4_influxdb += String(memoryStatsMin.freeHeap);
+        data_4_influxdb += F(",frag=");
+        data_4_influxdb += String(memoryStatsMax.frag);
+        data_4_influxdb += F(",max_block=");
+        data_4_influxdb += String(memoryStatsMin.maxFreeBlock);
+        data_4_influxdb += F(",cont_stack=");
+        data_4_influxdb += String(memoryStatsMin.freeContStack);
+        data_4_influxdb += "\n";
+    } else {
+        debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
+    }
+    debug_out(data_4_influxdb,DEBUG_MIN_INFO,1);
+    return data_4_influxdb;
+}
+
+/*****************************************************************
+ * send data as csv to serial out                                *
+ *****************************************************************/
+void send_csv(const String& data) {
+    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    JsonObject& json2data = jsonBuffer.parseObject(data);
+    debug_out(F("CSV Output"), DEBUG_MIN_INFO, 1);
+    debug_out(data, DEBUG_MIN_INFO, 1);
+    if (json2data.success()) {
+        String headline = F("Timestamp_ms;");
+        String valueline = String(act_milli) + ";";
+        for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
+            String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
+            headline += tmp_str + ";";
+            tmp_str = json2data["sensordatavalues"][i]["value"].as<char*>();
+            valueline += tmp_str + ";";
+        }
+        static bool first_csv_line = true;
+        if (first_csv_line) {
+            if (headline.length() > 0) {
+                headline.remove(headline.length() - 1);
+            }
+            Serial.println(headline);
+            first_csv_line = false;
+        }
+        if (valueline.length() > 0) {
+            valueline.remove(valueline.length() - 1);
+        }
+        Serial.println(valueline);
+    } else {
+        debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
+    }
+}
