@@ -226,8 +226,6 @@ namespace SPS30 {
     //send data to LD API...
     void sendToLD(){
         const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
-        //do data if SDS is sending
-        if (cfg::sds_read) {return;}
 
         String data;
         results(data);
