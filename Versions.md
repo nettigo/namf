@@ -1,3 +1,6 @@
+NAMF-2020-36rc3 (2021-02-20)
+- new names for JSON variables in SHT3x
+
 NAMF-2020-36rc2 (2021-02-17)
 - Sending data to LuftDaten/SensorCommunity from SPS30 and SHT3x
 
