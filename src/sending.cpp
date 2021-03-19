@@ -107,23 +107,12 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
  * send single sensor data to luftdaten.info api                 *
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
-    debugData(data,F("sendLuftdaten data in:"));
     String data_4_dusti = FPSTR(data_first_part);
-    debugData(data_4_dusti,String(__LINE__));
     data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
-    debugData(data_4_dusti,String(__LINE__));
     data_4_dusti += data;
-    debugData(data_4_dusti,String(__LINE__));
-    debugData(data,String(__LINE__));
     data_4_dusti.remove(data_4_dusti.length() - 1);
-    debugData(data_4_dusti,String(__LINE__));
-    debugData(data,String(__LINE__));
     data_4_dusti.replace(replace_str, String(""));
-    debugData(data_4_dusti,String(__LINE__));
-    debugData(data,String(__LINE__));
     data_4_dusti += String("]}");
-    debugData(data_4_dusti,String(__LINE__));
-    debugData(data,String(__LINE__));
     if (data != "") {
         sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
     } else {
