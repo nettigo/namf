@@ -10,5 +10,5 @@
 #include "helpers.h"
 #include "html-content.h"
 void displayLEDBar();
-void lightLED(byte mode, byte cnt, byte red, byte green, byte blue);
+void lightLED(byte mode, byte cnt, byte red, byte green, byte blue, byte brightness = 0);
 #endif //NAMF_LEDBAR_H
