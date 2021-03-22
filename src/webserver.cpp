@@ -963,6 +963,7 @@ void webserver_status_page(void) {
     const int signal_quality = calcWiFiSignalQuality(WiFi.RSSI());
 
     debug_out(F("output status page"), DEBUG_MIN_INFO, 1);
+    unsigned long start = millis();
 
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
     page_content.reserve(10000);
@@ -974,6 +975,21 @@ void webserver_status_page(void) {
         page_content += age_last_values();
     }
     page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
+    page_content += FPSTR(EMPTY_ROW);
+    String I2Clist = F("");
+    for(uint8_t addr = 0x07; addr <= 0x7F; addr++ )
+    {
+        // Address the device
+        Wire.beginTransmission(addr);
+        if (Wire.endTransmission() == 0) {
+            I2Clist += String(addr,16);
+            I2Clist += F(", ");
+        }
+    }
+    page_content += table_row_from_value(F("I2C"), F("Na szynie I2C"), I2Clist, F(""));
+
+
+    // Check for ACK (detection of device), NACK or error
     page_content += FPSTR(EMPTY_ROW);
     page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
     page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
@@ -999,7 +1015,8 @@ void webserver_status_page(void) {
     page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
     page_content += FPSTR(TABLE_TAG_CLOSE_BR);
     page_content += make_footer();
-
+    debug_out(F("page generated in: "), DEBUG_MIN_INFO, 0);
+    debug_out(String(millis()-start), DEBUG_MIN_INFO, 1);
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
 }

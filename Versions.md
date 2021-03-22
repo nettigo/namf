@@ -1,6 +1,7 @@
 NAMF-2020-37rc2 ()
 - support for NAM LED BAR with brightness regulation
 - status/debug info moved from /values to new page /status
+- dump seen I2C addresses on status page
 
 NAMF-2020-37rc1 (2021-03-22)
 - do not send wrong data when WINSEN MHZ14A is enabled, but not present
