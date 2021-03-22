@@ -1,3 +1,4 @@
+INTL_STATUS_PAGE Sensor status
 INTL_UPDATE_ALFA alfa (experimental fw, do not use unless You can recover sensor)
 INTL_UPDATE_BETA beta (stability testing for new features)
 INTL_UPDATE_STABLE stable (use if in doubt)
