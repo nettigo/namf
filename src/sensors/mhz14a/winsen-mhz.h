@@ -54,6 +54,8 @@ namespace MHZ14A {
 
     void readWinsenMHZ(SoftwareSerial &);
 
+    void afterSend(bool);
+
     String sensorMHZ();
 }
 #endif //NAMF_WINSEN_MHZ_H
