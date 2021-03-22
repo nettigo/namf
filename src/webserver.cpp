@@ -136,6 +136,7 @@ void webserver_root() {
         page_content.replace("{t}", FPSTR(INTL_CURRENT_DATA));
         //page_content.replace(F("{map}"), FPSTR(INTL_ACTIVE_SENSORS_MAP));
         page_content.replace(F("{conf}"), FPSTR(INTL_CONFIGURATION));
+        page_content.replace(F("{status}"), FPSTR(INTL_STATUS_PAGE));
         page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
         page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
         page_content.replace(F("{debug_level}"), FPSTR(INTL_DEBUG_LEVEL));
