@@ -1,4 +1,4 @@
-NAMF-2020-37rc1 ()
+NAMF-2020-37rc1 (2021-03-22)
 - do not send wrong data when WINSEN MHZ14A is enabled, but not present
 - getting time from NTP fixed
 
