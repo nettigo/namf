@@ -1,3 +1,6 @@
+NAMF-2020-36 (2021-03-22)
+Merged NAMF-2020-36rc3 and previous
+
 NAMF-2020-36rc3 (2021-02-20)
 - new names for JSON variables in SHT3x
 
