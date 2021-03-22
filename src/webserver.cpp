@@ -966,6 +966,13 @@ void webserver_status_page(void) {
 
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
     page_content.reserve(10000);
+    if (first_cycle) {
+        page_content += F("<b style='color:red'>");
+        page_content += warning_first_cycle();
+        page_content += F("</b><br/><br/>");
+    } else {
+        page_content += age_last_values();
+    }
     page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
     page_content += FPSTR(EMPTY_ROW);
     page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
