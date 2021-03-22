@@ -108,12 +108,22 @@ namespace SHT3x {
         }
     }
 
+    //send data to LD API...
+    void sendToLD(){
+        const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
+        String data;
+        results(data);
+        debug_out(F("SHT3x to Luftdaten"), DEBUG_MIN_INFO, 1);
+        sendLuftdaten(data, 7 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SHT3X_");
+
+    };
+
     void results(String &s) {
         if (!enabled || cnt == 0) { return; }
         String tmp;
         tmp.reserve(64);
-        tmp = Value2Json(F("SHT30_T"), String(currentTemp()));
-        tmp += Value2Json(F("SHT30_RH"), String(currentRH()));
+        tmp = Value2Json(F("SHT3X_temperature"), String(currentTemp()));
+        tmp += Value2Json(F("SHT3X_humidity"), String(currentRH()));
         s += tmp;
     }
 

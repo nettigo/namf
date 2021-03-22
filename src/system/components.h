@@ -19,6 +19,9 @@ namespace SimpleScheduler {
     //collect results as JSON
     void getResults( String &res);
 
+    //push data to LuftDaten/SC
+    void sendToSC();
+
     //did all API collect data?
     void afterSendData(bool status);
 

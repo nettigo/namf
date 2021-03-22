@@ -618,7 +618,6 @@ void debugData(const String&d, const String&m){
     debugData(d,m.c_str());
 }
 void debugData(const String &d, const char *msg){
-    return;
     Serial.print(F("\n****["));
     time_t now = time(nullptr);
     String tmp=(ctime(&now));

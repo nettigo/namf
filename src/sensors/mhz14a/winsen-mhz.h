@@ -23,6 +23,9 @@ namespace MHZ14A {
 
     JsonObject &parseHTTPRequest();
 
+    //send data to LD API...
+    extern void sendToLD();
+
     void getResults (String &);
 
     void resultsAsHTML (String &);

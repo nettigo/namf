@@ -42,6 +42,8 @@ namespace SPS30 {
 
     //return JSON with results
     extern void results(String &s);
+    //send data to LD API...
+    extern void sendToLD();
 
     extern void resultsAsHTML(String &page_content);
     //display on LCD
