@@ -131,6 +131,7 @@ namespace SimpleScheduler {
         int i = findSlot(slot);
         if (i < 0) return -1;
         _tasks[i].hasDisplay = screens;
+        return 0;
     }
 
     //how many screens is being registered
