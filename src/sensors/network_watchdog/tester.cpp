@@ -177,6 +177,7 @@ namespace NetworkWatchdog {
             case THIRD_CHECK:
                 return 60 * 1000;
         }
+        return 0;   //disable WTD
     }
 
     unsigned long processState(void) {

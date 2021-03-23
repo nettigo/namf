@@ -54,7 +54,6 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     http->setTimeout(20 * 1000);
     http->setUserAgent(String(SOFTWARE_VERSION) + "/" + esp_chipid());
     http->setReuse(false);
-    bool send_success = false;
     debug_out(String(host), DEBUG_MIN_INFO, 1);
     debug_out(String(httpPort), DEBUG_MIN_INFO, 1);
     debug_out(String(url), DEBUG_MIN_INFO, 1);

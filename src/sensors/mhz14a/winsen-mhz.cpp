@@ -87,6 +87,7 @@ namespace MHZ14A {
             lcd->print(last_value_WINSEN_CO2);
             lcd->print(F(" ppm"));
         }
+        return false;
     };
 
     bool getDisplaySetting() {
