@@ -10,6 +10,8 @@ namespace SimpleScheduler {
                 return SPS30::getDisplaySetting();
             case SimpleScheduler::MHZ14A:
                 return MHZ14A::getDisplaySetting();
+            default:
+                return false;
         }
     };
 
