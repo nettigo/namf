@@ -837,6 +837,9 @@ void webserver_values() {
         }
 
         SimpleScheduler::getResultsAsHTML(page_content);
+        page_content += FPSTR(EMPTY_ROW);
+        page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
+        page_content += table_row_from_value(F("NAM"),F("Uptime"), millisToTime(millis()),"");
 
         server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
     }
