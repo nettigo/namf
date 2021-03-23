@@ -82,7 +82,7 @@ namespace SimpleScheduler {
          * name - name of sensor/subsytem. Will be used to display configuration checkbox to enable/disable subsystem
          */
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
-        int unregisterSensor(LoopEntryType slot);
+        void unregisterSensor(LoopEntryType slot);
 
         void enableSubsystem(LoopEntryType, bool, loopTimerFunc, const __FlashStringHelper *);
         bool isRegistered(LoopEntryType);

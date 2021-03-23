@@ -82,12 +82,13 @@ namespace SimpleScheduler {
         page += F("</div>");
     }
 
-    int NAMFScheduler::unregisterSensor(LoopEntryType slot) {
+    void NAMFScheduler::unregisterSensor(LoopEntryType slot) {
         int i = findSlot(slot);
-        if (i < 0) return 0;
+        if (i < 0) return;
         loopSize--;
         _tasks[i].slotID = EMPTY;
         _tasks[i].process(STOP);
+        return;
 
     }
 
