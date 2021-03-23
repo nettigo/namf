@@ -90,7 +90,7 @@ void readConfig() {
 
 	if (SPIFFS.begin()) {
 		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
-		if (SPIFFS.exists("/config.json")) {
+		if (SPIFFS.exists(F("/config.json"))) {
 			//file exists, reading and loading
 			debug_out(F("reading config file..."), DEBUG_MIN_INFO, 1);
 			File configFile = SPIFFS.open("/config.json", "r");

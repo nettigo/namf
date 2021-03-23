@@ -919,9 +919,9 @@ void webserver_removeConfig() {
         page_content.replace("{c}", FPSTR(INTL_CANCEL));
 
     } else {
-        if (SPIFFS.exists("/config.json")) {	//file exists
+        if (SPIFFS.exists(F("/config.json"))) {	//file exists
             debug_out(F("removing config.json..."), DEBUG_MIN_INFO, 1);
-            if (SPIFFS.remove("/config.json")) {
+            if (SPIFFS.remove(F("/config.json"))) {
                 page_content += tmpl(message_string, FPSTR(INTL_CONFIG_DELETED));
             } else {
                 page_content += tmpl(message_string, FPSTR(INTL_CONFIG_CAN_NOT_BE_DELETED));
@@ -1100,21 +1100,21 @@ void webserver_prometheus_endpoint() {
  * Webserver setup                                               *
  *****************************************************************/
 void setup_webserver() {
-    server.on("/", webserver_root);
-    server.on("/config", webserver_config);
-    server.on("/simple_config", webserver_simple_config);
-    server.on("/config.json", HTTP_GET, webserver_config_json);
-    server.on("/configSave.json", webserver_config_json_save);
-    server.on("/forceUpdate", webserver_config_force_update);
-    server.on("/wifi", webserver_wifi);
-    server.on("/values", webserver_values);
-    server.on("/debug", webserver_debug_level);
-    server.on("/ota", webserver_enable_ota);
-    server.on("/removeConfig", webserver_removeConfig);
-    server.on("/reset", webserver_reset);
-    server.on("/data.json", webserver_data_json);
-    server.on("/metrics", webserver_prometheus_endpoint);
-    server.on("/images", webserver_images);
+    server.on(F("/"), webserver_root);
+    server.on(F("/config"), webserver_config);
+    server.on(F("/simple_config"), webserver_simple_config);
+    server.on(F("/config.json"), HTTP_GET, webserver_config_json);
+    server.on(F("/configSave.json"), webserver_config_json_save);
+    server.on(F("/forceUpdate"), webserver_config_force_update);
+    server.on(F("/wifi"), webserver_wifi);
+    server.on(F("/values"), webserver_values);
+    server.on(F("/debug"), webserver_debug_level);
+    server.on(F("/ota"), webserver_enable_ota);
+    server.on(F("/removeConfig"), webserver_removeConfig);
+    server.on(F("/reset"), webserver_reset);
+    server.on(F("/data.json"), webserver_data_json);
+    server.on(F("/metrics"), webserver_prometheus_endpoint);
+    server.on(F("/images"), webserver_images);
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
     server.onNotFound(webserver_not_found);
