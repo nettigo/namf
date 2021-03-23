@@ -187,7 +187,7 @@ namespace MHZ14A {
         return false;
     }
 
-    static bool exchange_command(SoftwareSerial &sensor, uint8_t cmd, uint8_t data[], unsigned int timeout) {
+    bool exchange_command(SoftwareSerial &sensor, uint8_t cmd, uint8_t data[], unsigned int timeout) {
         // create command buffer
         uint8_t buf[9];
         int len = prepare_tx(cmd, data, buf, sizeof(buf));
@@ -210,7 +210,7 @@ namespace MHZ14A {
         return false;
     }
 
-    static bool set_range(SoftwareSerial &serial, range_t r) {
+    bool set_range(SoftwareSerial &serial, range_t r) {
         uint8_t data[6];
         uint8_t *p = data;
         switch (r) {
@@ -235,7 +235,7 @@ namespace MHZ14A {
     }
 
 
-    static bool read_temp_co2(SoftwareSerial &serial, unsigned int *co2, unsigned int *temp) {
+    bool read_temp_co2(SoftwareSerial &serial, unsigned int *co2, unsigned int *temp) {
         uint8_t data[] = {0, 0, 0, 0, 0, 0};
         bool result = exchange_command(serial, 0x86, data, 3000);
         if (result) {
