@@ -8,6 +8,7 @@ NAMF-2020-37rc1 (2021-03-22)
 - getting time from NTP fixed
 
 NAMF-2020-36 (2021-03-22)
+
 Merged NAMF-2020-36rc3 and previous
 
 NAMF-2020-36rc3 (2021-02-20)
