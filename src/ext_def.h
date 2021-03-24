@@ -29,9 +29,6 @@
 #define SEND2CSV 0
 #define SEND2CUSTOM 0
 
-// NTP Server
-#define NTP_SERVER "0.europe.pool.ntp.org"
-
 // OpenSenseMap
 #define SENSEBOXID ""
 
