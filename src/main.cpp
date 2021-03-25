@@ -848,7 +848,7 @@ static bool acquireNetworkTime() {
 	debug_out(F("Setting time using SNTP"), DEBUG_MIN_INFO, 1);
 	time_t now = time(nullptr);
 	debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-	debug_out(F("NTP.org:"),DEBUG_MIN_INFO,1);
+	debug_out(NTP_SERVER,DEBUG_MIN_INFO,1);
 	settimeofday_cb(time_is_set);
 	configTime("GMT", NTP_SERVER);
 	while (retryCount++ < 20) {
