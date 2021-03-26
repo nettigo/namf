@@ -21,10 +21,10 @@ void displayLEDBar() {
     else if (pm10 >= 135) lightLED(0, 8, 150/scale, 75/scale, 0);           // 8 LEDs in orange
     else if (pm10 >= 90) lightLED(0, 7, 150/scale, 75/scale, 0);            // 7 LEDs in orange
     else if (pm10 >= 70) lightLED(0, 6, 150/scale, 120/scale, 0);           // 6 LEDs in yellow
-    else if (pm10 >= 12) lightLED(0, 5, 150/scale, 120/scale, 0);           // 5 LEDs in yellow
-    else if (pm10 >= 10) lightLED(0, 4, 75/scale, 150/scale, 0);            // 4 LEDs in yellow-green
-    else if (pm10 >= 7) lightLED(0, 3, 75/scale, 150/scale, 0);            // 3 LEDs in yellow-green
-    else if (pm10 >= 5) lightLED(0, 2, 0, 150/scale, 0);                   // 2 LEDs in green
+    else if (pm10 >= 50) lightLED(0, 5, 150/scale, 120/scale, 0);           // 5 LEDs in yellow
+    else if (pm10 >= 37) lightLED(0, 4, 75/scale, 150/scale, 0);            // 4 LEDs in yellow-green
+    else if (pm10 >= 25) lightLED(0, 3, 75/scale, 150/scale, 0);            // 3 LEDs in yellow-green
+    else if (pm10 >= 12) lightLED(0, 2, 0, 150/scale, 0);                   // 2 LEDs in green
     else if (pm10 >= 0.5) lightLED(0, 1, 0, 150/scale, 0);                  // 1LEDs in green
     else lightLED(0, 0, 0, 2, 0);
 
