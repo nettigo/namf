@@ -1,4 +1,4 @@
-NAMF-2020-37rc2 ()
+NAMF-2020-37rc2 (2021-03-28)
 - support for NAM LED BAR with brightness regulation
 - status/debug info moved from /values to new page /status
 - dump seen I2C addresses on status page
