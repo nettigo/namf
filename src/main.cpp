@@ -981,7 +981,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
 		sum_send_time += millis() - start_send;
 	}
-    debugData(data,F("po madavi:"));
 
     if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
@@ -1000,16 +999,13 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	}
 
     if (cfg::send2influx) {
-        debugData(data,F("influx start:"));
         debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
         start_send = millis();
         const String data_4_influxdb = create_influxdb_string(data);
-        debugData(data,F("po influx_string:"));
 
         sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
 		sum_send_time += millis() - start_send;
     }
-    debugData(data,F("po influx "));
 
 	/*		if (send2lora) {
 				debug_out(F("## Sending to LoRa gateway: "), DEBUG_MIN_INFO, 1);
@@ -1030,7 +1026,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
 		sum_send_time += millis() - start_send;
 	}
-    debugData(data,F("po custom "));
 
     return sum_send_time;
 }
@@ -1109,17 +1104,13 @@ void loop() {
 
 		if (cfg::bme280_read && (! bme280_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BME280), DEBUG_MAX_INFO, 1);
-            debugData(result_BME280,F("BME  przed:"));
 			result_BME280 = sensorBME280();                 // getting temperature, humidity and pressure (optional)
-            debugData(result_BME280,F("BME po:"));
 
         }
 
 		if (cfg::heca_read && (! heca_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HECA), DEBUG_MAX_INFO, 1);
-			debugData(result_HECA,F("HECA  przed:"));
 			result_HECA = sensorHECA();                 // getting temperature, humidity and pressure (optional)
-            debugData(result_HECA,F("HECA  po:"));
 		}
 
 		if (cfg::ds18b20_read) {
@@ -1200,7 +1191,6 @@ void loop() {
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
-                debugData(data,F("przed SendLuftdaten:"));
 				sendLuftdaten(result_BME280, BME280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BME280_");
 				sum_send_time += millis() - start_send;
 			}
@@ -1248,7 +1238,6 @@ void loop() {
 		data += data_sample_times;
 
 		data += "]}";
-        debugData(data,F("po Luftdaten "));
 
 		sum_send_time += sendDataToOptionalApis(data);
 
