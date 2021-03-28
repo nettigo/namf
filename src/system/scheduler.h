@@ -87,6 +87,11 @@ namespace SimpleScheduler {
         void enableSubsystem(LoopEntryType, bool, loopTimerFunc, const __FlashStringHelper *);
         bool isRegistered(LoopEntryType);
 
+        //how many slots for sensors is available in total
+        byte sensorSlots(void);
+        //how many free slots for
+        byte freeSlots(void);
+
         void getConfigForms(String &page);
         void getConfigJSON(LoopEntryType);
         void getConfigJSON(String &json);

@@ -108,6 +108,16 @@ namespace SimpleScheduler {
         return findSlot(slot) >= 0;
     }
 
+    //how many slots for sensors is available in total
+    byte NAMFScheduler::sensorSlots(void) {
+        return SCHEDULER_SIZE;
+    };
+    //how many free slots for
+    byte NAMFScheduler::freeSlots(void){
+        return SCHEDULER_SIZE - loopSize;
+    };
+
+
     //takes which screen to display and goes through list of all "display" sensor,
     //counting which one is current. *minor* returns which screen from singe sensor should
     //be displayed (sensor can register more than one screen to display)
