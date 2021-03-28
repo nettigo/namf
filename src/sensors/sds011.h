@@ -152,8 +152,6 @@ bool SDS_checksum_valid(const uint8_t (&data)[8]) {
     for (unsigned i = 0; i < 6; ++i) {
         checksum_is += data[i];
     }
-    Serial.print(F("SDS Checksum ok? "));
-    Serial.println(data[7] == 0xAB && checksum_is == data[6]);
     return (data[7] == 0xAB && checksum_is == data[6]);
 }
 
@@ -293,14 +291,14 @@ static void sensorSDS(String& s) {
                     debug_out(FPSTR(DBG_TXT_START_READING), DEBUG_MAX_INFO, 0);
                     debug_out(FPSTR(SENSORS_SDS011), DEBUG_MAX_INFO, 1);
                     size_t read = serialSDS.readBytes(data, sizeof(data));
-                    for (byte i=0; i< sizeof(data); i++) {
-                        Serial.print(data[i], HEX);
-                        Serial.print(F(","));
-                    }
-                    Serial.println();
-                    Serial.print(F("Readed: "));
-                    Serial.println(read);
-                    if ( read == sizeof(data) && SDS_checksum_valid(data)) {
+//                    for (byte i=0; i< sizeof(data); i++) {
+//                        Serial.print(data[i], HEX);
+//                        Serial.print(F(","));
+//                    }
+//                    Serial.println();
+//                    Serial.print(F("Readed: "));
+//                    Serial.println(read);
+                    if (read == sizeof(data) &&  SDS_checksum_valid(data)) {
                         uint32_t pm25_serial = data[0] | (data[1] << 8);
                         uint32_t pm10_serial = data[2] | (data[3] << 8);
 
