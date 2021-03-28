@@ -4,6 +4,15 @@
 
 #ifndef AIRROHR_FIRMWARE_SDS011_H
 #define AIRROHR_FIRMWARE_SDS011_H
+enum {
+    SDS_REPLY_HDR = 10,
+    SDS_REPLY_BODY = 8
+} SDS_waiting_for;
+unsigned long SDS_error_count;
+
+#define UPDATE_MIN(MIN, SAMPLE) if (SAMPLE < MIN) { MIN = SAMPLE; }
+#define UPDATE_MAX(MAX, SAMPLE) if (SAMPLE > MAX) { MAX = SAMPLE; }
+#define UPDATE_MIN_MAX(MIN, MAX, SAMPLE) { UPDATE_MIN(MIN, SAMPLE); UPDATE_MAX(MAX, SAMPLE); }
 
 void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
     char buffer;
@@ -99,38 +108,53 @@ void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
 /*****************************************************************
  * send SDS011 command (start, stop, continuous mode, version    *
  *****************************************************************/
-static bool SDS_cmd(PmSensorCmd cmd) {
-    static constexpr uint8_t start_cmd[] PROGMEM = {
-            0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB
-    };
-    static constexpr uint8_t stop_cmd[] PROGMEM = {
-            0xAA, 0xB4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
-    };
-    static constexpr uint8_t continuous_mode_cmd[] PROGMEM = {
-            0xAA, 0xB4, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x07, 0xAB
-    };
-    static constexpr uint8_t version_cmd[] PROGMEM = {
-            0xAA, 0xB4, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
-    };
-    constexpr uint8_t cmd_len = array_num_elements(start_cmd);
+void SDS_rawcmd(const uint8_t cmd_head1, const uint8_t cmd_head2, const uint8_t cmd_head3) {
+    constexpr uint8_t cmd_len = 19;
 
     uint8_t buf[cmd_len];
+    buf[0] = 0xAA;
+    buf[1] = 0xB4;
+    buf[2] = cmd_head1;
+    buf[3] = cmd_head2;
+    buf[4] = cmd_head3;
+    for (unsigned i = 5; i < 15; ++i) {
+        buf[i] = 0x00;
+    }
+    buf[15] = 0xFF;
+    buf[16] = 0xFF;
+    buf[17] = cmd_head1 + cmd_head2 + cmd_head3 - 2;
+    buf[18] = 0xAB;
+    serialSDS.write(buf, cmd_len);
+}
+
+bool SDS_cmd(PmSensorCmd cmd) {
     switch (cmd) {
         case PmSensorCmd::Start:
-            memcpy_P(buf, start_cmd, cmd_len);
+            SDS_rawcmd(0x06, 0x01, 0x01);
             break;
         case PmSensorCmd::Stop:
-            memcpy_P(buf, stop_cmd, cmd_len);
+            SDS_rawcmd(0x06, 0x01, 0x00);
             break;
         case PmSensorCmd::ContinuousMode:
-            memcpy_P(buf, continuous_mode_cmd, cmd_len);
+            // TODO: Check mode first before (re-)setting it
+            SDS_rawcmd(0x08, 0x01, 0x00);
+            SDS_rawcmd(0x02, 0x01, 0x00);
             break;
         case PmSensorCmd::VersionDate:
-            memcpy_P(buf, version_cmd, cmd_len);
+            SDS_rawcmd(0x07, 0, 0);
             break;
     }
-    serialSDS.write(buf, cmd_len);
+
     return cmd != PmSensorCmd::Stop;
+}
+bool SDS_checksum_valid(const uint8_t (&data)[8]) {
+    uint8_t checksum_is = 0;
+    for (unsigned i = 0; i < 6; ++i) {
+        checksum_is += data[i];
+    }
+    Serial.print(F("SDS Checksum ok? "));
+    Serial.println(data[7] == 0xAB && checksum_is == data[6]);
+    return (data[7] == 0xAB && checksum_is == data[6]);
 }
 
 
@@ -244,24 +268,60 @@ String SDS_version_date() {
 /*****************************************************************
  * read SDS011 sensor values                                     *
  *****************************************************************/
-String sensorSDS() {
-    String s = "";
-
-    int pm10_serial = 0;
-    int pm25_serial = 0;
-
-
-    debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_SDS011), DEBUG_MED_INFO, 1);
-    if (msSince(starttime) < (cfg::sending_intervall_ms - (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
+static void sensorSDS(String& s) {
+    if (cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS) &&
+        msSince(starttime) < (cfg::sending_intervall_ms - (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
         if (is_SDS_running) {
             is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
         }
     } else {
         if (! is_SDS_running) {
             is_SDS_running = SDS_cmd(PmSensorCmd::Start);
+            SDS_waiting_for = SDS_REPLY_HDR;
         }
 
-        readSingleSDSPacket(&pm10_serial, &pm25_serial);
+        while (serialSDS.available() >= SDS_waiting_for) {
+            const uint8_t constexpr hdr_measurement[2] = { 0xAA, 0xC0 };
+            uint8_t data[8];
+
+            switch (SDS_waiting_for) {
+                case SDS_REPLY_HDR:
+                    if (serialSDS.find(hdr_measurement, sizeof(hdr_measurement)))
+                        SDS_waiting_for = SDS_REPLY_BODY;
+                    break;
+                case SDS_REPLY_BODY:
+                    debug_out(FPSTR(DBG_TXT_START_READING), DEBUG_MAX_INFO, 0);
+                    debug_out(FPSTR(SENSORS_SDS011), DEBUG_MAX_INFO, 1);
+                    size_t read = serialSDS.readBytes(data, sizeof(data));
+                    for (byte i=0; i< sizeof(data); i++) {
+                        Serial.print(data[i], HEX);
+                        Serial.print(F(","));
+                    }
+                    Serial.println();
+                    Serial.print(F("Readed: "));
+                    Serial.println(read);
+                    if ( read == sizeof(data) && SDS_checksum_valid(data)) {
+                        uint32_t pm25_serial = data[0] | (data[1] << 8);
+                        uint32_t pm10_serial = data[2] | (data[3] << 8);
+
+                        if (msSince(starttime) > (cfg::sending_intervall_ms - READINGTIME_SDS_MS)) {
+                            sds_pm10_sum += pm10_serial;
+                            sds_pm25_sum += pm25_serial;
+                            UPDATE_MIN_MAX(sds_pm10_min, sds_pm10_max, pm10_serial);
+                            UPDATE_MIN_MAX(sds_pm25_min, sds_pm25_max, pm25_serial);
+//                            debug_outln_verbose(F("PM10 (sec.) : "), String(pm10_serial / 10.0f));
+//                            debug_outln_verbose(F("PM2.5 (sec.): "), String(pm25_serial / 10.0f));
+                            sds_val_count++;
+                        }
+                    }
+//                    debug_outln_verbose(FPSTR(DBG_TXT_END_READING), FPSTR(SENSORS_SDS011));
+                    SDS_waiting_for = SDS_REPLY_HDR;
+                    for (byte i=0; i< sizeof(data); i++) {
+                        data[i]=0;
+                    }
+                    break;
+            }
+        }
     }
     if (send_now) {
         last_value_SDS_P1 = -1;
@@ -272,13 +332,16 @@ String sensorSDS() {
             sds_val_count = sds_val_count - 2;
         }
         if (sds_val_count > 0) {
-            last_value_SDS_P1 = double(sds_pm10_sum) / (sds_val_count * 10.0);
-            last_value_SDS_P2 = double(sds_pm25_sum) / (sds_val_count * 10.0);
-            debug_out("PM10:  " + Float2String(last_value_SDS_P1), DEBUG_MIN_INFO, 1);
-            debug_out("PM2.5: " + Float2String(last_value_SDS_P2), DEBUG_MIN_INFO, 1);
-            debug_out("----", DEBUG_MIN_INFO, 1);
-            s += Value2Json("SDS_P1", Float2String(last_value_SDS_P1));
-            s += Value2Json("SDS_P2", Float2String(last_value_SDS_P2));
+            last_value_SDS_P1 = float(sds_pm10_sum) / (sds_val_count * 10.0f);
+            last_value_SDS_P2 = float(sds_pm25_sum) / (sds_val_count * 10.0f);
+            s += Value2Json(F("SDS_P1"), Float2String(last_value_SDS_P1));
+            s+= Value2Json( F("SDS_P2"), Float2String(last_value_SDS_P2));
+//            debug_outln_info(FPSTR(DBG_TXT_SEP));
+            if (sds_val_count < 3) {
+                SDS_error_count++;
+            }
+        } else {
+            SDS_error_count++;
         }
         sds_pm10_sum = 0;
         sds_pm25_sum = 0;
@@ -288,13 +351,12 @@ String sensorSDS() {
         sds_pm25_max = 0;
         sds_pm25_min = 20000;
         if ((cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
-            is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+
+            if (is_SDS_running) {
+                is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+            }
         }
     }
-
-    debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_SDS011), DEBUG_MED_INFO, 1);
-
-    return s;
 }
 
 
