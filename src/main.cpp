@@ -1081,7 +1081,7 @@ void loop() {
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
 		if (cfg::sds_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "SDS", DEBUG_MAX_INFO, 1);
-			result_SDS = sensorSDS();
+			sensorSDS(result_SDS);
 			starttime_SDS = act_milli;
 		}
 
