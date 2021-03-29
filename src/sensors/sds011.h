@@ -332,8 +332,6 @@ static void sensorSDS(String& s) {
         if (sds_val_count > 0) {
             last_value_SDS_P1 = float(sds_pm10_sum) / (sds_val_count * 10.0f);
             last_value_SDS_P2 = float(sds_pm25_sum) / (sds_val_count * 10.0f);
-            s += Value2Json(F("SDS_P1"), Float2String(last_value_SDS_P1));
-            s+= Value2Json( F("SDS_P2"), Float2String(last_value_SDS_P2));
 //            debug_outln_info(FPSTR(DBG_TXT_SEP));
             if (sds_val_count < 3) {
                 SDS_error_count++;
@@ -341,6 +339,8 @@ static void sensorSDS(String& s) {
         } else {
             SDS_error_count++;
         }
+        s += Value2Json(F("SDS_P1"), Float2String(last_value_SDS_P1));
+        s += Value2Json( F("SDS_P2"), Float2String(last_value_SDS_P2));
         sds_pm10_sum = 0;
         sds_pm25_sum = 0;
         sds_val_count = 0;
