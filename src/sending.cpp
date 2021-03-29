@@ -182,6 +182,13 @@ String create_influxdb_string(const String& data) {
                 tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
             data_4_influxdb += tmp_str;
         }
+        //send SDS values even if no value returned from SDS (debug missing readings)
+        if (cfg::sds_read && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
+            data_4_influxdb += F(",SDS_P1=");
+            data_4_influxdb += String(last_value_SDS_P1);
+            data_4_influxdb += F(",SDS_P2=");
+            data_4_influxdb += String(last_value_SDS_P2);
+        }
         data_4_influxdb += F(",measurements=");
         data_4_influxdb += String(count_sends+1);
         data_4_influxdb += F(",free=");
