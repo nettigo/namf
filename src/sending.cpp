@@ -143,7 +143,28 @@ String create_influxdb_string(const String& data) {
     if (json2data.success()) {
         bool first_line = true;
         data_4_influxdb += F("feinstaub,node=esp8266-");
-        data_4_influxdb += esp_chipid() + " ";
+        data_4_influxdb += esp_chipid() + F(",");
+        data_4_influxdb += F("fw=");
+        data_4_influxdb += F(SOFTWARE_VERSION);
+        data_4_influxdb += F(",");
+        data_4_influxdb += F("chann=");
+        switch (cfg::update_channel) {
+            case UPDATE_CHANNEL_ALFA:
+                data_4_influxdb += F("alfa");
+                break;
+            case UPDATE_CHANNEL_BETA:
+                data_4_influxdb += F("beta");
+                break;
+            case UPDATE_CHANNEL_STABLE:
+                data_4_influxdb += F("stable");
+                break;
+            default:
+                data_4_influxdb += F("unknown");
+                break;
+
+
+        }
+        data_4_influxdb += F(" ");
         for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = "";
             if (first_line)
