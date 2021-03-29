@@ -76,15 +76,15 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         result = http->POST(data);
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
-            debug_out(F("Succeeded - "), DEBUG_MED_INFO, 1);
+            debug_out(F("Succeeded - "), DEBUG_MIN_INFO, 1);
         } else {
             debug_out(F("Not succeeded "), DEBUG_MIN_INFO, 1);
         }
-        debug_out(F("Request result: "), DEBUG_MED_INFO, 0);
-        debug_out(String(result), DEBUG_MED_INFO, 1);
+        debug_out(F("Request result: "), DEBUG_MIN_INFO, 0);
+        debug_out(String(result), DEBUG_MIN_INFO, 1);
         if (result != 204 && http->getString().length() > 0) {
-            debug_out(F("Details:"), DEBUG_MED_INFO, 1);
-            debug_out(http->getString(), DEBUG_MED_INFO, 1);
+            debug_out(F("Details:"), DEBUG_MIN_INFO, 1);
+            debug_out(http->getString(), DEBUG_MIN_INFO, 1);
         }
 
 
@@ -92,8 +92,8 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         debug_out(F("Failed connecting"), DEBUG_MIN_INFO, 1);
     }
     http->end();
-    debug_out(F("End connecting to "), DEBUG_MED_INFO, 0);
-    debug_out(host, DEBUG_MED_INFO, 1);
+    debug_out(F("End connecting to "), DEBUG_MIN_INFO, 0);
+    debug_out(host, DEBUG_MIN_INFO, 1);
     delete (http);
     delete (client);
 
@@ -147,9 +147,6 @@ String create_influxdb_string(const String& data) {
         data_4_influxdb += F("fw=");
         data_4_influxdb += F(SOFTWARE_VERSION);
         data_4_influxdb += F(",");
-        data_4_influxdb += F("hostname=");
-        data_4_influxdb += cfg::fs_ssid;
-        data_4_influxdb += F(",");
         data_4_influxdb += F("chann=");
         switch (cfg::update_channel) {
             case UPDATE_CHANNEL_ALFA:
@@ -185,13 +182,6 @@ String create_influxdb_string(const String& data) {
                 tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
             data_4_influxdb += tmp_str;
         }
-        if (SDS011::enabled && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
-            data_4_influxdb += F(",SDS_P1=");
-            data_4_influxdb += String(last_value_SDS_P1);
-            data_4_influxdb += F(",SDS_P2=");
-            data_4_influxdb += String(last_value_SDS_P2);
-        }
-
         data_4_influxdb += F(",measurements=");
         data_4_influxdb += String(count_sends+1);
         data_4_influxdb += F(",free=");
