@@ -146,6 +146,8 @@ String create_influxdb_string(const String& data) {
         data_4_influxdb += esp_chipid() + F(",");
         data_4_influxdb += F("fw=");
         data_4_influxdb += F(SOFTWARE_VERSION);
+        data_4_influxdb += F("hostname=");
+        data_4_influxdb += cfg::fs_ssid;
         data_4_influxdb += F(",");
         data_4_influxdb += F("hostname=");
         data_4_influxdb += cfg::fs_ssid;
