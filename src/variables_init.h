@@ -85,12 +85,12 @@ namespace cfg {
     }
 }
 
-enum class PmSensorCmd {
-    Start,
-    Stop,
-    ContinuousMode,
-    VersionDate
-};
+//enum class PmSensorCmd {
+//    Start,
+//    Stop,
+//    ContinuousMode,
+//    VersionDate
+//};
 
 long int sample_count = 0;
 bool bmp280_init_failed = false;

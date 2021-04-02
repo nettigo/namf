@@ -11,6 +11,7 @@
 #include "ext_def.h"
 #include "helpers.h"
 #include "html-content.h"
+#include "system/debug.h"
 #include "variables.h"
 
 
