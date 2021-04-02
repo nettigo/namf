@@ -64,6 +64,8 @@ namespace SimpleScheduler {
     JsonObject& parseHTTPConfig(LoopEntryType sensor) {
 
         switch (sensor) {
+            case SimpleScheduler::SDS011:
+                return SDS011::parseHTTPRequest();
             case SimpleScheduler::SPS30:
                 return SPS30::parseHTTPRequest();
             case SimpleScheduler::NTW_WTD:
