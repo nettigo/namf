@@ -2,11 +2,13 @@
 
 namespace SDS011 {
     const char KEY[] PROGMEM = "SDS011";
+    bool enabled = false;
+    bool printOnLCD = false;
+    unsigned long SDS_error_count;
     enum {
         SDS_REPLY_HDR = 10,
         SDS_REPLY_BODY = 8
     } SDS_waiting_for;
-    unsigned long SDS_error_count;
 
 #define UPDATE_MIN(MIN, SAMPLE) if (SAMPLE < MIN) { MIN = SAMPLE; }
 #define UPDATE_MAX(MAX, SAMPLE) if (SAMPLE > MAX) { MAX = SAMPLE; }
@@ -155,6 +157,13 @@ namespace SDS011 {
         }
         return (data[7] == 0xAB && checksum_is == data[6]);
     }
+
+    JsonObject & parseHTTPRequest(){
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
+        //use display?
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
+
+    };
 
 
 /*****************************************************************
