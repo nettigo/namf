@@ -29,6 +29,8 @@ namespace SDS011 {
 
     bool getDisplaySetting();
     bool display(LiquidCrystal_I2C *lcd, byte minor);
+    String getConfigJSON();
+
     /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
  *****************************************************************/

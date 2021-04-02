@@ -86,6 +86,8 @@ namespace SimpleScheduler {
     String getConfigJSON(LoopEntryType sensor) {
         String s = F("");
         switch (sensor) {
+            case SimpleScheduler::SDS011:
+                return SDS011::getConfigJSON();
             case SimpleScheduler::SPS30:
                 return SPS30::getConfigJSON();
             case SimpleScheduler::NTW_WTD:
@@ -149,6 +151,8 @@ namespace SimpleScheduler {
 
     const __FlashStringHelper *findSlotKey(LoopEntryType sensor) {
         switch (sensor) {
+            case SimpleScheduler::SDS011:
+                return FPSTR(SDS011::KEY);
             case SimpleScheduler::SPS30:
                 return FPSTR(SPS30::KEY);
             case SimpleScheduler::NTW_WTD:

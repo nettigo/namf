@@ -179,6 +179,13 @@ namespace SDS011 {
         if (lcd == NULL) return true;   //we are able to do display
     };
 
+    String getConfigJSON(){
+        String ret = F("");
+        ret += Var2JsonInt(F("e"), enabled);
+        if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
+        return ret;
+    };
+
 
     /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
