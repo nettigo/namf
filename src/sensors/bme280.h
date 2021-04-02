@@ -9,14 +9,8 @@
 #include "variables.h"
 #include "html-content.h"
 #include "helpers.h"
-extern const char DBG_TXT_START_READING[] PROGMEM;
-extern const char DBG_TXT_COULDNT_BE_READ[] PROGMEM;
-extern const char DBG_TXT_TEMPERATURE[] PROGMEM;
-extern const char DBG_TXT_PRESSURE[] PROGMEM;
-extern const char DBG_TXT_HUMIDITY[] PROGMEM;
-extern const char DBG_TXT_END_READING[] PROGMEM;
-extern const char SENSORS_BME280[] PROGMEM;
-//extern const char DEBUG_MED_INFO[] PROGMEM;
+#include "system/debug.h"
+
 #include <Adafruit_BMP280.h>
 #include <Adafruit_BME280.h>
 
