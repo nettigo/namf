@@ -24,7 +24,7 @@
 #include "html-content.h"
 #include "webserver.h"
 #include "sending.h"
-#include "sensors/sds011.h"
+#include "sensors/sds011/sds011.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "sensors/heca.h"
