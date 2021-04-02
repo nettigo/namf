@@ -1149,15 +1149,6 @@ void loop() {
 		yield();
 		server.stop();
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
-		if (cfg::sds_read) {
-			data += result_SDS;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(SDS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_SDS, SDS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS_");
-				sum_send_time += millis() - start_send;
-			}
-		}
 
         if (cfg::pms_read) {
 			data += result_PMS;
