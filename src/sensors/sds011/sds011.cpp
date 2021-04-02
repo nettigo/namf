@@ -162,11 +162,25 @@ namespace SDS011 {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject &ret = jsonBuffer.createObject();
+        ret[F("e")] = enabled;
+        ret[F("d")] = printOnLCD;
+        return ret;
+
 
     };
 
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
 
-/*****************************************************************
+    bool display(LiquidCrystal_I2C *lcd, byte minor){
+        if (lcd == NULL) return true;   //we are able to do display
+    };
+
+
+    /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
  *****************************************************************/
     String SDS_version_date() {
