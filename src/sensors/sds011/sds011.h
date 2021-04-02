@@ -12,6 +12,7 @@
 #include "html-content.h"   //just for sensor name, to be removed later
 namespace SDS011 {
 
+    extern const char KEY[] PROGMEM;
 
     void readSingleSDSPacket(int *pm10_serial, int *pm25_serial);
 
@@ -40,7 +41,7 @@ namespace SDS011 {
 /*****************************************************************
  * read SDS011 sensor values                                     *
  *****************************************************************/
-    static void sensorSDS(String &s) ;
+    void sensorSDS(String &s) ;
 }
 
 #endif //NAMF_SENSORS_SDS011
