@@ -2,8 +2,8 @@
 // Created by viciu on 13.01.2020.
 //
 
-#ifndef AIRROHR_FIRMWARE_SDS011_H
-#define AIRROHR_FIRMWARE_SDS011_H
+#ifndef NAMF_SENSORS_SDS011
+#define NAMF_SENSORS_SDS011
 enum {
     SDS_REPLY_HDR = 10,
     SDS_REPLY_BODY = 8
@@ -358,4 +358,4 @@ static void sensorSDS(String& s) {
 }
 
 
-#endif //AIRROHR_FIRMWARE_SDS011_H
+#endif //NAMF_SENSORS_SDS011
