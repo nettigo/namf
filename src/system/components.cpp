@@ -165,6 +165,8 @@ namespace SimpleScheduler {
     //convert sensor/subsytem type to string with code
     const __FlashStringHelper *findSlotDescription(LoopEntryType sensor) {
         switch (sensor) {
+            case SimpleScheduler::SDS011:
+                return FPSTR(INTL_SDS011_DESC);
             case SimpleScheduler::SPS30:
                 return FPSTR(INTL_SPS30_SENSOR_DESC);
             case SimpleScheduler::NTW_WTD:
