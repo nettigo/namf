@@ -1,3 +1,6 @@
+NAMF-2020-37rc4
+- send to influx hostname (fs_ssid) 
+
 NAMF-2020-37rc3 (2021-03-30)
 - when sending to Infux send also firmware version and update channel
 - if SDS is enabled always send result to influx. This will send -1 instead skipping reading - but **only** for influx. Other APIs won't get -1 (behavior won't change)
