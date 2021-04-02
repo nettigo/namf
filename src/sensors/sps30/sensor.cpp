@@ -365,8 +365,6 @@ namespace SPS30 {
     };
 
     bool getDisplaySetting() {
-        Serial.print("printOnLCD SPS:");
-        Serial.println(printOnLCD);
         return printOnLCD;
     };
 
