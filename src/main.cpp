@@ -1074,11 +1074,6 @@ void loop() {
     server.handleClient();
 #if !defined(BOOT_FW)
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
-		if (cfg::sds_read) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "SDS", DEBUG_MAX_INFO, 1);
-			sensorSDS(result_SDS);
-			starttime_SDS = act_milli;
-		}
 
 		if (cfg::pms_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "PMS", DEBUG_MAX_INFO, 1);
