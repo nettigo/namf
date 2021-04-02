@@ -8,12 +8,7 @@
 #include "variables.h"
 #include "html-content.h"
 #include "helpers.h"
-extern const char DBG_TXT_START_READING[] PROGMEM;
-extern const char DBG_TXT_END_READING[] PROGMEM;
-extern const char SENSORS_DHT22[] PROGMEM;
-extern const char DBG_TXT_COULDNT_BE_READ[] PROGMEM;
-extern const char DBG_TXT_HUMIDITY[] PROGMEM;
-extern const char DBG_TXT_TEMPERATURE[] PROGMEM;
+#include "system/debug.h"
 /* DHT library
 
 MIT license
