@@ -711,14 +711,14 @@ static void powerOnTestSensors() {
     cfg::debug = DEBUG_MED_INFO;
 	if (cfg::sds_read) {
 		debug_out(F("Read SDS..."), 0, 1);
-		SDS_cmd(PmSensorCmd::Start);
+		SDS011::SDS_cmd(PmSensorCmd::Start);
 		delay(100);
-		SDS_cmd(PmSensorCmd::ContinuousMode);
+        SDS011::SDS_cmd(PmSensorCmd::ContinuousMode);
         delay(100);
         int pm10 = 0, pm25 = 0;
         unsigned timeOutCount = 0;
         while (timeOutCount < 200 && (pm10 == 0 || pm25 == 0)) {
-            readSingleSDSPacket(&pm10, &pm25);
+            SDS011::readSingleSDSPacket(&pm10, &pm25);
             timeOutCount++;
             delay(5);
         }
@@ -732,7 +732,7 @@ static void powerOnTestSensors() {
             last_value_SDS_P2 = double(pm25/10.0);
         }
         debug_out(F("Stopping SDS011..."),  DEBUG_ERROR,1);
-        is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+        is_SDS_running = SDS011::SDS_cmd(PmSensorCmd::Stop);
 	}
 
 	if (cfg::pms_read) {

@@ -9,7 +9,8 @@
 #include "variables.h"
 #include "defines.h"
 #include "helpers.h"
-#include "html-content.h"
+#include "html-content.h"   //for sensor name, to remove after move to new scheduler
+#include "system/debug.h"
 String sensorHECA();
 bool initHECA();
 #endif //NAMF_HECA_H

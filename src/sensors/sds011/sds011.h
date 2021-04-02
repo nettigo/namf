@@ -8,8 +8,8 @@
 #include "Arduino.h"
 #include "variables.h"
 #include "helpers.h"
-#include "helpers.h"
-
+#include "system/debug.h"
+#include "html-content.h"   //just for sensor name, to be removed later
 namespace SDS011 {
 
     enum {
