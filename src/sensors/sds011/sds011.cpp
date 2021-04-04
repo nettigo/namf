@@ -298,7 +298,7 @@ namespace SDS011 {
 /*****************************************************************
  * read SDS011 sensor values                                     *
  *****************************************************************/
-    static void sensorSDS(String &s) {
+    void sensorSDS(String &s) {
         if (cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS) &&
             msSince(starttime) < (cfg::sending_intervall_ms - (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
             if (is_SDS_running) {
