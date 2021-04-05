@@ -194,9 +194,9 @@ namespace SDS011 {
             scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
             scheduler.init(SimpleScheduler::SDS011);
             enabled = true;
-            Serial.println(F("SDS011 enabled"));
+            debug_out(F("SDS011: start"), DEBUG_MIN_INFO,1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
-            Serial.println(F("SDS011: stop"));
+            debug_out(F("SDS011: stop"), DEBUG_MIN_INFO,1);
             scheduler.unregisterSensor(SimpleScheduler::SDS011);
         }
     }

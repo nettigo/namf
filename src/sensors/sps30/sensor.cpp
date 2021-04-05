@@ -197,9 +197,9 @@ namespace SPS30 {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
             scheduler.init(SimpleScheduler::SPS30);
             enabled = true;
-            Serial.println(F("SPS30 enabled"));
+            debug_out(F("SPS30 enabled"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
-            Serial.println(F("SPS30: stop"));
+            debug_out(F("SPS30: stop"),DEBUG_MIN_INFO,1);
             scheduler.unregisterSensor(SimpleScheduler::SPS30);
         }
     }
