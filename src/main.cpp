@@ -709,31 +709,6 @@ bool initBMP280(char addr) {
 static void powerOnTestSensors() {
      debug_out(F("PowerOnTest"),0,1);
     cfg::debug = DEBUG_MED_INFO;
-	if (cfg::sds_read) {
-		debug_out(F("Read SDS..."), 0, 1);
-		SDS011::SDS_cmd(PmSensorCmd::Start);
-		delay(100);
-        SDS011::SDS_cmd(PmSensorCmd::ContinuousMode);
-        delay(100);
-        int pm10 = 0, pm25 = 0;
-        unsigned timeOutCount = 0;
-        while (timeOutCount < 200 && (pm10 == 0 || pm25 == 0)) {
-            SDS011::readSingleSDSPacket(&pm10, &pm25);
-            timeOutCount++;
-            delay(5);
-        }
-        if (timeOutCount == 200) {
-            debug_out(F("SDS011 not sending data!"), DEBUG_ERROR, 1);
-        } else {
-            debug_out(F("PM10/2.5:"),  DEBUG_ERROR,1);
-            debug_out(String(pm10/10.0,2),DEBUG_ERROR,1);
-            debug_out(String(pm25/10.0,2),DEBUG_ERROR,1);
-            last_value_SDS_P1 = double(pm10/10.0);
-            last_value_SDS_P2 = double(pm25/10.0);
-        }
-        debug_out(F("Stopping SDS011..."),  DEBUG_ERROR,1);
-        is_SDS_running = SDS011::SDS_cmd(PmSensorCmd::Stop);
-	}
 
 	if (cfg::pms_read) {
 		debug_out(F("Read PMS(1,3,5,6,7)003..."), DEBUG_MIN_INFO, 1);
