@@ -125,7 +125,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_TEMPERATURE[] PROGMEM = "hőmérséklet";
 /* ./src/lang/intl_hu.lang */ const char INTL_TIME[] PROGMEM = "Idő";
 /* ./src/lang/intl_hu.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " másodperc telt el az utolsó mérés óta.";
-/* ./src/lang/intl_hu.lang */ const char INTL_TIME_TO_FIRST_MEASUREMENT[] PROGMEM = "Még {v} másodperc van hátra az első mérésig.";
+/* ./src/lang/intl_hu.lang */ const char INTL_TIME_TO_MEASUREMENT[] PROGMEM = "Még {v} másodperc van hátra az mérésig";
 /* ./src/lang/intl_hu.lang */ const char INTL_USER[] PROGMEM = "Felhasználónév";
 /* ./src/lang/intl_hu.lang */ const char INTL_VALUE[] PROGMEM = "Érték";
 /* ./src/lang/intl_hu.lang */ const char INTL_WARNING[] PROGMEM = "warnings";

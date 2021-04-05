@@ -78,7 +78,7 @@ INTL_MAX_INFO maks. info
 INTL_CONFIG_DELETED Usunięto konfigurację
 INTL_CONFIG_CAN_NOT_BE_DELETED Konfiguracja nie może zostać usunięta
 INTL_CONFIG_NOT_FOUND Nie znaleziono konfiguracji
-INTL_TIME_TO_FIRST_MEASUREMENT Pozostało {v} sekund do pierwszego pomiaru.
+INTL_TIME_TO_MEASUREMENT Pozostało {v} sekund do pomiaru
 INTL_TIME_SINCE_LAST_MEASUREMENT  sekund od ostatniego pomiaru.
 INTL_PARTICLES_PER_LITER cząsteczek/litr
 INTL_PARTICULATE_MATTER pył zawieszony

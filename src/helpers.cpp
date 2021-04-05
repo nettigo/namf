@@ -438,6 +438,12 @@ void setVariableFromHTTP(const __FlashStringHelper *name, unsigned long &v, byte
     Serial.println(v);
 }
 
+unsigned long time2Measure(void){
+    unsigned long timeFromStart = millis() - starttime;
+    if ( timeFromStart > cfg::sending_intervall_ms) return 0;
+    return cfg::sending_intervall_ms - timeFromStart;
+};
+
 //Form helpers
 //
 String form_input(const String& name, const String& info, const String& value, const int length) {

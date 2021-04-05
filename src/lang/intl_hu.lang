@@ -78,7 +78,7 @@ INTL_MAX_INFO max. info
 INTL_CONFIG_DELETED Beállítások törölve
 INTL_CONFIG_CAN_NOT_BE_DELETED A beállítások törlése sikertelen.
 INTL_CONFIG_NOT_FOUND Beállítások nem találhatóak
-INTL_TIME_TO_FIRST_MEASUREMENT Még {v} másodperc van hátra az első mérésig.
+INTL_TIME_TO_MEASUREMENT Még {v} másodperc van hátra az mérésig
 INTL_TIME_SINCE_LAST_MEASUREMENT  másodperc telt el az utolsó mérés óta.
 INTL_PARTICLES_PER_LITER részecske/liter
 INTL_PARTICULATE_MATTER szálló por

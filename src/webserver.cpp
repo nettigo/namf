@@ -39,17 +39,14 @@ String wlan_ssid_to_table_row(const String& ssid, const String& encryption, int3
     return s;
 }
 
-String warning_first_cycle() {
-    String s = FPSTR(INTL_TIME_TO_FIRST_MEASUREMENT);
-    unsigned long time_to_first = cfg::sending_intervall_ms - msSince(starttime);
-    if (time_to_first > cfg::sending_intervall_ms) {
-        time_to_first = 0;
-    }
-    s.replace("{v}", String((long)((time_to_first + 500) / 1000)));
+String time2NextMeasure() {
+    String s = FPSTR(INTL_TIME_TO_MEASUREMENT);
+    s.replace("{v}", String(time2Measure()/1000));
     return s;
 }
 
-String age_last_values() {
+
+String timeSinceLastMeasure() {
     String s = "<b>";
     unsigned long time_since_last = msSince(starttime);
     if (time_since_last > cfg::sending_intervall_ms) {
@@ -60,6 +57,20 @@ String age_last_values() {
     s += F("</b><br/><br/>");
     return s;
 }
+
+
+void getTimeHeadings(String &page_content){
+    page_content += F("<b>");
+    if (first_cycle) page_content += F("<span style='color:red'>");
+    page_content += time2NextMeasure();
+    if (first_cycle) page_content += F(".</span><br/><br/>");
+    page_content += F(" </b>");
+    if (!first_cycle) {
+        page_content += F(",");
+        page_content += timeSinceLastMeasure();
+    }
+}
+
 
 
 void webserver_not_found() {
@@ -782,13 +793,8 @@ void webserver_values() {
         last_page_load = millis();
 
         debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
-        if (first_cycle) {
-            page_content += F("<b style='color:red'>");
-            page_content += warning_first_cycle();
-            page_content += F("</b><br/><br/>");
-        } else {
-            page_content += age_last_values();
-        }
+        getTimeHeadings(page_content);
+
         page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
         page_content += tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE));
         if (cfg::sds_read) {
@@ -961,6 +967,7 @@ void webserver_reset() {
  * Display status page
  *
  *********************************/
+
 void webserver_status_page(void) {
     if (!webserver_request_auth()) { return; }
 
@@ -971,13 +978,7 @@ void webserver_status_page(void) {
 
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
     page_content.reserve(10000);
-    if (first_cycle) {
-        page_content += F("<b style='color:red'>");
-        page_content += warning_first_cycle();
-        page_content += F("</b><br/><br/>");
-    } else {
-        page_content += age_last_values();
-    }
+    getTimeHeadings(page_content);
     page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
     page_content += FPSTR(EMPTY_ROW);
     String I2Clist = F("");
