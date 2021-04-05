@@ -186,10 +186,36 @@ namespace SDS011 {
         return ret;
     };
 
+    void readConfigJSON(JsonObject &json) {
+        enabled = json.get<bool>(F("e"));
+        printOnLCD = json.get<bool>(F("d"));
 
-    /*****************************************************************
- * read SDS011 sensor serial and firmware date                   *
- *****************************************************************/
+        if (enabled && !scheduler.isRegistered(SimpleScheduler::SDS011)) {
+            scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
+            scheduler.init(SimpleScheduler::SDS011);
+            enabled = true;
+            Serial.println(F("SDS011 enabled"));
+        } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
+            Serial.println(F("SDS011: stop"));
+            scheduler.unregisterSensor(SimpleScheduler::SDS011);
+        }
+    }
+
+    unsigned long process(SimpleScheduler::LoopEventType e) {
+        switch (e) {
+            case SimpleScheduler::STOP:
+                break;
+            case SimpleScheduler::INIT:
+                break;
+            case SimpleScheduler::RUN:
+                break;
+        }
+        return 0;
+    }
+
+        /*****************************************************************
+     * read SDS011 sensor serial and firmware date                   *
+     *****************************************************************/
     String SDS_version_date() {
         String s = "";
         char buffer;
