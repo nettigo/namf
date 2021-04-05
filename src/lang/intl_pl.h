@@ -114,6 +114,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_SAVE_AND_RESTART[] PROGMEM = "Zapisz i zrestartuj";
 /* ./src/lang/intl_pl.lang */ const char INTL_SDS011[] PROGMEM = "SDS011 ({pm})";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_DESC[] PROGMEM = "   SDS011 - Czujnik PM2.5/PM10";
+/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "   Czas, w którym jest dokonywany pomiar (ms)";
+/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "   Czas pracy przed rozpoczęciem pomiary (ms)";
 /* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO[] PROGMEM = "Wysyłaj dane do {v}";
 /* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Wysyłaj dane do własnego API";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR[] PROGMEM = "Czujnik";

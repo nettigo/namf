@@ -156,6 +156,8 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate EN: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate EN: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate EN: INTL_BMP180 🐱;";
+ const char INTL_SDS011_READTIME[] PROGMEM = "Translate EN: INTL_SDS011_READTIME 🐱;";
+ const char INTL_SDS011_WARMUP[] PROGMEM = "Translate EN: INTL_SDS011_WARMUP 🐱;";
 
 
 #endif

@@ -52,6 +52,8 @@ namespace SimpleScheduler {
     String selectConfigForm(LoopEntryType sensor) {
         String s = F("");
         switch (sensor) {
+            case SimpleScheduler::SDS011:
+                return SDS011::getConfigHTML();
             case SimpleScheduler::SPS30:
                 return SPS30::getConfigHTML();
             case SimpleScheduler::NTW_WTD:

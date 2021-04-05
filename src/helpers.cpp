@@ -407,10 +407,12 @@ void parseHTTP(const String &name, bool &value ){
     }
 };
 
-void setHTTPVarName(String sensorID, String const name, byte id) {
-    sensorID = F("{n}-{s}");
-    sensorID.replace(F("{s}"), String(id));
-    sensorID.replace(F("{n}"), name);
+void setHTTPVarName(String &varName, String const name, byte id) {
+    varName = F("{n}-{s}");
+    varName.replace(F("{s}"), String(id));
+    varName.replace(F("{n}"), name);
+    Serial.println(varName);
+
 }
 
 /* get read and set bool variables for new scheduler. Works with checkbox
@@ -428,6 +430,12 @@ void setVariableFromHTTP(String const name, unsigned long &v, byte i){
     String sensorID;
     setHTTPVarName(sensorID, name, i);
     parseHTTP(sensorID, v);
+}
+void setVariableFromHTTP(const __FlashStringHelper *name, unsigned long &v, byte i){
+    String sensorID;
+    setHTTPVarName(sensorID, name, i);
+    parseHTTP(sensorID, v);
+    Serial.println(v);
 }
 
 //Form helpers
