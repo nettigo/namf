@@ -194,11 +194,35 @@ namespace SDS011 {
             scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
             scheduler.init(SimpleScheduler::SDS011);
             enabled = true;
-            debug_out(F("SDS011: start"), DEBUG_MIN_INFO,1);
+            debug_out(F("SDS011: start"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
-            debug_out(F("SDS011: stop"), DEBUG_MIN_INFO,1);
+            debug_out(F("SDS011: stop"), DEBUG_MIN_INFO, 1);
             scheduler.unregisterSensor(SimpleScheduler::SDS011);
         }
+    }
+
+    void startSDS() {
+        SDS011::SDS_cmd(PmSensorCmd::Start);
+        delay(100);
+        SDS011::SDS_cmd(PmSensorCmd::ContinuousMode);
+        delay(100);
+        int pm10 = -1, pm25 = -1;
+        unsigned long timeOutCount = millis();
+        while ((millis()-timeOutCount) < 500 && (pm10 == -1 || pm25 == -1)) {
+            SDS011::readSingleSDSPacket(&pm10, &pm25);
+            delay(5);
+        }
+        if (pm10 == -1 || pm25 == -1) {
+            debug_out(F("SDS011 not sending data!"), DEBUG_ERROR, 1);
+        } else {
+            debug_out(F("PM10/2.5:"), DEBUG_ERROR, 1);
+            debug_out(String(pm10 / 10.0, 2), DEBUG_ERROR, 1);
+            debug_out(String(pm25 / 10.0, 2), DEBUG_ERROR, 1);
+            last_value_SDS_P1 = double(pm10 / 10.0);
+            last_value_SDS_P2 = double(pm25 / 10.0);
+        }
+        is_SDS_running = SDS011::SDS_cmd(PmSensorCmd::Stop);
+
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
@@ -206,6 +230,8 @@ namespace SDS011 {
             case SimpleScheduler::STOP:
                 break;
             case SimpleScheduler::INIT:
+                startSDS();
+                return(1000);
                 break;
             case SimpleScheduler::RUN:
                 break;
