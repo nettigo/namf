@@ -1,1 +1,3 @@
 INTL_SDS011_DESC    SDS011 - Czujnik PM2.5/PM10
+INTL_SDS011_READTIME    Czas, w którym jest dokonywany pomiar (ms)
+INTL_SDS011_WARMUP    Czas pracy przed rozpoczęciem pomiary (ms)

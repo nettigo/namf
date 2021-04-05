@@ -165,8 +165,8 @@ namespace SDS011 {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
-        setVariableFromHTTP(String(F("warmup")), warmupTime, SimpleScheduler::SDS011);
-        setVariableFromHTTP(String(F("read")), readTime, SimpleScheduler::SDS011);
+        setVariableFromHTTP(F("w"), warmupTime, SimpleScheduler::SDS011);
+        setVariableFromHTTP(String(F("r")), readTime, SimpleScheduler::SDS011);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
@@ -251,7 +251,20 @@ namespace SDS011 {
         return 0;
     }
 
-        /*****************************************************************
+    String getConfigHTML(void) {
+        String ret = F("");
+        String name;
+        setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
+        ret += form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7);
+
+        setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
+        ret += form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7);
+
+        return ret;
+    }
+
+
+    /*****************************************************************
      * read SDS011 sensor serial and firmware date                   *
      *****************************************************************/
     String SDS_version_date() {
