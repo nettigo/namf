@@ -47,26 +47,24 @@ String time2NextMeasure() {
 
 
 String timeSinceLastMeasure() {
-    String s = "<b>";
+    String s = F("");
     unsigned long time_since_last = msSince(starttime);
     if (time_since_last > cfg::sending_intervall_ms) {
         time_since_last = 0;
     }
     s += String((long)((time_since_last + 500) / 1000));
     s += FPSTR(INTL_TIME_SINCE_LAST_MEASUREMENT);
-    s += F("</b><br/><br/>");
+    s += F("<br/><br/>");
     return s;
 }
 
 
 void getTimeHeadings(String &page_content){
-    page_content += F("<b>");
     if (first_cycle) page_content += F("<span style='color:red'>");
     page_content += time2NextMeasure();
     if (first_cycle) page_content += F(".</span><br/><br/>");
-    page_content += F(" </b>");
     if (!first_cycle) {
-        page_content += F(",");
+        page_content += F(", ");
         page_content += timeSinceLastMeasure();
     }
 }
