@@ -81,7 +81,7 @@ INTL_MAX_INFO max. info
 INTL_CONFIG_DELETED Configuration is deleted
 INTL_CONFIG_CAN_NOT_BE_DELETED Configuration can not be deleted
 INTL_CONFIG_NOT_FOUND Configuration not found
-INTL_TIME_TO_FIRST_MEASUREMENT Still {v} seconds until first measurement.
+INTL_TIME_TO_MEASUREMENT Still {v} seconds until measurement
 INTL_TIME_SINCE_LAST_MEASUREMENT  seconds since last measurement.
 INTL_PARTICLES_PER_LITER particles/liter
 INTL_PARTICULATE_MATTER particulate matter
