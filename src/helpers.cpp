@@ -374,6 +374,13 @@ void parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
         value = server.arg(name).toInt();
     }
 };
+
+void parseHTTP(const String name, unsigned long &value ){
+    if (server.hasArg(name)) {
+        value = server.arg(name).toInt();
+    }
+};
+
 void  parseHTTP(const __FlashStringHelper *name, byte &value ){
     if (server.hasArg(name)) {
         value = server.arg(name).toInt();
@@ -400,18 +407,27 @@ void parseHTTP(const String &name, bool &value ){
     }
 };
 
+void setHTTPVarName(String sensorID, String const name, byte id) {
+    sensorID = F("{n}-{s}");
+    sensorID.replace(F("{s}"), String(id));
+    sensorID.replace(F("{n}"), name);
+}
+
 /* get read and set bool variables for new scheduler. Works with checkbox
  named var_name-SENSOR_ID (var name it is enable or display currently
- Geting enable val from client is code done by each sensor, to make it easier this
+ Getting enable val from client is code done by each sensor, to make it easier this
  helper was created. It supports any bool var.
 */
 void setBoolVariableFromHTTP(String const name, bool &v, byte i){
-    String sensorID = F("{n}-{s}");
-    sensorID.replace(F("{s}"), String(i));
-    sensorID.replace(F("{n}"), name);
+    String sensorID;
+    setHTTPVarName(sensorID, name, i);
     parseHTTP(sensorID, v);
+}
 
-
+void setVariableFromHTTP(String const name, unsigned long &v, byte i){
+    String sensorID;
+    setHTTPVarName(sensorID, name, i);
+    parseHTTP(sensorID, v);
 }
 
 //Form helpers
