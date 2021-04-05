@@ -111,6 +111,7 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::SHT3x:
                 SHT3x::readConfigJSON(json);
+                return;
             case SimpleScheduler::MHZ14A:
                 MHZ14A::readConfigJSON(json);
                 return;
