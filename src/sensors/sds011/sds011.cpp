@@ -1,10 +1,14 @@
 #include "sds011.h"
+#include "../../variables_init.h"
 
 namespace SDS011 {
-    const char KEY[] PROGMEM = "SDS011";
+    const char KEY[]
+    PROGMEM = "SDS011";
     bool enabled = false;
     bool printOnLCD = false;
     unsigned long SDS_error_count;
+    unsigned long warmupTime = WARMUPTIME_SDS_MS;
+    unsigned long readTime = READINGTIME_SDS_MS;
     enum {
         SDS_REPLY_HDR = 10,
         SDS_REPLY_BODY = 8
@@ -158,14 +162,18 @@ namespace SDS011 {
         return (data[7] == 0xAB && checksum_is == data[6]);
     }
 
-    JsonObject & parseHTTPRequest(){
+    JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
+        setVariableFromHTTP(String(F("warmup")), warmupTime, SimpleScheduler::SDS011);
+        setVariableFromHTTP(String(F("read")), readTime, SimpleScheduler::SDS011);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        ret[F("w")] = warmupTime;
+        ret[F("r")] = readTime;
         return ret;
 
 
@@ -179,10 +187,12 @@ namespace SDS011 {
         if (lcd == NULL) return true;   //we are able to do display
     };
 
-    String getConfigJSON(){
+    String getConfigJSON() {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
         if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
+        if (readTime != READINGTIME_SDS_MS) ret += Var2Json(F("r"), readTime);
+        if (warmupTime != WARMUPTIME_SDS_MS) ret += Var2Json(F("w"), warmupTime);
         return ret;
     };
 
@@ -228,6 +238,7 @@ namespace SDS011 {
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
+                is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                 break;
             case SimpleScheduler::INIT:
                 startSDS();
@@ -235,6 +246,8 @@ namespace SDS011 {
                 break;
             case SimpleScheduler::RUN:
                 break;
+            default:
+                return 0;
         }
         return 0;
     }

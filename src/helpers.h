@@ -39,6 +39,9 @@ void parseHTTP(const String &name, bool &value );
 void parseHTTP(const __FlashStringHelper * , byte &value );
 
 void setBoolVariableFromHTTP(String const name, bool &v, byte i);
+void setVariableFromHTTP(String const name, unsigned long &v, byte i);
+void setHTTPVarName(String sensorID, String const name, byte id);
+
 String form_option(String const &name, const String & info, const bool checked = false);
 String form_input(const String& name, const String& info, const String& value, const int length);
 String form_password(const String& name, const String& info, const String& value, const int length);
