@@ -1,5 +1,4 @@
 #include "sds011.h"
-#include "../../variables_init.h"
 
 namespace SDS011 {
     const char KEY[]
