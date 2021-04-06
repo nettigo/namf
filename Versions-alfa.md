@@ -2,6 +2,11 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-37a6
+
+* if old cfg::sds_read is set, then always enable new SDS support
+* firmware version in header is linked to changelog
+
 ### NAMF-2020-37a5
 
 * SDS011 code moved to new scheduler
