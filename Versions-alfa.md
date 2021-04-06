@@ -4,7 +4,7 @@ This is list of test/experiment firmware, with changes included:
 
 ### NAMF-2020-37a5
 
-* SDS011 code moved to new
+* SDS011 code moved to new scheduler
 * sensor shows both time from last measurement and time left to next one
 
 ### NAMF-2020-37a4 
