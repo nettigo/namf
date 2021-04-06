@@ -19,6 +19,7 @@ namespace SimpleScheduler {
 
     //collect results as JSON
     void getResults(String &res) {
+        SDS011::results(res);
         SPS30::results(res);
         SHT3x::results(res);
         MHZ14A::getResults(res);

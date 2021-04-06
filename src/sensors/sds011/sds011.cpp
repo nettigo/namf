@@ -24,7 +24,9 @@ namespace SDS011 {
         WARMUP,     // run, but no reading saved
         READ,       // start reading
         READING,    // run and collect data
-        STOP        // turn off
+        STOP,        // turn off
+        AFTER_READING
+
     } SDS011State;
 
     unsigned long stateChangeTime = 0;
@@ -33,8 +35,6 @@ namespace SDS011 {
     //change state and store timestamp
     void updateState(SDS011State newState) {
         if (newState == sensorState) return;
-        Serial.print("SDS011: New state: ");
-        Serial.println(newState);
         sensorState = newState;
         stateChangeTime = millis();
     }
@@ -203,18 +203,11 @@ namespace SDS011 {
 
     //reset counters
     void resetReadings() {
-        Serial.print("SDS - reset readings: ");
-        Serial.print(pm10Sum);
-        Serial.print(",");
-        Serial.print(pm25Sum);
-        Serial.print(",");
-        Serial.println(readingCount);
         pm10Sum = pm25Sum = readingCount = 0;
     };
 
     void storeReadings(const int pm10, const int pm25) {
         if (pm10 == -1 || pm25 == -1) return;
-        Serial.println("Store readings");
         pm10Sum += pm10;
         pm25Sum += pm25;
         readingCount++;
@@ -222,18 +215,20 @@ namespace SDS011 {
 
     //store last values pm
     void processReadings() {
-        Serial.print("SDS - [process] readings: ");
-        Serial.print(pm10Sum);
-        Serial.print(",");
-        Serial.print(pm25Sum);
-        Serial.print(",");
-        Serial.println(readingCount);
+        if (readingCount > 0) {
+            last_value_SDS_P1 = pm10Sum / readingCount / 10.0;
+            last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
+        } else {
+            last_value_SDS_P1 = last_value_SDS_P2 = -1;
+        }
 
     };
 
     //did timeout happen (from last state change)
     bool timeout(unsigned long t) {
-        if (millis() - stateChangeTime > t) return true;
+        //100 ms margin - to complete before sending
+        unsigned long diff = millis() + 100 - stateChangeTime;
+        if (diff > t) return true;
         return false;
     }
 
@@ -254,7 +249,6 @@ namespace SDS011 {
                 updateState(POST);
                 return 100;
             case POST:
-                Serial.println(serialSDS.available());
                 if (serialSDS.available() >= SDS_waiting_for) {
                     readSingleSDSPacket(&pm10, &pm25);
                     storeReadings(pm10, pm25);
@@ -266,8 +260,6 @@ namespace SDS011 {
                     return 500;
                 }
                 return 20;
-
-
             case OFF:
                 if (t < warmupTime + readTime)
                     updateState(START);
@@ -277,7 +269,7 @@ namespace SDS011 {
                 updateState(WARMUP);
                 return 100;
             case WARMUP:
-                if (t < readTime)
+                if (t < warmupTime)
                     updateState(READ);
                 return 10;
             case READ:
@@ -285,6 +277,7 @@ namespace SDS011 {
                 resetReadings();
                 SDS_waiting_for = SDS_REPLY_HDR;
                 updateState(READING);
+                return 10;
             case READING:
                 if (serialSDS.available() >= SDS_waiting_for) {
                     readSingleSDSPacket(&pm10, &pm25);
@@ -294,23 +287,40 @@ namespace SDS011 {
                     updateState(STOP);
                     return 50;
                 }
+                return 20;
             case STOP:
                 processReadings();
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-                updateState(OFF);
+                updateState(AFTER_READING);
                 return 100;
             default:
                 return 1000;
         }
     }
 
+    void results(String &res) {
+        if (last_value_SDS_P2 != -1 && last_value_SDS_P1 != -1) {
+
+            res += Value2Json(F("SDS_P1"),String(last_value_SDS_P1));
+            res += Value2Json(F("SDS_P1"),String(last_value_SDS_P1));
+        }
+    }
+
     void sendToLD() {
-        processState();
+        if (sensorState == AFTER_READING) {
+            updateState(OFF);
+        }
+        const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
+        String data;
+        results(data);
+        sendLuftdaten(data, 1 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SPS30_");
+
     }
 
     void getStatusReport(String &res) {
         res += FPSTR(EMPTY_ROW);
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
+        res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
     }
 
 

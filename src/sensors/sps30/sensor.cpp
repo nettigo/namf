@@ -209,6 +209,7 @@ namespace SPS30 {
         if (!enabled || !started || measurement_count == 0) return;
         String tmp;
         tmp.reserve(512);
+
         tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count));
         tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count));
         tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count));

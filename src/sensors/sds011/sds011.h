@@ -27,15 +27,24 @@ namespace SDS011 {
 
     bool SDS_checksum_valid(const uint8_t (&data)[8]);
 
-    JsonObject & parseHTTPRequest();
+    JsonObject &parseHTTPRequest();
 
     bool getDisplaySetting();
+
     bool display(LiquidCrystal_I2C *lcd, byte minor);
+
     String getConfigJSON();
+
     void readConfigJSON(JsonObject &json);
+
     unsigned long process(SimpleScheduler::LoopEventType e);
+
     String getConfigHTML(void);
+
+    void results(String &res);
+
     void sendToLD();
+
     void getStatusReport(String &);
 
     /*****************************************************************
