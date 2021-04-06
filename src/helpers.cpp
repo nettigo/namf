@@ -411,7 +411,6 @@ void setHTTPVarName(String &varName, String const name, byte id) {
     varName = F("{n}-{s}");
     varName.replace(F("{s}"), String(id));
     varName.replace(F("{n}"), name);
-    Serial.println(varName);
 
 }
 
