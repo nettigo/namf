@@ -138,6 +138,7 @@ namespace SDS011 {
         ret[F("d")] = printOnLCD;
         ret[F("w")] = warmupTime;
         ret[F("r")] = readTime;
+        ret.printTo(Serial);
         return ret;
 
 
@@ -164,6 +165,12 @@ namespace SDS011 {
     void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
+        if (json.containsKey(F("r"))) {
+            readTime = json.get<unsigned long>(F("r"));
+        }
+        if (json.containsKey(F("w"))) {
+            warmupTime = json.get<unsigned long>(F("w"));
+        }
 
         if (enabled && !scheduler.isRegistered(SimpleScheduler::SDS011)) {
             scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
@@ -290,6 +297,7 @@ namespace SDS011 {
                 return 20;
             case STOP:
                 processReadings();
+                debug_out(F("SDS011: end of cycle"),DEBUG_MIN_INFO, 1);
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                 updateState(AFTER_READING);
                 return 100;
