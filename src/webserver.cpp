@@ -991,7 +991,7 @@ void webserver_status_page(void) {
     }
     page_content += table_row_from_value(F("I2C"), F("Na szynie I2C"), I2Clist, F(""));
 
-
+    SimpleScheduler::getStatusReport(page_content);
     // Check for ACK (detection of device), NACK or error
     page_content += FPSTR(EMPTY_ROW);
     page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");

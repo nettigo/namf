@@ -213,8 +213,8 @@ namespace SDS011 {
     };
 
     void storeReadings(const int pm10, const int pm25) {
-        Serial.println("Store readings");
         if (pm10 == -1 || pm25 == -1) return;
+        Serial.println("Store readings");
         pm10Sum += pm10;
         pm25Sum += pm25;
         readingCount++;
@@ -291,21 +291,28 @@ namespace SDS011 {
                     storeReadings(pm10, pm25);
                 }
                 if (timeout(readTime)) {
-                    processReadings();
-                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                     updateState(STOP);
                     return 50;
                 }
             case STOP:
+                processReadings();
+                is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+                updateState(OFF);
                 return 100;
             default:
                 return 1000;
         }
     }
 
-    void sendToLD(){
-        updateState(OFF);
+    void sendToLD() {
+        processState();
     }
+
+    void getStatusReport(String &res) {
+        res += FPSTR(EMPTY_ROW);
+        res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
+    }
+
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
