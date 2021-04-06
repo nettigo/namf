@@ -987,7 +987,6 @@ void webserver_status_page(void) {
     const int signal_quality = calcWiFiSignalQuality(WiFi.RSSI());
 
     debug_out(F("output status page"), DEBUG_MIN_INFO, 1);
-    unsigned long start = millis();
 
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
     page_content.reserve(10000);
@@ -1048,7 +1047,6 @@ void webserver_status_page(void) {
     page_content += FPSTR(TABLE_TAG_CLOSE_BR);
     page_content += make_footer();
 
-    debug_out(String(millis()-start), DEBUG_MIN_INFO, 1);
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
 }
