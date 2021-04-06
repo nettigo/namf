@@ -8,18 +8,36 @@ namespace SDS011 {
     unsigned long SDS_error_count;
     unsigned long warmupTime = WARMUPTIME_SDS_MS;
     unsigned long readTime = READINGTIME_SDS_MS;
+    unsigned long pm10Sum, pm25Sum = 0;
+    unsigned readingCount = 0;
     enum {
         SDS_REPLY_HDR = 10,
         SDS_REPLY_BODY = 8
     } SDS_waiting_for;
 
     typedef enum {
-        IDLE,
-        WARMUP,
-        READ
+        POWERON,    //after poweron
+        STARTUP,    //first run
+        POST,       //measure data on POST
+        OFF,        // wait for measure period
+        START,      // start fan
+        WARMUP,     // run, but no reading saved
+        READ,       // start reading
+        READING,    // run and collect data
+        STOP        // turn off
     } SDS011State;
 
-    SDS011State sensorState;
+    unsigned long stateChangeTime = 0;
+    SDS011State sensorState = POWERON;
+
+    //change state and store timestamp
+    void updateState(SDS011State newState) {
+        if (newState == sensorState) return;
+        Serial.print("SDS011: New state: ");
+        Serial.println(newState);
+        sensorState = newState;
+        stateChangeTime = millis();
+    }
 
 #define UPDATE_MIN(MIN, SAMPLE) if (SAMPLE < MIN) { MIN = SAMPLE; }
 #define UPDATE_MAX(MAX, SAMPLE) if (SAMPLE > MAX) { MAX = SAMPLE; }
@@ -28,31 +46,31 @@ namespace SDS011 {
     void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
         const uint8_t constexpr hdr_measurement[2] = {0xAA, 0xC0};
         uint8_t data[8];
+        while (serialSDS.available() > SDS_waiting_for) {
+            switch (SDS_waiting_for) {
+                case SDS_REPLY_HDR:
+                    if (serialSDS.find(hdr_measurement, sizeof(hdr_measurement)))
+                        SDS_waiting_for = SDS_REPLY_BODY;
+                    break;
+                case SDS_REPLY_BODY:
+                    debug_out(FPSTR(DBG_TXT_START_READING), DEBUG_MAX_INFO, 0);
+                    debug_out(FPSTR(SENSORS_SDS011), DEBUG_MAX_INFO, 1);
+                    size_t read = serialSDS.readBytes(data, sizeof(data));
+                    if (read == sizeof(data) && SDS_checksum_valid(data)) {
+                        *pm25_serial = data[0] | (data[1] << 8);
+                        *pm10_serial = data[2] | (data[3] << 8);
+                    } else {
+                        *pm10_serial = -1;
+                        *pm25_serial = -1;
+                    }
+                    SDS_waiting_for = SDS_REPLY_HDR;
+                    for (byte i = 0; i < sizeof(data); i++) {
+                        data[i] = 0;
+                    }
 
-        switch (SDS_waiting_for) {
-            case SDS_REPLY_HDR:
-                if (serialSDS.find(hdr_measurement, sizeof(hdr_measurement)))
-                    SDS_waiting_for = SDS_REPLY_BODY;
-                break;
-            case SDS_REPLY_BODY:
-                debug_out(FPSTR(DBG_TXT_START_READING), DEBUG_MAX_INFO, 0);
-                debug_out(FPSTR(SENSORS_SDS011), DEBUG_MAX_INFO, 1);
-                size_t read = serialSDS.readBytes(data, sizeof(data));
-                if (read == sizeof(data) && SDS_checksum_valid(data)) {
-                    *pm25_serial = data[0] | (data[1] << 8);
-                    *pm10_serial = data[2] | (data[3] << 8);
-                } else {
-                    *pm10_serial = -1;
-                    *pm25_serial = -1;
-                }
-                SDS_waiting_for = SDS_REPLY_HDR;
-                for (byte i = 0; i < sizeof(data); i++) {
-                    data[i] = 0;
-                }
 
-
+            }
         }
-
 
     }
 
@@ -183,32 +201,116 @@ namespace SDS011 {
 
     }
 
+    //reset counters
+    void resetReadings() {
+        Serial.print("SDS - reset readings: ");
+        Serial.print(pm10Sum);
+        Serial.print(",");
+        Serial.print(pm25Sum);
+        Serial.print(",");
+        Serial.println(readingCount);
+        pm10Sum = pm25Sum = readingCount = 0;
+    };
+
+    void storeReadings(const int pm10, const int pm25) {
+        Serial.println("Store readings");
+        if (pm10 == -1 || pm25 == -1) return;
+        pm10Sum += pm10;
+        pm25Sum += pm25;
+        readingCount++;
+    };
+
+    //store last values pm
+    void processReadings() {
+        Serial.print("SDS - [process] readings: ");
+        Serial.print(pm10Sum);
+        Serial.print(",");
+        Serial.print(pm25Sum);
+        Serial.print(",");
+        Serial.println(readingCount);
+
+    };
+
+    //did timeout happen (from last state change)
+    bool timeout(unsigned long t) {
+        if (millis() - stateChangeTime > t) return true;
+        return false;
+    }
+
+#define STARTUP_TIME   2000
+
     //select proper state, depending on time left to
-    void selectState() {
+    unsigned long processState() {
+        int pm25, pm10 = -1;
         unsigned long t = time2Measure();
-        if (t > readTime + warmupTime) sensorState = IDLE;
-        if (t > readTime) sensorState = WARMUP;
-        sensorState = READ;
+        switch (sensorState) {
+            case POWERON:
+                updateState(STARTUP);
+                return 10;
+            case STARTUP:
+                is_SDS_running = SDS_cmd(PmSensorCmd::Start);
+                SDS_waiting_for = SDS_REPLY_HDR;
+                resetReadings();
+                updateState(POST);
+                return 100;
+            case POST:
+                Serial.println(serialSDS.available());
+                if (serialSDS.available() > SDS_waiting_for) {
+                    readSingleSDSPacket(&pm10, &pm25);
+                    storeReadings(pm10, pm25);
+                }
+                if (timeout(STARTUP_TIME)) {
+                    processReadings();
+                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+                    updateState(OFF);
+                    return 500;
+                }
+                return 20;
+
+
+            case OFF:
+                if (t < warmupTime + readTime)
+                    updateState(START);
+                return 10;
+            case START:
+                is_SDS_running = SDS_cmd(PmSensorCmd::Start);
+                updateState(WARMUP);
+                return 100;
+            case WARMUP:
+                if (t < readTime)
+                    updateState(READ);
+                return 10;
+            case READ:
+            case READING:
+                if (serialSDS.available() > SDS_waiting_for) {
+                    readSingleSDSPacket(&pm10, &pm25);
+                    storeReadings(pm10, pm25);
+                }
+                if (timeout(readTime)) {
+                    processReadings();
+                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+                    updateState(STOP);
+                    return 50;
+                }
+            case STOP:
+                return 100;
+            default:
+                return 1000;
+        }
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-                break;
+                return 0;
             case SimpleScheduler::INIT:
-                startSDS();
-                sensorState = IDLE;
-                return (1000);
-                break;
+                return processState();
             case SimpleScheduler::RUN:
-                selectState();
-
-                break;
+                return processState();
             default:
                 return 0;
         }
-        return 0;
     }
 
     String getConfigHTML(void) {
