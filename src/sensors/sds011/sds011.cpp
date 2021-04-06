@@ -321,7 +321,7 @@ namespace SDS011 {
         const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
         String data;
         results(data);
-        sendLuftdaten(data, 1 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SPS30_");
+        sendLuftdaten(data, 1 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "");
 
     }
 
