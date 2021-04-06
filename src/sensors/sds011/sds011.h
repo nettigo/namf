@@ -8,6 +8,7 @@
 #include "Arduino.h"
 #include "variables.h"
 #include "helpers.h"
+#include "sending.h"
 #include "system/debug.h"
 #include "html-content.h"   //just for sensor name, to be removed later
 #include "webserver.h"  //HTML functions
