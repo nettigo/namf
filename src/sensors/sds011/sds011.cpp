@@ -13,6 +13,14 @@ namespace SDS011 {
         SDS_REPLY_BODY = 8
     } SDS_waiting_for;
 
+    typedef enum {
+        IDLE,
+        WARMUP,
+        READ
+    } SDS011State;
+
+    SDS011State sensorState;
+
 #define UPDATE_MIN(MIN, SAMPLE) if (SAMPLE < MIN) { MIN = SAMPLE; }
 #define UPDATE_MAX(MAX, SAMPLE) if (SAMPLE > MAX) { MAX = SAMPLE; }
 #define UPDATE_MIN_MAX(MIN, MAX, SAMPLE) { UPDATE_MIN(MIN, SAMPLE); UPDATE_MAX(MAX, SAMPLE); }
@@ -234,6 +242,14 @@ namespace SDS011 {
 
     }
 
+    //select proper state, depending on time left to
+    void selectState() {
+        unsigned long t = time2Measure();
+        if (t > readTime + warmupTime) sensorState = IDLE;
+        if (t > readTime ) sensorState = WARMUP;
+        sensorState = READ;
+    }
+
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
@@ -241,9 +257,12 @@ namespace SDS011 {
                 break;
             case SimpleScheduler::INIT:
                 startSDS();
+                sensorState = IDLE;
                 return(1000);
                 break;
             case SimpleScheduler::RUN:
+                selectState();
+
                 break;
             default:
                 return 0;
