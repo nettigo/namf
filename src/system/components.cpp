@@ -49,6 +49,11 @@ namespace SimpleScheduler {
         NetworkWatchdog::resultsAsHTML(res);
     }
 
+    //collect sensors status
+    void getStatusReport(String &res){
+        SDS011::getStatusReport(res);
+    }
+
     //prepare forms with configuration
     String selectConfigForm(LoopEntryType sensor) {
         String s = F("");

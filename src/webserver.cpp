@@ -1005,7 +1005,7 @@ void webserver_status_page(void) {
     }
     page_content += table_row_from_value(F("I2C"), FPSTR(INTL_I2C_BUS), I2Clist, F(""));
 
-
+    SimpleScheduler::getStatusReport(page_content);
     // Check for ACK (detection of device), NACK or error
     page_content += FPSTR(EMPTY_ROW);
     if (sntp_time_is_set) {

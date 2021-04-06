@@ -10,6 +10,7 @@
 #include "helpers.h"
 #include "system/debug.h"
 #include "html-content.h"   //just for sensor name, to be removed later
+#include "webserver.h"  //HTML functions
 namespace SDS011 {
 
     extern const char KEY[] PROGMEM;
@@ -35,6 +36,7 @@ namespace SDS011 {
     unsigned long process(SimpleScheduler::LoopEventType e);
     String getConfigHTML(void);
     void sendToLD();
+    void getStatusReport(String &);
 
     /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
