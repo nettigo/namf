@@ -1,6 +1,6 @@
 # List of changes in alfa versions
 
-This is list of test/experiment firmware, with changes included:
+This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
 ### NAMF-2020-37a5
 
