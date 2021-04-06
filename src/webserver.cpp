@@ -159,12 +159,27 @@ String make_header(const String& title) {
     String s = FPSTR(WEB_PAGE_HEADER);
     s.replace("{tt}", FPSTR(INTL_PM_SENSOR));
     s.replace("{h}", FPSTR(INTL_HOME));
-    if(title != " ") {
+    if (title != " ") {
         s.replace("{n}", F("&raquo;"));
     } else {
         s.replace("{n}", "");
     }
-    String v = String(SOFTWARE_VERSION);
+    String v = F("<a href=\"https://github.com/nettigo/namf/blob/");
+    switch (cfg::update_channel) {
+        case UPDATE_CHANNEL_STABLE:
+            v += F("master/Versions.md");
+            break;
+        case UPDATE_CHANNEL_BETA:
+            v += F("beta/Versions.md");
+            break;
+        case UPDATE_CHANNEL_ALFA:
+            v += F("new_sds011/Versions-alfa.md");
+            break;
+    }
+    v += F("\">");
+    v += String(SOFTWARE_VERSION);
+    v += F("</a>");
+
 #ifdef BUILD_TIME
     v+="(";
     char timestamp[16];
