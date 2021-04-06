@@ -1022,7 +1022,7 @@ void webserver_status_page(void) {
     page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
     page_content += FPSTR(TABLE_TAG_CLOSE_BR);
     page_content += make_footer();
-    debug_out(F("page generated in: "), DEBUG_MIN_INFO, 0);
+
     debug_out(String(millis()-start), DEBUG_MIN_INFO, 1);
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
