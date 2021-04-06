@@ -276,7 +276,7 @@ namespace SDS011 {
                 updateState(WARMUP);
                 return 100;
             case WARMUP:
-                if (t < warmupTime)
+                if (t < readTime)
                     updateState(READ);
                 return 10;
             case READ:
