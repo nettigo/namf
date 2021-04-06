@@ -34,7 +34,7 @@ namespace SDS011 {
     void readConfigJSON(JsonObject &json);
     unsigned long process(SimpleScheduler::LoopEventType e);
     String getConfigHTML(void);
-
+    void sendToLD();
 
     /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
