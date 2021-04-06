@@ -30,6 +30,7 @@ namespace SimpleScheduler {
         SPS30::sendToLD();
         SHT3x::sendToLD();
         MHZ14A::sendToLD();
+        SDS011::sendToLD();
 
     }
 

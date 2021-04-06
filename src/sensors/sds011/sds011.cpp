@@ -237,7 +237,7 @@ namespace SDS011 {
         return false;
     }
 
-#define STARTUP_TIME   2000
+#define STARTUP_TIME  5000
 
     //select proper state, depending on time left to
     unsigned long processState() {
@@ -255,7 +255,7 @@ namespace SDS011 {
                 return 100;
             case POST:
                 Serial.println(serialSDS.available());
-                if (serialSDS.available() > SDS_waiting_for) {
+                if (serialSDS.available() >= SDS_waiting_for) {
                     readSingleSDSPacket(&pm10, &pm25);
                     storeReadings(pm10, pm25);
                 }
@@ -281,8 +281,12 @@ namespace SDS011 {
                     updateState(READ);
                 return 10;
             case READ:
+                serialSDS.flush();
+                resetReadings();
+                SDS_waiting_for = SDS_REPLY_HDR;
+                updateState(READING);
             case READING:
-                if (serialSDS.available() > SDS_waiting_for) {
+                if (serialSDS.available() >= SDS_waiting_for) {
                     readSingleSDSPacket(&pm10, &pm25);
                     storeReadings(pm10, pm25);
                 }
@@ -297,6 +301,10 @@ namespace SDS011 {
             default:
                 return 1000;
         }
+    }
+
+    void sendToLD(){
+        updateState(OFF);
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
