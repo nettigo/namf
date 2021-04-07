@@ -50,6 +50,7 @@ INTL_PASSWORD Hasło
 INTL_SEND_TO Wysyłaj dane do {v}
 INTL_READ_FROM Czytaj z {v}
 INTL_SENSOR_IS_REBOOTING Ponowne uruchamianie czujnika.
+INTL_SENSOR_IS_REBOOTING_NOW Trwa restart urządzenia... Za kilkanaście sekund kliknij przycisk poniżej.
 INTL_RESTART_DEVICE Uruchom ponownie urządzenie
 INTL_DELETE_CONFIG Usuń zapisaną konfigurację
 INTL_RESTART_SENSOR Uruchom ponownie czujnik

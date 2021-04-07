@@ -53,6 +53,7 @@ INTL_PASSWORD Password
 INTL_SEND_TO Send to {v}
 INTL_READ_FROM Read from {v}
 INTL_SENSOR_IS_REBOOTING Sensor is rebooting.
+INTL_SENSOR_IS_REBOOTING_NOW Sensor is being rebooted. Wait few seconds and click button below
 INTL_RESTART_DEVICE Restart device
 INTL_DELETE_CONFIG delete saved configuration
 INTL_RESTART_SENSOR Restart sensor
