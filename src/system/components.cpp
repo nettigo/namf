@@ -28,10 +28,12 @@ namespace SimpleScheduler {
 
     //push results to Luftdaten/SensorCommunity
     void sendToSC(void) {
-        SPS30::sendToLD();
-        SHT3x::sendToLD();
-        MHZ14A::sendToLD();
-        SDS011::sendToLD();
+        if (cfg::send2dusti) {
+            SPS30::sendToLD();
+            SHT3x::sendToLD();
+            MHZ14A::sendToLD();
+            SDS011::sendToLD();
+        }
 
     }
 
