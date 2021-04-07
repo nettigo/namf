@@ -165,6 +165,7 @@ namespace SDS011 {
     void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
+        json.printTo(Serial);
         if (json.containsKey(F("r"))) {
             readTime = json.get<unsigned long>(F("r"));
         }
