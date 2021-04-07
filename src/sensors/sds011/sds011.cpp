@@ -245,6 +245,7 @@ namespace SDS011 {
     unsigned long processState() {
         int pm25, pm10 = -1;
         unsigned long t = time2Measure();
+        if (t>1000) t -= 200;
         switch (sensorState) {
             case POWERON:
                 updateState(STARTUP);
@@ -310,19 +311,20 @@ namespace SDS011 {
         if (last_value_SDS_P2 != -1 && last_value_SDS_P1 != -1) {
 
             res += Value2Json(F("SDS_P1"),String(last_value_SDS_P1));
-            res += Value2Json(F("SDS_P1"),String(last_value_SDS_P1));
+            res += Value2Json(F("SDS_P2"),String(last_value_SDS_P2));
         }
     }
 
     void sendToLD() {
         if (sensorState == AFTER_READING) {
             updateState(OFF);
+            const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
+            String data;
+            results(data);
+            sendLuftdaten(data, 1, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS_");
+        } else {
+            debug_out(F("SDS011 reading procedure not finished, not sending data."),DEBUG_MIN_INFO);
         }
-        const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
-        String data;
-        results(data);
-        sendLuftdaten(data, 1 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS011_");
-
     }
 
     void getStatusReport(String &res) {
