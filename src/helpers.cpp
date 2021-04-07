@@ -327,7 +327,6 @@ int readAndParseConfigFile(File configFile) {
             if (json.containsKey(F("sensors"))) {
                 JsonObject& item = json[F("sensors")];
                 if (cfg::sds_read) {
-                    Serial.println("Force SDS enable");
                     item["SDS011"]["e"] = 1;
                 }
                 SimpleScheduler::readConfigJSON(item);
