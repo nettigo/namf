@@ -112,7 +112,7 @@ namespace SHT3x {
         const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
         String data;
         results(data);
-        debug_out(F("SHT3x to Luftdaten"), DEBUG_MIN_INFO, 1);
+        debug_out(F("SHT3x to SensorCommunity"), DEBUG_MIN_INFO, 1);
         sendLuftdaten(data, 7 , HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SHT3X_");
 
     };
