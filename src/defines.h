@@ -39,7 +39,7 @@ extern String tmpl(const String& patt, const String& value);
 #define URL_MADAVI "/data.php"
 #define PORT_MADAVI 80
 
-#define HOST_DUSTI "api.luftdaten.info"
+#define HOST_DUSTI "api.sensor.community"
 #define URL_DUSTI "/v1/push-sensor-data/"
 #define PORT_DUSTI 80
 
