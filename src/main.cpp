@@ -1061,7 +1061,7 @@ void loop() {
 	server.handleClient();
 
 	if (send_now) {
-        debugData(String(F("****************** Upload data to APIs*****************************")));
+        debug_out(String(F("****************** Upload data to APIs*****************************")),DEBUG_MED_INFO);
         if (cfg::dht_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)

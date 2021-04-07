@@ -116,8 +116,8 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     } else {
         debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
     }
-    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
-    debugData(data,F("sendLuftdaten data out:"));
+//    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
+//    debugData(data,F("sendLuftdaten data out:"));
 }
 
 /*****************************************************************

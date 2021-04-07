@@ -11,7 +11,7 @@
 
 int32_t calcWiFiSignalQuality(int32_t rssi);
 
-void debug_out(const String& text, const int level, const bool linebreak);
+void debug_out(const String& text, const int level, const bool linebreak = true);
 
 //declarations for changing .ino to .cpp
 String Float2String(const double value, uint8_t digits);
@@ -56,7 +56,4 @@ void collectMemStats();
 void dumpCurrentMemStats();
 void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
-void debugData(const String&, const String&, byte logLevel = DEBUG_MIN_INFO);
-void debugData(const String&, const char * ="", byte logLevel = DEBUG_MIN_INFO);
-void debugData(const String&, const __FlashStringHelper *, byte logLevel = DEBUG_MIN_INFO);
 #endif //NAMF_HELPERS_H
