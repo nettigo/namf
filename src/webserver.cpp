@@ -965,6 +965,14 @@ void webserver_reset() {
         page_content.replace("{b}", FPSTR(INTL_RESTART));
         page_content.replace("{c}", FPSTR(INTL_CANCEL));
     } else {
+        String page_content = make_header(FPSTR(INTL_SENSOR_IS_REBOOTING));
+        page_content += F("<p>");
+        page_content += FPSTR(INTL_SENSOR_IS_REBOOTING_NOW);
+        page_content += F("</p>");
+        page_content += make_footer();
+        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+        debug_out(F("restarting..."), DEBUG_MIN_INFO, 1);
+        delay(300);
         ESP.restart();
     }
     page_content += make_footer();
