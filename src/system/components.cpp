@@ -50,12 +50,13 @@ namespace SimpleScheduler {
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
         MHZ14A::resultsAsHTML(res);
-        NetworkWatchdog::resultsAsHTML(res);
     }
 
     //collect sensors status
     void getStatusReport(String &res){
         SDS011::getStatusReport(res);
+        NetworkWatchdog::resultsAsHTML(res);
+
     }
 
     //prepare forms with configuration
