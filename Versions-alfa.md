@@ -2,6 +2,11 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-37a8
+
+* drop old display for SDS (HTML on /values page)
+* Network Watchdog reports state on /status not /values
+
 ### NAMF-2020-37a7
 
 * respect send to SC setting in new scheduler
