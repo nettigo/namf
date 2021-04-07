@@ -46,6 +46,7 @@ namespace SimpleScheduler {
 
     //collect HTML table with current results
     void getResultsAsHTML(String &res) {
+        SDS011::resultsAsHTML(res);
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
         MHZ14A::resultsAsHTML(res);
