@@ -32,7 +32,7 @@
 #include "display/ledbar.h"
 
 SimpleScheduler::NAMFScheduler scheduler;
-
+unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS;
 
 /*****************************************************************
  * send Plantower PMS sensor command start, stop, cont. mode     *
@@ -888,6 +888,19 @@ void setup() {
     init_lcd();
 
     powerOnTestSensors();
+
+    //set update check interval
+
+    switch (cfg::update_channel) {
+        case UPDATE_CHANNEL_ALFA:
+            PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 3600 * 1000;
+            break;
+        case UPDATE_CHANNEL_BETA:
+            PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 3 * 3600 * 1000;
+        default:
+            PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = ONE_DAY_IN_MS;
+    }
+
 
     setup_webserver();
     display_debug(F("Connecting to"), String(cfg::wlanssid));
