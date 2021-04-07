@@ -642,24 +642,25 @@ String millisToTime(const unsigned long time) {
     return tmp;
 
 }
-void debugData(const String &d, const __FlashStringHelper  *msg) {
+void debugData(const String &d, const __FlashStringHelper *msg, byte logLevel) {
     PGM_P p = reinterpret_cast<PGM_P>(msg);
-    debugData(d,p);
+    debugData(d,p,logLevel);
 }
-void debugData(const String&d, const String&m){
-    debugData(d,m.c_str());
+void debugData(const String&d, const String&m, byte logLevel){
+    debugData(d,m.c_str(), logLevel);
 }
-void debugData(const String &d, const char *msg){
-    Serial.print(F("\n****["));
-    time_t now = time(nullptr);
-    String tmp=(ctime(&now));
-    tmp.trim();
-    Serial.print(tmp);
-    Serial.print(F("]**** "));
-    Serial.print(msg);
-    if (d.endsWith("\n")) {
-        Serial.print(d);
-    } else {
-        Serial.println(d);
-    }
-}
+void debugData(const String &d, const char *msg, byte logLevel ){
+    if (logLevel <= cfg::debug) {
+        Serial.print(F("\n****["));
+        time_t now = time(nullptr);
+        String tmp = (ctime(&now));
+        tmp.trim();
+        Serial.print(tmp);
+        Serial.print(F("]**** "));
+        Serial.print(msg);
+        if (d.endsWith("\n")) {
+            Serial.print(d);
+        } else {
+            Serial.println(d);
+        }
+    }}

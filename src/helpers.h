@@ -6,6 +6,7 @@
 #define NAMF_HELPERS_H
 #include "Arduino.h"
 #include <ArduinoJson.h>
+#include "variables.h"
 #include <FS.h>                     // must be first
 
 int32_t calcWiFiSignalQuality(int32_t rssi);
@@ -55,7 +56,7 @@ void collectMemStats();
 void dumpCurrentMemStats();
 void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
-void debugData(const String&, const String&);
-void debugData(const String&, const char * ="");
-void debugData(const String&, const __FlashStringHelper *);
+void debugData(const String&, const String&, byte logLevel = DEBUG_MIN_INFO);
+void debugData(const String&, const char * ="", byte logLevel = DEBUG_MIN_INFO);
+void debugData(const String&, const __FlashStringHelper *, byte logLevel = DEBUG_MIN_INFO);
 #endif //NAMF_HELPERS_H
