@@ -379,7 +379,7 @@ void webserver_config() {
 
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("\n<b>APIs</b><br/>");
-            page_content += form_checkbox("send2dusti", F("API Luftdaten.info"), send2dusti, false);
+            page_content += form_checkbox("send2dusti", F("API Sensor Community"), send2dusti, false);
             page_content += F("&nbsp;&nbsp;(");
             page_content += form_checkbox("ssl_dusti", F("HTTPS"), ssl_dusti, false);
             page_content += F(")<br/>");
