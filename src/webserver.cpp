@@ -73,7 +73,8 @@ void getTimeHeadings(String &page_content){
 
 void webserver_not_found() {
     last_page_load = millis();
-    debug_out(F("output not found page..."), DEBUG_MIN_INFO, 1);
+    debug_out(F("output not found page: "), DEBUG_MIN_INFO, 0);
+    debug_out(server.uri(),DEBUG_MIN_INFO);
     if (WiFi.status() != WL_CONNECTED) {
         if ((server.uri().indexOf(F("success.html")) != -1) || (server.uri().indexOf(F("detect.html")) != -1)) {
             server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), FPSTR(WEB_IOS_REDIRECT));
