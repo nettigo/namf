@@ -811,11 +811,6 @@ void webserver_values() {
 
         page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
         page_content += tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE));
-        if (cfg::sds_read) {
-            page_content += FPSTR(EMPTY_ROW);
-            page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5", check_display_value(last_value_SDS_P2, -1, 1, 0), unit_PM);
-            page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM10", check_display_value(last_value_SDS_P1, -1, 1, 0), unit_PM);
-        }
         if (cfg::pms_read) {
             page_content += FPSTR(EMPTY_ROW);
             page_content += table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0), unit_PM);

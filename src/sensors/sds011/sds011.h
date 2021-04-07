@@ -42,6 +42,8 @@ namespace SDS011 {
 
     String getConfigHTML(void);
 
+    void resultsAsHTML(String &page_content);
+
     void results(String &res);
 
     void sendToLD();

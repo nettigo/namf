@@ -360,6 +360,13 @@ namespace SDS011 {
         return ret;
     }
 
+    void resultsAsHTML(String &page_content) {
+        page_content += FPSTR(EMPTY_ROW);
+        page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5",
+                                             check_display_value(last_value_SDS_P2, -1, 1, 0), F("µg/m³"));
+        page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM10",
+                                             check_display_value(last_value_SDS_P1, -1, 1, 0), F("µg/m³"));
+    }
 
     /*****************************************************************
      * read SDS011 sensor serial and firmware date                   *
