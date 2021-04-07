@@ -82,7 +82,7 @@ const char WEB_REMOVE_CONFIG_CONTENT[] PROGMEM = "<h3>{t}</h3>\
 ";
 
 const char WEB_RESET_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action'/reset'><input type='submit' class='s_red' name='submit' value='&#128260; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action='/reset'><input type='submit' class='s_red' name='submit' value='&#128260; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_IOS_REDIRECT[] PROGMEM = "<html><body>Redirecting...\
