@@ -5,6 +5,7 @@ This is list of test/experiment firmwares. If You need to see what have changed 
 ### NAMF-2020-37a9
 
 * nice confirmation page on device restart
+* SDS displays on LCD (not on OLED)
 
 ### NAMF-2020-37a8
 
