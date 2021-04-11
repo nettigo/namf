@@ -2,6 +2,10 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-37a9
+
+* nice confirmation page on device restart
+
 ### NAMF-2020-37a8
 
 * drop old display for SDS (HTML on /values page)
