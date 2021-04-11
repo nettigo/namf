@@ -72,12 +72,6 @@ void display_values() {
         pm25_value = last_value_PMS_P2;
         pm25_sensor = FPSTR(SENSORS_PMSx003);
     }
-    if (cfg::sds_read) {
-        pm10_value = last_value_SDS_P1;
-        pm10_sensor = FPSTR(SENSORS_SDS011);
-        pm25_value = last_value_SDS_P2;
-        pm25_sensor = FPSTR(SENSORS_SDS011);
-    }
     if (cfg::dht_read) {
         t_value = last_value_DHT_T;
         t_sensor = FPSTR(SENSORS_DHT22);
@@ -112,7 +106,7 @@ void display_values() {
         alt_value = last_value_GPS_alt;
         gps_sensor = "NEO6M";
     }
-    if (cfg::pms_read || cfg::sds_read) {
+    if (cfg::pms_read) {
         screens[static_screen_count++] = DisplayPages::PagePM;
     }
     if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
