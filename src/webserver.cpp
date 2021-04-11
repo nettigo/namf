@@ -979,6 +979,21 @@ void webserver_reset() {
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
+
+//dump internals on Serial
+void webserver_dump_status(){
+    Serial.println(F("SimpleScheduler table:"));
+    scheduler.dumpTable();
+
+    String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
+    page_content += F("<p>Internal status data dumped to serial</p>");
+    page_content += make_footer();
+
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+
+}
+
+
 /********************************
  *
  * Display status page
@@ -1137,6 +1152,7 @@ void setup_webserver() {
     server.on(F("/images"), webserver_images);
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
+    server.on(F("/dump"), webserver_dump_status);
     server.onNotFound(webserver_not_found);
 
     debug_out(F("Starting Webserver... "), DEBUG_MIN_INFO, 0);
