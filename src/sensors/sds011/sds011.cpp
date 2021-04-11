@@ -138,7 +138,6 @@ namespace SDS011 {
         ret[F("d")] = printOnLCD;
         ret[F("w")] = warmupTime;
         ret[F("r")] = readTime;
-        ret.printTo(Serial);
         return ret;
 
 
@@ -150,6 +149,21 @@ namespace SDS011 {
 
     bool display(LiquidCrystal_I2C *lcd, byte minor) {
         if (lcd == NULL) return true;   //we are able to do display
+        byte row = 0;
+        lcd->clear();
+        if (getLCDRows() == 4) {
+            lcd->setCursor(0,row++);
+            lcd->print(FPSTR(INTL_SDS011_LCD_HDR));
+        }
+        lcd->setCursor(0,row++);
+        lcd->print(F("PM2.5:"));
+        lcd->print(check_display_value(last_value_SDS_P2, -1, 1, 6));
+//        lcd->print(F(" µg/m³"));
+        lcd->setCursor(0,row++);
+        lcd->print(F("PM10: "));
+        lcd->print(check_display_value(last_value_SDS_P1, -1, 1, 6));
+//        lcd->print(F(" µg/m³"));
+
         return false;
     };
 
@@ -163,6 +177,8 @@ namespace SDS011 {
     };
 
     void readConfigJSON(JsonObject &json) {
+        Serial.println("SDS readConfigJson");
+        json.printTo(Serial);
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
         if (json.containsKey(F("r"))) {
@@ -172,6 +188,7 @@ namespace SDS011 {
             warmupTime = json.get<unsigned long>(F("w"));
         }
 
+        //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::SDS011)) {
             scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
             scheduler.init(SimpleScheduler::SDS011);
@@ -181,6 +198,8 @@ namespace SDS011 {
             debug_out(F("SDS011: stop"), DEBUG_MIN_INFO, 1);
             scheduler.unregisterSensor(SimpleScheduler::SDS011);
         }
+        //register display - separate check to allow enable/disable display not only when turning SDS011 on/off
+        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::SDS011, 1);
     }
 
     void startSDS() {

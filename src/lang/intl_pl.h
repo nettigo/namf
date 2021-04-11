@@ -114,14 +114,15 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_SAVE_AND_RESTART[] PROGMEM = "Zapisz i zrestartuj";
 /* ./src/lang/intl_pl.lang */ const char INTL_SDS011[] PROGMEM = "SDS011 ({pm})";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_DESC[] PROGMEM = "   SDS011 - Czujnik PM2.5/PM10";
+/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_LCD_HDR[] PROGMEM = "SDS011 wartosci:";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "   Czas, w którym jest dokonywany pomiar (ms)";
-/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "   Czas pracy przed rozpoczęciem pomiary (ms)";
+/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "   Czas pracy przed rozpoczęciem pomiaru (ms)";
 /* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO[] PROGMEM = "Wysyłaj dane do {v}";
 /* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Wysyłaj dane do własnego API";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR[] PROGMEM = "Czujnik";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSORS[] PROGMEM = "Sensory";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Ponowne uruchamianie czujnika.";
-/* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Trwa restart urządzenia... Za kilka sekund kliknij przycisk poniżej.";
+/* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Trwa restart urządzenia... Za kilkanaście sekund kliknij przycisk poniżej.";
 /* ./src/lang/intl_pl.lang */ const char INTL_SERVER[] PROGMEM = "Adres serwera";
 /* ./src/lang/intl_pl.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Pokaż status WiFi na LCD";
 /* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - czujnik temperatury i wilgotności";

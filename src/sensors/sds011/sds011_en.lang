@@ -1,3 +1,4 @@
 INTL_SDS011_DESC    SDS011 - PM2.5/PM10 sensor
 INTL_SDS011_READTIME    Measurement time (ms)
 INTL_SDS011_WARMUP    Warmup time before measurement (ms)
+INTL_SDS011_LCD_HDR SDS011 readings:
