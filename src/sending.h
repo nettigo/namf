@@ -13,7 +13,7 @@
 #include "html-content.h"
 #include "system/debug.h"
 #include "variables.h"
-
+#include "sensors/sds011/sds011.h"  //debugging SDS and sending data to InfluxDB
 
 #include <ESP8266WiFi.h>
 #if defined(ESP8266)
