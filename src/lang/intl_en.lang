@@ -1,3 +1,6 @@
+INTL_NTP_TIME   Time from NTP
+INTL_NTP_TIME_NOT_ACC   Not set
+INTL_I2C_BUS    On I2C bus
 INTL_STATUS_PAGE Sensor status
 INTL_UPDATE_ALFA alfa (experimental fw, do not use unless You can recover sensor)
 INTL_UPDATE_BETA beta (stability testing for new features)

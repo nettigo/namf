@@ -1,3 +1,6 @@
+INTL_NTP_TIME   Czas z NTP
+INTL_NTP_TIME_NOT_ACC   Nie ustawione
+INTL_I2C_BUS    Na szynie I2C
 INTL_STATUS_PAGE Status sensora
 INTL_UPDATE_ALFA alfa (eksperymentalne firmware)
 INTL_UPDATE_BETA beta (testowanie stabilności nowych rozwiązań)

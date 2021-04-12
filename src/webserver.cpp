@@ -996,25 +996,32 @@ void webserver_status_page(void) {
     page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
     page_content += FPSTR(EMPTY_ROW);
     String I2Clist = F("");
-    for(uint8_t addr = 0x07; addr <= 0x7F; addr++ )
-    {
+    for (uint8_t addr = 0x07; addr <= 0x7F; addr++) {
         // Address the device
         Wire.beginTransmission(addr);
         if (Wire.endTransmission() == 0) {
-            I2Clist += String(addr,16);
+            I2Clist += String(addr, 16);
             I2Clist += F(", ");
         }
     }
-    page_content += table_row_from_value(F("I2C"), F("Na szynie I2C"), I2Clist, F(""));
+    page_content += table_row_from_value(F("I2C"), FPSTR(INTL_I2C_BUS), I2Clist, F(""));
 
 
     // Check for ACK (detection of device), NACK or error
     page_content += FPSTR(EMPTY_ROW);
-    page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
+    if (sntp_time_is_set) {
+        time_t now = time(nullptr);
+        String tmp = (ctime(&now));
+        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), tmp, F(""));
+    } else {
+        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), FPSTR(INTL_NTP_TIME_NOT_ACC),
+                                             F(""));
+    }
+    page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH), String(WiFi.RSSI()), "dBm");
     page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
     page_content += FPSTR(EMPTY_ROW);
-    page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
-    page_content += table_row_from_value(F("NAM"),F("Uptime"), millisToTime(millis()),"");
+    page_content += table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), "");
+    page_content += table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), "");
     page_content += FPSTR(EMPTY_ROW);
 //    page_content += table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,"");
     page_content += table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,"");
