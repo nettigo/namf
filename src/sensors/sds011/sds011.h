@@ -18,8 +18,10 @@ namespace SDS011 {
 
     void readSingleSDSPacket(int *pm10_serial, int *pm25_serial);
 
+    extern bool enabled;
 
-/*****************************************************************
+
+    /*****************************************************************
  * send SDS011 command (start, stop, continuous mode, version    *
  *****************************************************************/
     void SDS_rawcmd(const uint8_t cmd_head1, const uint8_t cmd_head2, const uint8_t cmd_head3);
