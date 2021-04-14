@@ -64,13 +64,7 @@ namespace NetworkWatchdog {
         } else {
             configured = false;
         }
-        if (enabled && !scheduler.isRegistered(SimpleScheduler::NTW_WTD)) {
-            scheduler.registerSensor(SimpleScheduler::NTW_WTD, NetworkWatchdog::process, FPSTR(KEY));
-            scheduler.init(SimpleScheduler::NTW_WTD);
-
-        } else if (scheduler.isRegistered(SimpleScheduler::NTW_WTD)) {
-            scheduler.unregisterSensor(SimpleScheduler::NTW_WTD);
-        }
+        scheduler.enableSubsystem(SimpleScheduler::NTW_WTD, enabled, NetworkWatchdog::process, FPSTR(KEY));
     }
 
     void resultsAsHTML(String &page_content) {
