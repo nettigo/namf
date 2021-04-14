@@ -1026,6 +1026,9 @@ void webserver_status_page(void) {
 //    page_content += table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,"");
     page_content += table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,"");
     page_content += table_row_from_value(F("NAMF"),F("Free slots"), String(scheduler.freeSlots()) ,"");
+
+    page_content += table_row_from_value(F("NAMF"),F("Sensors"), scheduler.registeredNames() ,"");
+
     page_content += FPSTR(EMPTY_ROW);
     page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
