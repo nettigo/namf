@@ -73,7 +73,9 @@ namespace SimpleScheduler {
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
-            templ += F("{body}<input type='submit' value='zapisz'/></form>\n");
+            templ += F("{body}<input type='submit' value='");
+            templ += INTL_SAVE;
+            templ += F("'/></form>\n");
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
             page += templ;
