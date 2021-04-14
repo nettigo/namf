@@ -1,4 +1,4 @@
-NAMF-2020-37rc4
+NAMF-2020-37rc4 (2021-04-14)
 - send to influx hostname (fs_ssid) 
 
 NAMF-2020-37rc3 (2021-03-30)
