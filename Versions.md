@@ -1,3 +1,8 @@
+NAMF-2020-37rc5 (2021-04-15)
+* better translation on config page (new scheduler)
+* use subsytem names on /status pages
+* fixed Network Watchdog - do not toggle status when saving config on enabled WTD
+
 NAMF-2020-37rc4 (2021-04-14)
 - send to influx hostname (fs_ssid) 
 
