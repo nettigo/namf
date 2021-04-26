@@ -1,3 +1,7 @@
+NAMF-2020-37 (2021-04-27)
+
+* Merged all beta releases (37rcX)
+
 NAMF-2020-37rc5 (2021-04-15)
 * better translation on config page (new scheduler)
 * use subsytem names on /status pages
