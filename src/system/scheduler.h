@@ -21,6 +21,15 @@ namespace SimpleScheduler {
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
+    extern const char LET_0 [] PROGMEM;
+    extern const char LET_1 [] PROGMEM ;
+    extern const char LET_2 [] PROGMEM;
+    extern const char LET_3 [] PROGMEM;
+    extern const char LET_4 [] PROGMEM;
+    extern const char LET_5 [] PROGMEM;
+
+    extern const char *LET_NAMES[] PROGMEM;
+
     LoopEntryType operator++(LoopEntryType &entry, int);
 
     typedef enum {
@@ -82,10 +91,17 @@ namespace SimpleScheduler {
          * name - name of sensor/subsytem. Will be used to display configuration checkbox to enable/disable subsystem
          */
         int registerSensor(LoopEntryType slot, loopTimerFunc processF, const __FlashStringHelper *code);
-        int unregisterSensor(LoopEntryType slot);
+        void unregisterSensor(LoopEntryType slot);
 
         void enableSubsystem(LoopEntryType, bool, loopTimerFunc, const __FlashStringHelper *);
         bool isRegistered(LoopEntryType);
+
+        //how many slots for sensors is available in total
+        byte sensorSlots(void);
+        //how many free slots for
+        byte freeSlots(void);
+        //String with sensor names (codes)
+        String registeredNames();
 
         void getConfigForms(String &page);
         void getConfigJSON(LoopEntryType);

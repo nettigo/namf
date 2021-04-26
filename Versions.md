@@ -1,3 +1,30 @@
+NAMF-2020-37rc5 (2021-04-15)
+* better translation on config page (new scheduler)
+* use subsytem names on /status pages
+* fixed Network Watchdog - do not toggle status when saving config on enabled WTD
+
+NAMF-2020-37rc4 (2021-04-14)
+- send to influx hostname (fs_ssid) 
+
+NAMF-2020-37rc3 (2021-03-30)
+- when sending to Infux send also firmware version and update channel
+- if SDS is enabled always send result to influx. This will send -1 instead skipping reading - but **only** for influx. Other APIs won't get -1 (behavior won't change)
+- due to misconfiguration of build environment this release will use proper SoftwareSerial version (previous binaries were built against older version)
+
+NAMF-2020-37rc2 (2021-03-28)
+- support for NAM LED BAR with brightness regulation
+- status/debug info moved from /values to new page /status
+- dump seen I2C addresses on status page
+- NTP server is selected based on firmware language
+
+NAMF-2020-37rc1 (2021-03-22)
+- do not send wrong data when WINSEN MHZ14A is enabled, but not present
+- getting time from NTP fixed
+
+NAMF-2020-36 (2021-03-22)
+
+Merged NAMF-2020-36rc3 and previous
+
 NAMF-2020-36 (2021-03-22)
 Merged NAMF-2020-36rc3 and previous
 

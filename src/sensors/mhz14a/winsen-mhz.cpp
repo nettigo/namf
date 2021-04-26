@@ -87,6 +87,7 @@ namespace MHZ14A {
             lcd->print(last_value_WINSEN_CO2);
             lcd->print(F(" ppm"));
         }
+        return false;
     };
 
     bool getDisplaySetting() {
@@ -187,7 +188,7 @@ namespace MHZ14A {
         return false;
     }
 
-    static bool exchange_command(SoftwareSerial &sensor, uint8_t cmd, uint8_t data[], unsigned int timeout) {
+    bool exchange_command(SoftwareSerial &sensor, uint8_t cmd, uint8_t data[], unsigned int timeout) {
         // create command buffer
         uint8_t buf[9];
         int len = prepare_tx(cmd, data, buf, sizeof(buf));
@@ -210,7 +211,7 @@ namespace MHZ14A {
         return false;
     }
 
-    static bool set_range(SoftwareSerial &serial, range_t r) {
+    bool set_range(SoftwareSerial &serial, range_t r) {
         uint8_t data[6];
         uint8_t *p = data;
         switch (r) {
@@ -235,7 +236,7 @@ namespace MHZ14A {
     }
 
 
-    static bool read_temp_co2(SoftwareSerial &serial, unsigned int *co2, unsigned int *temp) {
+    bool read_temp_co2(SoftwareSerial &serial, unsigned int *co2, unsigned int *temp) {
         uint8_t data[] = {0, 0, 0, 0, 0, 0};
         bool result = exchange_command(serial, 0x86, data, 3000);
         if (result) {
@@ -254,11 +255,13 @@ namespace MHZ14A {
 
 #define WINSEN_AVG_SAMPLE   10
     unsigned int *samples = nullptr;
+    unsigned int samplesCount;
 
     void setupWinsenMHZ(SoftwareSerial &serial) {
         serial.begin(9600);
         set_range(serial, RANGE_2K);
         samples = new unsigned int[WINSEN_AVG_SAMPLE];
+        samplesCount = 0;
     }
 
     void readWinsenMHZ(SoftwareSerial &serial) {
@@ -276,10 +279,15 @@ namespace MHZ14A {
             } //else debug_out(String("**** NO read Winsen"), DEBUG_MIN_INFO, true);
     }
 
+    //reset counter after sending
+    void afterSend(bool status) {
+        samplesCount = 0;
+    }
+
     String sensorMHZ() {
         String s;
         unsigned long sum = 0;
-        if (!samples)
+        if (!samples || samplesCount == 0)
             return s;
         for (byte i = 0; i < WINSEN_AVG_SAMPLE; i++)
             sum += samples[i];

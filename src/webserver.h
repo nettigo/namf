@@ -93,4 +93,7 @@ void webserver_prometheus_endpoint();
  * Webserver setup                                               *
  *****************************************************************/
 void setup_webserver();
+
+void webserver_status_page();
+
 #endif //NAMF_WEBSERVER_H

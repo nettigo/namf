@@ -369,7 +369,7 @@ void writeConfig(){
     writeConfigRaw(json_string);
 }
 
-unsigned long  parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
+void parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
     if (server.hasArg(name)) {
         value = server.arg(name).toInt();
     }
@@ -379,21 +379,21 @@ void  parseHTTP(const __FlashStringHelper *name, byte &value ){
         value = server.arg(name).toInt();
     }
 };
-unsigned long  parseHTTP(const __FlashStringHelper *name, String &value ){
+void parseHTTP(const __FlashStringHelper *name, String &value ){
     value = F("");
     if (server.hasArg(name)) {
         value = server.arg(name);
     }
 };
 
-unsigned long  parseHTTP(const __FlashStringHelper *name, bool &value ){
+void parseHTTP(const __FlashStringHelper *name, bool &value ){
     value = false;
     if (server.hasArg(name)) {
         value = server.arg(name) == "1";
     }
 };
 
-unsigned long  parseHTTP(const String &name, bool &value ){
+void parseHTTP(const String &name, bool &value ){
     value = false;
     if (server.hasArg(name)) {
         value = server.arg(name) == "1";

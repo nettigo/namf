@@ -35,6 +35,7 @@ namespace SHT3x {
 
     String getConfigHTML() {
         String s = F("");
+        return s;
 
     }
 
@@ -75,21 +76,19 @@ namespace SHT3x {
                     return 0;
                 }
             case SimpleScheduler::RUN:
+            {
                 SHT31D result = sht30.periodicFetchData();
                 if (result.error == SHT3XD_NO_ERROR) {
-//                    Serial.print (F("SHT3x:   "));
-//                    Serial.print ((int) (result.t * 100));
-//                    Serial.print (F(", "));
-//                    Serial.println (result.rh);
-
                     temp += (int) (result.t * 100);
                     rh += (int) (result.rh * 10);
                     cnt++;
-//                    Serial.println(currentTemp());
                 }
                 return (15 * 1000);
+
+            }
+            default:
+                return 1000;
         }
-        return 1000;
     };
 
     void resultsAsHTML(String &page_content) {

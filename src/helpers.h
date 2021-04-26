@@ -32,10 +32,10 @@ String Var2Json(const String& name, const float value);
 String Var2Json(const String& name, const unsigned long value);
 //Nettigo NAM 0.3.2 factory firmware - test
 
-unsigned long parseHTTP(const __FlashStringHelper *, unsigned long & );
-unsigned long parseHTTP(const __FlashStringHelper *, bool & );
-unsigned long parseHTTP(const __FlashStringHelper *, String & );
-unsigned long parseHTTP(const String &name, bool &value );
+void parseHTTP(const __FlashStringHelper *, unsigned long & );
+void parseHTTP(const __FlashStringHelper *, bool & );
+void parseHTTP(const __FlashStringHelper *, String & );
+void parseHTTP(const String &name, bool &value );
 void parseHTTP(const __FlashStringHelper * , byte &value );
 
 void setBoolVariableFromHTTP(String const name, bool &v, byte i);

@@ -54,7 +54,6 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     http->setTimeout(20 * 1000);
     http->setUserAgent(String(SOFTWARE_VERSION) + "/" + esp_chipid());
     http->setReuse(false);
-    bool send_success = false;
     debug_out(String(host), DEBUG_MIN_INFO, 1);
     debug_out(String(httpPort), DEBUG_MIN_INFO, 1);
     debug_out(String(url), DEBUG_MIN_INFO, 1);
@@ -78,7 +77,6 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
             debug_out(F("Succeeded - "), DEBUG_MIN_INFO, 1);
-            send_success = true;
         } else {
             debug_out(F("Not succeeded "), DEBUG_MIN_INFO, 1);
         }
@@ -145,7 +143,31 @@ String create_influxdb_string(const String& data) {
     if (json2data.success()) {
         bool first_line = true;
         data_4_influxdb += F("feinstaub,node=esp8266-");
-        data_4_influxdb += esp_chipid() + " ";
+        data_4_influxdb += esp_chipid() + F(",");
+        data_4_influxdb += F("fw=");
+        data_4_influxdb += F(SOFTWARE_VERSION);
+        data_4_influxdb += F(",");
+        data_4_influxdb += F("hostname=");
+        data_4_influxdb += cfg::fs_ssid;
+        data_4_influxdb += F(",");
+        data_4_influxdb += F("chann=");
+        switch (cfg::update_channel) {
+            case UPDATE_CHANNEL_ALFA:
+                data_4_influxdb += F("alfa");
+                break;
+            case UPDATE_CHANNEL_BETA:
+                data_4_influxdb += F("beta");
+                break;
+            case UPDATE_CHANNEL_STABLE:
+                data_4_influxdb += F("stable");
+                break;
+            default:
+                data_4_influxdb += F("unknown");
+                break;
+
+
+        }
+        data_4_influxdb += F(" ");
         for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = "";
             if (first_line)
@@ -162,6 +184,13 @@ String create_influxdb_string(const String& data) {
             else
                 tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
             data_4_influxdb += tmp_str;
+        }
+        //send SDS values even if no value returned from SDS (debug missing readings)
+        if (cfg::sds_read && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
+            data_4_influxdb += F(",SDS_P1=");
+            data_4_influxdb += String(last_value_SDS_P1);
+            data_4_influxdb += F(",SDS_P2=");
+            data_4_influxdb += String(last_value_SDS_P2);
         }
         data_4_influxdb += F(",measurements=");
         data_4_influxdb += String(count_sends+1);

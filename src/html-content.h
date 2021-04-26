@@ -73,6 +73,7 @@ const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inl
 
 const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a><br/>\
 <a href='/config'>&#128295; {conf}</a><br/>\
+<a href='/status'>&#x1FA7A; {status}</a><br/>\
 <a href='/reset'>&#128260; {restart}</a><br/>\
 <table style='width:100%;'>\
 <tr><td colspan='3'>&#128027; <b>{debug_level}</b></td></tr>\

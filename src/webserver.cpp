@@ -136,6 +136,7 @@ void webserver_root() {
         page_content.replace("{t}", FPSTR(INTL_CURRENT_DATA));
         //page_content.replace(F("{map}"), FPSTR(INTL_ACTIVE_SENSORS_MAP));
         page_content.replace(F("{conf}"), FPSTR(INTL_CONFIGURATION));
+        page_content.replace(F("{status}"), FPSTR(INTL_STATUS_PAGE));
         page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
         page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
         page_content.replace(F("{debug_level}"), FPSTR(INTL_DEBUG_LEVEL));
@@ -158,12 +159,27 @@ String make_header(const String& title) {
     String s = FPSTR(WEB_PAGE_HEADER);
     s.replace("{tt}", FPSTR(INTL_PM_SENSOR));
     s.replace("{h}", FPSTR(INTL_HOME));
-    if(title != " ") {
+    if (title != " ") {
         s.replace("{n}", F("&raquo;"));
     } else {
         s.replace("{n}", "");
     }
-    String v = String(SOFTWARE_VERSION);
+    String v = F("<a href=\"https://github.com/nettigo/namf/blob/");
+    switch (cfg::update_channel) {
+        case UPDATE_CHANNEL_STABLE:
+            v += F("master/Versions.md");
+            break;
+        case UPDATE_CHANNEL_BETA:
+            v += F("beta/Versions.md");
+            break;
+        case UPDATE_CHANNEL_ALFA:
+            v += F("new_sds011/Versions-alfa.md");
+            break;
+    }
+    v += F("\">");
+    v += String(SOFTWARE_VERSION);
+    v += F("</a>");
+
 #ifdef BUILD_TIME
     v+="(";
     char timestamp[16];
@@ -780,7 +796,6 @@ void webserver_values() {
         const String unit_P = "hPa";
         last_page_load = millis();
 
-        const int signal_quality = calcWiFiSignalQuality(WiFi.RSSI());
         debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
         if (first_cycle) {
             page_content += F("<b style='color:red'>");
@@ -839,30 +854,9 @@ void webserver_values() {
         SimpleScheduler::getResultsAsHTML(page_content);
 
         page_content += FPSTR(EMPTY_ROW);
-        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH),  String(WiFi.RSSI()), "dBm");
-        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
-        page_content += FPSTR(EMPTY_ROW);
         page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
         page_content += table_row_from_value(F("NAM"),F("Uptime"), millisToTime(millis()),"");
-        page_content += FPSTR(EMPTY_ROW);
-        page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
-        String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
-        page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B");
-        tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
-        page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), tmp,"%");
-        tmp = String(memoryStatsMin.freeContStack) + String("/") + String(memoryStatsMax.freeContStack);
-        page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B");
-        tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
-        page_content += table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B");
-        page_content += table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),"");
-        page_content += table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),"");
-        page_content += table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz");
-        page_content += table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),"");
-        page_content += FPSTR(EMPTY_ROW);
-        page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
-        page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
-        page_content += FPSTR(TABLE_TAG_CLOSE_BR);
-        page_content += make_footer();
+
         server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
     }
 }
@@ -940,9 +934,9 @@ void webserver_removeConfig() {
         page_content.replace("{c}", FPSTR(INTL_CANCEL));
 
     } else {
-        if (SPIFFS.exists("/config.json")) {	//file exists
+        if (SPIFFS.exists(F("/config.json"))) {	//file exists
             debug_out(F("removing config.json..."), DEBUG_MIN_INFO, 1);
-            if (SPIFFS.remove("/config.json")) {
+            if (SPIFFS.remove(F("/config.json"))) {
                 page_content += tmpl(message_string, FPSTR(INTL_CONFIG_DELETED));
             } else {
                 page_content += tmpl(message_string, FPSTR(INTL_CONFIG_CAN_NOT_BE_DELETED));
@@ -975,6 +969,89 @@ void webserver_reset() {
     }
     page_content += make_footer();
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+}
+
+/********************************
+ *
+ * Display status page
+ *
+ *********************************/
+void webserver_status_page(void) {
+    if (!webserver_request_auth()) { return; }
+
+    const int signal_quality = calcWiFiSignalQuality(WiFi.RSSI());
+
+    debug_out(F("output status page"), DEBUG_MIN_INFO, 1);
+    unsigned long start = millis();
+
+    String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
+    page_content.reserve(10000);
+    if (first_cycle) {
+        page_content += F("<b style='color:red'>");
+        page_content += warning_first_cycle();
+        page_content += F("</b><br/><br/>");
+    } else {
+        page_content += age_last_values();
+    }
+    page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
+    page_content += FPSTR(EMPTY_ROW);
+    String I2Clist = F("");
+    for (uint8_t addr = 0x07; addr <= 0x7F; addr++) {
+        // Address the device
+        Wire.beginTransmission(addr);
+        if (Wire.endTransmission() == 0) {
+            I2Clist += String(addr, 16);
+            I2Clist += F(", ");
+        }
+    }
+    page_content += table_row_from_value(F("I2C"), FPSTR(INTL_I2C_BUS), I2Clist, F(""));
+
+
+    // Check for ACK (detection of device), NACK or error
+    page_content += FPSTR(EMPTY_ROW);
+    if (sntp_time_is_set) {
+        time_t now = time(nullptr);
+        String tmp = (ctime(&now));
+        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), tmp, F(""));
+    } else {
+        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), FPSTR(INTL_NTP_TIME_NOT_ACC),
+                                             F(""));
+    }
+    page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH), String(WiFi.RSSI()), "dBm");
+    page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
+    page_content += FPSTR(EMPTY_ROW);
+    page_content += table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), "");
+    page_content += table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), "");
+    page_content += FPSTR(EMPTY_ROW);
+//    page_content += table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,"");
+    page_content += table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,"");
+    page_content += table_row_from_value(F("NAMF"),F("Free slots"), String(scheduler.freeSlots()) ,"");
+
+    page_content += table_row_from_value(F("NAMF"),F("Sensors"), scheduler.registeredNames() ,"");
+
+    page_content += FPSTR(EMPTY_ROW);
+    page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
+    String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
+    page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B");
+    tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
+    page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), tmp,"%");
+    tmp = String(memoryStatsMin.freeContStack) + String("/") + String(memoryStatsMax.freeContStack);
+    page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B");
+    tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
+    page_content += table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B");
+    page_content += table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),"");
+    page_content += table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),"");
+    page_content += table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz");
+    page_content += table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),"");
+    page_content += FPSTR(EMPTY_ROW);
+    page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
+    page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
+    page_content += FPSTR(TABLE_TAG_CLOSE_BR);
+    page_content += make_footer();
+    debug_out(F("page generated in: "), DEBUG_MIN_INFO, 0);
+    debug_out(String(millis()-start), DEBUG_MIN_INFO, 1);
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+
 }
 
 /*****************************************************************
@@ -1052,22 +1129,23 @@ void webserver_prometheus_endpoint() {
  * Webserver setup                                               *
  *****************************************************************/
 void setup_webserver() {
-    server.on("/", webserver_root);
-    server.on("/config", webserver_config);
-    server.on("/simple_config", webserver_simple_config);
-    server.on("/config.json", HTTP_GET, webserver_config_json);
-    server.on("/configSave.json", webserver_config_json_save);
-    server.on("/forceUpdate", webserver_config_force_update);
-    server.on("/wifi", webserver_wifi);
-    server.on("/values", webserver_values);
-    server.on("/debug", webserver_debug_level);
-    server.on("/ota", webserver_enable_ota);
-    server.on("/removeConfig", webserver_removeConfig);
-    server.on("/reset", webserver_reset);
-    server.on("/data.json", webserver_data_json);
-    server.on("/metrics", webserver_prometheus_endpoint);
-    server.on("/images", webserver_images);
-    server.on("/stack_dump", webserver_dump_stack);
+    server.on(F("/"), webserver_root);
+    server.on(F("/config"), webserver_config);
+    server.on(F("/simple_config"), webserver_simple_config);
+    server.on(F("/config.json"), HTTP_GET, webserver_config_json);
+    server.on(F("/configSave.json"), webserver_config_json_save);
+    server.on(F("/forceUpdate"), webserver_config_force_update);
+    server.on(F("/wifi"), webserver_wifi);
+    server.on(F("/values"), webserver_values);
+    server.on(F("/debug"), webserver_debug_level);
+    server.on(F("/ota"), webserver_enable_ota);
+    server.on(F("/removeConfig"), webserver_removeConfig);
+    server.on(F("/reset"), webserver_reset);
+    server.on(F("/data.json"), webserver_data_json);
+    server.on(F("/metrics"), webserver_prometheus_endpoint);
+    server.on(F("/images"), webserver_images);
+    server.on(F("/stack_dump"), webserver_dump_stack);
+    server.on(F("/status"), webserver_status_page);
     server.onNotFound(webserver_not_found);
 
     debug_out(F("Starting Webserver... "), DEBUG_MIN_INFO, 0);

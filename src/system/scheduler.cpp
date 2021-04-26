@@ -8,6 +8,17 @@
 
 
 namespace SimpleScheduler {
+    const char LET_0 [] PROGMEM = "EMPTY";
+    const char LET_1 [] PROGMEM = "SPS30";
+    const char LET_2 [] PROGMEM = "NTW_WTD";
+    const char LET_3 [] PROGMEM = "SHT3x";
+    const char LET_4 [] PROGMEM = "MHZ14A";
+    const char LET_5 [] PROGMEM = "SIZE";
+
+    const char *LET_NAMES[] PROGMEM = {
+            LET_0, LET_1, LET_2, LET_3, LET_4, LET_5
+    };
+
     unsigned long nullF(LoopEventType event) { return 0; }
 
 
@@ -73,7 +84,9 @@ namespace SimpleScheduler {
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
-            templ += F("{body}<input type='submit' value='zapisz'/></form>\n");
+            templ += F("{body}<input type='submit' value='");
+            templ += INTL_SAVE;
+            templ += F("'/></form>\n");
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
             page += templ;
@@ -82,12 +95,13 @@ namespace SimpleScheduler {
         page += F("</div>");
     }
 
-    int NAMFScheduler::unregisterSensor(LoopEntryType slot) {
+    void NAMFScheduler::unregisterSensor(LoopEntryType slot) {
         int i = findSlot(slot);
-        if (i < 0) return 0;
+        if (i < 0) return;
         loopSize--;
         _tasks[i].slotID = EMPTY;
         _tasks[i].process(STOP);
+        return;
 
     }
 
@@ -106,6 +120,29 @@ namespace SimpleScheduler {
     bool NAMFScheduler::isRegistered(LoopEntryType slot) {
         return findSlot(slot) >= 0;
     }
+
+    //how many slots for sensors is available in total
+    byte NAMFScheduler::sensorSlots(void) {
+        return SCHEDULER_SIZE;
+    };
+    //how many free slots for
+    byte NAMFScheduler::freeSlots(void){
+        return SCHEDULER_SIZE - loopSize;
+    };
+
+    String NAMFScheduler::registeredNames(){
+        String t = F("");
+
+        for (byte i=0; i< SCHEDULER_SIZE; i++) {
+            if (_tasks[i].slotID != EMPTY) {
+                t+= FPSTR(LET_NAMES[_tasks[i].slotID]);
+                t+= F(" ");
+            }
+        }
+        return t;
+
+    }
+
 
     //takes which screen to display and goes through list of all "display" sensor,
     //counting which one is current. *minor* returns which screen from singe sensor should
@@ -130,6 +167,7 @@ namespace SimpleScheduler {
         int i = findSlot(slot);
         if (i < 0) return -1;
         _tasks[i].hasDisplay = screens;
+        return 0;
     }
 
     //how many screens is being registered

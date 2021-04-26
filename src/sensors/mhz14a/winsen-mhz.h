@@ -44,15 +44,17 @@ namespace MHZ14A {
 
     int prepare_tx(uint8_t cmd, const uint8_t *data, uint8_t buffer[], int size);
 
-    static bool exchange_command(SoftwareSerial &, uint8_t cmd, uint8_t data[], unsigned int timeout);
+    bool exchange_command(SoftwareSerial &, uint8_t cmd, uint8_t data[], unsigned int timeout);
 
-    static bool set_range(SoftwareSerial &, range_t r);
+    bool set_range(SoftwareSerial &, range_t r);
 
-    static bool read_temp_co2(SoftwareSerial &, unsigned int *co2, unsigned int *temp);
+    bool read_temp_co2(SoftwareSerial &, unsigned int *co2, unsigned int *temp);
 
     void setupWinsenMHZ(SoftwareSerial &);
 
     void readWinsenMHZ(SoftwareSerial &);
+
+    void afterSend(bool);
 
     String sensorMHZ();
 }

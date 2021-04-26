@@ -66,6 +66,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
 /* ./src/lang/intl_en.lang */ const char INTL_HOME[] PROGMEM = "Home";
 /* ./src/lang/intl_en.lang */ const char INTL_HUMIDITY[] PROGMEM = "humidity";
+/* ./src/lang/intl_en.lang */ const char INTL_I2C_BUS[] PROGMEM = "   On I2C bus";
 /* ./src/lang/intl_en.lang */ const char INTL_LANG[] PROGMEM = "EN";
 /* ./src/lang/intl_en.lang */ const char INTL_LANGUAGE[] PROGMEM = "Language";
 /* ./src/lang/intl_en.lang */ const char INTL_LATITUDE[] PROGMEM = "Latitude";
@@ -89,6 +90,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_NETWORKS_FOUND[] PROGMEM = "Found Networks:";
 /* ./src/lang/intl_en.lang */ const char INTL_NONE[] PROGMEM = "off";
 /* ./src/lang/intl_en.lang */ const char INTL_NO_NETWORKS[] PROGMEM = "No WiFi Network Found";
+/* ./src/lang/intl_en.lang */ const char INTL_NTP_TIME[] PROGMEM = "  Time from NTP";
+/* ./src/lang/intl_en.lang */ const char INTL_NTP_TIME_NOT_ACC[] PROGMEM = "  Not set";
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_DESC[] PROGMEM = "Network watchdog - restart sensor in case lack of connectivity";
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "This is not proper IP";
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "Address to ping (IP)";
@@ -131,6 +134,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_REFRESH[] PROGMEM = "Pause between saving measurements";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - high precision particle matter sensor";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
+/* ./src/lang/intl_en.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Sensor status";
 /* ./src/lang/intl_en.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperature";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME[] PROGMEM = "Time";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " seconds since last measurement.";

@@ -90,7 +90,7 @@ void readConfig() {
 
 	if (SPIFFS.begin()) {
 		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
-		if (SPIFFS.exists("/config.json")) {
+		if (SPIFFS.exists(F("/config.json"))) {
 			//file exists, reading and loading
 			debug_out(F("reading config file..."), DEBUG_MIN_INFO, 1);
 			File configFile = SPIFFS.open("/config.json", "r");
@@ -848,9 +848,9 @@ static bool acquireNetworkTime() {
 	debug_out(F("Setting time using SNTP"), DEBUG_MIN_INFO, 1);
 	time_t now = time(nullptr);
 	debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-	debug_out(F("NTP.org:"),DEBUG_MIN_INFO,1);
+	debug_out(NTP_SERVER,DEBUG_MIN_INFO,1);
 	settimeofday_cb(time_is_set);
-	configTime(0, 0, "pool.ntp.org");
+	configTime("GMT", NTP_SERVER);
 	while (retryCount++ < 20) {
 		// later than 2000/01/01:00:00:00
 		if (sntp_time_is_set) {
