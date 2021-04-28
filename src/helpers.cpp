@@ -324,10 +324,15 @@ int readAndParseConfigFile(File configFile) {
 #undef setFromJSON
 #undef strcpyFromJSON
             //Sensor configs from simple scheduler
+            if (!json.containsKey(F("sensors")))
+                json.createNestedObject(F("sensors"));
             if (json.containsKey(F("sensors"))) {
                 JsonObject& item = json[F("sensors")];
                 if (cfg::sds_read) {
-                    item["SDS011"]["e"] = 1;
+                    if (!item.containsKey(F("SDS011"))) {
+                        item.createNestedObject(F("SDS011"));
+                    }
+                    item[F("SDS011")][F("e")] = 1;
                 }
                 SimpleScheduler::readConfigJSON(item);
             }
