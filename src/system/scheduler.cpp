@@ -85,7 +85,7 @@ namespace SimpleScheduler {
 
             s = SimpleScheduler::selectConfigForm(i);
             templ += F("{body}<input type='submit' value='");
-            templ += INTL_SAVE;
+            templ += FPSTR(INTL_SAVE);
             templ += F("'/></form>\n");
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
