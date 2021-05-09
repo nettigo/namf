@@ -26,22 +26,24 @@ body{font-family:Arial;margin:0;}\
 .spacer{padding:10px;}\
 .r{text-align:right;}\
 td{vertical-align:top;}\
+a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\
 a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
+a.plain:hover{background:inherit}\
 a:hover{background:#1A4};\
 .wifi{background:none;color:blue;padding:5px;display:inline;}\
 input[type='text']{width:100%;}\
 input[type='password']{width:100%;}\
 input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
-.s_red{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
-.s_red:hover {background:#E33;}\
-.s_orange{background:#F80;}\
-.s_orange:hover{background:#E70;}\
+.s_r{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
+.s_r:hover {background:#E33;}\
+.s_o{background:#F80;}\
+.s_o:hover{background:#E70;}\
 #ncf hr{margin:25px 10px;}\
 #ncf {max-width:800px;}\
 </style>\
 </head><body>\
 <div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
-<a href='/' style='background:none;width:0;display:inline'><img src='/images?name=luftdaten_logo' style='float:left;margin:20px'/></a>\
+<a href='/' style='background:none;width:0;display:inline'><img src='/images?n=l' style='float:left;margin:20px'/></a>\
 <h3 style='margin:0'>{tt}<br>{sname}</h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4>{h} {n} {t}</h4>";
 
@@ -69,7 +71,7 @@ const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a
 <td><a href='/debug?lvl=5'>{max_info}</a></td>\
 </tr>\
 </table>\
-<br/><a href='/removeConfig' class='s_orange'>&#128293; {conf_delete}</a><br/>\
+<br/><a href='/removeConfig' class='s_o'>&#128293; {conf_delete}</a><br/>\
 ";
 
 const char WEB_CONFIG_SCRIPT[] PROGMEM = "<script>\
@@ -78,11 +80,11 @@ function load_wifi_list(){var x=new XMLHttpRequest();x.open('GET','/wifi');x.onl
 </script>";
 
 const char WEB_REMOVE_CONFIG_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action='/removeConfig'><input type='submit' class='s_red' name='submit' value='&#128293; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action='/removeConfig'><input type='submit' class='s_r' name='submit' value='&#128293; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_RESET_CONTENT[] PROGMEM = "<h3>{t}</h3>\
-<table><tr><td><form method='POST' action='/reset'><input type='submit' class='s_red' name='submit' value='&#128260; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
+<table><tr><td><form method='POST' action='/reset'><input type='submit' class='s_r' name='submit' value='&#128260; {b}'/></form></td><td><a href='/'>{c}</a></td></tr></table>\
 ";
 
 const char WEB_IOS_REDIRECT[] PROGMEM = "<html><body>Redirecting...\

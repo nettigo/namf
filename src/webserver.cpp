@@ -88,7 +88,7 @@ void webserver_not_found() {
 
 
 void webserver_images() {
-    if (server.arg("name") == F("luftdaten_logo")) {
+    if (server.arg("n") == F("l")) {
 //		debug_out(F("output luftdaten.info logo..."), DEBUG_MAX_INFO, 1);
         server.send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
     } else {
@@ -174,7 +174,7 @@ String make_header(const String& title) {
     } else {
         s.replace("{n}", "");
     }
-    String v = F("<a href=\"https://github.com/nettigo/namf/blob/");
+    String v = F("<a class=\"plain\" href=\"https://github.com/nettigo/namf/blob/");
     switch (cfg::update_channel) {
         case UPDATE_CHANNEL_STABLE:
             v += F("master/Versions.md");
@@ -799,7 +799,9 @@ void webserver_values() {
     if (WiFi.status() != WL_CONNECTED) {
         sendHttpRedirect(server);
     } else {
-        String page_content = make_header(FPSTR(INTL_CURRENT_DATA));
+        String page_content;
+        page_content.reserve(5000);
+        page_content = make_header(FPSTR(INTL_CURRENT_DATA));
         const String unit_PM = "µg/m³";
         const String unit_T = "°C";
         const String unit_H = "%";
@@ -810,7 +812,7 @@ void webserver_values() {
         getTimeHeadings(page_content);
 
         if (cfg::send2madavi) {
-            String link(F("<a href=\"https://api-rrd.madavi.de/grafana/d/q87EBfWGk/temperature-humidity-pressure?orgId=1&var-chipID=esp8266-{id}\" target=\"_blank\">{n}</a>"));
+            String link(F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID=esp8266-{id}\" target=\"_blank\">{n}</a>"));
             link.replace(F("{id}"), esp_chipid());
             link.replace(F("{n}"), INTL_MADAVI_LINK);
             page_content += link;
