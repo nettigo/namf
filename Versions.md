@@ -1,3 +1,7 @@
+NAMF-2020-38rc1 ()
+
+* aim to finish SDS readings 2 sec before sending time - should not catch SDS during collecting data on sending time  
+
 NAMF-2020-37 (2021-04-27)
 
 * Merged all beta releases (37rcX)

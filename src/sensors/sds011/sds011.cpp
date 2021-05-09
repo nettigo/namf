@@ -259,12 +259,14 @@ namespace SDS011 {
     }
 
 #define STARTUP_TIME  5000
+//how many ms before read time reading cycle should be fished
+#define SDS011_END_TIME 2000
 
     //select proper state, depending on time left to
     unsigned long processState() {
         int pm25, pm10 = -1;
         unsigned long t = time2Measure();
-        if (t>1000) t -= 200;
+//        if (t>1000) t -= 200;
         switch (sensorState) {
             case POWERON:
                 updateState(STARTUP);
@@ -288,7 +290,7 @@ namespace SDS011 {
                 }
                 return 20;
             case OFF:
-                if (t < warmupTime + readTime)
+                if (t < warmupTime + readTime + SDS011_END_TIME)   //aim to finish 2 sec before readingTime
                     updateState(START);
                 return 10;
             case START:
@@ -296,7 +298,7 @@ namespace SDS011 {
                 updateState(WARMUP);
                 return 100;
             case WARMUP:
-                if (t < readTime)
+                if (t < readTime + SDS011_END_TIME)
                     updateState(READ);
                 return 10;
             case READ:
