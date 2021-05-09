@@ -34,7 +34,8 @@ namespace SimpleScheduler {
 
     void NAMFScheduler::process() {
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            if (_tasks[i].nextRun && _tasks[i].nextRun < millis()) {
+            //run if not EMPTY slot, has set nextRun and time has passed
+            if (_tasks[i].slotID && _tasks[i].nextRun && _tasks[i].nextRun < millis()) {
                 unsigned long nextRun = _tasks[i].process(RUN);
                 if (nextRun) {
                     _tasks[i].nextRun = millis() + nextRun;
