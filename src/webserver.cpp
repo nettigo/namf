@@ -809,6 +809,13 @@ void webserver_values() {
         debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
         getTimeHeadings(page_content);
 
+        if (cfg::send2madavi) {
+            String link(F("<a href=\"https://api-rrd.madavi.de/grafana/d/q87EBfWGk/temperature-humidity-pressure?orgId=1&var-chipID=esp8266-{id}\" target=\"_blank\">{n}</a>"));
+            link.replace(F("{id}"), esp_chipid());
+            link.replace(F("{n}"), INTL_MADAVI_LINK);
+            page_content += link;
+        }
+
         page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
         page_content += tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE));
         if (cfg::pms_read) {
