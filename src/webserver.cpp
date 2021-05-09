@@ -934,9 +934,9 @@ void webserver_removeConfig() {
         page_content.replace("{c}", FPSTR(INTL_CANCEL));
 
     } else {
-        if (SPIFFS.exists(F("/config.json"))) {	//file exists
+        if (SPIFFS.exists("/config.json")) {	//file exists
             debug_out(F("removing config.json..."), DEBUG_MIN_INFO, 1);
-            if (SPIFFS.remove(F("/config.json"))) {
+            if (SPIFFS.remove("/config.json")) {
                 page_content += tmpl(message_string, FPSTR(INTL_CONFIG_DELETED));
             } else {
                 page_content += tmpl(message_string, FPSTR(INTL_CONFIG_CAN_NOT_BE_DELETED));
