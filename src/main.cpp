@@ -857,7 +857,7 @@ static bool acquireNetworkTime() {
  *****************************************************************/
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
-    serialSDS.begin(9600);
+    serialSDS.begin(9600, SWSERIAL_8N1);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
 
