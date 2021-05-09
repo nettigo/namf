@@ -345,6 +345,8 @@ namespace SDS011 {
             sendLuftdaten(data, 1, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS_");
         } else {
             debug_out(F("SDS011 reading procedure not finished, not sending data."),DEBUG_MIN_INFO);
+            debug_out(String(stateChangeTime),DEBUG_MIN_INFO);
+            debug_out(String(sensorState),DEBUG_MIN_INFO);
         }
     }
 
