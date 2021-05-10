@@ -96,10 +96,6 @@ void display_values() {
         p_value = last_value_BME280_P;
         p_sensor = FPSTR(SENSORS_BME280);
     }
-    if (cfg::heca_read) {
-        t_hc_value = last_value_HECA_T;
-        h_hc_value = last_value_HECA_H;
-    }
     if (cfg::gps_read) {
         lat_value = last_value_GPS_lat;
         lon_value = last_value_GPS_lon;
@@ -111,9 +107,6 @@ void display_values() {
     }
     if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
         screens[static_screen_count++] = DisplayPages::PageTemp;
-    }
-    if (cfg::heca_read) {
-        screens[static_screen_count++] = DisplayPages::PageHECA;
     }
     if (cfg::gps_read) {
         screens[static_screen_count++] = DisplayPages::PageGPS;

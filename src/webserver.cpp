@@ -842,11 +842,6 @@ void webserver_values() {
             page_content += table_row_from_value(FPSTR(SENSORS_BME280), FPSTR(INTL_HUMIDITY), check_display_value(last_value_BME280_H, -1, 1, 0), unit_H);
             page_content += table_row_from_value(FPSTR(SENSORS_BME280), FPSTR(INTL_PRESSURE),  check_display_value(last_value_BME280_P / 100.0, (-1 / 100.0), 2, 0), unit_P);
         }
-        if (cfg::heca_read) {
-            page_content += FPSTR(EMPTY_ROW);
-            page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_HECA_T, -128, 1, 0), unit_T);
-            page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_HUMIDITY), check_display_value(last_value_HECA_H, -1, 1, 0), unit_H);
-        }
         if (cfg::ds18b20_read) {
             page_content += FPSTR(EMPTY_ROW);
             page_content += table_row_from_value(FPSTR(SENSORS_DS18B20), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DS18B20_T, -128, 1, 0), unit_T);
