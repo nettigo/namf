@@ -1,6 +1,10 @@
-NAMF-2020-38rc1 ()
+NAMF-2020-38rc1 (2021-05-10)
 
-* aim to finish SDS readings 2 sec before sending time - should not catch SDS during collecting data on sending time  
+* aim to finish SDS readings 2 sec before sending time - should not catch SDS during collecting data on sending time
+* log when procedure takes longer than 1s
+* use SoftwareSerial library bundled with Arduino Core
+* added uptime to data.json (in seconds)
+* on /values page there is a link to graphs for given sensor on madavi.de
 
 NAMF-2020-37 (2021-04-27)
 
