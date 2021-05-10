@@ -13,10 +13,11 @@ namespace SimpleScheduler {
     const char LET_2 [] PROGMEM = "NTW_WTD";
     const char LET_3 [] PROGMEM = "SHT3x";
     const char LET_4 [] PROGMEM = "MHZ14A";
-    const char LET_5 [] PROGMEM = "SIZE";
+    const char LET_5 [] PROGMEM = "HECA";
+    const char LET_SIZE [] PROGMEM = "SIZE";
 
     const char *LET_NAMES[] PROGMEM = {
-            LET_0, LET_1, LET_2, LET_3, LET_4, LET_5
+            LET_0, LET_1, LET_2, LET_3, LET_4, LET_5, LET_SIZE
     };
 
     unsigned long nullF(LoopEventType event) { return 0; }

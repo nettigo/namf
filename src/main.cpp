@@ -27,7 +27,6 @@
 #include "sensors/sds011/sds011.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
-#include "sensors/heca.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
 
@@ -746,11 +745,11 @@ static void powerOnTestSensors() {
 
 	if (cfg::heca_read) {
 		debug_out(F("Read HECA (SHT30)..."), DEBUG_MIN_INFO, 1);
-		if (!initHECA()) {
+		if (!HECA::initHECA()) {
 			debug_out(F("Check HECA (SHT30) wiring"), DEBUG_MIN_INFO, 1);
 			heca_init_failed = 1;
 		} else {
-		    sensorHECA();
+		    HECA::sensorHECA();
 		    debug_out(F("Temp: "),DEBUG_MIN_INFO,0);
 		    debug_out(String(last_value_HECA_T,2),DEBUG_MIN_INFO,1);
             debug_out(F("Hum: "),DEBUG_MIN_INFO,0);
@@ -1093,7 +1092,7 @@ void loop() {
 
 		if (cfg::heca_read && (! heca_init_failed)) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HECA), DEBUG_MAX_INFO, 1);
-			result_HECA = sensorHECA();                 // getting temperature, humidity and pressure (optional)
+			result_HECA = HECA::sensorHECA();                 // getting temperature, humidity and pressure (optional)
 		}
 
 		if (cfg::ds18b20_read) {
