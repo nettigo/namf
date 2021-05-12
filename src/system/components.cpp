@@ -120,6 +120,9 @@ namespace SimpleScheduler {
 
     void readConfigJSON(LoopEntryType sensor, JsonObject &json) {
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                HECA::readConfigJSON(json);
+                return;
             case SimpleScheduler::SDS011:
                 SDS011::readConfigJSON(json);
                 return;

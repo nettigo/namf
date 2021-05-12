@@ -25,6 +25,25 @@ namespace HECA {
         if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
         return ret;
     };
+
+    void readConfigJSON( JsonObject &json){
+        enabled = json.get<bool>(F("e"));
+        printOnLCD = json.get<bool>(F("d"));
+    };
+
+    unsigned long process(SimpleScheduler::LoopEventType e) {
+        switch (e) {
+            case SimpleScheduler::STOP:
+                initHECA();
+                break;
+            case SimpleScheduler::INIT:
+                break;
+            case SimpleScheduler::RUN:
+                break;
+
+
+        }
+    }
 /*****************************************************************
  * read HECA (SHT30) sensor values                                     *
  *****************************************************************/

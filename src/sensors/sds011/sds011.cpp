@@ -180,7 +180,7 @@ namespace SDS011 {
 
     void readConfigJSON(JsonObject &json) {
 //        Serial.println("SDS readConfigJson");
-        json.printTo(Serial);
+//        json.printTo(Serial);
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
         if (json.containsKey(F("r"))) {

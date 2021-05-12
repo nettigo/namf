@@ -22,6 +22,8 @@ namespace HECA {
     JsonObject& parseHTTPRequest();
 
     String getConfigJSON();
+    void readConfigJSON( JsonObject &json);
+    unsigned long process(SimpleScheduler::LoopEventType e);
 }
 
 #endif //NAMF_HECA_H
