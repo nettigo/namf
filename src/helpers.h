@@ -31,7 +31,7 @@ String Var2Json(const String& name, const String & value);
 String Var2Json(const String& name, const char * value);
 String Var2Json(const String& name, const float value);
 String Var2Json(const String& name, const unsigned long value);
-//Nettigo NAM 0.3.2 factory firmware - test
+void addJsonIfNotDefault(String &str,const  __FlashStringHelper *name, const unsigned long defaultValue, const unsigned long current);
 
 void parseHTTP(const __FlashStringHelper *, unsigned long & );
 void parseHTTP(const __FlashStringHelper *, bool & );
