@@ -114,10 +114,7 @@ String Var2Json(const String& name, const float value) {
 
 void addJsonIfNotDefault(String &str,const  __FlashStringHelper *name, const unsigned long defaultValue, const unsigned long current) {
     if (defaultValue != current){
-//        Serial.printf("Setting %s to %ui",name, current);
         str += Var2Json(name, current);
-    } else {
-//        Serial.printf("No change to %s, %ui not diff from %ui",name, defaultValue, current);
     }
     return;
 }
