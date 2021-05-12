@@ -19,6 +19,9 @@ namespace HECA {
     String sensorHECA();
     bool initHECA();
 
+    JsonObject& parseHTTPRequest();
+
+    String getConfigJSON();
 }
 
 #endif //NAMF_HECA_H

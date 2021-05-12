@@ -79,6 +79,8 @@ namespace SimpleScheduler {
     JsonObject& parseHTTPConfig(LoopEntryType sensor) {
 
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return HECA::parseHTTPRequest();
             case SimpleScheduler::SDS011:
                 return SDS011::parseHTTPRequest();
             case SimpleScheduler::SPS30:
@@ -99,6 +101,8 @@ namespace SimpleScheduler {
     String getConfigJSON(LoopEntryType sensor) {
         String s = F("");
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return HECA::getConfigJSON();
             case SimpleScheduler::SDS011:
                 return SDS011::getConfigJSON();
             case SimpleScheduler::SPS30:
@@ -168,6 +172,8 @@ namespace SimpleScheduler {
 
     const __FlashStringHelper *findSlotKey(LoopEntryType sensor) {
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return FPSTR(HECA::KEY);
             case SimpleScheduler::SDS011:
                 return FPSTR(SDS011::KEY);
             case SimpleScheduler::SPS30:
@@ -190,6 +196,8 @@ namespace SimpleScheduler {
     //convert sensor/subsytem type to string with code
     const __FlashStringHelper *findSlotDescription(LoopEntryType sensor) {
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return FPSTR(INTL_HECA_DESC);
             case SimpleScheduler::SDS011:
                 return FPSTR(INTL_SDS011_DESC);
             case SimpleScheduler::SPS30:

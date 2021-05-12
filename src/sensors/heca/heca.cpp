@@ -9,12 +9,22 @@ namespace HECA {
     bool enabled = false;
     bool printOnLCD = false;
 
-    //
-// Created by viciu on 17.02.2020.
-//
+    JsonObject &parseHTTPRequest() {
+        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
+        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::HECA);
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject &ret = jsonBuffer.createObject();
+        ret[F("e")] = enabled;
+        ret[F("d")] = printOnLCD;
+        return ret;
+    };
 
-#include "heca.h"
-
+    String getConfigJSON(){
+        String ret = F("");
+        ret += Var2JsonInt(F("e"), enabled);
+        if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
+        return ret;
+    };
 /*****************************************************************
  * read HECA (SHT30) sensor values                                     *
  *****************************************************************/
