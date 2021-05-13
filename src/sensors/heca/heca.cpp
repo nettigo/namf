@@ -50,7 +50,9 @@ namespace HECA {
         SHT31D alertSetLow = heca.readAlertLowSet();
         SHT31D alertClearHigh = heca.readAlertHighClear();
         SHT31D alertClearLow = heca.readAlertLowClear();
-        if (result.error == SHT3XD_NO_ERROR) {
+        if (result.error == SHT3XD_NO_ERROR && alertClearLow.error == SHT3XD_NO_ERROR &&
+            alertClearHigh.error == SHT3XD_NO_ERROR && alertSetLow.error == SHT3XD_NO_ERROR &&
+            alertSetHigh.error == SHT3XD_NO_ERROR) {
             Serial.println("HECA\t\tSetH\tSetL\tClH\tClL\tAlert");
             Serial.print(F("Temp\t"));
             Serial.print(result.t);
@@ -63,8 +65,9 @@ namespace HECA {
             Serial.print(F("\t"));
             Serial.print(alertClearLow.t);
             Serial.print(F("\t"));
-            Serial.print(reg.T_TrackingAlert);
-            Serial.print(reg.AlertPending);
+            Serial.print((reg.rawData & 1<<10) ? 1:0);
+            Serial.print((reg.rawData & 1<<15) ? 1:0);
+
 
 //            Serial.print(F("\t"));
             Serial.println();
@@ -79,10 +82,14 @@ namespace HECA {
             Serial.print(F("\t"));
             Serial.print(alertClearLow.rh);
             Serial.print(F("\t"));
+            Serial.print((reg.rawData & 1<<11) ? 1:0);
+            Serial.print((reg.rawData & 1<<15) ? 1:0);
             Serial.print(reg.RH_TrackingAlert);
-            Serial.print(reg.AlertPending);
 //            Serial.print(F("\t"));
             Serial.println();
+//            Serial.println(reg.rawData,HEX);
+//            Serial.println((unsigned long)(reg.rawData+65536), BIN);
+//            Serial.println(" EDCBA09876543210");
         } else {
             Serial.println("HECA error");
         }
@@ -147,7 +154,7 @@ namespace HECA {
             if (heca.writeAlertHigh(120, 119, 41, 38) != SHT3XD_NO_ERROR) {
                 debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_ERROR, 1);
             }
-            if (heca.writeAlertLow(-5, 5, 0, 1) != SHT3XD_NO_ERROR) {
+            if (heca.writeAlertLow(5, -5, 0, 1) != SHT3XD_NO_ERROR) {
                 debug_out(F(" [HECA ERROR] Cannot set Alert LOW"), DEBUG_ERROR, 1);
             }
             if (heca.clearAll() != SHT3XD_NO_ERROR) {
