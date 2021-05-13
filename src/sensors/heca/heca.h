@@ -18,6 +18,7 @@ namespace HECA {
     extern bool enabled;
     String sensorHECA();
     bool initHECA();
+    extern ClosedCube_SHT31D heca;
 
     JsonObject& parseHTTPRequest();
 

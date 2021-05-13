@@ -113,11 +113,6 @@ SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false);
 SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
 
 /*****************************************************************
- * HECA (SHT30) declaration                                            *
- *****************************************************************/
-ClosedCube_SHT31D heca;
-
-/*****************************************************************
  * DS18B20 declaration                                            *
  *****************************************************************/
 OneWire oneWire(ONEWIRE_PIN);

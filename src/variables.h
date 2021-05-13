@@ -136,11 +136,6 @@ extern SoftwareSerial serialSDS;
 extern SoftwareSerial serialGPS;
 
 /*****************************************************************
- * HECA (SHT30) declaration                                            *
- *****************************************************************/
-extern ClosedCube_SHT31D heca;
-
-/*****************************************************************
  * DS18B20 declaration                                            *
  *****************************************************************/
 extern OneWire oneWire;

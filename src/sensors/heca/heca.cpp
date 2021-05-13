@@ -2,12 +2,14 @@
 // Created by viciu on 10.05.2021.
 //
 #include "heca.h"
+#include "../../../.pio/libdeps/nodemcuv2_en/ClosedCube SHT31D/src/ClosedCube_SHT31D.h"
 
 namespace HECA {
     const char KEY[]
     PROGMEM = "HECA";
     bool enabled = false;
     bool printOnLCD = false;
+    ClosedCube_SHT31D heca;
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
@@ -29,20 +31,80 @@ namespace HECA {
     void readConfigJSON( JsonObject &json){
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
+        if (enabled && !scheduler.isRegistered(SimpleScheduler::HECA)) {
+            scheduler.registerSensor(SimpleScheduler::HECA, HECA::process, FPSTR(HECA::KEY));
+            scheduler.init(SimpleScheduler::HECA);
+            debug_out(F("HECA started"), DEBUG_MED_INFO);
+        }else if (!enabled && scheduler.isRegistered(SimpleScheduler::HECA)) {
+            scheduler.unregisterSensor(SimpleScheduler::HECA);
+            debug_out(F("HECA stopped"), DEBUG_MED_INFO);
+
+        }
     };
+
+    void getData() {
+        SHT31D_RegisterStatus reg;
+        SHT31D result = heca.periodicFetchData();
+        reg = heca.readStatusRegister();
+        SHT31D alertSetHigh = heca.readAlertHighSet();
+        SHT31D alertSetLow = heca.readAlertLowSet();
+        SHT31D alertClearHigh = heca.readAlertHighClear();
+        SHT31D alertClearLow = heca.readAlertLowClear();
+        if (result.error == SHT3XD_NO_ERROR) {
+            Serial.println("HECA\t\tSetH\tSetL\tClH\tClL\tAlert");
+            Serial.print(F("Temp\t"));
+            Serial.print(result.t);
+            Serial.print(F("\t"));
+            Serial.print(alertSetHigh.t);
+            Serial.print(F("\t"));
+            Serial.print(alertSetLow.t);
+            Serial.print(F("\t"));
+            Serial.print(alertClearHigh.t);
+            Serial.print(F("\t"));
+            Serial.print(alertClearLow.t);
+            Serial.print(F("\t"));
+            Serial.print(reg.T_TrackingAlert);
+            Serial.print(reg.AlertPending);
+
+//            Serial.print(F("\t"));
+            Serial.println();
+            Serial.print(F("RH\t"));
+            Serial.print(result.rh);
+            Serial.print(F("\t"));
+            Serial.print(alertSetHigh.rh);
+            Serial.print(F("\t"));
+            Serial.print(alertSetLow.rh);
+            Serial.print(F("\t"));
+            Serial.print(alertClearHigh.rh);
+            Serial.print(F("\t"));
+            Serial.print(alertClearLow.rh);
+            Serial.print(F("\t"));
+            Serial.print(reg.RH_TrackingAlert);
+            Serial.print(reg.AlertPending);
+//            Serial.print(F("\t"));
+            Serial.println();
+        } else {
+            Serial.println("HECA error");
+        }
+
+    }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
-                initHECA();
                 break;
             case SimpleScheduler::INIT:
+                initHECA();
+                return 1000;
                 break;
             case SimpleScheduler::RUN:
+                getData();
+                return 1000;
                 break;
 
 
         }
+        return 1000;
     }
 /*****************************************************************
  * read HECA (SHT30) sensor values                                     *
@@ -82,7 +144,7 @@ namespace HECA {
             return false;
         } else {
             // temperature set, temperature clear, humidity set, humidity clear
-            if (heca.writeAlertHigh(120, 119, 63, 60) != SHT3XD_NO_ERROR) {
+            if (heca.writeAlertHigh(120, 119, 41, 38) != SHT3XD_NO_ERROR) {
                 debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_ERROR, 1);
             }
             if (heca.writeAlertLow(-5, 5, 0, 1) != SHT3XD_NO_ERROR) {
