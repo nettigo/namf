@@ -112,6 +112,13 @@ String Var2Json(const String& name, const float value) {
     return s;
 }
 
+void addJsonIfNotDefault(String &str,const  __FlashStringHelper *name, const unsigned long defaultValue, const unsigned long current) {
+    if (defaultValue != current){
+        str += Var2Json(name, current);
+    }
+    return;
+}
+
 
 
 

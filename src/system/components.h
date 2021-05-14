@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include "variables.h"
 #include "../sensors/sds011/sds011.h"
+#include "../sensors/heca/heca.h"
 #include "../sensors/sps30/sensor.h"
 #include "../sensors/network_watchdog/tester.h"
 #include "../sensors/sht3x/sht3x.h"

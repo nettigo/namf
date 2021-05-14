@@ -6,6 +6,8 @@ namespace SimpleScheduler {
 
     bool sensorWantsDisplay(LoopEntryType sensor){
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return HECA::getDisplaySetting();
             case SimpleScheduler::SDS011:
                 return SDS011::getDisplaySetting();
             case SimpleScheduler::SPS30:
@@ -17,13 +19,14 @@ namespace SimpleScheduler {
         }
     };
 
-    //collect results as JSON
+    //collect results as JSON. Currently it is called only before sending data, so it can be place where
+    //counters are reset and calculations are done
     void getResults(String &res) {
         SDS011::results(res);
         SPS30::results(res);
         SHT3x::results(res);
         MHZ14A::getResults(res);
-
+        HECA::getResults(res);
     }
 
     //push results to Luftdaten/SensorCommunity
@@ -39,6 +42,7 @@ namespace SimpleScheduler {
 
     //did all API collect data?
     void afterSendData(bool status) {
+        HECA::afterSend(status);
         SPS30::afterSend(status);
         SHT3x::afterSend(status);
 
@@ -47,6 +51,7 @@ namespace SimpleScheduler {
     //collect HTML table with current results
     void getResultsAsHTML(String &res) {
         SDS011::resultsAsHTML(res);
+        HECA::resultsAsHTML(res);
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
         MHZ14A::resultsAsHTML(res);
@@ -54,6 +59,7 @@ namespace SimpleScheduler {
 
     //collect sensors status
     void getStatusReport(String &res){
+        HECA::getStatusReport(res);
         SDS011::getStatusReport(res);
         NetworkWatchdog::resultsAsHTML(res);
 
@@ -79,6 +85,8 @@ namespace SimpleScheduler {
     JsonObject& parseHTTPConfig(LoopEntryType sensor) {
 
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return HECA::parseHTTPRequest();
             case SimpleScheduler::SDS011:
                 return SDS011::parseHTTPRequest();
             case SimpleScheduler::SPS30:
@@ -99,6 +107,8 @@ namespace SimpleScheduler {
     String getConfigJSON(LoopEntryType sensor) {
         String s = F("");
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return HECA::getConfigJSON();
             case SimpleScheduler::SDS011:
                 return SDS011::getConfigJSON();
             case SimpleScheduler::SPS30:
@@ -116,6 +126,9 @@ namespace SimpleScheduler {
 
     void readConfigJSON(LoopEntryType sensor, JsonObject &json) {
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                HECA::readConfigJSON(json);
+                return;
             case SimpleScheduler::SDS011:
                 SDS011::readConfigJSON(json);
                 return;
@@ -168,6 +181,8 @@ namespace SimpleScheduler {
 
     const __FlashStringHelper *findSlotKey(LoopEntryType sensor) {
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return FPSTR(HECA::KEY);
             case SimpleScheduler::SDS011:
                 return FPSTR(SDS011::KEY);
             case SimpleScheduler::SPS30:
@@ -190,6 +205,8 @@ namespace SimpleScheduler {
     //convert sensor/subsytem type to string with code
     const __FlashStringHelper *findSlotDescription(LoopEntryType sensor) {
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return FPSTR(INTL_HECA_DESC);
             case SimpleScheduler::SDS011:
                 return FPSTR(INTL_SDS011_DESC);
             case SimpleScheduler::SPS30:
@@ -209,6 +226,8 @@ namespace SimpleScheduler {
 //check if senor has display subroutine. TODO - second parameter with LCD object
     bool displaySensor(SimpleScheduler::LoopEntryType sensor, LiquidCrystal_I2C *lcd, byte minor){
         switch (sensor) {
+            case HECA:
+                return HECA::display(lcd, minor);
             case SDS011:
                 return SDS011::display(lcd, minor);
             case SPS30:

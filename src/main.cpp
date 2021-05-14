@@ -27,7 +27,6 @@
 #include "sensors/sds011/sds011.h"
 #include "sensors/bme280.h"
 #include "sensors/dht.h"
-#include "sensors/heca.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
 
@@ -744,20 +743,6 @@ static void powerOnTestSensors() {
         }
 	}
 
-	if (cfg::heca_read) {
-		debug_out(F("Read HECA (SHT30)..."), DEBUG_MIN_INFO, 1);
-		if (!initHECA()) {
-			debug_out(F("Check HECA (SHT30) wiring"), DEBUG_MIN_INFO, 1);
-			heca_init_failed = 1;
-		} else {
-		    sensorHECA();
-		    debug_out(F("Temp: "),DEBUG_MIN_INFO,0);
-		    debug_out(String(last_value_HECA_T,2),DEBUG_MIN_INFO,1);
-            debug_out(F("Hum: "),DEBUG_MIN_INFO,0);
-            debug_out(String(last_value_HECA_H,2),DEBUG_MIN_INFO,1);
-		}
-	}
-
 	if (cfg::ds18b20_read) {
 		ds18b20.begin();                                    // Start DS18B20
 		debug_out(F("Read DS18B20..."), DEBUG_MIN_INFO, 1);
@@ -1091,10 +1076,6 @@ void loop() {
 
         }
 
-		if (cfg::heca_read && (! heca_init_failed)) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HECA), DEBUG_MAX_INFO, 1);
-			result_HECA = sensorHECA();                 // getting temperature, humidity and pressure (optional)
-		}
 
 		if (cfg::ds18b20_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DS18B20), DEBUG_MAX_INFO, 1);
@@ -1170,15 +1151,6 @@ void loop() {
 			}
 		}
 
-        if (cfg::heca_read && (! heca_init_failed)) {
-			data += result_HECA;
-//			if (cfg::send2dusti) {
-//				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
-//				start_send = millis();
-//				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
-//				sum_send_time += millis() - start_send;
-//			}
-		}
 
 		if (cfg::ds18b20_read) {
 			data += result_DS18B20;

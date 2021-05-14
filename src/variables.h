@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-38rc1"
+#define SOFTWARE_VERSION  "NAMF-2020-38rc2"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -134,11 +134,6 @@ extern LiquidCrystal_I2C * char_lcd;
  *****************************************************************/
 extern SoftwareSerial serialSDS;
 extern SoftwareSerial serialGPS;
-
-/*****************************************************************
- * HECA (SHT30) declaration                                            *
- *****************************************************************/
-extern ClosedCube_SHT31D heca;
 
 /*****************************************************************
  * DS18B20 declaration                                            *

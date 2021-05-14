@@ -153,6 +153,8 @@ namespace SDS011 {
         lcd->clear();
         if (getLCDRows() == 4) {
             lcd->setCursor(0,row++);
+            lcd->print(getLCDHeader());
+            lcd->print(F(" "));
             lcd->print(FPSTR(INTL_SDS011_LCD_HDR));
         }
         lcd->setCursor(0,row++);
@@ -171,14 +173,16 @@ namespace SDS011 {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
         if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
-        if (readTime != READINGTIME_SDS_MS) ret += Var2Json(F("r"), readTime);
-        if (warmupTime != WARMUPTIME_SDS_MS) ret += Var2Json(F("w"), warmupTime);
+        addJsonIfNotDefault(ret, F("r"), READINGTIME_SDS_MS, readTime);
+        addJsonIfNotDefault(ret, F("w"), WARMUPTIME_SDS_MS, warmupTime);
+//        if (readTime != READINGTIME_SDS_MS) ret += Var2Json(F("r"), readTime);
+//        if (warmupTime != WARMUPTIME_SDS_MS) ret += Var2Json(F("w"), warmupTime);
         return ret;
     };
 
     void readConfigJSON(JsonObject &json) {
-        Serial.println("SDS readConfigJson");
-        json.printTo(Serial);
+//        Serial.println("SDS readConfigJson");
+//        json.printTo(Serial);
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
         if (json.containsKey(F("r"))) {

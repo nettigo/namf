@@ -1,3 +1,10 @@
+NAMF-2020-38rc2 (2021-05-14)
+
+* HECA is now under new scheduler
+* HECA reports duty cycle (how long heater was enabled during current measurement period)
+* SDS011 now display header on LCD 20x4
+* sending hostname to Influx was lost during merge - reenabled
+
 NAMF-2020-38rc1 (2021-05-10)
 
 * aim to finish SDS readings 2 sec before sending time - should not catch SDS during collecting data on sending time

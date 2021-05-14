@@ -63,6 +63,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "WiFi Szenzor konfigurációs módban";
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI_NAME[] PROGMEM = "Név";
 /* ./src/lang/intl_hu.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
+/* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_DESC[] PROGMEM = "";
 /* ./src/lang/intl_hu.lang */ const char INTL_HOME[] PROGMEM = "Főoldal";
 /* ./src/lang/intl_hu.lang */ const char INTL_HPM[] PROGMEM = "Honeywell PM sensor";
 /* ./src/lang/intl_hu.lang */ const char INTL_HTU21D[] PROGMEM = "HTU21D ({t}, {h})";
