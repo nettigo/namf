@@ -2,7 +2,7 @@
 // Created by viciu on 10.05.2021.
 //
 #include "heca.h"
-#include "../../../.pio/libdeps/nodemcuv2_en/ClosedCube SHT31D/src/ClosedCube_SHT31D.h"
+#define HECA_DATAPOINTS 20
 
 namespace HECA {
     const char KEY[]
@@ -10,6 +10,12 @@ namespace HECA {
     bool enabled = false;
     bool printOnLCD = false;
     ClosedCube_SHT31D heca;
+    unsigned long lastDatapoint = 0;    //when last time we have saved T & RH to average
+    unsigned long interval = 0;
+    double rh_total, t_total;
+    unsigned dataCount, dutyCycleCount, dutyCycleValT, dutyCycleValRH;
+
+
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
@@ -35,24 +41,42 @@ namespace HECA {
             scheduler.registerSensor(SimpleScheduler::HECA, HECA::process, FPSTR(HECA::KEY));
             scheduler.init(SimpleScheduler::HECA);
             debug_out(F("HECA started"), DEBUG_MED_INFO);
-        }else if (!enabled && scheduler.isRegistered(SimpleScheduler::HECA)) {
+        } else if (!enabled && scheduler.isRegistered(SimpleScheduler::HECA)) {
             scheduler.unregisterSensor(SimpleScheduler::HECA);
             debug_out(F("HECA stopped"), DEBUG_MED_INFO);
 
         }
     };
 
+    void initCycle() {
+        t_total = rh_total = 0;
+        dutyCycleCount = dutyCycleValT = dutyCycleValRH = dataCount = 0;
+    }
+
     void getData() {
         SHT31D_RegisterStatus reg;
         SHT31D result = heca.periodicFetchData();
         reg = heca.readStatusRegister();
-        SHT31D alertSetHigh = heca.readAlertHighSet();
-        SHT31D alertSetLow = heca.readAlertLowSet();
-        SHT31D alertClearHigh = heca.readAlertHighClear();
-        SHT31D alertClearLow = heca.readAlertLowClear();
-        if (result.error == SHT3XD_NO_ERROR && alertClearLow.error == SHT3XD_NO_ERROR &&
+//        SHT31D alertSetHigh = heca.readAlertHighSet();
+//        SHT31D alertSetLow = heca.readAlertLowSet();
+//        SHT31D alertClearHigh = heca.readAlertHighClear();
+//        SHT31D alertClearLow = heca.readAlertLowClear();
+        if (result.error == SHT3XD_NO_ERROR /*&& alertClearLow.error == SHT3XD_NO_ERROR &&
             alertClearHigh.error == SHT3XD_NO_ERROR && alertSetLow.error == SHT3XD_NO_ERROR &&
-            alertSetHigh.error == SHT3XD_NO_ERROR) {
+            alertSetHigh.error == SHT3XD_NO_ERROR*/) {
+            if (millis() - lastDatapoint > interval) {
+                lastDatapoint = millis();
+                t_total += result.t;
+                rh_total += result.rh;
+                dataCount++;
+            }
+            if (reg.rawData & 1<<10)    //Temp tracking alert
+                dutyCycleValT++;
+            if (reg.rawData & 1<<11)    //RH tracking alert
+                dutyCycleValRH++;
+            dutyCycleCount++;
+
+            /*
             Serial.println("HECA\t\tSetH\tSetL\tClH\tClL\tAlert");
             Serial.print(F("Temp\t"));
             Serial.print(result.t);
@@ -90,6 +114,7 @@ namespace HECA {
 //            Serial.println(reg.rawData,HEX);
 //            Serial.println((unsigned long)(reg.rawData+65536), BIN);
 //            Serial.println(" EDCBA09876543210");
+             */
         } else {
             Serial.println("HECA error");
         }
@@ -101,8 +126,10 @@ namespace HECA {
             case SimpleScheduler::STOP:
                 break;
             case SimpleScheduler::INIT:
-                initHECA();
-                return 1000;
+                if (initHECA())
+                    return 1000;
+                else
+                    return 0;
                 break;
             case SimpleScheduler::RUN:
                 getData();
@@ -160,6 +187,8 @@ namespace HECA {
             if (heca.clearAll() != SHT3XD_NO_ERROR) {
                 debug_out(F(" [HECA ERROR] Cannot clear register"), DEBUG_ERROR, 1);
             }
+            interval = cfg::sending_intervall_ms / (HECA_DATAPOINTS + 1);
+            initCycle();
             return true;
         }
     }
