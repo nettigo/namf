@@ -1,3 +1,8 @@
+NAMF-2020-38rc3 (2021-05-14)
+
+* if HECA old_style was enabled - force enabling new HECA subsystem. No reconfiguration need after upgrade
+
+
 NAMF-2020-38rc2 (2021-05-14)
 
 * HECA is now under new scheduler
