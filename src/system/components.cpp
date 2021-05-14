@@ -17,13 +17,14 @@ namespace SimpleScheduler {
         }
     };
 
-    //collect results as JSON
+    //collect results as JSON. Currently it is called only before sending data, so it can be place where
+    //counters are reset and calculations are done
     void getResults(String &res) {
         SDS011::results(res);
         SPS30::results(res);
         SHT3x::results(res);
         MHZ14A::getResults(res);
-
+        HECA::getResults(res);
     }
 
     //push results to Luftdaten/SensorCommunity
@@ -39,6 +40,7 @@ namespace SimpleScheduler {
 
     //did all API collect data?
     void afterSendData(bool status) {
+        HECA::afterSend(status);
         SPS30::afterSend(status);
         SHT3x::afterSend(status);
 
@@ -47,6 +49,7 @@ namespace SimpleScheduler {
     //collect HTML table with current results
     void getResultsAsHTML(String &res) {
         SDS011::resultsAsHTML(res);
+        HECA::resultsAsHTML(res);
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
         MHZ14A::resultsAsHTML(res);
@@ -54,6 +57,7 @@ namespace SimpleScheduler {
 
     //collect sensors status
     void getStatusReport(String &res){
+        HECA::getStatusReport(res);
         SDS011::getStatusReport(res);
         NetworkWatchdog::resultsAsHTML(res);
 

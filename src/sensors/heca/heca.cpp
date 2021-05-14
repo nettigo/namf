@@ -13,7 +13,7 @@ namespace HECA {
     unsigned long lastDatapoint = 0;    //when last time we have saved T & RH to average
     unsigned long interval = 0;
     double rh_total, t_total;
-    unsigned dataCount, dutyCycleCount, dutyCycleValT, dutyCycleValRH;
+    unsigned dataCount, dutyCycleCount, dutyCycleValT, dutyCycleValRH, dutyCycleTotal;
 
 
 
@@ -50,7 +50,7 @@ namespace HECA {
 
     void initCycle() {
         t_total = rh_total = 0;
-        dutyCycleCount = dutyCycleValT = dutyCycleValRH = dataCount = 0;
+        dutyCycleCount = dutyCycleValT = dutyCycleValRH = dataCount = dutyCycleTotal = 0;
     }
 
     void getData() {
@@ -74,6 +74,8 @@ namespace HECA {
                 dutyCycleValT++;
             if (reg.rawData & 1<<11)    //RH tracking alert
                 dutyCycleValRH++;
+            if (reg.rawData & 1<<15)
+                dutyCycleTotal++;
             dutyCycleCount++;
 
             /*
@@ -117,6 +119,45 @@ namespace HECA {
              */
         } else {
             Serial.println("HECA error");
+        }
+
+    }
+
+    void afterSend(bool status) {
+        initCycle();
+    }
+
+    void getResults(String &res){
+        if (!enabled) return;
+        if (dataCount) {
+            last_value_HECA_H = rh_total/dataCount;
+            last_value_HECA_T = t_total/dataCount;
+            res += Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T));
+            res += Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H));
+            if (dutyCycleCount) {
+                res += Value2Json(F("HECA_Tdc"), String((float)dutyCycleValT/dutyCycleCount*100));
+                res += Value2Json(F("HECA_RHdc"), String((float)dutyCycleValRH/dutyCycleCount*100));
+                res += Value2Json(F("HECA_dc"), String((float)dutyCycleTotal/dutyCycleCount*100));
+            }
+        } else {
+            last_value_HECA_T = -128.0;
+            last_value_HECA_H = -1.0;
+        }
+    }
+
+    void resultsAsHTML(String &page_content) {
+        page_content += FPSTR(EMPTY_ROW);
+        page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_HECA_T, -128, 1, 0), "°C");
+        page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_HUMIDITY), check_display_value(last_value_HECA_H, -1, 1, 0), "%");
+    }
+
+    void getStatusReport (String &page_content) {
+        if (dutyCycleCount) {
+            page_content += FPSTR(EMPTY_ROW);
+            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycle", String((float)dutyCycleTotal/dutyCycleCount*100), "%");
+            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleTemp", String((float)dutyCycleValT/dutyCycleCount*100), "%");
+            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleRH", String((float)dutyCycleValRH/dutyCycleCount*100), "%");
+
         }
 
     }
@@ -178,7 +219,7 @@ namespace HECA {
             return false;
         } else {
             // temperature set, temperature clear, humidity set, humidity clear
-            if (heca.writeAlertHigh(120, 119, 41, 38) != SHT3XD_NO_ERROR) {
+            if (heca.writeAlertHigh(120, 119, 63, 60) != SHT3XD_NO_ERROR) {
                 debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_ERROR, 1);
             }
             if (heca.writeAlertLow(5, -5, 0, 1) != SHT3XD_NO_ERROR) {

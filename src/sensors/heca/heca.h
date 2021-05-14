@@ -10,6 +10,7 @@
 #include "variables.h"
 #include "defines.h"
 #include "helpers.h"
+#include "webserver.h"
 #include "html-content.h"   //for sensor name, to remove after move to new scheduler
 #include "system/debug.h"
 
@@ -25,6 +26,10 @@ namespace HECA {
     String getConfigJSON();
     void readConfigJSON( JsonObject &json);
     unsigned long process(SimpleScheduler::LoopEventType e);
+    void afterSend(bool);
+    void getResults(String &);
+    void resultsAsHTML(String &);
+    void getStatusReport(String &);
 }
 
 #endif //NAMF_HECA_H
