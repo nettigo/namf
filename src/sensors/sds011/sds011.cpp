@@ -153,6 +153,8 @@ namespace SDS011 {
         lcd->clear();
         if (getLCDRows() == 4) {
             lcd->setCursor(0,row++);
+            lcd->print(getLCDHeader());
+            lcd->print(F(" "));
             lcd->print(FPSTR(INTL_SDS011_LCD_HDR));
         }
         lcd->setCursor(0,row++);
