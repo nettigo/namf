@@ -44,9 +44,38 @@ namespace HECA {
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::HECA)) {
             scheduler.unregisterSensor(SimpleScheduler::HECA);
             debug_out(F("HECA stopped"), DEBUG_MED_INFO);
-
         }
+        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::HECA, 1);
     };
+
+    bool display(LiquidCrystal_I2C *lcd, byte minor) {
+        if (lcd == NULL) return true;   //we are able to do display
+        byte row = 0;
+        lcd->clear();
+        if (getLCDRows() == 4) {
+            lcd->setCursor(0,row++);
+            lcd->print(getLCDHeader());
+            lcd->print(F(" "));
+            lcd->print(FPSTR(SENSORS_HECA));
+        }
+        lcd->setCursor(0,row++);
+        lcd->print(F("RH:"));
+        lcd->print(check_display_value(last_value_HECA_H, -1, 1, 0));
+//        lcd->print(F(" µg/m³"));
+        lcd->setCursor(0,row++);
+        lcd->print(F("T: "));
+        lcd->print(check_display_value(last_value_HECA_T, -128, 1, 0));
+//        lcd->print(F(" µg/m³"));
+        if (getLCDRows() == 4) {
+            lcd->setCursor(0,row);
+            lcd->print(F("Duty cycle: "));
+            lcd->print(getDutyCycle());
+        }
+
+
+        return false;
+
+    }
 
     void initCycle() {
         t_total = rh_total = 0;
@@ -127,6 +156,11 @@ namespace HECA {
         initCycle();
     }
 
+    float getDutyCycle() {
+        if (dutyCycleCount == 0) return 0.0;
+        return (float)dutyCycleTotal/dutyCycleCount*100;
+    }
+
     void getResults(String &res){
         if (!enabled) return;
         if (dataCount) {
@@ -137,7 +171,7 @@ namespace HECA {
             if (dutyCycleCount) {
                 res += Value2Json(F("HECA_Tdc"), String((float)dutyCycleValT/dutyCycleCount*100));
                 res += Value2Json(F("HECA_RHdc"), String((float)dutyCycleValRH/dutyCycleCount*100));
-                res += Value2Json(F("HECA_dc"), String((float)dutyCycleTotal/dutyCycleCount*100));
+                res += Value2Json(F("HECA_dc"), String(getDutyCycle()));
             }
         } else {
             last_value_HECA_T = -128.0;
@@ -154,7 +188,7 @@ namespace HECA {
     void getStatusReport (String &page_content) {
         if (dutyCycleCount) {
             page_content += FPSTR(EMPTY_ROW);
-            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycle", String((float)dutyCycleTotal/dutyCycleCount*100), "%");
+            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycle", String(getDutyCycle()), "%");
             page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleTemp", String((float)dutyCycleValT/dutyCycleCount*100), "%");
             page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleRH", String((float)dutyCycleValRH/dutyCycleCount*100), "%");
 
@@ -203,6 +237,9 @@ namespace HECA {
         return s;
     }
 
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
 
 /*****************************************************************
  * Init HECA                                                     *

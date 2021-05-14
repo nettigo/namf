@@ -6,6 +6,8 @@ namespace SimpleScheduler {
 
     bool sensorWantsDisplay(LoopEntryType sensor){
         switch (sensor) {
+            case SimpleScheduler::HECA:
+                return HECA::getDisplaySetting();
             case SimpleScheduler::SDS011:
                 return SDS011::getDisplaySetting();
             case SimpleScheduler::SPS30:
@@ -224,6 +226,8 @@ namespace SimpleScheduler {
 //check if senor has display subroutine. TODO - second parameter with LCD object
     bool displaySensor(SimpleScheduler::LoopEntryType sensor, LiquidCrystal_I2C *lcd, byte minor){
         switch (sensor) {
+            case HECA:
+                return HECA::display(lcd, minor);
             case SDS011:
                 return SDS011::display(lcd, minor);
             case SPS30:

@@ -30,6 +30,9 @@ namespace HECA {
     void getResults(String &);
     void resultsAsHTML(String &);
     void getStatusReport(String &);
+    bool getDisplaySetting();
+    bool display(LiquidCrystal_I2C *lcd, byte minor);
+    float getDutyCycle();
 }
 
 #endif //NAMF_HECA_H
