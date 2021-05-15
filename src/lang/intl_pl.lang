@@ -1,7 +1,7 @@
-INTL_MADAVI_LINK    Wykresy z sensora na Madavi
-INTL_NTP_TIME   Czas z NTP
-INTL_NTP_TIME_NOT_ACC   Nie ustawione
-INTL_I2C_BUS    Na szynie I2C
+INTL_MADAVI_LINK Wykresy z sensora na Madavi
+INTL_NTP_TIME Czas z NTP
+INTL_NTP_TIME_NOT_ACC Nie ustawione
+INTL_I2C_BUS Na szynie I2C
 INTL_STATUS_PAGE Status sensora
 INTL_UPDATE_ALFA alfa (eksperymentalne firmware)
 INTL_UPDATE_BETA beta (testowanie stabilności nowych rozwiązań)
@@ -84,7 +84,7 @@ INTL_CONFIG_DELETED Usunięto konfigurację
 INTL_CONFIG_CAN_NOT_BE_DELETED Konfiguracja nie może zostać usunięta
 INTL_CONFIG_NOT_FOUND Nie znaleziono konfiguracji
 INTL_TIME_TO_MEASUREMENT Pozostało {v} sekund do pomiaru
-INTL_TIME_SINCE_LAST_MEASUREMENT  sekund od ostatniego pomiaru.
+INTL_TIME_SINCE_LAST_MEASUREMENT sekund od ostatniego pomiaru.
 INTL_PARTICLES_PER_LITER cząsteczek/litr
 INTL_PARTICULATE_MATTER pył zawieszony
 INTL_TEMPERATURE temperatura

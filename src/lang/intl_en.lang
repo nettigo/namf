@@ -1,7 +1,7 @@
-INTL_MADAVI_LINK    Sensor graphs on Madavi
-INTL_NTP_TIME   Time from NTP
-INTL_NTP_TIME_NOT_ACC   Not set
-INTL_I2C_BUS    On I2C bus
+INTL_MADAVI_LINK Sensor graphs on Madavi
+INTL_NTP_TIME Time from NTP
+INTL_NTP_TIME_NOT_ACC Not set
+INTL_I2C_BUS On I2C bus
 INTL_STATUS_PAGE Sensor status
 INTL_UPDATE_ALFA alfa (experimental fw, do not use unless You can recover sensor)
 INTL_UPDATE_BETA beta (stability testing for new features)
@@ -84,7 +84,7 @@ INTL_CONFIG_DELETED Configuration is deleted
 INTL_CONFIG_CAN_NOT_BE_DELETED Configuration can not be deleted
 INTL_CONFIG_NOT_FOUND Configuration not found
 INTL_TIME_TO_MEASUREMENT Still {v} seconds until measurement
-INTL_TIME_SINCE_LAST_MEASUREMENT  seconds since last measurement.
+INTL_TIME_SINCE_LAST_MEASUREMENT seconds since last measurement.
 INTL_PARTICLES_PER_LITER particles/liter
 INTL_PARTICULATE_MATTER particulate matter
 INTL_TEMPERATURE temperature
