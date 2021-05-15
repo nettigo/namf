@@ -59,7 +59,7 @@ namespace HECA {
             lcd->print(FPSTR(SENSORS_HECA));
         }
         lcd->setCursor(0,row++);
-        lcd->print(F("RH:"));
+        lcd->print(F("RH: "));
         lcd->print(check_display_value(last_value_HECA_H, -1, 1, 0));
 //        lcd->print(F(" µg/m³"));
         lcd->setCursor(0,row++);
@@ -68,8 +68,9 @@ namespace HECA {
 //        lcd->print(F(" µg/m³"));
         if (getLCDRows() == 4) {
             lcd->setCursor(0,row);
-            lcd->print(F("Duty cycle: "));
-            lcd->print(getDutyCycle());
+            lcd->print(FPSTR(INTL_HECA_DC));
+            lcd->print(F(" "));
+            lcd->print(String(getDutyCycle(),1));
         }
 
 
