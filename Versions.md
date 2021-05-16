@@ -1,4 +1,4 @@
-NAMF-2020-38rc3 ()
+NAMF-2020-38rc3 (2021-05-16)
 
 * old HECA/SDS011 enable checkbox enables both sensor and LCD display - to mimic old behaviour
 * subsystem list on /values page is now complete (SDS011 name was missing)
