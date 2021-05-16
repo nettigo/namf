@@ -2,6 +2,8 @@
 // Created by viciu on 10.05.2021.
 //
 #include "heca.h"
+#include "../../helpers.h"
+
 #define HECA_DATAPOINTS 20
 
 namespace HECA {
@@ -61,16 +63,22 @@ namespace HECA {
         lcd->setCursor(0,row++);
         lcd->print(F("RH: "));
         lcd->print(check_display_value(last_value_HECA_H, -1, 1, 0));
-//        lcd->print(F(" µg/m³"));
+        lcd->print(F(" "));
+        lcd->print(FPSTR(UNIT_PERCENT));
         lcd->setCursor(0,row++);
         lcd->print(F("T: "));
         lcd->print(check_display_value(last_value_HECA_T, -128, 1, 0));
+        lcd->print(F(" "));
+        lcd->print(FPSTR(UNIT_CELCIUS_LCD));
 //        lcd->print(F(" µg/m³"));
         if (getLCDRows() == 4) {
             lcd->setCursor(0,row);
             lcd->print(FPSTR(INTL_HECA_DC));
             lcd->print(F(" "));
             lcd->print(String(getDutyCycle(),1));
+            lcd->print(F(" "));
+            lcd->print(FPSTR(UNIT_PERCENT));
+
         }
 
 
@@ -182,16 +190,16 @@ namespace HECA {
 
     void resultsAsHTML(String &page_content) {
         page_content += FPSTR(EMPTY_ROW);
-        page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_HECA_T, -128, 1, 0), "°C");
-        page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_HUMIDITY), check_display_value(last_value_HECA_H, -1, 1, 0), "%");
+        page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_HECA_T, -128, 1, 0), FPSTR(UNIT_CELCIUS));
+        page_content += table_row_from_value(FPSTR(SENSORS_HECA), FPSTR(INTL_HUMIDITY), check_display_value(last_value_HECA_H, -1, 1, 0), FPSTR(UNIT_PERCENT));
     }
 
     void getStatusReport (String &page_content) {
         if (dutyCycleCount) {
             page_content += FPSTR(EMPTY_ROW);
             page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycle", String(getDutyCycle()), "%");
-            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleTemp", String((float)dutyCycleValT/dutyCycleCount*100), "%");
-            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleRH", String((float)dutyCycleValRH/dutyCycleCount*100), "%");
+            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleTemp", String((float)dutyCycleValT/dutyCycleCount*100), FPSTR(UNIT_PERCENT));
+            page_content += table_row_from_value(FPSTR(SENSORS_HECA), "DutyCycleRH", String((float)dutyCycleValRH/dutyCycleCount*100), FPSTR(UNIT_PERCENT));
 
         }
 

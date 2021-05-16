@@ -5,6 +5,10 @@
 #include "helpers.h"
 #include "system/scheduler.h"
 
+extern const char UNIT_PERCENT[] PROGMEM = "%";
+extern const char UNIT_CELCIUS[] PROGMEM = "°C";
+extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
+
 int32_t calcWiFiSignalQuality(int32_t rssi) {
     if (rssi > -50) {
         rssi = -50;

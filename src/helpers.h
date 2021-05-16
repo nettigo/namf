@@ -9,6 +9,11 @@
 #include "variables.h"
 #include <FS.h>                     // must be first
 
+extern const char UNIT_PERCENT[];
+extern const char UNIT_CELCIUS[];
+extern const unsigned char UNIT_CELCIUS_LCD[];
+
+
 int32_t calcWiFiSignalQuality(int32_t rssi);
 
 void debug_out(const String& text, const int level, const bool linebreak = true);
