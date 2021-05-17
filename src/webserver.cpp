@@ -70,28 +70,28 @@ void getTimeHeadings(String &page_content){
 
 
 
-void webserver_not_found() {
+void webserver_not_found(AsyncWebServerRequest *request) {
     last_page_load = millis();
     debug_out(F("output not found page: "), DEBUG_MIN_INFO, 0);
-    debug_out(server.uri(),DEBUG_MIN_INFO);
+    debug_out(request->url(),DEBUG_MIN_INFO);
     if (WiFi.status() != WL_CONNECTED) {
-        if ((server.uri().indexOf(F("success.html")) != -1) || (server.uri().indexOf(F("detect.html")) != -1)) {
-            server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), FPSTR(WEB_IOS_REDIRECT));
-        } else {
-            sendHttpRedirect(server);
-        }
+//        if ((request->url().indexOf(F("success.html")) != -1) || (request->url().indexOf(F("detect.html")) != -1)) {
+//            request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), FPSTR(WEB_IOS_REDIRECT));
+//        } else {
+            sendHttpRedirect(request);
+//        }
     } else {
-        server.send(404, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), F("Not found."));
+        request->send(404, "text/plain", "Not found");
     }
 }
 
 
-void webserver_images() {
+void webserver_images(AsyncWebServerRequest *request) {
     if (server.arg("n") == F("l")) {
 //		debug_out(F("output luftdaten.info logo..."), DEBUG_MAX_INFO, 1);
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
+        request->send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
     } else {
-        webserver_not_found();
+        webserver_not_found(request);
     }
 }
 /*****************************************************************
@@ -109,29 +109,29 @@ bool webserver_request_auth() {
     }
     return true;
 }
-void webserver_dump_stack(){
+void webserver_dump_stack(AsyncWebServerRequest *request){
     if (!SPIFFS.exists ("/stack_dump")) {
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "No stack dump");
+        request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "No stack dump");
         return;
     }
     File dump;
     char buf[100];
     dump = SPIFFS.open("/stack_dump","r");
     server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "");
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "");
     unsigned size = dump.size();
     for (byte i=0; i<=size/100; i++) {
         dump.readBytes(buf,99);
-        server.sendContent(buf);
+        request->sendContent(buf);
     }
 //    sprintf(buf,"File size: %i bytes\n",size);
-//    server.sendContent(buf);
+//    request->sendContent(buf);
 
 }
 /*****************************************************************
  * Webserver root: show all options                              *
  *****************************************************************/
-void webserver_root() {
+void webserver_root(AsyncWebServerRequest *request) {
     if (WiFi.status() != WL_CONNECTED) {
         sendHttpRedirect(server);
     } else {
@@ -156,7 +156,7 @@ void webserver_root() {
         page_content.replace(F("{med_info}"), FPSTR(INTL_MED_INFO));
         page_content.replace(F("{max_info}"), FPSTR(INTL_MAX_INFO));
         page_content += make_footer();
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+        request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
     }
 }
 
@@ -214,17 +214,17 @@ String make_footer() {
     return s;
 }
 //Webserver - current config as JSON (txt) to save
-void webserver_config_json() {
+void webserver_config_json(AsyncWebServerRequest *request) {
 
     if (!webserver_request_auth())
     { return; }
     String page_content = getMaskedConfigString();
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), page_content);
 }
 
 
 //Webserver - force update with custom URL
-void webserver_config_force_update() {
+void webserver_config_force_update(AsyncWebServerRequest *request) {
 
     if (!webserver_request_auth())
     { return; }
@@ -233,12 +233,12 @@ void webserver_config_force_update() {
         if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
             cfg::auto_update = true;
             updateFW(server.arg("host"), server.arg("port"), server.arg("path"));
-            server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+            request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
             ESP.restart();
         }
         else {
-            server.sendHeader(F("Location"), F("/"));
+            request->sendHeader(F("Location"), F("/"));
         }
 
     }else {
@@ -260,12 +260,12 @@ void webserver_config_force_update() {
 
 
     }
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 
 //Webserver - current config as JSON (txt) to save
-void webserver_config_json_save() {
+void webserver_config_json_save(AsyncWebServerRequest *request) {
 
     if (!webserver_request_auth())
     { return; }
@@ -273,25 +273,25 @@ void webserver_config_json_save() {
     if (server.method() == HTTP_POST) {
         if (server.hasArg("json")) {
             if (writeConfigRaw(server.arg("json"),"/test.json")) {
-                server.send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error writing config"));
+                request->send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error writing config"));
                 return; //we dont have reason to restart, current config was not altered yet
             };
             File tempCfg = SPIFFS.open ("/test.json", "r");
             if (readAndParseConfigFile(tempCfg)) {
-                server.send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error parsing config"));
+                request->send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error parsing config"));
                 delay(500);
                 ESP.restart(); // we dont know in what state config is. Maybe something was read maybe not
                 return;
             }
             //now config is mix of and new config file. Should be save to save it
             writeConfig();
-            server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+            request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
             Serial.println(F("RESET"));
             ESP.restart();
         }
         else {
-            server.sendHeader(F("Location"), F("/"));
+            request->sendHeader(F("Location"), F("/"));
         }
 
     }else {
@@ -305,7 +305,7 @@ void webserver_config_json_save() {
 
 
     }
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 
@@ -313,7 +313,7 @@ void webserver_config_json_save() {
 /*****************************************************************
  * Webserver config: show config page                            *
  *****************************************************************/
-void webserver_config() {
+void webserver_config(AsyncWebServerRequest *request) {
     if (!webserver_request_auth()) { return; }
 
     String page_content;
@@ -659,10 +659,10 @@ void webserver_config() {
     }
     page_content += make_footer();
 
-    server.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-    server.sendHeader(F("Pragma"), F("no-cache"));
-    server.sendHeader(F("Expires"), F("0"));
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+    request->sendHeader(F("Pragma"), F("no-cache"));
+    request->sendHeader(F("Expires"), F("0"));
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
     if (server.method() == HTTP_POST) {
         debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
@@ -677,7 +677,7 @@ void webserver_config() {
  * Parse sensor config - new, simple scheduler
  **************************************************************************/
 
-void webserver_simple_config() {
+void webserver_simple_config(AsyncWebServerRequest *request) {
 
     if (!webserver_request_auth()) { return; }
 
@@ -711,10 +711,10 @@ void webserver_simple_config() {
 
         page_content += make_footer();
 
-        server.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-        server.sendHeader(F("Pragma"), F("no-cache"));
-        server.sendHeader(F("Expires"), F("0"));
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+        request->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+        request->sendHeader(F("Pragma"), F("no-cache"));
+        request->sendHeader(F("Expires"), F("0"));
+        request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 //    } else {
 //        webserver_not_found();
 //    }
@@ -737,7 +737,7 @@ String table_row_from_value(const String &sensor, const String &param, const Str
 /*****************************************************************
  * Webserver wifi: show available wifi networks                  *
  *****************************************************************/
-void webserver_wifi() {
+void webserver_wifi(AsyncWebServerRequest *request) {
     debug_out(F("wifi networks found: "), DEBUG_MIN_INFO, 0);
     debug_out(String(count_wifiInfo), DEBUG_MIN_INFO, 1);
     String page_content = "";
@@ -788,13 +788,13 @@ void webserver_wifi() {
         page_content += FPSTR(TABLE_TAG_CLOSE_BR);
         page_content += FPSTR(BR_TAG);
     }
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
  * Webserver root: show latest values                            *
  *****************************************************************/
-void webserver_values() {
+void webserver_values(AsyncWebServerRequest *request) {
     if (WiFi.status() != WL_CONNECTED) {
         sendHttpRedirect(server);
     } else {
@@ -865,14 +865,14 @@ void webserver_values() {
         page_content += table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),"");
         page_content += table_row_from_value(F("NAM"),F("Uptime"), millisToTime(millis()),"");
 
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+        request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
     }
 }
 
 /*****************************************************************
  * Webserver set debug level                                     *
  *****************************************************************/
-void webserver_debug_level() {
+void webserver_debug_level(AsyncWebServerRequest *request) {
     if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_DEBUG_LEVEL));
@@ -896,13 +896,13 @@ void webserver_debug_level() {
         }
     }
     page_content += make_footer();
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
  * Webserver enable ota                                          *
  *****************************************************************/
- void webserver_enable_ota() {
+ void webserver_enable_ota(AsyncWebServerRequest *request) {
     String page_content;
     if (cfg::www_basicauth_enabled) {
         if (!webserver_request_auth()) { return; }
@@ -921,13 +921,13 @@ void webserver_debug_level() {
         page_content += make_footer();
 
     }
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
  * Webserver remove config                                       *
  *****************************************************************/
-void webserver_removeConfig() {
+void webserver_removeConfig(AsyncWebServerRequest *request) {
     if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_DELETE_CONFIG));
@@ -954,13 +954,13 @@ void webserver_removeConfig() {
         }
     }
     page_content += make_footer();
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
  * Webserver reset NodeMCU                                       *
  *****************************************************************/
-void webserver_reset() {
+void webserver_reset(AsyncWebServerRequest *request) {
     if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_RESTART_SENSOR));
@@ -978,18 +978,18 @@ void webserver_reset() {
         page_content += FPSTR(INTL_SENSOR_IS_REBOOTING_NOW);
         page_content += F("</p>");
         page_content += make_footer();
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+        request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
         debug_out(F("restarting..."), DEBUG_MIN_INFO, 1);
         delay(300);
         ESP.restart();
     }
     page_content += make_footer();
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 
 //dump internals on Serial
-void webserver_dump_status(){
+void webserver_dump_status(AsyncWebServerRequest *request){
     Serial.println(F("SimpleScheduler table:"));
     scheduler.dumpTable();
 
@@ -997,7 +997,7 @@ void webserver_dump_status(){
     page_content += F("<p>Internal status data dumped to serial</p>");
     page_content += make_footer();
 
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
 }
 
@@ -1008,7 +1008,7 @@ void webserver_dump_status(){
  *
  *********************************/
 
-void webserver_status_page(void) {
+void webserver_status_page(AsyncWebServerRequest *request) {
     if (!webserver_request_auth()) { return; }
 
     const int signal_quality = calcWiFiSignalQuality(WiFi.RSSI());
@@ -1074,14 +1074,14 @@ void webserver_status_page(void) {
     page_content += FPSTR(TABLE_TAG_CLOSE_BR);
     page_content += make_footer();
 
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
 }
 
 /*****************************************************************
  * Webserver data.json                                           *
  *****************************************************************/
-void webserver_data_json() {
+void webserver_data_json(AsyncWebServerRequest *request) {
     String s1 = "";
     unsigned long age = 0;
     debug_out(F("output data json..."), DEBUG_MIN_INFO, 1);
@@ -1115,13 +1115,13 @@ void webserver_data_json() {
     s1.replace(F(", \"sensordatavalues\""), s2);
     debug_out(F("replaced: "), DEBUG_MIN_INFO, 0);
     debug_out(s1, DEBUG_MIN_INFO, 1);
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_JSON), s1);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_JSON), s1);
 }
 
 /*****************************************************************
  * Webserver prometheus metrics endpoint                         *
  *****************************************************************/
-void webserver_prometheus_endpoint() {
+void webserver_prometheus_endpoint(AsyncWebServerRequest *request) {
     debug_out(F("output prometheus endpoint..."), DEBUG_MIN_INFO, 1);
     String data_4_prometheus = F("software_version{version=\"{ver}\",{id}} 1\nuptime_ms{{id}} {up}\nsending_intervall_ms{{id}} {si}\nnumber_of_measurements{{id}} {cs}\n");
     String id = F("node=\"esp8266-");
@@ -1148,7 +1148,7 @@ void webserver_prometheus_endpoint() {
         debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
     }
     debug_out(data_4_prometheus, DEBUG_MED_INFO, 1);
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), data_4_prometheus);
+    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), data_4_prometheus);
 }
 
 /*****************************************************************

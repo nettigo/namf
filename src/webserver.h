@@ -23,26 +23,26 @@ extern void updateFW();
 //latest stack dump
 void webserver_dump_stack();
 
-void sendHttpRedirect(AsyncWebServerRequest &httpServer);
+void sendHttpRedirect(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver Images                                              *
  *****************************************************************/
-void webserver_images();
+void webserver_images(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver page not found                                      *
  *****************************************************************/
-void webserver_not_found();
+void webserver_not_found(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver request auth: prompt for BasicAuth
  *
  * -Provide BasicAuth for all page contexts except /values and images
  *****************************************************************/
-bool webserver_request_auth();
+bool webserver_request_auth(AsyncWebServerRequest *);
 
 /*****************************************************************
  * Webserver root: show all options                              *
  *****************************************************************/
-void webserver_root();
+void webserver_root(AsyncWebServerRequest *);
 
 /*****************************************************************
  * html helper functions                                         *
@@ -51,49 +51,49 @@ void webserver_root();
 String make_header(const String& title);
 String make_footer();
 //Webserver - current config as JSON (txt) to save
-void webserver_config_json();
+void webserver_config_json(AsyncWebServerRequest *);
 //Webserver - force update with custom URL
-void webserver_config_force_update();
+void webserver_config_force_update(AsyncWebServerRequest *);
 //Webserver - current config as JSON (txt) to save
-void webserver_config_json_save();
-void webserver_config();
+void webserver_config_json_save(AsyncWebServerRequest *);
+void webserver_config(AsyncWebServerRequest *);
 
 /*****************************************************************
  * Webserver wifi: show available wifi networks                  *
  *****************************************************************/
-void webserver_wifi();
+void webserver_wifi(AsyncWebServerRequest *);
 
 /*****************************************************************
  * Webserver root: show latest values                            *
  *****************************************************************/
-void webserver_values();
+void webserver_values(AsyncWebServerRequest *);
 
 /*****************************************************************
  * Webserver set debug level                                     *
  *****************************************************************/
-void webserver_debug_level();
+void webserver_debug_level(AsyncWebServerRequest *);
 
 /*****************************************************************
  * Webserver remove config                                       *
  *****************************************************************/
-void webserver_removeConfig();
+void webserver_removeConfig(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver reset NodeMCU                                       *
  *****************************************************************/
-void webserver_reset();
+void webserver_reset(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver data.json                                           *
  *****************************************************************/
-void webserver_data_json();
+void webserver_data_json(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver prometheus metrics endpoint                         *
  *****************************************************************/
-void webserver_prometheus_endpoint();
+void webserver_prometheus_endpoint(AsyncWebServerRequest *);
 /*****************************************************************
  * Webserver setup                                               *
  *****************************************************************/
 void setup_webserver();
 
-void webserver_status_page();
+void webserver_status_page(AsyncWebServerRequest *);
 
 #endif //NAMF_WEBSERVER_H
