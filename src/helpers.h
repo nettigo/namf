@@ -38,11 +38,11 @@ String Var2Json(const String& name, const float value);
 String Var2Json(const String& name, const unsigned long value);
 void addJsonIfNotDefault(String &str,const  __FlashStringHelper *name, const unsigned long defaultValue, const unsigned long current);
 
-void parseHTTP(const __FlashStringHelper *, unsigned long & );
-void parseHTTP(const __FlashStringHelper *, bool & );
-void parseHTTP(const __FlashStringHelper *, String & );
-void parseHTTP(const String &name, bool &value );
-void parseHTTP(const __FlashStringHelper * , byte &value );
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *, unsigned long & );
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *, bool & );
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *, String & );
+void parseHTTP(AsyncWebServerRequest *request, const String &name, bool &value );
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper * , byte &value );
 
 void setBoolVariableFromHTTP(String const name, bool &v, byte i);
 void setVariableFromHTTP(String const name, unsigned long &v, byte i);

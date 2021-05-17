@@ -23,7 +23,7 @@ extern void updateFW();
 //latest stack dump
 void webserver_dump_stack();
 
-void sendHttpRedirect(ESP8266WebServer &httpServer);
+void sendHttpRedirect(AsyncWebServerRequest &httpServer);
 /*****************************************************************
  * Webserver Images                                              *
  *****************************************************************/

@@ -39,13 +39,13 @@ namespace SHT3x {
 
     }
 
-    JsonObject &parseHTTPRequest(void) {
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request) {
 //        String host;
 //        parseHTTP(F("host"), host);
         String sensorID = F("enabled-{s}");
         sensorID.replace(F("{s}"),String(SimpleScheduler::SHT3x));
         Serial.println(sensorID);
-        parseHTTP(sensorID, enabled);
+        parseHTTP(request, sensorID, enabled);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;

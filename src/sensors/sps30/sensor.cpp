@@ -106,8 +106,8 @@ namespace SPS30 {
 
 
     //callback to parse HTML form sent from `getConfigHTML`
-    JsonObject &parseHTTPRequest(void) {
-        parseHTTP(F("refresh"), refresh);
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request) {
+        parseHTTP(request, F("refresh"), refresh);
         //enabled?
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
         //use display?

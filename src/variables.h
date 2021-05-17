@@ -13,7 +13,11 @@
 #include "defines.h"
 #include "system/scheduler.h"
 #include <SoftwareSerial.h>
-#include <ESP8266WebServer.h>
+//#include <ESP8266WebServer.h>
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
@@ -120,7 +124,7 @@ extern bool bmp280_init_failed ;
 extern bool bme280_init_failed ;
 extern bool heca_init_failed ;
 
-extern ESP8266WebServer server;
+extern AsyncWebServer server;
 extern int TimeZone ;
 
 /*****************************************************************

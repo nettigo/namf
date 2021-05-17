@@ -19,9 +19,8 @@ static int constexpr constexprstrlen(const char* str) {
 }
 
 
-void sendHttpRedirect(ESP8266WebServer &httpServer) {
-    httpServer.sendHeader(F("Location"), F("http://192.168.4.1/config"));
-    httpServer.send(302, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), "");
+void sendHttpRedirect(AsyncWebServerRequest request) {
+    request->redirect(F("http://192.168.4.1/config"));
 }
 
 String wlan_ssid_to_table_row(const String& ssid, const String& encryption, int32_t rssi) {

@@ -12,7 +12,6 @@
 #include "system/components.h"
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
-#include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoOTA.h>
 #include <base64.h>
@@ -198,7 +197,7 @@ void wifiConfig() {
 	last_page_load = millis();
 	while (((millis() - last_page_load) < cfg::time_for_wifi_config)) {
 		dnsServer.processNextRequest();
-		server.handleClient();
+//		server.handleClient();
 		wdt_reset(); // nodemcu is alive
 		yield();
 	}
@@ -207,7 +206,7 @@ void wifiConfig() {
 	last_page_load = millis();
 	while ((millis() - last_page_load) < 500) {
 		dnsServer.processNextRequest();
-		server.handleClient();
+//		server.handleClient();
 		yield();
 	}
 
@@ -1047,7 +1046,7 @@ void loop() {
 	}
 	last_micro = act_micro;
 
-    server.handleClient();
+//    server.handleClient();
 #if !defined(BOOT_FW)
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
 
@@ -1059,7 +1058,7 @@ void loop() {
 
 	}
 
-	server.handleClient();
+//	server.handleClient();
 
 	if (send_now) {
         debug_out(String(F("****************** Upload data to APIs*****************************")),DEBUG_MED_INFO);
@@ -1112,9 +1111,9 @@ void loop() {
 		debug_out(" dBm", DEBUG_MIN_INFO, 1);
 		debug_out("----", DEBUG_MIN_INFO, 1);
 
-		server.handleClient();
+//		server.handleClient();
 		yield();
-		server.stop();
+//		server.stop();
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
         if (cfg::pms_read) {

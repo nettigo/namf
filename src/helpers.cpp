@@ -396,41 +396,41 @@ void writeConfig(){
     writeConfigRaw(json_string);
 }
 
-void parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
-    if (server.hasArg(name)) {
-        value = server.arg(name).toInt();
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *name, unsigned long &value) {
+    if (request->hasParam(name)) {
+        value = request->getParam(name)->value().toInt();
     }
 };
 
-void parseHTTP(const String name, unsigned long &value ){
-    if (server.hasArg(name)) {
-        value = server.arg(name).toInt();
+void parseHTTP(AsyncWebServerRequest *request, const String name, unsigned long &value ){
+    if (request->hasParam(name)) {
+        value = request->getParam(name)->value().toInt();
     }
 };
 
-void  parseHTTP(const __FlashStringHelper *name, byte &value ){
-    if (server.hasArg(name)) {
-        value = server.arg(name).toInt();
+void  parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *name, byte &value ){
+    if (request->hasParam(name)) {
+        value = request->getParam(name)->value().toInt();
     }
 };
-void parseHTTP(const __FlashStringHelper *name, String &value ){
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *name, String &value ){
     value = F("");
-    if (server.hasArg(name)) {
-        value = server.arg(name);
+    if (request->hasParam(name)) {
+        value = request->getParam(name)->value();
     }
 };
 
-void parseHTTP(const __FlashStringHelper *name, bool &value ){
+void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *name, bool &value ){
     value = false;
-    if (server.hasArg(name)) {
-        value = server.arg(name) == "1";
+    if (request->hasParam(name)) {
+        value = request->getParam(name)->value() == "1";
     }
 };
 
-void parseHTTP(const String &name, bool &value ){
+void parseHTTP(AsyncWebServerRequest *request, const String &name, bool &value ){
     value = false;
-    if (server.hasArg(name)) {
-        value = server.arg(name) == "1";
+    if (request->hasParam(name)) {
+        value = request->getParam(name)->value() == "1";
     }
 };
 
@@ -446,22 +446,22 @@ void setHTTPVarName(String &varName, String const name, byte id) {
  Getting enable val from client is code done by each sensor, to make it easier this
  helper was created. It supports any bool var.
 */
-void setBoolVariableFromHTTP(String const name, bool &v, byte i){
+void setBoolVariableFromHTTP(AsyncWebServerRequest *request, String const name, bool &v, byte i){
     String sensorID;
     setHTTPVarName(sensorID, name, i);
-    parseHTTP(sensorID, v);
+    parseHTTP(request, sensorID, v);
 }
 
-void setVariableFromHTTP(String const name, unsigned long &v, byte i){
+void setVariableFromHTTP(AsyncWebServerRequest *request, String const name, unsigned long &v, byte i){
     String sensorID;
     setHTTPVarName(sensorID, name, i);
-    parseHTTP(sensorID, v);
+    parseHTTP(request, sensorID, v);
 }
-void setVariableFromHTTP(const __FlashStringHelper *name, unsigned long &v, byte i){
+void setVariableFromHTTP(AsyncWebServerRequest *request, const __FlashStringHelper *name, unsigned long &v, byte i){
     String sensorID;
     setHTTPVarName(sensorID, name, i);
-    parseHTTP(sensorID, v);
-    Serial.println(v);
+    parseHTTP(request, sensorID, v);
+
 }
 
 unsigned long time2Measure(void){

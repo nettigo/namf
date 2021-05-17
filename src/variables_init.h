@@ -97,7 +97,7 @@ bool bmp280_init_failed = false;
 bool bme280_init_failed = false;
 bool heca_init_failed = false;
 
-ESP8266WebServer server(80);
+AsyncWebServer server(80);
 int TimeZone = 1;
 
 /*****************************************************************
