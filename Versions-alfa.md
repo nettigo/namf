@@ -2,6 +2,10 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-37a3
+
+* sync to beta 38rc5 (no current work in alfa, so we keep in sync with beta)
+
 ### NAMF-2020-37a10
 
 * send -1 as SDS reading on error. Only to Influx,other loggers are not affected
