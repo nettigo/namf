@@ -19,7 +19,7 @@ static int constexpr constexprstrlen(const char* str) {
 }
 
 
-void sendHttpRedirect(AsyncWebServerRequest request) {
+void sendHttpRedirect(AsyncWebServerRequest *request) {
     request->redirect(F("http://192.168.4.1/config"));
 }
 
