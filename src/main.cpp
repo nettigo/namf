@@ -919,8 +919,11 @@ void setup() {
     //if (MDNS.begin(server_name.c_str())) {
 		
 	if (MDNS.begin(cfg::fs_ssid)) {
-        MDNS.addService("http", "tcp", 80);
-
+        MDNSResponder::hMDNSService hService = MDNS.addService( cfg::fs_ssid, "http", "tcp", 80);
+//        MDNS.addService("http", "tcp", 80);
+        char buff[20];
+        sprintf(buff, "NAM-%u", ESP.getChipId());
+        MDNS.addServiceTxt(hService, "ID", buff);
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }

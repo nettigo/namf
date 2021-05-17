@@ -1,3 +1,6 @@
+NAMF-2020-38rc6 ()
+* send TXT record with ID key (NAM-XXXX), to allow Home Assistant to discover NAM if host name is set to different than NAM-XXXX
+
 NAMF-2020-38rc5 (2021-05-17)
 
 * with new SDS code result -1 (no data from SDS) is being reported to Influx (not to other APIs) like it was with old code in 37rc3 
