@@ -87,7 +87,7 @@ void webserver_not_found(AsyncWebServerRequest *request) {
 
 
 void webserver_images(AsyncWebServerRequest *request) {
-    if (server.arg("n") == F("l")) {
+    if (request->arg("n") == F("l")) {
 //		debug_out(F("output luftdaten.info logo..."), DEBUG_MAX_INFO, 1);
         request->send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
     } else {
@@ -232,7 +232,7 @@ void webserver_config_force_update(AsyncWebServerRequest *request) {
     if (server.method() == HTTP_POST) {
         if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
             cfg::auto_update = true;
-            updateFW(server.arg("host"), server.arg("port"), server.arg("path"));
+            updateFW(request->arg("host"), request->arg("port"), request->arg("path"));
             request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
             ESP.restart();
@@ -272,7 +272,7 @@ void webserver_config_json_save(AsyncWebServerRequest *request) {
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
     if (server.method() == HTTP_POST) {
         if (server.hasArg("json")) {
-            if (writeConfigRaw(server.arg("json"),"/test.json")) {
+            if (writeConfigRaw(request->arg("json"),"/test.json")) {
                 request->send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error writing config"));
                 return; //we dont have reason to restart, current config was not altered yet
             };
@@ -485,42 +485,42 @@ void webserver_config(AsyncWebServerRequest *request) {
     } else {
 #define readCharParam(param) \
         if (server.hasArg(#param)){ \
-            server.arg(#param).toCharArray(param, sizeof(param)); \
+            request->arg(#param).toCharArray(param, sizeof(param)); \
         }
 
 #define readBoolParam(param) \
         param = false; \
         if (server.hasArg(#param)){ \
-            param = server.arg(#param) == "1";\
+            param = request->arg(#param) == "1";\
         }
 
 #define readIntParam(param) \
         if (server.hasArg(#param)){ \
-            param = server.arg(#param).toInt(); \
+            param = request->arg(#param).toInt(); \
         }
 
 #define readFloatParam(param) \
         if (server.hasArg(#param)){ \
-            param = server.arg(#param).toFloat(); \
+            param = request->arg(#param).toFloat(); \
         }
 
 #define readTimeParam(param) \
         if (server.hasArg(#param)){ \
-            int val = server.arg(#param).toInt(); \
+            int val = request->arg(#param).toInt(); \
             param = val*1000; \
         }
 
 #define readPasswdParam(param) \
         if (server.hasArg(#param)){ \
             masked_pwd = ""; \
-            for (uint8_t i=0;i<server.arg(#param).length();i++) \
+            for (uint8_t i=0;i<request->arg(#param).length();i++) \
                 masked_pwd += "*"; \
-            if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
-                server.arg(#param).toCharArray(param, sizeof(param)); \
+            if (masked_pwd != request->arg(#param) || request->arg(#param) == "") {\
+                request->arg(#param).toCharArray(param, sizeof(param)); \
             }\
         }
 
-        if (server.hasArg("wlanssid") && server.arg("wlanssid") != "") {
+        if (server.hasArg("wlanssid") && request->arg("wlanssid") != "") {
             readCharParam(wlanssid);
             readPasswdParam(wlanpwd);
         }
@@ -535,7 +535,7 @@ void webserver_config(AsyncWebServerRequest *request) {
             readBoolParam(www_basicauth_enabled);
             readCharParam(fs_ssid);
             if (server.hasArg("fs_pwd") &&
-                ((server.arg("fs_pwd").length() > 7) || (server.arg("fs_pwd").length() == 0))) {
+                ((request->arg("fs_pwd").length() > 7) || (request->arg("fs_pwd").length() == 0))) {
                 readPasswdParam(fs_pwd);
             }
             readBoolParam(send2dusti);
@@ -590,7 +590,7 @@ void webserver_config(AsyncWebServerRequest *request) {
         has_lcd2004_27 = false;
         has_lcd2004_3f = false;
         if (server.hasArg("has_lcd")) {
-            switch (server.arg("lcd_type").toInt()) {
+            switch (request->arg("lcd_type").toInt()) {
                 case 1:
                     has_lcd1602_27 = true;
                     break;
@@ -690,7 +690,7 @@ void webserver_simple_config(AsyncWebServerRequest *request) {
 
         if (server.hasArg(F("sensor"))) {
             SimpleScheduler::LoopEntryType sensor;
-            sensor = static_cast<SimpleScheduler::LoopEntryType>(server.arg(F("sensor")).toInt());
+            sensor = static_cast<SimpleScheduler::LoopEntryType>(request->arg(F("sensor")).toInt());
             page_content += F("Sensor val: ");
             page_content += String(sensor);
             page_content += F("<br>");
@@ -880,7 +880,7 @@ void webserver_debug_level(AsyncWebServerRequest *request) {
     debug_out(F("output change debug level page..."), DEBUG_MIN_INFO, 1);
 
     if (server.hasArg("lvl")) {
-        const int lvl = server.arg("lvl").toInt();
+        const int lvl = request->arg("lvl").toInt();
         if (lvl >= 0 && lvl <= 5) {
             cfg::debug = lvl;
             page_content += F("<h3>");
