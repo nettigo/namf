@@ -101,12 +101,12 @@ void webserver_images(AsyncWebServerRequest *request) {
  *****************************************************************/
 bool webserver_request_auth() {
     debug_out(F("validate request auth..."), DEBUG_MIN_INFO, 1);
-    if (cfg::www_basicauth_enabled && ! wificonfig_loop) {
-        if (!server.authenticate(cfg::www_username, cfg::www_password)) {
-            server.requestAuthentication();
-            return false;
-        }
-    }
+//    if (cfg::www_basicauth_enabled && ! wificonfig_loop) {
+//        if (!server.authenticate(cfg::www_username, cfg::www_password)) {
+//            server.requestAuthentication();
+//            return false;
+//        }
+//    }
     return true;
 }
 void webserver_dump_stack(AsyncWebServerRequest *request){
@@ -117,12 +117,12 @@ void webserver_dump_stack(AsyncWebServerRequest *request){
     File dump;
     char buf[100];
     dump = SPIFFS.open("/stack_dump","r");
-    server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+//    server.setContentLength(CONTENT_LENGTH_UNKNOWN); //FIX
     request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), "");
     unsigned size = dump.size();
     for (byte i=0; i<=size/100; i++) {
         dump.readBytes(buf,99);
-        request->sendContent(buf);
+//        request->sendContent(buf); //please FIX
     }
 //    sprintf(buf,"File size: %i bytes\n",size);
 //    request->sendContent(buf);
@@ -133,7 +133,7 @@ void webserver_dump_stack(AsyncWebServerRequest *request){
  *****************************************************************/
 void webserver_root(AsyncWebServerRequest *request) {
     if (WiFi.status() != WL_CONNECTED) {
-        sendHttpRedirect(server);
+        sendHttpRedirect(request);
     } else {
         if (!webserver_request_auth())
         { return; }
@@ -229,15 +229,14 @@ void webserver_config_force_update(AsyncWebServerRequest *request) {
     if (!webserver_request_auth())
     { return; }
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
-    if (server.method() == HTTP_POST) {
+    if (request->method() == HTTP_POST) {
         if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
             cfg::auto_update = true;
             updateFW(request->arg("host"), request->arg("port"), request->arg("path"));
             request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
             delay(5000);
             ESP.restart();
-        }
-        else {
+        } else {
             request->sendHeader(F("Location"), F("/"));
         }
 
