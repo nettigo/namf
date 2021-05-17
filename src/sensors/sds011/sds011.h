@@ -43,7 +43,7 @@ namespace SDS011 {
 
     unsigned long process(SimpleScheduler::LoopEventType e);
 
-    String getConfigHTML(AsyncWebServerRequest *request);
+    String getConfigHTML();
 
     void resultsAsHTML(String &page_content);
 

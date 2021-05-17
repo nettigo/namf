@@ -66,17 +66,17 @@ namespace SimpleScheduler {
     }
 
     //prepare forms with configuration
-    String selectConfigForm(AsyncWebServerRequest *request, LoopEntryType sensor) {
+    String selectConfigForm(LoopEntryType sensor) {
         String s = F("");
         switch (sensor) {
             case SimpleScheduler::SDS011:
-                return SDS011::getConfigHTML(request);
+                return SDS011::getConfigHTML();
             case SimpleScheduler::SPS30:
-                return SPS30::getConfigHTML(request);
+                return SPS30::getConfigHTML();
             case SimpleScheduler::NTW_WTD:
-                return NetworkWatchdog::getConfigHTML(request);
+                return NetworkWatchdog::getConfigHTML();
             case SimpleScheduler::SHT3x:
-                return SHT3x::getConfigHTML(request);
+                return SHT3x::getConfigHTML();
             default:
                 return s;
         }

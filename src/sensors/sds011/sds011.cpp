@@ -377,13 +377,13 @@ namespace SDS011 {
         }
     }
 
-    String getConfigHTML(AsyncWebServerRequest *request) {
+    String getConfigHTML() {
         String ret = F("");
         String name;
-        setHTTPVarName(request, name, F("r"), SimpleScheduler::SDS011);
+        setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
         ret += form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7);
 
-        setHTTPVarName(request, name, F("w"), SimpleScheduler::SDS011);
+        setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
         ret += form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7);
 
         return ret;

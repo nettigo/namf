@@ -46,7 +46,7 @@ void parseHTTP(AsyncWebServerRequest *request, const __FlashStringHelper * , byt
 
 void setBoolVariableFromHTTP(AsyncWebServerRequest *, String const name, bool &v, byte i);
 void setVariableFromHTTP(AsyncWebServerRequest *, String const name, unsigned long &v, byte i);
-void setHTTPVarName(AsyncWebServerRequest *, String &varName, String const name, byte id);
+void setHTTPVarName(String &varName, String const name, byte id);
 
 unsigned long time2Measure(void);
 String form_option(String const &name, const String & info, const bool checked = false);

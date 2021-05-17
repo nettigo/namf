@@ -472,7 +472,7 @@ void webserver_config(AsyncWebServerRequest *request) {
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("<br/></form>");
 
-            scheduler.getConfigForms(request, page_content);
+            scheduler.getConfigForms(page_content);
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content += FPSTR(TABLE_TAG_OPEN);

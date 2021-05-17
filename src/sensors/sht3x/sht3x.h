@@ -15,7 +15,7 @@ namespace SHT3x {
     extern const char KEY[] PROGMEM;
 
 
-    extern String getConfigHTML(AsyncWebServerRequest *request);
+    extern String getConfigHTML();
     extern JsonObject &parseHTTPRequest(AsyncWebServerRequest *request);
     extern String getConfigJSON(void);
     extern void readConfigJSON(JsonObject &json);
