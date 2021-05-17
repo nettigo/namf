@@ -21,7 +21,7 @@ namespace HECA {
     bool initHECA();
     extern ClosedCube_SHT31D heca;
 
-    JsonObject& parseHTTPRequest();
+    JsonObject& parseHTTPRequest(AsyncWebServerRequest *request);
 
     String getConfigJSON();
     void readConfigJSON( JsonObject &json);

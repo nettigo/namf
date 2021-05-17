@@ -126,12 +126,12 @@ namespace SDS011 {
         return (data[7] == 0xAB && checksum_is == data[6]);
     }
 
-    JsonObject &parseHTTPRequest() {
-        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request) {
+        setBoolVariableFromHTTP(request, String(F("enabled")), enabled, SimpleScheduler::SDS011);
         //use display?
-        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
-        setVariableFromHTTP(F("w"), warmupTime, SimpleScheduler::SDS011);
-        setVariableFromHTTP(String(F("r")), readTime, SimpleScheduler::SDS011);
+        setBoolVariableFromHTTP(request, String(F("display")), printOnLCD, SimpleScheduler::SDS011);
+        setVariableFromHTTP(request, F("w"), warmupTime, SimpleScheduler::SDS011);
+        setVariableFromHTTP(request, String(F("r")), readTime, SimpleScheduler::SDS011);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
@@ -377,13 +377,13 @@ namespace SDS011 {
         }
     }
 
-    String getConfigHTML(void) {
+    String getConfigHTML(AsyncWebServerRequest *request) {
         String ret = F("");
         String name;
-        setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
+        setHTTPVarName(request, name, F("r"), SimpleScheduler::SDS011);
         ret += form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7);
 
-        setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
+        setHTTPVarName(request, name, F("w"), SimpleScheduler::SDS011);
         ret += form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7);
 
         return ret;

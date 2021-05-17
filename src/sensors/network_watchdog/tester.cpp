@@ -47,7 +47,7 @@ namespace NetworkWatchdog {
         return ret;
     }
 
-    String getConfigJSON(void) {
+    String getConfigJSON(AsyncWebServerRequest *request) {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
         ret += Var2Json(F("ip"), (addr.toString()));

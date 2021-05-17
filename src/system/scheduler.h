@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <LiquidCrystal_I2C.h>
+#include <ESPAsyncWebServer.h>
 
 #define SCHEDULER_SIZE  10
 
@@ -69,7 +70,7 @@ namespace SimpleScheduler {
 
     String selectConfigForm(LoopEntryType sensor);
 
-    void getConfigForms(String &page);
+    void getConfigForms(AsyncWebServerRequest *request, String &page);
     void getConfigJSON(String &json);
     void readConfigJSON(LoopEntryType sensor, JsonObject& json);
     void readConfigJSON(JsonObject& json);

@@ -67,7 +67,7 @@ namespace SimpleScheduler {
 
     }
 
-    void NAMFScheduler::getConfigForms(String &page) {
+    void NAMFScheduler::getConfigForms(AsyncWebServerRequest *request, String &page) {
         String s = F("");
         page += F("<div id='ncf'>");
         LoopEntryType i = EMPTY;
@@ -89,7 +89,7 @@ namespace SimpleScheduler {
             }
             //HTML to enable/disable given sensor
 
-            s = SimpleScheduler::selectConfigForm(i);
+            s = SimpleScheduler::selectConfigForm(request, i);
             templ += F("{body}<input type='submit' value='");
             templ += FPSTR(INTL_SAVE);
             templ += F("'/></form>\n");

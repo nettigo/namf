@@ -8,6 +8,7 @@
 #include "Arduino.h"
 #include "variables.h"
 #include "helpers.h"
+#include "webserver.h"
 #include "sending.h"
 #include "system/debug.h"
 #include "html-content.h"   //just for sensor name, to be removed later
@@ -30,7 +31,7 @@ namespace SDS011 {
 
     bool SDS_checksum_valid(const uint8_t (&data)[8]);
 
-    JsonObject &parseHTTPRequest();
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request);
 
     bool getDisplaySetting();
 
@@ -42,7 +43,7 @@ namespace SDS011 {
 
     unsigned long process(SimpleScheduler::LoopEventType e);
 
-    String getConfigHTML(void);
+    String getConfigHTML(AsyncWebServerRequest *request);
 
     void resultsAsHTML(String &page_content);
 

@@ -33,7 +33,7 @@ namespace SimpleScheduler {
     //collect HTML table for status page
     void getStatusReport(String &res);
 
-    JsonObject &parseHTTPConfig(LoopEntryType sensor);
+    JsonObject &parseHTTPConfig(AsyncWebServerRequest *request, LoopEntryType sensor);
 
     String getConfigJSON(LoopEntryType sensor);
 

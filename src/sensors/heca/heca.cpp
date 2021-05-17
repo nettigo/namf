@@ -19,9 +19,9 @@ namespace HECA {
 
 
 
-    JsonObject &parseHTTPRequest() {
-        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
-        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::HECA);
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request) {
+        setBoolVariableFromHTTP(request, String(F("enabled")), enabled, SimpleScheduler::HECA);
+        setBoolVariableFromHTTP(request, String(F("display")), printOnLCD, SimpleScheduler::HECA);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;

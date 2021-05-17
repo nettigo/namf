@@ -29,7 +29,7 @@ namespace SPS30 {
 
     //return string with HTML used to configure SPS30 sensor. Right now it only takes number of seconds to wait between measurements
     //taken to average
-    String getConfigHTML(void) {
+    String getConfigHTML(AsyncWebServerRequest *request) {
         String ret = F("");
         ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
         return ret;
@@ -109,9 +109,9 @@ namespace SPS30 {
     JsonObject &parseHTTPRequest(AsyncWebServerRequest *request) {
         parseHTTP(request, F("refresh"), refresh);
         //enabled?
-        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
+        setBoolVariableFromHTTP(request, String(F("enabled")), enabled, SimpleScheduler::SPS30);
         //use display?
-        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
+        setBoolVariableFromHTTP(request, String(F("display")), printOnLCD, SimpleScheduler::SPS30);
         registerDisplaySPS();  //register display if enabled on runtime
 
         DynamicJsonBuffer jsonBuffer;

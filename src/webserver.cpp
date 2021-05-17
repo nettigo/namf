@@ -237,7 +237,7 @@ void webserver_config_force_update(AsyncWebServerRequest *request) {
             delay(5000);
             ESP.restart();
         } else {
-            request->sendHeader(F("Location"), F("/"));
+            request->redirect( F("/"));
         }
 
     }else {
@@ -269,7 +269,7 @@ void webserver_config_json_save(AsyncWebServerRequest *request) {
     if (!webserver_request_auth())
     { return; }
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
-    if (server.method() == HTTP_POST) {
+    if (request->method() == HTTP_POST) {
         if (request->hasParam("json")) {
             if (writeConfigRaw(request->arg("json"),"/test.json")) {
                 request->send(500, TXT_CONTENT_TYPE_TEXT_PLAIN,F("Error writing config"));
@@ -290,7 +290,7 @@ void webserver_config_json_save(AsyncWebServerRequest *request) {
             ESP.restart();
         }
         else {
-            request->sendHeader(F("Location"), F("/"));
+            request->redirect(F("/"));
         }
 
     }else {
@@ -327,7 +327,7 @@ void webserver_config(AsyncWebServerRequest *request) {
     }
 
     using namespace cfg;
-    if (server.method() == HTTP_GET) {
+    if (request->method() == HTTP_GET) {
         page_content += F("<form method='POST' action='/config' style='width:100%;'>\n<b>");
         page_content += FPSTR(INTL_WIFI_SETTINGS);
         page_content += F("</b><br/>");
@@ -562,8 +562,8 @@ void webserver_config(AsyncWebServerRequest *request) {
             readCharParam(senseboxid);
 
             readBoolParam(send2custom);
-            parseHTTP(F("host_custom"), host_custom);
-            parseHTTP(F("url_custom"), url_custom);
+            parseHTTP(request, F("host_custom"), host_custom);
+            parseHTTP(request, F("url_custom"), url_custom);
 
             readIntParam(port_custom);
             readCharParam(user_custom);
@@ -571,8 +571,8 @@ void webserver_config(AsyncWebServerRequest *request) {
 
             readBoolParam(send2influx);
 
-            parseHTTP(F("host_influx"), host_influx);
-            parseHTTP(F("url_influx"), url_influx);
+            parseHTTP(request, F("host_influx"), host_influx);
+            parseHTTP(request, F("url_influx"), url_influx);
 
             readIntParam(port_influx);
             readCharParam(user_influx);
@@ -581,7 +581,7 @@ void webserver_config(AsyncWebServerRequest *request) {
         }
 
         readBoolParam(auto_update);
-        parseHTTP(F("channel"), update_channel);
+        parseHTTP(request, F("channel"), update_channel);
 
         readBoolParam(has_display);
         has_lcd1602 = false;
@@ -658,12 +658,13 @@ void webserver_config(AsyncWebServerRequest *request) {
     }
     page_content += make_footer();
 
-    request->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-    request->sendHeader(F("Pragma"), F("no-cache"));
-    request->sendHeader(F("Expires"), F("0"));
-    request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    AsyncWebServerResponse *response = request->beginResponse(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    response->addHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+    response->addHeader(F("Pragma"), F("no-cache"));
+    response->addHeader(F("Expires"), F("0"));
+    request->send(response);
 
-    if (server.method() == HTTP_POST) {
+    if (request->method() == HTTP_POST) {
         debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
         display_debug(F("Writing config"), F("and restarting"));
         writeConfig();
@@ -685,7 +686,7 @@ void webserver_simple_config(AsyncWebServerRequest *request) {
 
     debug_out(F("output config page ..."), DEBUG_MIN_INFO, 1);
 
-//    if (server.method() == HTTP_POST) {
+//    if (request->method() == HTTP_POST) {
 
         if (request->hasParam(F("sensor"))) {
             SimpleScheduler::LoopEntryType sensor;
@@ -710,10 +711,12 @@ void webserver_simple_config(AsyncWebServerRequest *request) {
 
         page_content += make_footer();
 
-        request->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-        request->sendHeader(F("Pragma"), F("no-cache"));
-        request->sendHeader(F("Expires"), F("0"));
-        request->send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    AsyncWebServerResponse *response = request->beginResponse(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+
+    response->addHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+    response->addHeader(F("Pragma"), F("no-cache"));
+    response->addHeader(F("Expires"), F("0"));
+    request->send(response);
 //    } else {
 //        webserver_not_found();
 //    }
@@ -795,7 +798,7 @@ void webserver_wifi(AsyncWebServerRequest *request) {
  *****************************************************************/
 void webserver_values(AsyncWebServerRequest *request) {
     if (WiFi.status() != WL_CONNECTED) {
-        sendHttpRedirect(server);
+        sendHttpRedirect(request);
     } else {
         String page_content;
         page_content.reserve(4000);
@@ -934,7 +937,7 @@ void webserver_removeConfig(AsyncWebServerRequest *request) {
     last_page_load = millis();
     debug_out(F("output remove config page..."), DEBUG_MIN_INFO, 1);
 
-    if (server.method() == HTTP_GET) {
+    if (request->method() == HTTP_GET) {
         page_content += FPSTR(WEB_REMOVE_CONFIG_CONTENT);
         page_content.replace("{t}", FPSTR(INTL_CONFIGURATION_REALLY_DELETE));
         page_content.replace("{b}", FPSTR(INTL_DELETE));
@@ -966,7 +969,7 @@ void webserver_reset(AsyncWebServerRequest *request) {
     last_page_load = millis();
     debug_out(F("output reset NodeMCU page..."), DEBUG_MIN_INFO, 1);
 
-    if (server.method() == HTTP_GET) {
+    if (request->method() == HTTP_GET) {
         page_content += FPSTR(WEB_RESET_CONTENT);
         page_content.replace("{t}", FPSTR(INTL_REALLY_RESTART_SENSOR));
         page_content.replace("{b}", FPSTR(INTL_RESTART));
@@ -1154,24 +1157,24 @@ void webserver_prometheus_endpoint(AsyncWebServerRequest *request) {
  * Webserver setup                                               *
  *****************************************************************/
 void setup_webserver() {
-    server.on(F("/"), webserver_root);
-    server.on(F("/config"), webserver_config);
-    server.on(F("/simple_config"), webserver_simple_config);
-    server.on(F("/config.json"), HTTP_GET, webserver_config_json);
-    server.on(F("/configSave.json"), webserver_config_json_save);
-    server.on(F("/forceUpdate"), webserver_config_force_update);
-    server.on(F("/wifi"), webserver_wifi);
-    server.on(F("/values"), webserver_values);
-    server.on(F("/debug"), webserver_debug_level);
-    server.on(F("/ota"), webserver_enable_ota);
-    server.on(F("/removeConfig"), webserver_removeConfig);
-    server.on(F("/reset"), webserver_reset);
-    server.on(F("/data.json"), webserver_data_json);
-    server.on(F("/metrics"), webserver_prometheus_endpoint);
-    server.on(F("/images"), webserver_images);
-    server.on(F("/stack_dump"), webserver_dump_stack);
-    server.on(F("/status"), webserver_status_page);
-    server.on(F("/dump"), webserver_dump_status);
+    server.on("/", webserver_root);
+    server.on("/config", webserver_config);
+    server.on("/simple_config", webserver_simple_config);
+    server.on("/config.json", HTTP_GET, webserver_config_json);
+    server.on("/configSave.json", webserver_config_json_save);
+    server.on("/forceUpdate", webserver_config_force_update);
+    server.on("/wifi", webserver_wifi);
+    server.on("/values", webserver_values);
+    server.on("/debug", webserver_debug_level);
+    server.on("/ota", webserver_enable_ota);
+    server.on("/removeConfig", webserver_removeConfig);
+    server.on("/reset", webserver_reset);
+    server.on("/data.json", webserver_data_json);
+    server.on("/metrics", webserver_prometheus_endpoint);
+    server.on("/images", webserver_images);
+    server.on("/stack_dump", webserver_dump_stack);
+    server.on("/status", webserver_status_page);
+    server.on("/dump", webserver_dump_status);
     server.onNotFound(webserver_not_found);
 
     debug_out(F("Starting Webserver... "), DEBUG_MIN_INFO, 0);

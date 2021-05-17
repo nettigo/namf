@@ -29,9 +29,9 @@ namespace MHZ14A {
             scheduler.registerDisplay(SimpleScheduler::MHZ14A, 0);  // disable
     }
 
-    JsonObject &parseHTTPRequest() {
-        setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::MHZ14A);
-        setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::MHZ14A);
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request) {
+        setBoolVariableFromHTTP(request, String(F("enabled")), enabled, SimpleScheduler::MHZ14A);
+        setBoolVariableFromHTTP(request, String(F("display")), printOnLCD, SimpleScheduler::MHZ14A);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;

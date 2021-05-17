@@ -66,37 +66,37 @@ namespace SimpleScheduler {
     }
 
     //prepare forms with configuration
-    String selectConfigForm(LoopEntryType sensor) {
+    String selectConfigForm(AsyncWebServerRequest *request, LoopEntryType sensor) {
         String s = F("");
         switch (sensor) {
             case SimpleScheduler::SDS011:
-                return SDS011::getConfigHTML();
+                return SDS011::getConfigHTML(request);
             case SimpleScheduler::SPS30:
-                return SPS30::getConfigHTML();
+                return SPS30::getConfigHTML(request);
             case SimpleScheduler::NTW_WTD:
-                return NetworkWatchdog::getConfigHTML();
+                return NetworkWatchdog::getConfigHTML(request);
             case SimpleScheduler::SHT3x:
-                return SHT3x::getConfigHTML();
+                return SHT3x::getConfigHTML(request);
             default:
                 return s;
         }
     }
 
-    JsonObject& parseHTTPConfig(LoopEntryType sensor) {
+    JsonObject& parseHTTPConfig(AsyncWebServerRequest *request, LoopEntryType sensor) {
 
         switch (sensor) {
             case SimpleScheduler::HECA:
-                return HECA::parseHTTPRequest();
+                return HECA::parseHTTPRequest(request);
             case SimpleScheduler::SDS011:
-                return SDS011::parseHTTPRequest();
+                return SDS011::parseHTTPRequest(request);
             case SimpleScheduler::SPS30:
-                return SPS30::parseHTTPRequest();
+                return SPS30::parseHTTPRequest(request);
             case SimpleScheduler::NTW_WTD:
-                return NetworkWatchdog::parseHTTPRequest();
+                return NetworkWatchdog::parseHTTPRequest(request);
             case SimpleScheduler::SHT3x:
-                return SHT3x::parseHTTPRequest();
+                return SHT3x::parseHTTPRequest(request);
             case SimpleScheduler::MHZ14A:
-                return MHZ14A::parseHTTPRequest();
+                return MHZ14A::parseHTTPRequest(request);
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
