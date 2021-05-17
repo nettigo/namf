@@ -810,9 +810,6 @@ void webserver_values() {
 
         debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
         getTimeHeadings(page_content);
-        Serial.print(__FILE__);
-        Serial.print(" ");
-        Serial.println(__LINE__);
 
         if (cfg::send2madavi) {
             String link(F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID=esp8266-{id}\" target=\"_blank\">{n}</a>"));
@@ -820,9 +817,7 @@ void webserver_values() {
             link.replace(F("{n}"), FPSTR(INTL_MADAVI_LINK));
             page_content += link;
         }
-        Serial.print(__FILE__);
-        Serial.print(" ");
-        Serial.println(__LINE__);
+
         page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
         page_content += tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE));
         if (cfg::pms_read) {
@@ -859,7 +854,6 @@ void webserver_values() {
             page_content += table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, "");
             page_content += table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, "");
         }
-        Serial.println("Dive into shced");
         SimpleScheduler::getResultsAsHTML(page_content);
 
         page_content += FPSTR(EMPTY_ROW);
