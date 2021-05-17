@@ -341,6 +341,7 @@ namespace SDS011 {
     }
 
     void sendToLD() {
+        if (!enabled) return;
         if (sensorState == AFTER_READING) {
             updateState(OFF);
             const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
@@ -355,6 +356,7 @@ namespace SDS011 {
     }
 
     void getStatusReport(String &res) {
+        if (!enabled) return;
         res += FPSTR(EMPTY_ROW);
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
@@ -388,6 +390,7 @@ namespace SDS011 {
     }
 
     void resultsAsHTML(String &page_content) {
+        if (!enabled) return;
         page_content += FPSTR(EMPTY_ROW);
         page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5",
                                              check_display_value(last_value_SDS_P2, -1, 1, 0), F("µg/m³"));
