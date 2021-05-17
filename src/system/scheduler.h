@@ -68,7 +68,7 @@ namespace SimpleScheduler {
         byte hasDisplay;
     };
 
-    String selectConfigForm(LoopEntryType sensor);
+    String selectConfigForm(AsyncWebServerRequest *request, LoopEntryType sensor);
 
     void getConfigForms(AsyncWebServerRequest *request, String &page);
     void getConfigJSON(String &json);
@@ -107,7 +107,7 @@ namespace SimpleScheduler {
         //String with sensor names (codes)
         String registeredNames();
 
-        void getConfigForms(String &page);
+        void getConfigForms(AsyncWebServerRequest *request, String &page);
         void getConfigJSON(LoopEntryType);
         void getConfigJSON(String &json);
 

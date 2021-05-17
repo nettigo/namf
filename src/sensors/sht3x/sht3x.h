@@ -15,8 +15,8 @@ namespace SHT3x {
     extern const char KEY[] PROGMEM;
 
 
-    extern String getConfigHTML();
-    extern JsonObject &parseHTTPRequest(void);
+    extern String getConfigHTML(AsyncWebServerRequest *request);
+    extern JsonObject &parseHTTPRequest(AsyncWebServerRequest *request);
     extern String getConfigJSON(void);
     extern void readConfigJSON(JsonObject &json);
     extern unsigned long process (SimpleScheduler::LoopEventType);

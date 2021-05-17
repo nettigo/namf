@@ -33,7 +33,7 @@ namespace SHT3x {
     }
 
 
-    String getConfigHTML() {
+    String getConfigHTML(AsyncWebServerRequest *request) {
         String s = F("");
         return s;
 

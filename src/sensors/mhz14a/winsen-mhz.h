@@ -21,7 +21,7 @@ namespace MHZ14A {
         RANGE_10K
     } range_t;
 
-    JsonObject &parseHTTPRequest();
+    JsonObject &parseHTTPRequest(AsyncWebServerRequest *request);
 
     //send data to LD API...
     extern void sendToLD();

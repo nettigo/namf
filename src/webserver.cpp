@@ -472,7 +472,7 @@ void webserver_config(AsyncWebServerRequest *request) {
             page_content += FPSTR(TABLE_TAG_CLOSE_BR);
             page_content += F("<br/></form>");
 
-            scheduler.getConfigForms(page_content);
+            scheduler.getConfigForms(request, page_content);
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content += FPSTR(TABLE_TAG_OPEN);
@@ -694,7 +694,7 @@ void webserver_simple_config(AsyncWebServerRequest *request) {
             page_content += F("Sensor val: ");
             page_content += String(sensor);
             page_content += F("<br>");
-            JsonObject &ret = SimpleScheduler::parseHTTPConfig(sensor);
+            JsonObject &ret = SimpleScheduler::parseHTTPConfig(request, sensor);
             ret.printTo(Serial);
             if (ret.containsKey(F("err"))){
                 page_content += F("<h2>");

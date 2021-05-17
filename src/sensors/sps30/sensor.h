@@ -35,7 +35,7 @@ namespace SPS30 {
     //we will reset average even on API failure
     extern void afterSend(bool success);
     extern String getConfigHTML(AsyncWebServerRequest *request);
-    extern JsonObject & parseHTTPRequest(void);
+    extern JsonObject & parseHTTPRequest(AsyncWebServerRequest *request);
 
     extern String getConfigJSON(void);
     extern void readConfigJSON( JsonObject &);
