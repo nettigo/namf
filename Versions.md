@@ -1,3 +1,7 @@
+NAMF-2020-38rc5 (2021-05-17)
+
+* with new SDS code result -1 (no data from SDS) is being reported to Influx (not to other APIs) like it was with old code in 37rc3 
+
 NAMF-2020-38rc4 (2021-05-16)
 
 * old HECA/SDS011 enable checkbox enables both sensor and LCD display - to mimic old behaviour
