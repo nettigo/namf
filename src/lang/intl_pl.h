@@ -145,7 +145,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Status sensora";
 /* ./src/lang/intl_pl.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperatura";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME[] PROGMEM = "Czas";
-/* ./src/lang/intl_pl.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = "sekund od ostatniego pomiaru.";
+/* ./src/lang/intl_pl.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " sekund od ostatniego pomiaru.";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_TO_MEASUREMENT[] PROGMEM = "Pozostało {v} sekund do pomiaru";
 /* ./src/lang/intl_pl.lang */ const char INTL_UPDATE_ALFA[] PROGMEM = "alfa (eksperymentalne firmware)";
 /* ./src/lang/intl_pl.lang */ const char INTL_UPDATE_BETA[] PROGMEM = "beta (testowanie stabilności nowych rozwiązań)";
