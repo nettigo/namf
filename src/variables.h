@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-38rc5"
+#define SOFTWARE_VERSION  "NAMF-2020-38a4"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -16,6 +16,7 @@
 #include <ESP8266WebServer.h>
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
+#include "PCF8574.h"
 #include <LiquidCrystal_I2C.h>
 
 #include "ClosedCube_SHT31D.h" // support for Nettigo Air Monitor HECA
@@ -46,6 +47,8 @@ namespace cfg {
 
     extern char fs_ssid[33];
     extern char fs_pwd[65];
+
+    extern PCF8574 PCF;
 
     extern char version_from_local_config[20];
 

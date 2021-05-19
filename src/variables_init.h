@@ -26,6 +26,7 @@ namespace cfg {
     char fs_pwd[65] = FS_PWD;
 
     char version_from_local_config[20] = "";
+    PCF8574 PCF(0x26);
 
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;

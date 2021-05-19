@@ -25,6 +25,9 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     WiFiClient *client;
     const __FlashStringHelper *contentType;
     bool ssl = false;
+    Serial.println(F("******* SENDING"));
+    Serial.println(logger);
+    Serial.println(data);
     if (httpPort == 443) {
         client = new WiFiClientSecure;
         ssl = true;

@@ -845,7 +845,8 @@ void setup() {
     serialSDS.begin(9600, SWSERIAL_8N1);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
-
+    cfg::PCF.begin();
+    cfg::PCF.write8(0xFF);
     cfg::initNonTrivials(esp_chipid().c_str());
 
     Serial.print(F("\nNAMF ver: "));

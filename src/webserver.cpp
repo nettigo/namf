@@ -1002,7 +1002,25 @@ void webserver_dump_status(){
  * Display status page
  *
  *********************************/
+void webserver_toggle_sds(void) {
+    if (!webserver_request_auth()) { return; }
+    String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
+    if (cfg::PCF.isConnected()) {
+        byte val = cfg::PCF.read(0);
+        cfg::PCF.write(0,!val);
+        page_content += F("<p> Status was: ");
+        page_content += String(val);
+        page_content += F(", status is now: ");
+        page_content += String(cfg::PCF.read(0));
+        page_content += F("</p>");
 
+    } else {
+        page_content += F("<h3>PCF not connected!</h3>");
+    }
+    page_content += make_footer();
+
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+}
 void webserver_status_page(void) {
     if (!webserver_request_auth()) { return; }
 
@@ -1168,6 +1186,7 @@ void setup_webserver() {
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
     server.on(F("/dump"), webserver_dump_status);
+    server.on(F("/sds"), webserver_toggle_sds);
     server.onNotFound(webserver_not_found);
 
     debug_out(F("Starting Webserver... "), DEBUG_MIN_INFO, 0);
