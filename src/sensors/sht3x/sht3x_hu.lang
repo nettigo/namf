@@ -1,3 +1,4 @@
+SENSOR_SHT3 SHT3x
 INTL_SHT3X_DESC SHT3x - temperature and humidity sensor
 INTL_SHT3X_RESULTS Humidity and temperature
 INTL_SHT3x_HUM Relative humidity
