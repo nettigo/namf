@@ -136,8 +136,16 @@ void display_values() {
                 display->drawString(0, 28, lines[2]);
                 display->drawString(0, 40, lines[3]);
                 display->setTextAlignment(TEXT_ALIGN_CENTER);
-                display->drawString(64, 52, displayGenerateFooter(static_screen_count+scheduler.countScreens()));
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
                 display->display();
+            }
+            if (char_lcd) {
+                char_lcd->clear();
+                for (byte i = 0; i < 4; i++) {
+                    char_lcd->setCursor(0,i);
+                    char_lcd->print(lines[i]);
+                }
+
             }
             next_display_count++;
             skipOldDisplay = true;

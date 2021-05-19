@@ -47,7 +47,9 @@ namespace SHT3x {
     bool display(byte cols, byte rows, byte minor, String lines[]) {
         byte row = 0;
         if (rows == 4) {
-            lines[row++] =FPSTR(SENSOR_SHT3);
+            lines[row] = getLCDHeader();
+            lines[row++] += FPSTR(SENSOR_SHT3);
+
         }
 
         lines[row] += F("T:  ");

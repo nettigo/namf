@@ -227,12 +227,14 @@ namespace SimpleScheduler {
 
 //check if senor has display subroutine. TODO - second parameter with LCD object
     bool displaySensor(SimpleScheduler::LoopEntryType sensor, String (&lines)[4], byte cols, byte rows, byte minor) {
+//        Serial.print("displaySensor for: ");
+//        Serial.println(LET_NAMES[sensor]);
+//        Serial.println(cols);
         switch (sensor) {
             case SHT3x:
                 if (cols == 0) return true;
-                return SHT3x::display(cols, rows, minor, lines);
-                Serial.println("SHT3x display:");
-                for (byte i=0; i<4;i++) {Serial.println(lines[i]);}
+                SHT3x::display(cols, rows, minor, lines);
+                return true;
 //            case HECA:
 //                return HECA::display(lcd, minor);
 //            case SDS011:
