@@ -26,6 +26,7 @@ namespace SHT3x {
     extern void resultsAsHTML(String &page_content);
     extern void afterSend(bool success);
     extern bool display(LiquidCrystal_I2C *lcd, byte minor);
+    bool getDisplaySetting();
 
     }
 #endif //NAMF_SHT3X_H

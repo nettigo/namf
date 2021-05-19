@@ -6,6 +6,8 @@ namespace SimpleScheduler {
 
     bool sensorWantsDisplay(LoopEntryType sensor){
         switch (sensor) {
+            case SimpleScheduler::SHT3x:
+                return SHT3x::getDisplaySetting();
             case SimpleScheduler::HECA:
                 return HECA::getDisplaySetting();
             case SimpleScheduler::SDS011:

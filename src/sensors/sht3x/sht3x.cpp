@@ -33,6 +33,10 @@ namespace SHT3x {
         return (float) rh / 10.0 / (float) cnt;
     }
 
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
+
 
     String getConfigHTML() {
         String s = F("");
