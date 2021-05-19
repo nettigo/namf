@@ -1128,7 +1128,7 @@ void webserver_prometheus_endpoint() {
     data_4_prometheus.replace("{up}", String(msSince(time_point_device_start_ms)));
     data_4_prometheus.replace("{si}", String(cfg::sending_intervall_ms));
     data_4_prometheus.replace("{cs}", String(count_sends));
-    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    DynamicJsonBuffer jsonBuffer;
     JsonObject& json2data = jsonBuffer.parseObject(last_data_string);
     if (json2data.success()) {
         for (uint8_t i = 0; i < json2data["sensordatavalues"].size() - 1; i++) {

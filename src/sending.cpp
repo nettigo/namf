@@ -138,7 +138,7 @@ String create_influxdb_string(const String& data) {
     String data_4_influxdb = "";
     debug_out(F("Parse JSON for influx DB"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);
-    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    DynamicJsonBuffer jsonBuffer;
     JsonObject& json2data = jsonBuffer.parseObject(data);
     if (json2data.success()) {
         bool first_line = true;
@@ -213,7 +213,7 @@ String create_influxdb_string(const String& data) {
  * send data as csv to serial out                                *
  *****************************************************************/
 void send_csv(const String& data) {
-    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    DynamicJsonBuffer jsonBuffer;
     JsonObject& json2data = jsonBuffer.parseObject(data);
     debug_out(F("CSV Output"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);

@@ -59,7 +59,7 @@ extern String tmpl(const String& patt, const String& value);
 #define UPDATE_URL_BETA F("/NAMF/index.php")
 #define UPDATE_PORT 80
 
-#define JSON_BUFFER_SIZE 2200
+#define JSON_BUFFER_SIZE 2600
 
 #define msSince(timestamp_before) (act_milli - (timestamp_before))
 

@@ -247,7 +247,7 @@ int readAndParseConfigFile(File configFile) {
         std::unique_ptr<char[]> buf(new char[size]);
 
         configFile.readBytes(buf.get(), size);
-        StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
         debug_out(F("Config - JSON object memory used:"),DEBUG_MIN_INFO, false);
         debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
