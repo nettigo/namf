@@ -147,24 +147,22 @@ namespace SDS011 {
         return printOnLCD;
     };
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor) {
-        if (lcd == NULL) return true;   //we are able to do display
+    bool display(byte cols, byte rows, byte minor, String lines[]) {
         byte row = 0;
-        lcd->clear();
-        if (getLCDRows() == 4) {
-            lcd->setCursor(0,row++);
-            lcd->print(getLCDHeader());
-            lcd->print(F(" "));
-            lcd->print(FPSTR(INTL_SDS011_LCD_HDR));
-        }
-        lcd->setCursor(0,row++);
-        lcd->print(F("PM2.5:"));
-        lcd->print(check_display_value(last_value_SDS_P2, -1, 1, 6));
-//        lcd->print(F(" µg/m³"));
-        lcd->setCursor(0,row++);
-        lcd->print(F("PM10: "));
-        lcd->print(check_display_value(last_value_SDS_P1, -1, 1, 6));
-//        lcd->print(F(" µg/m³"));
+//        if (rows == 4) {
+//            lcd->setCursor(0,row++);
+//            lcd->print(getLCDHeader());
+//            lcd->print(F(" "));
+//            lcd->print(FPSTR(INTL_SDS011_LCD_HDR));
+//        }
+//        lcd->setCursor(0,row++);
+//        lcd->print(F("PM2.5:"));
+//        lcd->print(check_display_value(last_value_SDS_P2, -1, 1, 6));
+////        lcd->print(F(" µg/m³"));
+//        lcd->setCursor(0,row++);
+//        lcd->print(F("PM10: "));
+//        lcd->print(check_display_value(last_value_SDS_P1, -1, 1, 6));
+////        lcd->print(F(" µg/m³"));
 
         return false;
     };

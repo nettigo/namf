@@ -123,7 +123,22 @@ void display_values() {
         if (sensor == SimpleScheduler::EMPTY) {
             next_display_count = 0;
         } else {
-            SimpleScheduler::displaySensor(sensor, char_lcd, minor);
+            String lines[] = {"","","",""};
+            SimpleScheduler::displaySensor(sensor, lines, 20, 4, minor);
+            if (display) {
+                display->clear();
+                display->displayOn();
+//                display->setTextAlignment(TEXT_ALIGN_CENTER);
+//                display->drawString(64, 1, display_header);
+                display->setTextAlignment(TEXT_ALIGN_LEFT);
+                display->drawString(0, 1, lines[0]);
+                display->drawString(0, 16, lines[1]);
+                display->drawString(0, 28, lines[2]);
+                display->drawString(0, 40, lines[3]);
+                display->setTextAlignment(TEXT_ALIGN_CENTER);
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count+scheduler.countScreens()));
+                display->display();
+            }
             next_display_count++;
             skipOldDisplay = true;
         }

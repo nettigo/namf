@@ -226,18 +226,22 @@ namespace SimpleScheduler {
     }
 
 //check if senor has display subroutine. TODO - second parameter with LCD object
-    bool displaySensor(SimpleScheduler::LoopEntryType sensor, LiquidCrystal_I2C *lcd, byte minor){
+    bool displaySensor(SimpleScheduler::LoopEntryType sensor, String (&lines)[4], byte cols, byte rows, byte minor) {
         switch (sensor) {
             case SHT3x:
-                return SHT3x::display(lcd, minor);
-            case HECA:
-                return HECA::display(lcd, minor);
-            case SDS011:
-                return SDS011::display(lcd, minor);
-            case SPS30:
-                return SPS30::display(lcd, minor);
-            case MHZ14A:
-                return MHZ14A::display(lcd, minor);
+                if (cols == 0) return true;
+                return SHT3x::display(cols, rows, minor, lines);
+                Serial.println("SHT3x display:");
+                for (byte i=0; i<4;i++) {Serial.println(lines[i]);}
+//            case HECA:
+//                return HECA::display(lcd, minor);
+//            case SDS011:
+//                if (cols == 0) return true;   //we are able to do display
+//                return SDS011::display(cols, rows, minor, lines);
+//            case SPS30:
+//                return SPS30::display(lcd, minor);
+//            case MHZ14A:
+//                return MHZ14A::display(lcd, minor);
             default:
                 return false;
         }
