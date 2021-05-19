@@ -138,6 +138,7 @@ namespace SHT3x {
 
     //send data to LD API...
     void sendToLD(){
+        if (!enabled) return;
         const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
         String data;
         results(data);
