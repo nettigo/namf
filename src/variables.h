@@ -66,7 +66,6 @@ namespace cfg {
     extern bool send2influx;
     extern bool send2csv;
     extern bool auto_update;
-    extern bool has_display;
     extern u8_t update_channel;
     extern bool has_display;
     extern bool has_lcd1602;
