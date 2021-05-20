@@ -22,7 +22,7 @@ String check_display_value(double value, double undef, uint8_t len, uint8_t str_
 byte getLCDCols();
 byte getLCDRows();
 //returns "x/y" where x is current screen being displayed and y total count
-String getLCDHeader();
+String getLCDHeader(bool longDisp = true);
 //should we display? Should we draw new screen?
 void cycleDisplay();
 #endif //NAMF_DISPLAY_COMMONS_H

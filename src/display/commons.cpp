@@ -131,7 +131,8 @@ void display_values() {
 //                display->setTextAlignment(TEXT_ALIGN_CENTER);
 //                display->drawString(64, 1, display_header);
                 display->setTextAlignment(TEXT_ALIGN_LEFT);
-                display->drawString(0, 1, lines[0]);
+                String hdr_ln = getLCDHeader()+lines[0];
+                display->drawString(0, 1, hdr_ln);
                 display->drawString(0, 16, lines[1]);
                 display->drawString(0, 28, lines[2]);
                 display->drawString(0, 40, lines[3]);
@@ -143,6 +144,7 @@ void display_values() {
                 char_lcd->clear();
                 for (byte i = 0; i < 4; i++) {
                     char_lcd->setCursor(0,i);
+                    if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));
                     char_lcd->print(lines[i]);
                 }
 
@@ -298,8 +300,12 @@ byte getLCDRows(){
 
 };
 
-String getLCDHeader(){
-    String ret = String(next_display_count+1)+F("/")+String(static_screen_count+scheduler.countScreens());
+String getLCDHeader(bool longDisp) {
+    String ret = String(next_display_count + 1);
+    if (longDisp)
+        ret += F("/");
+    ret += String(static_screen_count + scheduler.countScreens());
+    ret += F(" ");
     return ret;
 };
 
