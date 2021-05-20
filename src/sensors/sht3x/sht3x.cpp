@@ -44,7 +44,7 @@ namespace SHT3x {
 
     }
 
-    bool display(byte cols, byte rows, byte minor, String lines[]) {
+    void display(byte cols, byte rows, byte minor, String lines[]) {
         byte row = 0;
         if (rows == 4) {
             lines[row++] = FPSTR(SENSOR_SHT3);
@@ -61,7 +61,6 @@ namespace SHT3x {
         lines[row] += check_display_value(currentRH(), -1, 1, 0);
         lines[row] += F(" ");
         lines[row] += FPSTR(UNIT_PERCENT);
-        return false;
     }
 
     JsonObject &parseHTTPRequest(void) {
