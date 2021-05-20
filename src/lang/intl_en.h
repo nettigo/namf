@@ -137,6 +137,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_CONCENTRATION[] PROGMEM = "pcs/cm³";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_CONCENTRATIONS[] PROGMEM = "Particle matter concentration";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_COUNTS[] PROGMEM = "Particle matter counts";
+/* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_FW_FAIL[] PROGMEM = "Reading failed";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Not started";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_NO_RESULT[] PROGMEM = "no results";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_REFRESH[] PROGMEM = "Pause between saving measurements";

@@ -37,6 +37,8 @@ namespace SPS30 {
     extern String getConfigHTML(void);
     extern JsonObject & parseHTTPRequest(void);
 
+    void getStatusReport (String &page_content);
+
     extern String getConfigJSON(void);
     extern void readConfigJSON( JsonObject &);
 
@@ -49,6 +51,7 @@ namespace SPS30 {
     //display on LCD
     extern bool display(LiquidCrystal_I2C*, byte);
     bool getDisplaySetting();
-}
+
+    }
 
 #endif //NAMF_SENSOR_H

@@ -62,6 +62,7 @@ namespace SimpleScheduler {
     //collect sensors status
     void getStatusReport(String &res){
         HECA::getStatusReport(res);
+        SPS30::getStatusReport(res);
         SDS011::getStatusReport(res);
         NetworkWatchdog::resultsAsHTML(res);
 

@@ -170,7 +170,19 @@ namespace SPS30 {
         return 15 * 1000;
     }
 
-    //callback called after each sending data to APIs Bool parameter tell if there was success, or some API call failed
+    void getStatusReport (String &page_content) {
+        if (!enabled) return;
+        page_content += FPSTR(EMPTY_ROW);
+        uint8_t major, minor;
+        if (sps30_read_firmware_version(&major, &minor) == 0) {
+            page_content += table_row_from_value(FPSTR(KEY), F("FW ver"), String(major)+String(F("."))+String(minor), "");
+        } else
+            page_content += table_row_from_value(FPSTR(KEY), F("FW ver"), FPSTR(INTL_SPS30_FW_FAIL), "");
+
+
+
+        }
+        //callback called after each sending data to APIs Bool parameter tell if there was success, or some API call failed
     //in SPS30 it is being used start averaging results
     void afterSend(bool success) {
         zeroMeasurementStruct(sum);
