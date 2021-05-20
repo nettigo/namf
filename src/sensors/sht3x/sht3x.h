@@ -25,7 +25,7 @@ namespace SHT3x {
     extern void results (String &s);
     extern void resultsAsHTML(String &page_content);
     extern void afterSend(bool success);
-    extern void display(byte, byte, byte, String[]);
+    extern void display(byte, byte, String[]);
     bool getDisplaySetting();
 
     }

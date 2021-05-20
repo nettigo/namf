@@ -44,7 +44,7 @@ namespace SHT3x {
 
     }
 
-    void display(byte cols, byte rows, byte minor, String lines[]) {
+    void display(byte rows, byte minor, String lines[]) {
         byte row = 0;
         if (rows == 4) {
             lines[row++] = FPSTR(SENSOR_SHT3);

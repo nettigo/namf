@@ -50,40 +50,31 @@ namespace HECA {
         if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::HECA, 1);
     };
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor) {
-        if (lcd == NULL) return true;   //we are able to do display
+    bool display(byte rows, byte minor, String lines[]) {
         byte row = 0;
-        lcd->clear();
         if (getLCDRows() == 4) {
-            lcd->setCursor(0,row++);
-            lcd->print(getLCDHeader());
-            lcd->print(F(" "));
-            lcd->print(FPSTR(SENSORS_HECA));
+            lines[row] += (FPSTR(SENSORS_HECA));
         }
-        lcd->setCursor(0,row++);
-        lcd->print(F("RH: "));
-        lcd->print(check_display_value(last_value_HECA_H, -1, 1, 0));
-        lcd->print(F(" "));
-        lcd->print(FPSTR(UNIT_PERCENT));
-        lcd->setCursor(0,row++);
-        lcd->print(F("T: "));
-        lcd->print(check_display_value(last_value_HECA_T, -128, 1, 0));
-        lcd->print(F(" "));
-        lcd->print(FPSTR(UNIT_CELCIUS_LCD));
-//        lcd->print(F(" µg/m³"));
+        row++;
+        lines[row] += (F("RH: "));
+        lines[row] += (check_display_value(last_value_HECA_H, -1, 1, 0));
+        lines[row] += (F(" "));
+        lines[row] += (FPSTR(UNIT_PERCENT));
+        row++;
+        lines[row] += (F("T: "));
+        lines[row] += (check_display_value(last_value_HECA_T, -128, 1, 0));
+        lines[row] += (F(" "));
+        lines[row] += (FPSTR(UNIT_CELCIUS_LCD));
+//        lines[row] += (F(" µg/m³"));
         if (getLCDRows() == 4) {
-            lcd->setCursor(0,row);
-            lcd->print(FPSTR(INTL_HECA_DC));
-            lcd->print(F(" "));
-            lcd->print(String(getDutyCycle(),1));
-            lcd->print(F(" "));
-            lcd->print(FPSTR(UNIT_PERCENT));
+            row++;
+            lines[row] += (FPSTR(INTL_HECA_DC));
+            lines[row] += (F(" "));
+            lines[row] += (String(getDutyCycle(),1));
+            lines[row] += (F(" "));
+            lines[row] += (FPSTR(UNIT_PERCENT));
 
         }
-
-
-        return false;
-
     }
 
     void initCycle() {
