@@ -238,9 +238,10 @@ namespace SimpleScheduler {
                 if (cols == 0) return true;
                 HECA::display(rows, minor, lines);
                 return true;
-//            case SDS011:
-//                if (cols == 0) return true;   //we are able to do display
-//                return SDS011::display(cols, rows, minor, lines);
+            case SDS011:
+                if (cols == 0) return true;   //we are able to do display
+                SDS011::display(rows, minor, lines);
+                return true;
 //            case SPS30:
 //                return SPS30::display(lcd, minor);
 //            case MHZ14A:

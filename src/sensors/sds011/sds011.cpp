@@ -147,22 +147,19 @@ namespace SDS011 {
         return printOnLCD;
     };
 
-    bool display(byte cols, byte rows, byte minor, String lines[]) {
+    bool display(byte rows, byte minor, String lines[]) {
         byte row = 0;
-//        if (rows == 4) {
-//            lcd->setCursor(0,row++);
-//            lcd->print(getLCDHeader());
-//            lcd->print(F(" "));
-//            lcd->print(FPSTR(INTL_SDS011_LCD_HDR));
-//        }
-//        lcd->setCursor(0,row++);
-//        lcd->print(F("PM2.5:"));
-//        lcd->print(check_display_value(last_value_SDS_P2, -1, 1, 6));
-////        lcd->print(F(" µg/m³"));
-//        lcd->setCursor(0,row++);
-//        lcd->print(F("PM10: "));
-//        lcd->print(check_display_value(last_value_SDS_P1, -1, 1, 6));
-////        lcd->print(F(" µg/m³"));
+        if (rows == 4) {
+            lines[row] += FPSTR(INTL_SDS011_LCD_HDR);
+        }
+        row++;;
+        lines[row] += F("PM2.5:");
+        lines[row] += (check_display_value(last_value_SDS_P2, -1, 1, 6));
+//        lines[row] += (F(" µg/m³"));
+        row++;;
+        lines[row] += F("PM10: ");
+        lines[row] += check_display_value(last_value_SDS_P1, -1, 1, 6);
+//        lines[row] += (F(" µg/m³"));
 
         return false;
     };

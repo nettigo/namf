@@ -34,7 +34,7 @@ namespace SDS011 {
 
     bool getDisplaySetting();
 
-    bool display(byte cols, byte rows, byte minor, String lines[]);
+    bool display(byte rows, byte minor, String lines[]);
 
     String getConfigJSON();
 
