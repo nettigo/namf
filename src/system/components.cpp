@@ -232,6 +232,7 @@ namespace SimpleScheduler {
 //        Serial.println(cols);
         switch (sensor) {
             case SHT3x:
+                if (cols == 0) return true;
                 SHT3x::display(rows, minor, lines);
                 return true;
             case HECA:
@@ -242,13 +243,16 @@ namespace SimpleScheduler {
                 if (cols == 0) return true;   //we are able to do display
                 SDS011::display(rows, minor, lines);
                 return true;
-//            case SPS30:
-//                return SPS30::display(lcd, minor);
+            case SPS30:
+                if (cols == 0) return true;
+                SPS30::display(rows, minor, lines);
+                return true;
 //            case MHZ14A:
 //                return MHZ14A::display(lcd, minor);
             default:
                 return false;
         }
+
     };
 }
 

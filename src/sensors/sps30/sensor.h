@@ -47,7 +47,7 @@ namespace SPS30 {
 
     extern void resultsAsHTML(String &page_content);
     //display on LCD
-    extern bool display(LiquidCrystal_I2C*, byte);
+    extern void display(byte rows, byte minor, String lines[]);
     bool getDisplaySetting();
 }
 

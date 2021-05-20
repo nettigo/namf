@@ -279,90 +279,93 @@ namespace SPS30 {
 
     }
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor) {
-        if (lcd == NULL) return true;   //I'm here, ready to display
+    void display(byte cols, byte minor, String lines[]) {
         if (!started) {
-            lcd->clear();
-            lcd->println(F("SPS30"));
-            lcd->println(FPSTR(INTL_SPS30_NOT_STARTED));
+            lines[0] = F("SPS30");
+            lines[1] = FPSTR(INTL_SPS30_NOT_STARTED);
+            return;
         }
         if (measurement_count == 0) {
-            lcd->clear();
-            lcd->print(INTL_SPS30_NO_RESULT);
-            return true;
+            lines[0] = F("SPS30");
+            lines[1] = FPSTR(INTL_SPS30_NO_RESULT);
+            return;
         }
+        byte row = 0;
+
         if (getLCDRows() == 2) {    //16x2
-            lcd->clear();
             switch (minor) {
                 case 0:
-                    lcd->print(F("SPS: PM1:"));
-                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("PM2.5: "));
-                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
+                    lines[row] += (F("SPS: PM1:"));
+                    lines[row] += (String(sum.mc_1p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("PM2.5: "));
+                    lines[row] += (String(sum.mc_2p5 / measurement_count, 1));
                     break;
                 case 1:
-                    lcd->print(F("SPS: PM4:"));
-                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("PM10: "));
-                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
+                    lines[row] += (F("SPS: PM4:"));
+                    lines[row] += (String(sum.mc_4p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("PM10: "));
+                    lines[row] += (String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 2:
-                    lcd->print(F("SPS: NC1:"));
-                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("NC2.5: "));
-                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
+                    lines[row] += (F("SPS: NC1:"));
+                    lines[row] += (String(sum.nc_1p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("NC2.5: "));
+                    lines[row] += (String(sum.nc_2p5 / measurement_count, 1));
                     break;
                 case 3:
-                    lcd->print(F("SPS: NC4:"));
-                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("NC10: "));
-                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
+                    lines[row] += (F("SPS: NC4:"));
+                    lines[row] += (String(sum.nc_4p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("NC10: "));
+                    lines[row] += (String(sum.nc_10p0 / measurement_count, 1));
                     break;
                 case 4:
-                    lcd->print(F("Typical size:"));
-                    lcd->setCursor(0, 1);
-                    lcd->print(String(sum.typical_particle_size / measurement_count, 2));
+                    lines[row] += (F("Typical size:"));
+                    row++;
+                    lines[row] += (String(sum.typical_particle_size / measurement_count, 2));
 
             }
 
-        } else {    //LCD 20x4, more real estate
-            lcd->clear();
+        } else {    //LCD 20x4 or OLED, more real estate
             switch (minor) {
                 case 0:
-                    lcd->print(getLCDHeader() + F(" SPS: PM1:"));
-                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("PM2.5: "));
-                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
-                    lcd->setCursor(0, 2);
-                    lcd->print(F("PM4:   "));
-                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 3);
-                    lcd->print(F("PM10:  "));
-                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
+                    Serial.println("1");
+                    lines[row] = F("SPS: PM1:");
+                    lines[row] += String(sum.mc_1p0 / measurement_count, 1);
+                    row++;
+                    Serial.println("2");
+                    lines[row] = F("PM2.5: ");
+                    lines[row] += String(sum.mc_2p5 / measurement_count, 1);
+                    row++;
+                    Serial.println("3");
+                    lines[row] = F("PM4:   ");
+                    lines[row] += String(sum.mc_4p0 / measurement_count, 1);
+                    row++;
+                    Serial.println("4");
+                    lines[row] = F("PM10:  ");
+                    lines[row] += String(sum.mc_10p0 / measurement_count, 1);
                     break;
                 case 1:
-                    lcd->print(getLCDHeader() + F(" SPS: NC1:"));
-                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("NC2.5: "));
-                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
-                    lcd->setCursor(0, 2);
-                    lcd->print(F("NC4:   "));
-                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 3);
-                    lcd->print(F("NC10:"));
-                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
-                    lcd->print(F(" TS:"));
-                    lcd->print(String(sum.typical_particle_size / measurement_count, 1));
+                    lines[row] = F(" SPS: NC1:");
+                    lines[row] += String(sum.nc_1p0 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("NC2.5: ");
+                    lines[row] += String(sum.nc_2p5 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("NC4:   ");
+                    lines[row] += String(sum.nc_4p0 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("NC10:");
+                    lines[row] += String(sum.nc_10p0 / measurement_count, 1);
+                    lines[row] += F(" TS:");
+                    lines[row] += String(sum.typical_particle_size / measurement_count, 1);
                     break;
             }
         }
-        return true;
+        return;
     };
 
     bool getDisplaySetting() {

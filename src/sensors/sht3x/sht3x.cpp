@@ -48,7 +48,6 @@ namespace SHT3x {
         byte row = 0;
         if (rows == 4) {
             lines[row++] = FPSTR(SENSOR_SHT3);
-
         }
 
         lines[row] += F("T:  ");
