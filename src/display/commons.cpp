@@ -131,8 +131,7 @@ void display_values() {
 //                display->setTextAlignment(TEXT_ALIGN_CENTER);
 //                display->drawString(64, 1, display_header);
                 display->setTextAlignment(TEXT_ALIGN_LEFT);
-                String hdr_ln = getLCDHeader()+lines[0];
-                display->drawString(0, 1, hdr_ln);
+                display->drawString(0, 1, lines[0]);
                 display->drawString(0, 16, lines[1]);
                 display->drawString(0, 28, lines[2]);
                 display->drawString(0, 40, lines[3]);
@@ -225,7 +224,7 @@ void display_values() {
                 display->drawString(0, 28, display_lines[1]);
                 display->drawString(0, 40, display_lines[2]);
                 display->setTextAlignment(TEXT_ALIGN_CENTER);
-                display->drawString(64, 52, displayGenerateFooter(static_screen_count));
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
                 display->display();
             }
             if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
