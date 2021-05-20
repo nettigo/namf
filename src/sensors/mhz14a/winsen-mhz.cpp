@@ -74,20 +74,13 @@ namespace MHZ14A {
         return ret;
     }
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor) {
-        if (lcd == NULL) return true;
-        if (getLCDRows() == 2 || getLCDRows() == 4) {    // any LCD
-            lcd->clear();
-            if (getLCDRows() == 4) {
-                lcd->print(getLCDHeader());
-                lcd->print(F(" "));
-            }
-            lcd->print(F("CO2 (MHZ14A)"));
-            lcd->setCursor(0, 1);
-            lcd->print(last_value_WINSEN_CO2);
-            lcd->print(F(" ppm"));
-        }
-        return false;
+    void display(byte cols, byte minor, String lines[]) {
+
+        lines[0] = (F("CO2 (MHZ14A)"));
+        lines[1] = String(last_value_WINSEN_CO2);
+        lines[1] += (F(" ppm"));
+
+        return;
     };
 
     bool getDisplaySetting() {

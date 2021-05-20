@@ -247,8 +247,10 @@ namespace SimpleScheduler {
                 if (cols == 0) return true;
                 SPS30::display(rows, minor, lines);
                 return true;
-//            case MHZ14A:
-//                return MHZ14A::display(lcd, minor);
+            case MHZ14A:
+                if (cols == 0) return true;
+                MHZ14A::display(rows, minor, lines);
+                return true;
             default:
                 return false;
         }
