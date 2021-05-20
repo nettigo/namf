@@ -294,7 +294,7 @@ byte getLCDCols(){
 
 byte getLCDRows(){
     if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 2;
-    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) return 4;
+    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || display) return 4;
     return 0;
 
 };
