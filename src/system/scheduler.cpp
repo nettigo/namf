@@ -82,7 +82,8 @@ namespace SimpleScheduler {
             boolean checked = findSlot(i) >= 0; // check if sensor is enabled
             templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
             templ += F("<br/>");
-            if (SimpleScheduler::displaySensor(i)) {
+            String lines[] = {"","","",""};
+            if (SimpleScheduler::displaySensor(i,lines)) {
                 checked = sensorWantsDisplay(i);
                 templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
                 templ += F("<div class='spacer'></div>");

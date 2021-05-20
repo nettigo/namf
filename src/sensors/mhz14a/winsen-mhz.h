@@ -34,7 +34,7 @@ namespace MHZ14A {
 
     String getConfigJSON(void);
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor);
+    void display(byte cols, byte minor, String lines[]);
 
     bool getDisplaySetting();
 

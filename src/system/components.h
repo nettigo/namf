@@ -37,7 +37,7 @@ namespace SimpleScheduler {
 
     String getConfigJSON(LoopEntryType sensor);
 
-    bool displaySensor(SimpleScheduler::LoopEntryType, LiquidCrystal_I2C * = NULL, byte= 0);
+    bool displaySensor(SimpleScheduler::LoopEntryType, String(&)[4], byte cols = 0, byte rows = 0, byte minor = 0);
 
 }
 

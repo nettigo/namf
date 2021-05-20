@@ -44,27 +44,22 @@ namespace SHT3x {
 
     }
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor) {
-        if (lcd == NULL) return true;   //we are able to do display
+    void display(byte rows, byte minor, String lines[]) {
         byte row = 0;
-        lcd->clear();
-        if (getLCDRows() == 4) {
-            lcd->setCursor(0, row++);
-            lcd->print(getLCDHeader());
-            lcd->print(F(" "));
-            lcd->print(FPSTR(SENSOR_SHT3));
+        if (rows == 4) {
+            lines[row++] = FPSTR(SENSOR_SHT3);
         }
-        lcd->setCursor(0, row++);
-        lcd->print(F("T:  "));
-        lcd->print(check_display_value(currentTemp(), -128, 1, 0));
-        lcd->print(F(" "));
-        lcd->print(FPSTR(UNIT_CELCIUS_LCD));
-        lcd->setCursor(0, row++);
-        lcd->print(F("RH: "));
-        lcd->print(check_display_value(currentRH(), -1, 1, 0));
-        lcd->print(F(" "));
-        lcd->print(FPSTR(UNIT_PERCENT));
-        return false;
+
+        lines[row] += F("T:  ");
+        lines[row] += check_display_value(currentTemp(), -128, 1, 0);
+        lines[row] += F(" ");
+        lines[row] += FPSTR(UNIT_CELCIUS_LCD);
+
+        row++;
+        lines[row] += F("RH: ");
+        lines[row] += check_display_value(currentRH(), -1, 1, 0);
+        lines[row] += F(" ");
+        lines[row] += FPSTR(UNIT_PERCENT);
     }
 
     JsonObject &parseHTTPRequest(void) {

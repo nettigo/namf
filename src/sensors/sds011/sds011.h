@@ -34,7 +34,7 @@ namespace SDS011 {
 
     bool getDisplaySetting();
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor);
+    bool display(byte rows, byte minor, String lines[]);
 
     String getConfigJSON();
 
