@@ -1,6 +1,7 @@
 NAMF-2020-38rc7 ()
 * add mDNS TXT field 'manufacturer'
 
+
 NAMF-2020-38rc6 (2021-05-20)
 * send TXT record with ID key (NAM-XXXX), to allow Home Assistant to discover NAM if host name is set to different than NAM-XXXX
 * SHT3x sensor used as temp/humidity sensor (not in HECA) can display measurements on LCD
