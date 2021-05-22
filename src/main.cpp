@@ -924,7 +924,7 @@ void setup() {
         char buff[20];
         sprintf(buff, "NAM-%u", ESP.getChipId());
         MDNS.addServiceTxt(hService, "id", buff);
-        MDNS.addServiceTxt(hService, "manufacturer", "Nettgio");
+        MDNS.addServiceTxt(hService, "manufacturer", "Nettigo");
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
