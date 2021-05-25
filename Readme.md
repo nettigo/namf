@@ -41,3 +41,7 @@ To build this project You need Platformio installed with python 3.
   * 4 - errors, warnings, min. info & med. info
   * 5 - all debug messages
 * /images - serving images - used for the NAM logo 
+
+## For developers and interested in
+
+In [Details](Details.md) You can find a bit more info about NAMF internals.
