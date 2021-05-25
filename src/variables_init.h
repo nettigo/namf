@@ -103,8 +103,8 @@ int TimeZone = 1;
 /*****************************************************************
  * Display definitions                                           *
  *****************************************************************/
-SSD1306 *display = NULL;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
-LiquidCrystal_I2C *char_lcd = NULL;//(0x27, 16, 2);
+SSD1306 *display = nullptr;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
+LiquidCrystal_I2C *char_lcd = nullptr;//(0x27, 16, 2);
 
 /*****************************************************************
  * SDS011 declarations                                           *
