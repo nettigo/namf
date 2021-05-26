@@ -35,6 +35,9 @@ extern SimpleScheduler::NAMFScheduler scheduler;
  * Note that the names of these variables can't be easily changed *
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
+extern unsigned SDSreadings;
+extern unsigned SDSfailedReadings;
+
 namespace cfg {
     extern char wlanssid[35];
     extern char wlanpwd[65];
@@ -48,6 +51,7 @@ namespace cfg {
     extern char fs_pwd[65];
 
     extern char version_from_local_config[20];
+
 
     extern bool dht_read;
     extern bool sds_read;

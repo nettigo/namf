@@ -271,6 +271,7 @@ String sensorSDS() {
             sds_pm25_sum = sds_pm25_sum - sds_pm25_min - sds_pm25_max;
             sds_val_count = sds_val_count - 2;
         }
+        SDSreadings++;
         if (sds_val_count > 0) {
             last_value_SDS_P1 = double(sds_pm10_sum) / (sds_val_count * 10.0);
             last_value_SDS_P2 = double(sds_pm25_sum) / (sds_val_count * 10.0);
@@ -279,6 +280,8 @@ String sensorSDS() {
             debug_out("----", DEBUG_MIN_INFO, 1);
             s += Value2Json("SDS_P1", Float2String(last_value_SDS_P1));
             s += Value2Json("SDS_P2", Float2String(last_value_SDS_P2));
+        } else {
+            SDSfailedReadings++;
         }
         sds_pm10_sum = 0;
         sds_pm25_sum = 0;
