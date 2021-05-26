@@ -882,6 +882,7 @@ void setup() {
             break;
         case UPDATE_CHANNEL_BETA:
             PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 3 * 3600 * 1000;
+            break;
         default:
             PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = ONE_DAY_IN_MS;
     }

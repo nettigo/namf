@@ -1,3 +1,6 @@
+NAMF-2020-38rc8 ()
+* fixed update check interval for beta channel
+
 NAMF-2020-38rc7 (2021-05-26)
 * add mDNS TXT field 'manufacturer'
 * when checking for update report number of SDS readings
