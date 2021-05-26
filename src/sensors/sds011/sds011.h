@@ -20,6 +20,9 @@ namespace SDS011 {
 
     extern bool enabled;
 
+    extern unsigned readings;
+    extern unsigned failedReadings;
+
 
     /*****************************************************************
  * send SDS011 command (start, stop, continuous mode, version    *

@@ -1,6 +1,6 @@
 NAMF-2020-38rc7 ()
 * add mDNS TXT field 'manufacturer'
-
+* when checking for update report number of SDS readings
 
 NAMF-2020-38rc6 (2021-05-20)
 * send TXT record with ID key (NAM-XXXX), to allow Home Assistant to discover NAM if host name is set to different than NAM-XXXX

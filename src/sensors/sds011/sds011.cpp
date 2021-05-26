@@ -10,6 +10,9 @@ namespace SDS011 {
     unsigned long readTime = READINGTIME_SDS_MS;
     unsigned long pm10Sum, pm25Sum = 0;
     unsigned readingCount = 0;
+
+    unsigned readings;
+    unsigned failedReadings;
     enum {
         SDS_REPLY_HDR = 10,
         SDS_REPLY_BODY = 8
@@ -328,10 +331,13 @@ namespace SDS011 {
     }
 
     void results(String &res) {
+        readings++;
         if (last_value_SDS_P2 != -1 && last_value_SDS_P1 != -1) {
 
             res += Value2Json(F("SDS_P1"),String(last_value_SDS_P1));
             res += Value2Json(F("SDS_P2"),String(last_value_SDS_P2));
+        } else {
+            failedReadings++;
         }
     }
 
@@ -364,6 +370,7 @@ namespace SDS011 {
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                 return 0;
             case SimpleScheduler::INIT:
+                readings = failedReadings = 0;
                 return processState();
             case SimpleScheduler::RUN:
                 return processState();

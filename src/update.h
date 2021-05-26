@@ -8,6 +8,7 @@
 #include "defines.h"
 #include "variables.h"
 #include "helpers.h"
+#include "sensors/sds011/sds011.h"
 
 #ifdef ESP32
 #include <WiFi.h> /// FOR ESP32
@@ -90,14 +91,25 @@ void updateFW(const String host, const String port, const String path) {
     verifyUpdate(ret);
 };
 
+String sds_report() {
+    String ret = F("");
+    if (SDS011::enabled) {
+        ret += String(SDS011::failedReadings) + String(F("-")) + String(SDS011::readings);
+        SDS011::failedReadings = SDS011::readings = 0;
+    } else {
+        ret += F("na-na");
+    }
+    return ret;
+}
 
 void updateFW() {
     Serial.print(F("Check for update with default URL"));
     Serial.println(SOFTWARE_VERSION);
     display_debug(F("Update - check"), F(""));
 
-    t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) );
+    t_httpUpdate_return ret = tryUpdate(
+            String(SOFTWARE_VERSION) + String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
+            String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) + String(" ") + sds_report());
     verifyUpdate(ret);
 };
 
