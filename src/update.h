@@ -106,7 +106,7 @@ void updateFW() {
     display_debug(F("Update - check"), F(""));
 
     t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) );
+                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) + String(" ") + sds_report() );
     verifyUpdate(ret);
 };
 
