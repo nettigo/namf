@@ -1003,14 +1003,15 @@ void webserver_dump_status(){
  *
  *********************************/
 void webserver_toggle_sds(void) {
+    static byte val =1;
     if (!webserver_request_auth()) { return; }
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
     if (cfg::PCF.isConnected()) {
-        byte val = cfg::PCF.read(0);
-        cfg::PCF.write(0,!val);
-        page_content += F("<p> Status was: ");
+        val = !val;
+        cfg::PCF.write(0,val);
+        page_content += F("<p> Status var: ");
         page_content += String(val);
-        page_content += F(", status is now: ");
+        page_content += F(", port read: ");
         page_content += String(cfg::PCF.read(0));
         page_content += F("</p>");
 
