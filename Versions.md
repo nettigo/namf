@@ -1,5 +1,7 @@
-NAMF-2020-37 (2021-04-27)
+NAMF-2020-37a (2021-06-04)
+* collect SDS statistics when checking for an update
 
+NAMF-2020-37 (2021-04-27)
 * Merged all beta releases (37rcX)
 
 NAMF-2020-37rc5 (2021-04-15)
