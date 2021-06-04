@@ -81,7 +81,7 @@ void verifyUpdate (t_httpUpdate_return result) {
 
 String sds_report() {
     String ret = F("");
-    if (SDS011::enabled) {
+    if (SDS011::enabled || cfg::sds_read) {
         ret += String(SDS011::failedReadings) + String(F("-")) + String(SDS011::readings);
         SDS011::failedReadings = SDS011::readings = 0;
     } else {
