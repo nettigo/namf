@@ -1,4 +1,4 @@
-NAMF-2020-38rc8 ()
+NAMF-2020-38rc8 (2021-06-04)
 * fixed update check interval for beta channel
 
 NAMF-2020-38rc7 (2021-05-26)
