@@ -100,27 +100,62 @@ namespace SDS011 {
         serialSDS.write(buf, cmd_len);
     }
 
+//    bool SDS_cmd(PmSensorCmd cmd) {
+//        switch (cmd) {
+//            case PmSensorCmd::Start:
+//                SDS_rawcmd(0x06, 0x01, 0x01);
+//                break;
+//            case PmSensorCmd::Stop:
+//                SDS_rawcmd(0x06, 0x01, 0x00);
+//                break;
+//            case PmSensorCmd::ContinuousMode:
+//                // TODO: Check mode first before (re-)setting it
+//                SDS_rawcmd(0x08, 0x01, 0x00);
+//                SDS_rawcmd(0x02, 0x01, 0x00);
+//                break;
+//            case PmSensorCmd::VersionDate:
+//                SDS_rawcmd(0x07, 0, 0);
+//                break;
+//        }
+//
+//        return cmd != PmSensorCmd::Stop;
+//    }
     bool SDS_cmd(PmSensorCmd cmd) {
+        static constexpr uint8_t start_cmd[] PROGMEM = {
+                0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB
+        };
+        static constexpr uint8_t stop_cmd[] PROGMEM = {
+                0xAA, 0xB4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
+        };
+        static constexpr uint8_t continuous_mode_cmd[] PROGMEM = {
+                0xAA, 0xB4, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x07, 0xAB
+        };
+        static constexpr uint8_t continuous_mode_cmd2[] PROGMEM = {
+                0xAA, 0xB4, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x01, 0xAB
+        };
+        static constexpr uint8_t version_cmd[] PROGMEM = {
+                0xAA, 0xB4, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
+        };
+        constexpr uint8_t cmd_len = 19;
+
+        uint8_t buf[cmd_len];
         switch (cmd) {
             case PmSensorCmd::Start:
-                SDS_rawcmd(0x06, 0x01, 0x01);
+                memcpy_P(buf, start_cmd, cmd_len);
                 break;
             case PmSensorCmd::Stop:
-                SDS_rawcmd(0x06, 0x01, 0x00);
+                memcpy_P(buf, stop_cmd, cmd_len);
                 break;
             case PmSensorCmd::ContinuousMode:
-                // TODO: Check mode first before (re-)setting it
-                SDS_rawcmd(0x08, 0x01, 0x00);
-                SDS_rawcmd(0x02, 0x01, 0x00);
+                memcpy_P(buf, continuous_mode_cmd, cmd_len);
                 break;
             case PmSensorCmd::VersionDate:
-                SDS_rawcmd(0x07, 0, 0);
+                memcpy_P(buf, version_cmd, cmd_len);
                 break;
         }
-
+        serialSDS.write(buf, cmd_len);
         return cmd != PmSensorCmd::Stop;
     }
-
     bool SDS_checksum_valid(const uint8_t (&data)[8]) {
         uint8_t checksum_is = 0;
         for (unsigned i = 0; i < 6; ++i) {
@@ -286,6 +321,8 @@ namespace SDS011 {
                 }
                 if (timeout(STARTUP_TIME)) {
                     processReadings();
+                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+                    delay(200);
                     is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                     updateState(OFF);
                     return 500;
