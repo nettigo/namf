@@ -1,3 +1,6 @@
+NAMF-2020-38rc9 (2021-06-07)
+* old (2019 line) code for sending SDS commands (diagnosing SDS problems)
+
 NAMF-2020-38rc8 (2021-06-04)
 * fixed update check interval for beta channel
 
