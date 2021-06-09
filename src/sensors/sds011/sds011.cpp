@@ -541,7 +541,7 @@ namespace SDS011 {
                 updateState(POST);
                 return 100;
             case POST:
-                if (serialSDS.available() >= SDS_waiting_for) {
+                if (replies[SDS_DATA].received) {
                     readSingleSDSPacket(&pm10, &pm25);
                     storeReadings(pm10, pm25);
                 }
