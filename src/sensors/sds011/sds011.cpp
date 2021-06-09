@@ -89,6 +89,7 @@ namespace SDS011 {
     } SDSReplyInfo;
 
     SDSReplyInfo replies[SDS_UNKNOWN];
+    unsigned checksumFailed = 0;
 
     //change state and store timestamp
     void updateState(SDS011State newState) {
@@ -225,6 +226,7 @@ namespace SDS011 {
         bool chk = data[9] == 0xAB && checksum_is == data[8];
         if (!chk){
             Serial.print( F("Checksum failed "));
+            checksumFailed++;
             Serial.println(checksum_is,16);
             for (byte i=0; i<10; i++) {
                 Serial.print(data[i],16);
@@ -625,6 +627,7 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
+        res += table_row_from_value(F("SDS011"), F("Checksum failures"), String(checksumFailed), "");
     }
 
 
