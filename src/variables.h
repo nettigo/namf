@@ -104,12 +104,13 @@ namespace cfg {
 
 
 
-enum class PmSensorCmd {
+typedef enum  {
     Start,
     Stop,
     ContinuousMode,
-    VersionDate
-};
+    VersionDate,
+    None
+}PmSensorCmd;
 
 extern char *basic_auth_influx ;
 extern char *basic_auth_custom ;

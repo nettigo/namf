@@ -182,7 +182,20 @@ namespace SDS011 {
 //
 //        return cmd != PmSensorCmd::Stop;
 //    }
+#define SDS_CMD_QUEUE_SIZE  5
+    PmSensorCmd cmdQ[SDS_CMD_QUEUE_SIZE];
+    byte cmdIdx = 0;
+    unsigned long lastCmdSent = 0;
+    PmSensorCmd sentCmd = PmSensorCmd::None;
+
     bool SDS_cmd(PmSensorCmd cmd) {
+        if (cmdIdx < SDS_CMD_QUEUE_SIZE) {
+            cmdQ[cmdIdx++] = cmd;
+        }
+        return cmd != PmSensorCmd::Stop;
+
+    }
+    bool SDS_cmd_send(PmSensorCmd cmd) {
         static constexpr uint8_t start_cmd[] PROGMEM = {
                 0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB
         };
@@ -203,15 +216,19 @@ namespace SDS011 {
         uint8_t buf[cmd_len];
         switch (cmd) {
             case PmSensorCmd::Start:
+                Serial.println(F("SDS cmd: start"));
                 memcpy_P(buf, start_cmd, cmd_len);
                 break;
             case PmSensorCmd::Stop:
+                Serial.println(F("SDS cmd: stop"));
                 memcpy_P(buf, stop_cmd, cmd_len);
                 break;
             case PmSensorCmd::ContinuousMode:
+                Serial.println(F("SDS cmd: continuous"));
                 memcpy_P(buf, continuous_mode_cmd, cmd_len);
                 break;
             case PmSensorCmd::VersionDate:
+                Serial.println(F("SDS cmd: version"));
                 memcpy_P(buf, version_cmd, cmd_len);
                 break;
         }
@@ -624,6 +641,7 @@ namespace SDS011 {
 
     void getStatusReport(String &res) {
         if (!enabled) return;
+        SDS_cmd(PmSensorCmd::Start);
         SDS_cmd(PmSensorCmd::VersionDate);
         res += FPSTR(EMPTY_ROW);
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
@@ -635,7 +653,23 @@ namespace SDS011 {
                                     String(fr) + F("% ") + String(checksumFailed) + F("/") + String(packetCount), "");
     }
 
+    void popCmd(PmSensorCmd &t) {
+        t = cmdQ[0];
+        cmdIdx--;
+        for (byte i = 0; i < cmdIdx; i++) {
+            cmdQ[i] = cmdQ[i + 1];
+        }
+    }
 
+    void processCmdQueue() {
+        if (cmdIdx) {
+            if (lastCmdSent != PmSensorCmd::None ) {
+                PmSensorCmd cmd;
+                popCmd(cmd);
+
+            }
+        }
+    }
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
@@ -681,9 +715,10 @@ namespace SDS011 {
         String version_date = "";
 
         debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
-
-        is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-        is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
+        if(!replies[SDS_FW_VER].received) {
+            is_SDS_running = SDS_cmd(PmSensorCmd::Start);
+            is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
+        }
 
         if (replies[SDS_FW_VER].received) {
             char reply[30];
