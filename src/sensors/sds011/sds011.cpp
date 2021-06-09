@@ -718,7 +718,7 @@ namespace SDS011 {
                     checksum_is = 7;
                     break;
                 case (3):
-                    version_date = String(value);
+                    version_date = String(2000+value);
                     break;
                 case (4):
                     version_date += "-" + String(value);
