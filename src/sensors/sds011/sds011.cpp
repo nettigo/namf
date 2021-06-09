@@ -540,7 +540,8 @@ namespace SDS011 {
                 return 10;
             case STARTUP:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-                SDS_waiting_for = SDS_REPLY_HDR;
+                delay(500);
+                is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
                 resetReadings();
                 updateState(POST);
                 return 100;
@@ -551,8 +552,6 @@ namespace SDS011 {
                 }
                 if (timeout(STARTUP_TIME)) {
                     processReadings();
-                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-                    delay(200);
                     is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                     updateState(OFF);
                     return 500;
@@ -625,11 +624,15 @@ namespace SDS011 {
 
     void getStatusReport(String &res) {
         if (!enabled) return;
+        SDS_cmd(PmSensorCmd::VersionDate);
         res += FPSTR(EMPTY_ROW);
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
-        res += table_row_from_value(F("SDS011"), F("Checksum failures"), String(checksumFailed)+F("/")+String(packetCount), "");
+        float fr = 0;
+        if (packetCount) fr = checksumFailed / (float) packetCount * 100.0;
+        res += table_row_from_value(F("SDS011"), F("Checksum failures"),
+                                    String(fr) + F("% ") + String(checksumFailed) + F("/") + String(packetCount), "");
     }
 
 
@@ -675,107 +678,25 @@ namespace SDS011 {
      * read SDS011 sensor serial and firmware date                   *
      *****************************************************************/
     String SDS_version_date() {
-        String s = "";
-        char buffer;
-        int value;
-        int len = 0;
         String version_date = "";
-        String device_id = "";
-        int checksum_is = 0;
-        int checksum_ok = 0;
 
         debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
 
         is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-
-        delay(100);
-
         is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
 
-        delay(500);
-
-        while (serialSDS.available() > 0) {
-            buffer = serialSDS.read();
-            debug_out(String(len) + " - " + String(buffer, DEC) + " - " + String(buffer, HEX) + " - " + int(buffer) +
-                      " .", DEBUG_MED_INFO, 1);
-//		"aa" = 170, "ab" = 171, "c0" = 192
-            value = int(buffer);
-            switch (len) {
-                case (0):
-                    if (value != 170) {
-                        len = -1;
-                    };
-                    break;
-                case (1):
-                    if (value != 197) {
-                        len = -1;
-                    };
-                    break;
-                case (2):
-                    if (value != 7) {
-                        len = -1;
-                    };
-                    checksum_is = 7;
-                    break;
-                case (3):
-                    version_date = String(2000+value);
-                    break;
-                case (4):
-                    version_date += "-" + String(value);
-                    break;
-                case (5):
-                    version_date += "-" + String(value);
-                    break;
-                case (6):
-                    if (value < 0x10) {
-                        device_id = "0" + String(value, HEX);
-                    } else {
-                        device_id = String(value, HEX);
-                    };
-                    break;
-                case (7):
-                    if (value < 0x10) {
-                        device_id += "0";
-                    };
-                    device_id += String(value, HEX);
-                    break;
-                case (8):
-                    debug_out(FPSTR(DBG_TXT_CHECKSUM_IS), DEBUG_MED_INFO, 0);
-                    debug_out(String(checksum_is % 256), DEBUG_MED_INFO, 0);
-                    debug_out(FPSTR(DBG_TXT_CHECKSUM_SHOULD), DEBUG_MED_INFO, 0);
-                    debug_out(String(value), DEBUG_MED_INFO, 1);
-                    if (value == (checksum_is % 256)) {
-                        checksum_ok = 1;
-                    } else {
-                        len = -1;
-                    };
-                    break;
-                case (9):
-                    if (value != 171) {
-                        len = -1;
-                    };
-                    break;
-            }
-            if (len > 2) { checksum_is += value; }
-            len++;
-            if (len == 10 && checksum_ok == 1) {
-                s = version_date + "(" + device_id + ")";
-                debug_out(F("SDS version date : "), DEBUG_MIN_INFO, 0);
-                debug_out(version_date, DEBUG_MIN_INFO, 1);
-                debug_out(F("SDS device ID: "), DEBUG_MIN_INFO, 0);
-                debug_out(device_id, DEBUG_MIN_INFO, 1);
-                len = 0;
-                checksum_ok = 0;
-                version_date = "";
-                device_id = "";
-                checksum_is = 0;
-            }
-            yield();
+        if (replies[SDS_FW_VER].received) {
+            char reply[30];
+            byte *buff = replies[SDS_FW_VER].data;
+            char fmt[20];
+            String a = F("%i-%i-%i(%02X%02X)");
+            a.toCharArray(fmt, 20);
+            sprintf_P(reply, fmt, buff[0], buff[1], buff[2], buff[3], buff[4]);
+            version_date = String(reply);
+        } else {
+            version_date = F("n/a");
         }
-
-        debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
-
-        return s;
+        return version_date;
     }
 
 
