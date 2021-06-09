@@ -19,6 +19,15 @@ namespace SDS011 {
     } SDS_waiting_for;
 
     typedef enum {
+        SER_UNDEF,
+        SER_HDR,
+        SER_DATA,
+        SER_REPLY,
+        SER_IDLE
+    } SDSSerialState;
+    SDSSerialState currState = SER_UNDEF;
+
+    typedef enum {
         POWERON,    //after poweron
         STARTUP,    //first run
         POST,       //measure data on POST
@@ -35,6 +44,52 @@ namespace SDS011 {
     unsigned long stateChangeTime = 0;
     SDS011State sensorState = POWERON;
 
+
+    typedef enum {
+        SDS_REPORTING,
+        SDS_DATA,
+        SDS_NEW_DEV_ID,
+        SDS_SLEEP,
+        SDS_PERIOD,
+        SDS_FW_VER,
+        SDS_UNKNOWN
+    } SDSResponseType;
+    const char SRT_0 [] PROGMEM = "Reporting mode";
+    const char SRT_1 [] PROGMEM = "Data packet";
+    const char SRT_2 [] PROGMEM = "New ID";
+    const char SRT_3 [] PROGMEM = "Sleep/work";
+    const char SRT_4 [] PROGMEM = "Working period";
+    const char SRT_5 [] PROGMEM = "FW version";
+    const char SRT_6 [] PROGMEM = "Unknown";
+    const char *SRT_NAMES[] PROGMEM = {SRT_0, SRT_1, SRT_2, SRT_3, SRT_4, SRT_5, SRT_6};
+
+    SDSResponseType selectResponse(byte x) {
+        switch (x) {
+            case 7:
+                return SDS_FW_VER;
+            case 8:
+                return SDS_PERIOD;
+            case 6:
+                return SDS_SLEEP;
+            case 5:
+                return SDS_NEW_DEV_ID;
+            case 2:
+                return SDS_REPORTING;
+            default:
+                return SDS_UNKNOWN;
+        }
+    }
+
+    typedef struct {
+        bool sent;
+        bool received;
+        unsigned long lastRequest;
+        unsigned long lastReply;
+        byte data[5];
+    } SDSReplyInfo;
+
+    SDSReplyInfo replies[SDS_UNKNOWN];
+
     //change state and store timestamp
     void updateState(SDS011State newState) {
         if (newState == sensorState) return;
@@ -47,6 +102,11 @@ namespace SDS011 {
 #define UPDATE_MIN_MAX(MIN, MAX, SAMPLE) { UPDATE_MIN(MIN, SAMPLE); UPDATE_MAX(MAX, SAMPLE); }
 
     void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
+        *pm25_serial = replies[SDS_DATA].data[0] | (replies[SDS_DATA].data[1] << 8);
+        *pm10_serial = replies[SDS_DATA].data[2] | (replies[SDS_DATA].data[3] << 8);
+        replies[SDS_DATA].received = false;
+        return;
+
         const uint8_t constexpr hdr_measurement[2] = {0xAA, 0xC0};
         uint8_t data[8];
         while (serialSDS.available() > SDS_waiting_for) {
@@ -156,6 +216,27 @@ namespace SDS011 {
         serialSDS.write(buf, cmd_len);
         return cmd != PmSensorCmd::Stop;
     }
+
+    bool SDS_checksum_valid10(const uint8_t (&data)[10]) {
+        uint8_t checksum_is = 0;
+        for (unsigned i = 2; i < 8; ++i) {
+            checksum_is += data[i];
+        }
+        bool chk = data[9] == 0xAB && checksum_is == data[8];
+        if (!chk){
+            Serial.print( F("Checksum failed "));
+            Serial.println(checksum_is,16);
+            for (byte i=0; i<10; i++) {
+                Serial.print(data[i],16);
+                Serial.print(" ");
+            }
+            Serial.println();
+
+        }
+        return (chk);
+    }
+
+
     bool SDS_checksum_valid(const uint8_t (&data)[8]) {
         uint8_t checksum_is = 0;
         for (unsigned i = 0; i < 6; ++i) {
@@ -163,6 +244,150 @@ namespace SDS011 {
         }
         return (data[7] == 0xAB && checksum_is == data[6]);
     }
+
+    void initReplyData() {
+        for (byte i = 0; i < SDS_UNKNOWN; i++) {
+            replies[i].sent = false;
+            replies[i].received = false;
+            replies[i].lastRequest = 0;
+            replies[i].lastReply = 0;
+
+        }
+    }
+
+    void logReply(SDSResponseType type) {
+        SDSReplyInfo x = replies[type];
+        for (byte i=0; i<5;i++) {Serial.print(x.data[i],16); Serial.print(" ");}
+        Serial.println();
+        Serial.print(F("**** SDS**** Odpowiedź z SDS: "));
+        switch(type){
+            case SDS_REPORTING:
+                Serial.print(F("REPORTING MODE "));
+                Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
+                Serial.print(x.data[1] ? F("query ") : F("active"));
+                break;
+            case SDS_DATA:
+                Serial.print(F("data packet"));
+                break;
+            case SDS_NEW_DEV_ID:
+            case SDS_SLEEP:
+                Serial.print(F("SLEEP MODE "));
+                Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
+                Serial.print(x.data[1] ? F("work ") : F("sleep"));
+                break;
+            case SDS_PERIOD:
+                Serial.print(F("WORKING PERIOD "));
+                Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
+                Serial.print(x.data[1] ? String(x.data[1]) : F("continous"));
+                break;
+
+            case SDS_FW_VER:
+                break;
+
+        }
+        Serial.println();
+    }
+    //store reply for command
+    void storeReply(const byte buff[10]) {
+        SDSResponseType type;
+        type = selectResponse(buff[2]);
+        Serial.print("Response type: ");
+        Serial.println(type);
+        if (type == SDS_UNKNOWN) { return; }
+        replies[type].received = true;
+        replies[type].lastReply=millis();
+        for (byte i=0; i<5;i++) replies[type].data[i] = buff[3+i];
+
+//        memcpy((void *) buff[3], replies[type].data, 5);
+        logReply(type);
+
+
+    }
+
+    String sds_internals() {
+        String ret = "";
+        for (byte i = 0; i < SDS_UNKNOWN; i++) {
+            ret += F("<p>");
+            ret += String(i);
+            ret += F("(");
+            ret += String(FPSTR(SRT_NAMES[i]));
+            ret += F("), ");
+            if (replies[i].received) {
+                ret += F("otrzymano pakiet ");
+                ret += String((millis() - replies[i].lastReply) / 1000);
+                ret += F(" sekund temu.");
+            }
+            for (byte j=0; j<5;j++){
+                ret += String(replies[i].data[j],16);
+                ret += F(" ");
+            }
+            ret += F("</p>");
+        }
+        return ret;
+    }
+
+    void readSerial() {
+        if (serialSDS.available()) {
+            byte x;
+            static byte buff[10];
+            static byte idx;
+            switch (currState) {
+                case SER_UNDEF:
+                    x = serialSDS.read();
+                    if (x == 0xAA) {
+                        currState = SER_HDR;
+                        idx = 2;
+                        buff[0] = 0xAA;
+                    }
+                    break;
+                case SER_HDR:
+                    x = serialSDS.read();
+                    buff[1] = x;
+                    if (x == 0xC0) {
+                        currState = SER_DATA;
+                    } else if (x == 0xC5) {
+                        currState = SER_REPLY;
+                    } else
+                        currState = SER_UNDEF;
+                    break;
+                case SER_REPLY:
+                    if (idx < 10) {
+                        buff[idx] = serialSDS.read();
+                        idx++;
+                    }
+                    if (idx == 10) {
+                        if (!SDS_checksum_valid10(buff)) {
+                            currState = SER_UNDEF;
+                            break;
+                        }
+                        storeReply(buff);
+                        currState = SER_UNDEF;
+
+
+                    }
+                    break;
+                case SER_DATA:
+                    if (idx < 10)
+                        buff[idx++] = serialSDS.read();
+                    if (idx == 10) {
+                        if (!SDS_checksum_valid10(buff)) {
+                            currState = SER_UNDEF;
+                            break;
+                        }
+                        replies[SDS_DATA].received = true;
+                        replies[SDS_DATA].lastReply = millis();
+                        for (byte i=0; i<5;i++) replies[SDS_DATA].data[i] = buff[2+i];
+//                        memcpy((void *) buff[3], replies[SDS_DATA].data, 5);
+                        logReply(SDS_DATA);
+                        currState = SER_UNDEF;
+                    }
+                    break;
+                default:
+                    currState = SER_UNDEF;
+            }
+        }
+    }
+
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
@@ -230,6 +455,7 @@ namespace SDS011 {
             scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
             scheduler.init(SimpleScheduler::SDS011);
             enabled = true;
+            initReplyData();
             debug_out(F("SDS011: start"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
             debug_out(F("SDS011: stop"), DEBUG_MIN_INFO, 1);
@@ -341,13 +567,13 @@ namespace SDS011 {
                     updateState(READ);
                 return 10;
             case READ:
-                serialSDS.flush();
+//                serialSDS.flush();
                 resetReadings();
                 SDS_waiting_for = SDS_REPLY_HDR;
                 updateState(READING);
                 return 10;
             case READING:
-                if (serialSDS.available() >= SDS_waiting_for) {
+                if (replies[SDS_DATA].received) {
                     readSingleSDSPacket(&pm10, &pm25);
                     storeReadings(pm10, pm25);
                 }
@@ -411,7 +637,9 @@ namespace SDS011 {
                 readings = failedReadings = 0;
                 return processState();
             case SimpleScheduler::RUN:
-                return processState();
+                readSerial();
+                processState();
+                return 1;
             default:
                 return 0;
         }
