@@ -10,6 +10,7 @@ namespace SDS011 {
     unsigned long readTime = READINGTIME_SDS_MS;
     unsigned long pm10Sum, pm25Sum = 0;
     unsigned readingCount = 0;
+    SerialSDS channelSDS(serialSDS);
 
     unsigned readings;
     unsigned failedReadings;
@@ -182,20 +183,21 @@ namespace SDS011 {
 //
 //        return cmd != PmSensorCmd::Stop;
 //    }
+
 #define SDS_CMD_QUEUE_SIZE  5
     PmSensorCmd cmdQ[SDS_CMD_QUEUE_SIZE];
     byte cmdIdx = 0;
     unsigned long lastCmdSent = 0;
     PmSensorCmd sentCmd = PmSensorCmd::None;
 
+//    bool SDS_cmd(PmSensorCmd cmd) {
+//        if (cmdIdx < SDS_CMD_QUEUE_SIZE) {
+//            cmdQ[cmdIdx++] = cmd;
+//        }
+//        return cmd != PmSensorCmd::Stop;
+//
+//    }
     bool SDS_cmd(PmSensorCmd cmd) {
-        if (cmdIdx < SDS_CMD_QUEUE_SIZE) {
-            cmdQ[cmdIdx++] = cmd;
-        }
-        return cmd != PmSensorCmd::Stop;
-
-    }
-    bool SDS_cmd_send(PmSensorCmd cmd) {
         static constexpr uint8_t start_cmd[] PROGMEM = {
                 0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB
         };
@@ -333,13 +335,13 @@ namespace SDS011 {
             ret += F("(");
             ret += String(FPSTR(SRT_NAMES[i]));
             ret += F("), ");
-            if (replies[i].received) {
+            if (channelSDS._replies[i].received) {
                 ret += F("otrzymano pakiet ");
-                ret += String((millis() - replies[i].lastReply) / 1000);
+                ret += String((millis() - channelSDS._replies[i].lastReply) / 1000);
                 ret += F(" sekund temu.");
             }
             for (byte j=0; j<5;j++){
-                ret += String(replies[i].data[j],16);
+                ret += String(channelSDS._replies[i].data[j],16);
                 ret += F(" ");
             }
             ret += F("</p>");
@@ -563,8 +565,7 @@ namespace SDS011 {
                 updateState(POST);
                 return 100;
             case POST:
-                if (replies[SDS_DATA].received) {
-                    readSingleSDSPacket(&pm10, &pm25);
+                if (channelSDS.fetchReading(pm10, pm25)) {
                     storeReadings(pm10, pm25);
                 }
                 if (timeout(STARTUP_TIME)) {
@@ -593,8 +594,7 @@ namespace SDS011 {
                 updateState(READING);
                 return 10;
             case READING:
-                if (replies[SDS_DATA].received) {
-                    readSingleSDSPacket(&pm10, &pm25);
+                if (channelSDS.fetchReading(pm10, pm25)) {
                     storeReadings(pm10, pm25);
                 }
                 if (timeout(readTime)) {
@@ -648,9 +648,9 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
         float fr = 0;
-        if (packetCount) fr = checksumFailed / (float) packetCount * 100.0;
+        if (channelSDS.toalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.toalPacketCnt() * 100.0;
         res += table_row_from_value(F("SDS011"), F("Checksum failures"),
-                                    String(fr) + F("% ") + String(checksumFailed) + F("/") + String(packetCount), "");
+                                    String(fr) + F("% ") + String(channelSDS.checksumErrCnt()) + F("/") + String(channelSDS.toalPacketCnt()), "");
     }
 
     void popCmd(PmSensorCmd &t) {
@@ -670,6 +670,7 @@ namespace SDS011 {
             }
         }
     }
+
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
@@ -679,7 +680,7 @@ namespace SDS011 {
                 readings = failedReadings = 0;
                 return processState();
             case SimpleScheduler::RUN:
-                readSerial();
+                channelSDS.process();
                 processState();
                 return 1;
             default:

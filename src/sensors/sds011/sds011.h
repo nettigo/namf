@@ -12,6 +12,8 @@
 #include "system/debug.h"
 #include "html-content.h"   //just for sensor name, to be removed later
 #include "webserver.h"  //HTML functions
+#include "SerialSDS.h"
+
 namespace SDS011 {
 
     extern const char KEY[] PROGMEM;
