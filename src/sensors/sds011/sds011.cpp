@@ -35,6 +35,7 @@ namespace SDS011 {
         STARTUP,    //first run
         POST,       //measure data on POST
         OFF,        // wait for measure period
+        HARDWARE_RESTART,
         START,      // start fan
         WARMUP,     // run, but no reading saved
         READ,       // start reading
@@ -94,6 +95,7 @@ namespace SDS011 {
     SDSReplyInfo replies[SDS_UNKNOWN];
     unsigned checksumFailed = 0;
     unsigned long packetCount = 0;
+    PCF8574 *PCF = nullptr;
 
     //change state and store timestamp
     void updateState(SDS011State newState) {
@@ -288,12 +290,15 @@ namespace SDS011 {
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
         setVariableFromHTTP(F("w"), warmupTime, SimpleScheduler::SDS011);
         setVariableFromHTTP(String(F("r")), readTime, SimpleScheduler::SDS011);
+        setBoolVariableFromHTTP(F("dbg"), hardwareWatchdog, SimpleScheduler::SDS011);
+
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         ret[F("w")] = warmupTime;
         ret[F("r")] = readTime;
+        ret[F("dbg")] = hardwareWatchdog;
         return ret;
 
 
@@ -326,7 +331,7 @@ namespace SDS011 {
         if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
         addJsonIfNotDefault(ret, F("r"), READINGTIME_SDS_MS, readTime);
         addJsonIfNotDefault(ret, F("w"), WARMUPTIME_SDS_MS, warmupTime);
-        addJsonIfNotDefault(ret, F("d"), false, hardwareWatchdog);
+        addJsonIfNotDefault(ret, F("dbg"), false, hardwareWatchdog);
 //        if (readTime != READINGTIME_SDS_MS) ret += Var2Json(F("r"), readTime);
 //        if (warmupTime != WARMUPTIME_SDS_MS) ret += Var2Json(F("w"), warmupTime);
         return ret;
@@ -343,8 +348,8 @@ namespace SDS011 {
         if (json.containsKey(F("w"))) {
             warmupTime = json.get<unsigned long>(F("w"));
         }
-        if (json.containsKey(F("w"))) {
-            hardwareWatchdog = json.get<bool>(F("d"));
+        if (json.containsKey(F("dbg"))) {
+            hardwareWatchdog = json.get<bool>(F("dbg"));
         }
 
 
@@ -354,6 +359,9 @@ namespace SDS011 {
             scheduler.init(SimpleScheduler::SDS011);
             enabled = true;
             initReplyData();
+            if (hardwareWatchdog) {
+                PCF = new PCF8574(0x26);
+            }
             debug_out(F("SDS011: start"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
             debug_out(F("SDS011: stop"), DEBUG_MIN_INFO, 1);
@@ -452,11 +460,28 @@ namespace SDS011 {
                 }
                 return 20;
             case OFF:
-                if (hardwareWatchdog && hwWtdgFailedReadings > 3) {
+                if (hardwareWatchdog && hwWtdgFailedReadings > 0) {
+                    Serial.println("HW & failed");
+                    Serial.println(PCF!=nullptr);
+                    Serial.println(PCF!= nullptr && PCF->isConnected());
+                    if (PCF != nullptr && PCF->isConnected()) {
+                        PCF->write(0,0);
+                        debug_out(F("SDS not responding hardware restart !!!! "), DEBUG_ERROR);
+                        updateState(HARDWARE_RESTART);
+                        return 10;
+                    }
 
                 }
                 if (t < warmupTime + readTime + SDS011_END_TIME)   //aim to finish 2 sec before readingTime
                     updateState(START);
+                return 10;
+            case HARDWARE_RESTART:
+                if (timeout(5*1000)) {
+                    debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
+                    PCF->write(0,1);
+                    hwWtdgFailedReadings = 0;
+                    updateState(OFF);
+                }
                 return 10;
             case START:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Start);
@@ -526,6 +551,7 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
+        res += table_row_from_value(F("SDS011"), F("Failed RD"), String(hwWtdgFailedReadings), "");
         float fr = 0;
         if (channelSDS.toalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.toalPacketCnt() * 100.0;
         res += table_row_from_value(F("SDS011"), F("Checksum failures"),
@@ -575,6 +601,9 @@ namespace SDS011 {
 
         setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
         ret += form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7);
+
+        setHTTPVarName(name, F("dbg"), SimpleScheduler::SDS011);
+        ret += form_checkbox(name, F("Hardware restarter"), hardwareWatchdog, true);
 
         return ret;
     }
