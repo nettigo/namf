@@ -26,6 +26,8 @@ namespace SimpleScheduler {
 
     NAMFScheduler::NAMFScheduler() {
         loopSize = 0;
+        _runTimeMax = 0;
+        _lastRunTime = 0;
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             _tasks[i].process = nullF;
             _tasks[i].nextRun = 0;
@@ -35,12 +37,15 @@ namespace SimpleScheduler {
     }
 
     void NAMFScheduler::process() {
+        unsigned long startTime = micros();
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             //run if not EMPTY slot, has set nextRun and time has passed
             if (_tasks[i].slotID && _tasks[i].nextRun && _tasks[i].nextRun < millis()) {
                 unsigned long startTime = millis();
                 unsigned long nextRun = _tasks[i].process(RUN);
-                if ((startTime=millis()-startTime) > 1000) { Serial.printf("Long run time for sensor %s (%lu ms)\n", LET_NAMES[_tasks[i].slotID], startTime);}
+                if ((startTime = millis() - startTime) > 1000) {
+                    Serial.printf("Long run time for sensor %s (%lu ms)\n", LET_NAMES[_tasks[i].slotID], startTime);
+                }
 
                 if (nextRun) {
                     _tasks[i].nextRun = millis() + nextRun;
@@ -50,6 +55,8 @@ namespace SimpleScheduler {
             }
 
         }
+        _lastRunTime = micros() - startTime;
+        if (_lastRunTime > _runTimeMax) _runTimeMax = _lastRunTime;
 
     }
 

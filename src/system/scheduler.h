@@ -121,11 +121,16 @@ namespace SimpleScheduler {
         //active sensors - how many screens are allocated
         unsigned countScreens(void);
         void dumpTable();
-        //call/check display subroutines for sensor
 
+        //how long processing loop took (max)
+        unsigned long runTimeMax() {return _runTimeMax;};
+        unsigned long lastRunTime() {return _lastRunTime;};
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];
         byte loopSize;
+        unsigned long _runTimeMax;
+        unsigned long _lastRunTime;
+
 
         int findSlot(byte id);
     };
