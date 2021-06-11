@@ -184,11 +184,11 @@ namespace SDS011 {
 //        return cmd != PmSensorCmd::Stop;
 //    }
 
-#define SDS_CMD_QUEUE_SIZE  5
-    PmSensorCmd cmdQ[SDS_CMD_QUEUE_SIZE];
-    byte cmdIdx = 0;
-    unsigned long lastCmdSent = 0;
-    PmSensorCmd sentCmd = PmSensorCmd::None;
+//#define SDS_CMD_QUEUE_SIZE  5
+//    PmSensorCmd cmdQ[SDS_CMD_QUEUE_SIZE];
+//    byte cmdIdx = 0;
+//    unsigned long lastCmdSent = 0;
+//    PmSensorCmd sentCmd = PmSensorCmd::None;
 
 //    bool SDS_cmd(PmSensorCmd cmd) {
 //        if (cmdIdx < SDS_CMD_QUEUE_SIZE) {
@@ -238,27 +238,6 @@ namespace SDS011 {
         return cmd != PmSensorCmd::Stop;
     }
 
-    bool SDS_checksum_valid10(const uint8_t (&data)[10]) {
-        uint8_t checksum_is = 0;
-        for (unsigned i = 2; i < 8; ++i) {
-            checksum_is += data[i];
-        }
-        bool chk = data[9] == 0xAB && checksum_is == data[8];
-        packetCount++;
-        if (!chk){
-            Serial.print( F("Checksum failed "));
-            checksumFailed++;
-            Serial.println(checksum_is,16);
-            for (byte i=0; i<10; i++) {
-                Serial.print(data[i],16);
-                Serial.print(" ");
-            }
-            Serial.println();
-
-        }
-        return (chk);
-    }
-
 
     bool SDS_checksum_valid(const uint8_t (&data)[8]) {
         uint8_t checksum_is = 0;
@@ -276,55 +255,6 @@ namespace SDS011 {
             replies[i].lastReply = 0;
 
         }
-    }
-
-    void logReply(SDSResponseType type) {
-        SDSReplyInfo x = replies[type];
-        for (byte i=0; i<5;i++) {Serial.print(x.data[i],16); Serial.print(" ");}
-        Serial.println();
-        Serial.print(F("**** SDS**** Odpowiedź z SDS: "));
-        switch(type){
-            case SDS_REPORTING:
-                Serial.print(F("REPORTING MODE "));
-                Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
-                Serial.print(x.data[1] ? F("query ") : F("active"));
-                break;
-            case SDS_DATA:
-                Serial.print(F("data packet"));
-                break;
-            case SDS_NEW_DEV_ID:
-            case SDS_SLEEP:
-                Serial.print(F("SLEEP MODE "));
-                Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
-                Serial.print(x.data[1] ? F("work ") : F("sleep"));
-                break;
-            case SDS_PERIOD:
-                Serial.print(F("WORKING PERIOD "));
-                Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
-                Serial.print(x.data[1] ? String(x.data[1]) : F("continous"));
-                break;
-
-            case SDS_FW_VER:
-                break;
-
-        }
-        Serial.println();
-    }
-    //store reply for command
-    void storeReply(const byte buff[10]) {
-        SDSResponseType type;
-        type = selectResponse(buff[2]);
-        Serial.print("Response type: ");
-        Serial.println(type);
-        if (type == SDS_UNKNOWN) { return; }
-        replies[type].received = true;
-        replies[type].lastReply=millis();
-        for (byte i=0; i<5;i++) replies[type].data[i] = buff[3+i];
-
-//        memcpy((void *) buff[3], replies[type].data, 5);
-        logReply(type);
-
-
     }
 
     String sds_internals() {
@@ -347,68 +277,6 @@ namespace SDS011 {
             ret += F("</p>");
         }
         return ret;
-    }
-
-    void readSerial() {
-        if (serialSDS.available()) {
-            byte x;
-            static byte buff[10];
-            static byte idx;
-            switch (currState) {
-                case SER_UNDEF:
-                    x = serialSDS.read();
-                    if (x == 0xAA) {
-                        currState = SER_HDR;
-                        idx = 2;
-                        buff[0] = 0xAA;
-                    }
-                    break;
-                case SER_HDR:
-                    x = serialSDS.read();
-                    buff[1] = x;
-                    if (x == 0xC0) {
-                        currState = SER_DATA;
-                    } else if (x == 0xC5) {
-                        currState = SER_REPLY;
-                    } else
-                        currState = SER_UNDEF;
-                    break;
-                case SER_REPLY:
-                    if (idx < 10) {
-                        buff[idx] = serialSDS.read();
-                        idx++;
-                    }
-                    if (idx == 10) {
-                        if (!SDS_checksum_valid10(buff)) {
-                            currState = SER_UNDEF;
-                            break;
-                        }
-                        storeReply(buff);
-                        currState = SER_UNDEF;
-
-
-                    }
-                    break;
-                case SER_DATA:
-                    if (idx < 10)
-                        buff[idx++] = serialSDS.read();
-                    if (idx == 10) {
-                        if (!SDS_checksum_valid10(buff)) {
-                            currState = SER_UNDEF;
-                            break;
-                        }
-                        replies[SDS_DATA].received = true;
-                        replies[SDS_DATA].lastReply = millis();
-                        for (byte i=0; i<5;i++) replies[SDS_DATA].data[i] = buff[2+i];
-//                        memcpy((void *) buff[3], replies[SDS_DATA].data, 5);
-                        logReply(SDS_DATA);
-                        currState = SER_UNDEF;
-                    }
-                    break;
-                default:
-                    currState = SER_UNDEF;
-            }
-        }
     }
 
 
@@ -653,23 +521,23 @@ namespace SDS011 {
                                     String(fr) + F("% ") + String(channelSDS.checksumErrCnt()) + F("/") + String(channelSDS.toalPacketCnt()), "");
     }
 
-    void popCmd(PmSensorCmd &t) {
-        t = cmdQ[0];
-        cmdIdx--;
-        for (byte i = 0; i < cmdIdx; i++) {
-            cmdQ[i] = cmdQ[i + 1];
-        }
-    }
-
-    void processCmdQueue() {
-        if (cmdIdx) {
-            if (lastCmdSent != PmSensorCmd::None ) {
-                PmSensorCmd cmd;
-                popCmd(cmd);
-
-            }
-        }
-    }
+//    void popCmd(PmSensorCmd &t) {
+//        t = cmdQ[0];
+//        cmdIdx--;
+//        for (byte i = 0; i < cmdIdx; i++) {
+//            cmdQ[i] = cmdQ[i + 1];
+//        }
+//    }
+//
+//    void processCmdQueue() {
+//        if (cmdIdx) {
+//            if (lastCmdSent != PmSensorCmd::None ) {
+//                PmSensorCmd cmd;
+//                popCmd(cmd);
+//
+//            }
+//        }
+//    }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
