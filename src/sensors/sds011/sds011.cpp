@@ -361,6 +361,7 @@ namespace SDS011 {
             initReplyData();
             if (hardwareWatchdog) {
                 PCF = new PCF8574(0x26);
+                PCF -> begin(0xFF);
             }
             debug_out(F("SDS011: start"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
@@ -465,7 +466,7 @@ namespace SDS011 {
                     Serial.println(PCF!=nullptr);
                     Serial.println(PCF!= nullptr && PCF->isConnected());
                     if (PCF != nullptr && PCF->isConnected()) {
-                        PCF->write(0,0);
+                        PCF->write8(0);
                         debug_out(F("SDS not responding hardware restart !!!! "), DEBUG_ERROR);
                         updateState(HARDWARE_RESTART);
                         return 10;
@@ -478,7 +479,7 @@ namespace SDS011 {
             case HARDWARE_RESTART:
                 if (timeout(5*1000)) {
                     debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
-                    PCF->write(0,1);
+                    PCF->write8(0xFF);
                     hwWtdgFailedReadings = 0;
                     updateState(OFF);
                 }
