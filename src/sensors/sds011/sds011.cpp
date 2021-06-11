@@ -467,6 +467,8 @@ namespace SDS011 {
                     Serial.println(PCF!= nullptr && PCF->isConnected());
                     if (PCF != nullptr && PCF->isConnected()) {
                         PCF->write8(0);
+                        Serial.print(F("PCF status: "));
+                        Serial.println(PCF->lastError());
                         debug_out(F("SDS not responding hardware restart !!!! "), DEBUG_ERROR);
                         updateState(HARDWARE_RESTART);
                         return 10;
@@ -478,10 +480,18 @@ namespace SDS011 {
                 return 10;
             case HARDWARE_RESTART:
                 if (timeout(5*1000)) {
-                    debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
-                    PCF->write8(0xFF);
-                    hwWtdgFailedReadings = 0;
-                    updateState(OFF);
+                    if (PCF->isConnected()) {
+                        debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
+                        PCF->write8(0xFF);
+                        byte e;
+                        if (e=PCF->lastError()) {
+                            Serial.print(F("PCF status: "));
+                            Serial.println(e);
+                            return 1;
+                        }
+                        hwWtdgFailedReadings = 0;
+                        updateState(OFF);
+                    }
                 }
                 return 10;
             case START:
