@@ -11,6 +11,8 @@ namespace SDS011 {
     unsigned long pm10Sum, pm25Sum = 0;
     unsigned readingCount = 0;
     SerialSDS channelSDS(serialSDS);
+    bool hardwareWatchdog = 0;
+    byte hwWtdgFailedReadings = 0; //after SDS restart this counter is reset, failedReadings is global
 
     unsigned readings;
     unsigned failedReadings;
@@ -324,6 +326,7 @@ namespace SDS011 {
         if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
         addJsonIfNotDefault(ret, F("r"), READINGTIME_SDS_MS, readTime);
         addJsonIfNotDefault(ret, F("w"), WARMUPTIME_SDS_MS, warmupTime);
+        addJsonIfNotDefault(ret, F("d"), false, hardwareWatchdog);
 //        if (readTime != READINGTIME_SDS_MS) ret += Var2Json(F("r"), readTime);
 //        if (warmupTime != WARMUPTIME_SDS_MS) ret += Var2Json(F("w"), warmupTime);
         return ret;
@@ -340,6 +343,10 @@ namespace SDS011 {
         if (json.containsKey(F("w"))) {
             warmupTime = json.get<unsigned long>(F("w"));
         }
+        if (json.containsKey(F("w"))) {
+            hardwareWatchdog = json.get<bool>(F("d"));
+        }
+
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::SDS011)) {
@@ -400,6 +407,7 @@ namespace SDS011 {
             last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
         } else {
             last_value_SDS_P1 = last_value_SDS_P2 = -1;
+            hwWtdgFailedReadings++;
         }
 
     };
@@ -444,6 +452,9 @@ namespace SDS011 {
                 }
                 return 20;
             case OFF:
+                if (hardwareWatchdog && hwWtdgFailedReadings > 3) {
+
+                }
                 if (t < warmupTime + readTime + SDS011_END_TIME)   //aim to finish 2 sec before readingTime
                     updateState(START);
                 return 10;
