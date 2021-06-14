@@ -5,6 +5,7 @@
  *****************************************************************/
 #include "defines.h"
 #include "variables.h"
+#include <Schedule.h>
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
@@ -843,6 +844,11 @@ static bool acquireNetworkTime() {
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600, SWSERIAL_8N1);
+    schedule_recurrent_function_us([]() {
+        serialSDS.perform_work();
+        serialGPS.perform_work();
+        return false;
+    }, 2);
 //    serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
@@ -1053,6 +1059,7 @@ void loop() {
 	last_micro = act_micro;
 
     server.handleClient();
+    yield();
 #if !defined(BOOT_FW)
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
 
@@ -1065,7 +1072,7 @@ void loop() {
 	}
 
 	server.handleClient();
-
+    yield();
 	if (send_now) {
         debug_out(String(F("****************** Upload data to APIs*****************************")),DEBUG_MED_INFO);
         if (cfg::dht_read) {
@@ -1098,6 +1105,7 @@ void loop() {
 	}
 
     cycleDisplay();
+	yield();
 
 	if ((cfg::has_ledbar_32) && (send_now)) {
 		displayLEDBar();

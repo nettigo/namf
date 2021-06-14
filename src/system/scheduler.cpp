@@ -39,6 +39,7 @@ namespace SimpleScheduler {
     void NAMFScheduler::process() {
         unsigned long startTime = micros();
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
+            yield();    // let internals run
             //run if not EMPTY slot, has set nextRun and time has passed
             if (_tasks[i].slotID && _tasks[i].nextRun && _tasks[i].nextRun < millis()) {
                 unsigned long startTime = millis();
