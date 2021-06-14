@@ -47,7 +47,7 @@ public:
 
     void process();
     unsigned checksumErrCnt() {return checksumFailed;}
-    unsigned long toalPacketCnt() {return packetCount;}
+    unsigned long totalPacketCnt() {return packetCount;}
     bool readingAvailable();
     bool fetchReading(int &pm10, int &pm25);
     ReplyInfo _replies[SDS_UNKNOWN];
