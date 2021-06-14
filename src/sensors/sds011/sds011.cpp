@@ -493,7 +493,7 @@ namespace SDS011 {
                 }
                 return 10;
             case HW_RESTART_CLEANUP:
-                if (timeout(500)) {
+                if (timeout(5000)) {
                     is_SDS_running = SDS_cmd(Stop);
                     updateState(OFF);
                 }
