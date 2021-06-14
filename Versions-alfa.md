@@ -2,6 +2,9 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-38a3 (2021-06-14)
+* new SDS code, support for SDS hw watchdog (extra module) 
+
 ### NAMF-2020-38a3 (2021-05-17)
 
 * sync to beta 38rc5 (no current work in alfa, so we keep in sync with beta)
