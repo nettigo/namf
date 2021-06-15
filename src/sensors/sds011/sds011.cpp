@@ -490,11 +490,6 @@ namespace SDS011 {
         if (hardwareWatchdog) {
             res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
         }
-        float fr = 0;
-        if (channelSDS.totalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.totalPacketCnt() * 100.0;
-        res += table_row_from_value(F("SDS011"), F("Checksum failures"),
-                                    String(fr) + F("% ") + String(channelSDS.checksumErrCnt()) + F("/") + String(
-                                            channelSDS.totalPacketCnt()), "");
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
