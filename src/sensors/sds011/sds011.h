@@ -19,22 +19,11 @@ namespace SDS011 {
 
     extern const char KEY[] PROGMEM;
 
-    void readSingleSDSPacket(int *pm10_serial, int *pm25_serial);
-
     extern bool enabled;
 
     extern unsigned readings;
     extern unsigned failedReadings;
 
-
-    /*****************************************************************
- * send SDS011 command (start, stop, continuous mode, version    *
- *****************************************************************/
-    void SDS_rawcmd(const uint8_t cmd_head1, const uint8_t cmd_head2, const uint8_t cmd_head3);
-
-    bool SDS_cmd(PmSensorCmd cmd);
-
-    bool SDS_checksum_valid(const uint8_t (&data)[8]);
 
     JsonObject &parseHTTPRequest();
 
