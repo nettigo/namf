@@ -1,4 +1,8 @@
-NAMF-2020-38rc10 (2021-06-15)
+NAMF-2020-38rc11 (2021-06-15)
+* fixed version number in binary  
+* hardware SDS restart after 3 missing measurements, not after first 
+
+NAMF-2020-38rc10 (2021-06-15) (typo in version number, binary built with 39 not 38...)
 * new SDS code, moved some functionality to separate class, work in progress 
   to get nonblocking full implementation SDS communication protocol, not just toss
   some commands to SDS...
