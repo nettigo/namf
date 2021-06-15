@@ -347,30 +347,6 @@ namespace SDS011 {
         if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::SDS011, 1);
     }
 
-    void startSDS() {
-        SDS011::SDS_cmd(PmSensorCmd::Start);
-        delay(100);
-        SDS011::SDS_cmd(PmSensorCmd::ContinuousMode);
-        delay(100);
-        int pm10 = -1, pm25 = -1;
-        unsigned long timeOutCount = millis();
-        SDS_waiting_for = SDS_REPLY_HDR;
-        while ((millis() - timeOutCount) < 500 && (pm10 == -1 || pm25 == -1)) {
-            // change to SerialSDS readSingleSDSPacket(&pm10, &pm25);
-            delay(5);
-        }
-        if (pm10 == -1 || pm25 == -1) {
-            debug_out(F("SDS011 not sending data!"), DEBUG_ERROR, 1);
-        } else {
-            debug_out(F("PM10/2.5:"), DEBUG_ERROR, 1);
-            debug_out(String(pm10 / 10.0, 2), DEBUG_ERROR, 1);
-            debug_out(String(pm25 / 10.0, 2), DEBUG_ERROR, 1);
-            last_value_SDS_P1 = double(pm10 / 10.0);
-            last_value_SDS_P2 = double(pm25 / 10.0);
-        }
-        is_SDS_running = SDS011::SDS_cmd(PmSensorCmd::Stop);
-
-    }
 
     //reset counters
     void resetReadings() {
@@ -643,71 +619,4 @@ namespace SDS011 {
     }
 
 
-/*****************************************************************
- * read SDS011 sensor values                                     *
- *****************************************************************/
-    void sensorSDS(String &s) {
-        int pm25_serial, pm10_serial;
-        if (cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS) &&
-            msSince(starttime) < (cfg::sending_intervall_ms - (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
-            if (is_SDS_running) {
-                is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-            }
-        } else {
-            if (!is_SDS_running) {
-                is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-                SDS_waiting_for = SDS_REPLY_HDR;
-            }
-
-            while (serialSDS.available() >= SDS_waiting_for) {
-                readSingleSDSPacket(&pm10_serial, &pm25_serial);
-                if (pm10_serial > -1 && pm25_serial > -1) {
-
-                    if (msSince(starttime) > (cfg::sending_intervall_ms - READINGTIME_SDS_MS)) {
-                        sds_pm10_sum += pm10_serial;
-                        sds_pm25_sum += pm25_serial;
-                        UPDATE_MIN_MAX(sds_pm10_min, sds_pm10_max, pm10_serial);
-                        UPDATE_MIN_MAX(sds_pm25_min, sds_pm25_max, pm25_serial);
-                        sds_val_count++;
-                    }
-                }
-            }
-
-            if (send_now) {
-                last_value_SDS_P1 = -1;
-                last_value_SDS_P2 = -1;
-                if (sds_val_count > 2) {
-                    sds_pm10_sum = sds_pm10_sum - sds_pm10_min - sds_pm10_max;
-                    sds_pm25_sum = sds_pm25_sum - sds_pm25_min - sds_pm25_max;
-                    sds_val_count = sds_val_count - 2;
-                }
-                if (sds_val_count > 0) {
-                    last_value_SDS_P1 = float(sds_pm10_sum) / (sds_val_count * 10.0f);
-                    last_value_SDS_P2 = float(sds_pm25_sum) / (sds_val_count * 10.0f);
-//            debug_outln_info(FPSTR(DBG_TXT_SEP));
-                    if (sds_val_count < 3) {
-                        SDS_error_count++;
-                    }
-                } else {
-                    SDS_error_count++;
-                }
-                s += Value2Json(F("SDS_P1"), Float2String(last_value_SDS_P1));
-                s += Value2Json(F("SDS_P2"), Float2String(last_value_SDS_P2));
-                sds_pm10_sum = 0;
-                sds_pm25_sum = 0;
-                sds_val_count = 0;
-                sds_pm10_max = 0;
-                sds_pm10_min = 20000;
-                sds_pm25_max = 0;
-                sds_pm25_min = 20000;
-                if ((cfg::sending_intervall_ms > (WARMUPTIME_SDS_MS + READINGTIME_SDS_MS))) {
-
-                    if (is_SDS_running) {
-                        is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-                    }
-                }
-            }
-        }
-
-    }
 }
