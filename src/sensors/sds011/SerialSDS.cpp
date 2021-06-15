@@ -52,7 +52,7 @@ void SerialSDS::process() {
                     _replies[SDS_DATA].received = true;
                     _replies[SDS_DATA].lastReply = millis();
                     for (byte i = 0; i < 5; i++) _replies[SDS_DATA].data[i] = _buff[2 + i];
-                    logReply(SDS_DATA);
+                    if (cfg::debug > DEBUG_MIN_INFO) logReply(SDS_DATA);
                     _currState = SER_UNDEF;
                 }
                 break;
@@ -140,7 +140,7 @@ void  SerialSDS::storeReply() {
     for (byte i=0; i<5;i++) _replies[type].data[i] = _buff[3+i];
 
 //        memcpy((void *) buff[3], replies[type].data, 5);
-    logReply(type);
+    if (cfg::debug > DEBUG_MIN_INFO) logReply(type);
 }
 SerialSDS::ResponseType SerialSDS::selectResponse(byte x) {
     switch (x) {
