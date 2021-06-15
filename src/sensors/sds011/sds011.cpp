@@ -12,7 +12,6 @@ namespace SDS011 {
     Sds011Async<SoftwareSerial> sds011(serialSDS);
 
     constexpr int pm_tablesize = 10;
-    unsigned warmupPackets;
     int pm25_table[pm_tablesize];
     int pm10_table[pm_tablesize];
 
@@ -56,7 +55,6 @@ namespace SDS011 {
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
         setVariableFromHTTP(F("w"), warmupTime, SimpleScheduler::SDS011);
-        warmupPackets = warmupTime/1000;
         setVariableFromHTTP(String(F("r")), readTime, SimpleScheduler::SDS011);
         setBoolVariableFromHTTP(F("dbg"), hardwareWatchdog, SimpleScheduler::SDS011);
 
@@ -106,8 +104,7 @@ namespace SDS011 {
     };
 
     void readConfigJSON(JsonObject &json) {
-//        Serial.println("SDS readConfigJson");
-//        json.printTo(Serial);
+
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
         if (json.containsKey(F("r"))) {
@@ -116,6 +113,8 @@ namespace SDS011 {
         if (json.containsKey(F("w"))) {
             warmupTime = json.get<unsigned long>(F("w"));
         }
+        sds011.set_data_rampup(warmupTime / 1000);
+
         if (json.containsKey(F("dbg"))) {
             hardwareWatchdog = json.get<bool>(F("dbg"));
         }
@@ -169,9 +168,10 @@ namespace SDS011 {
                 return 20;
             case OFF:
 
-                if (t < (warmupPackets + pm_tablesize +1)*1000 + SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
+                if (t < (warmupTime/1000 + pm_tablesize +1)*1000 + SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
                 {
                     if (!sds011.set_sleep(false)) { debug_out(F("SDS011 did not wake up..."), DEBUG_ERROR); };
+                    Serial.println("START");warmupTime / 1000;
                     updateState(START);
                 }
                 return 10;
@@ -275,7 +275,6 @@ namespace SDS011 {
                 return 0;
             case SimpleScheduler::INIT:
                 readings = failedReadings = 0;
-                warmupPackets = warmupTime / 1000;
                 Sds011::Report_mode report_mode;
                 sds011.set_sleep(false);
                 delay(500);
