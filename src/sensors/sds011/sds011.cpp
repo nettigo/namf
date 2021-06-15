@@ -188,7 +188,7 @@ namespace SDS011 {
                 sds011.on_query_data_auto_completed([](int n) {
                     int pm25;
                     int pm10;
-                    debug_out(F("n = "), DEBUG_ERROR, 0);
+                    debug_out(F("SDS011 - Packets captured: "), DEBUG_ERROR, 0);
                     debug_out(String(n), DEBUG_ERROR);
                     if (sds011.filter_data(n, pm25_table, pm10_table, pm25, pm10) &&
                         !isnan(pm10) && !isnan(pm25)) {
