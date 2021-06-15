@@ -3,7 +3,6 @@
 //
 
 #include "webserver.h"
-#include "sensors/sds011/sds011.h"
 
 template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminated_char_array(const T(&)[N]) {
     return N - 1;
@@ -1083,8 +1082,10 @@ void webserver_status_page(void) {
     page_content += table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz");
     page_content += table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),"");
     page_content += FPSTR(EMPTY_ROW);
-    page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
-    page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
+    String t = ESP.getFullVersion();
+    t.replace("/", FPSTR(BR_TAG));
+    page_content += table_row_from_value(F("ENV"), F("Core version"), t, "");
+//    page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
     page_content += FPSTR(TABLE_TAG_CLOSE_BR);
     page_content += make_footer();
 

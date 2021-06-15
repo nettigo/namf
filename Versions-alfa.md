@@ -2,7 +2,7 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
-### NAMF-2020-39a (2021-06-15) (b8587291919a101d44ae0ea6c826a62a728c685c)
+### NAMF-2020-39a (2021-06-15) (rev 6f0759c68f8f3ba3928e1a456d2481c6014f4e2b)
 
 * SDS is serviced with https://github.com/dok-net/esp_sds011 
 * Arduino core - 3.0.1dev

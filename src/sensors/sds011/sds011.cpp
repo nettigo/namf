@@ -5,10 +5,8 @@ namespace SDS011 {
             PROGMEM = "SDS011";
     bool enabled = false;
     bool printOnLCD = false;
-    unsigned long SDS_error_count;
     unsigned long warmupTime = WARMUPTIME_SDS_MS;
     unsigned long readTime = READINGTIME_SDS_MS;
-    unsigned long pm10Sum, pm25Sum = 0;
     unsigned readingCount = 0;
     SerialSDS channelSDS(serialSDS);
 
@@ -360,30 +358,6 @@ namespace SDS011 {
     }
 
 
-    //reset counters
-    void resetReadings() {
-        pm10Sum = pm25Sum = readingCount = 0;
-    };
-
-    void storeReadings(const int pm10, const int pm25) {
-        if (pm10 == -1 || pm25 == -1) return;
-        pm10Sum += pm10;
-        pm25Sum += pm25;
-        readingCount++;
-    };
-
-    //store last values pm
-    void processReadings() {
-        if (readingCount > 0) {
-            last_value_SDS_P1 = pm10Sum / readingCount / 10.0;
-            last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
-        } else {
-            last_value_SDS_P1 = last_value_SDS_P2 = -1;
-            hwWtdgFailedReadings++;
-        }
-
-    };
-
     //did timeout happen (from last state change)
     bool timeout(unsigned long t) {
         //100 ms margin - to complete before sending
@@ -407,7 +381,6 @@ namespace SDS011 {
                 return 10;
             case STARTUP:
 
-                resetReadings();
                 updateState(POST);
                 return 100;
             case POST:
@@ -524,24 +497,6 @@ namespace SDS011 {
                                             channelSDS.totalPacketCnt()), "");
     }
 
-//    void popCmd(PmSensorCmd &t) {
-//        t = cmdQ[0];
-//        cmdIdx--;
-//        for (byte i = 0; i < cmdIdx; i++) {
-//            cmdQ[i] = cmdQ[i + 1];
-//        }
-//    }
-//
-//    void processCmdQueue() {
-//        if (cmdIdx) {
-//            if (lastCmdSent != PmSensorCmd::None ) {
-//                PmSensorCmd cmd;
-//                popCmd(cmd);
-//
-//            }
-//        }
-//    }
-
     unsigned long process(SimpleScheduler::LoopEventType e) {
         static unsigned long lastPerform = 0;
         switch (e) {
@@ -619,25 +574,25 @@ namespace SDS011 {
      *****************************************************************/
     String SDS_version_date() {
         static String version_date = "";
-
+        unsigned short id = 0;
+        bool old_state;
         debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
+        if (version_date.length() < 3) {
+            if (!(old_state = is_SDS_running)) {
+                is_SDS_running = sds011.set_sleep(false);
+//                delay(500);
+            }
+            if (sds011.device_info(version_date, id)) {
+            } else {
+                version_date = F("n/a");
+            }
+            if (!old_state && is_SDS_running) {
+                is_SDS_running = sds011.set_sleep(true);
+            }
 
-        if (!channelSDS._replies[SDS_FW_VER].received) {
-            is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-            is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
         }
-
-        if (channelSDS._replies[SDS_FW_VER].received) {
-            char reply[30];
-            byte *buff = channelSDS._replies[SDS_FW_VER].data;
-            snprintf_P(reply, 30, PSTR("20%i-%i-%i(%02X%02X)"), buff[0], buff[1], buff[2], buff[3], buff[4]);
-            version_date = String(reply);
-        } else {
-            version_date = F("n/a");
-        }
-
         return version_date;
+
+
     }
-
-
 }
