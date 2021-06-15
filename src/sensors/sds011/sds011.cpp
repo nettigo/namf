@@ -14,7 +14,7 @@ namespace SDS011 {
 
     Sds011Async<SoftwareSerial> sds011(serialSDS);
 
-    constexpr int pm_tablesize = 15;
+    constexpr int pm_tablesize = 10;
     int pm25_table[pm_tablesize];
     int pm10_table[pm_tablesize];
 
