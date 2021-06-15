@@ -82,15 +82,14 @@ bool SerialSDS::checksumValid(void) {
     bool chk = _buff[9] == 0xAB && checksum_is == _buff[8];
     packetCount++;
     if (!chk){
-        Serial.print( F("Checksum failed "));
+        debug_out( F("SDS011 reply checksum failed "),DEBUG_ERROR);
         checksumFailed++;
-        Serial.println(checksum_is,16);
-        for (byte i=0; i<10; i++) {
-            Serial.print(_buff[i],16);
-            Serial.print(" ");
-        }
-        Serial.println();
-
+//        Serial.println(checksum_is,16);
+//        for (byte i=0; i<10; i++) {
+//            Serial.print(_buff[i],16);
+//            Serial.print(" ");
+//        }
+//        Serial.println();
     }
     return (chk);
 }
@@ -98,8 +97,8 @@ bool SerialSDS::checksumValid(void) {
 
 void SerialSDS::logReply(ResponseType type) {
     ReplyInfo x = _replies[type];
-    for (byte i=0; i<5;i++) {Serial.print(x.data[i],16); Serial.print(" ");}
-    Serial.println();
+//    for (byte i=0; i<5;i++) {Serial.print(x.data[i],16); Serial.print(" ");}
+//    Serial.println();
 //    Serial.print(F("**** SDS**** Odpowiedź z SDS: "));
     switch(type){
         case SDS_REPORTING:
@@ -133,8 +132,8 @@ void SerialSDS::logReply(ResponseType type) {
 void  SerialSDS::storeReply() {
     ResponseType type;
     type = selectResponse(_buff[2]);
-    Serial.print("Response type: ");
-    Serial.println(type);
+    debug_out(F("Response type: "),DEBUG_MED_INFO,0);
+    debug_out(String(type), DEBUG_MED_INFO);
     if (type == SDS_UNKNOWN) { return; }
     _replies[type].received = true;
     _replies[type].lastReply=millis();

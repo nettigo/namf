@@ -211,19 +211,19 @@ namespace SDS011 {
         uint8_t buf[cmd_len];
         switch (cmd) {
             case PmSensorCmd::Start:
-                Serial.println(F("SDS cmd: start"));
+//                Serial.println(F("SDS cmd: start"));
                 memcpy_P(buf, start_cmd, cmd_len);
                 break;
             case PmSensorCmd::Stop:
-                Serial.println(F("SDS cmd: stop"));
+//                Serial.println(F("SDS cmd: stop"));
                 memcpy_P(buf, stop_cmd, cmd_len);
                 break;
             case PmSensorCmd::ContinuousMode:
-                Serial.println(F("SDS cmd: continuous"));
+//                Serial.println(F("SDS cmd: continuous"));
                 memcpy_P(buf, continuous_mode_cmd, cmd_len);
                 break;
             case PmSensorCmd::VersionDate:
-                Serial.println(F("SDS cmd: version"));
+//                Serial.println(F("SDS cmd: version"));
                 memcpy_P(buf, version_cmd, cmd_len);
                 break;
         }
@@ -604,12 +604,9 @@ namespace SDS011 {
         }
 
         if (channelSDS._replies[SDS_FW_VER].received) {
-            Serial.println("SDS FW VER response OK?");
             char reply[30];
             byte *buff = channelSDS._replies[SDS_FW_VER].data;
             snprintf_P(reply, 30, PSTR("20%i-%i-%i(%02X%02X)"), buff[0], buff[1], buff[2], buff[3], buff[4]);
-            Serial.print("***** =>");
-            Serial.println(reply);
             version_date = String(reply);
         } else {
             version_date = F("n/a");

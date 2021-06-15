@@ -6,6 +6,7 @@
 #define NAMF_SERIALSDS_H
 
 #include <Arduino.h>
+#include "helpers.h"
 
 class SerialSDS {
 public:
