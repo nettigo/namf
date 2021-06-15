@@ -135,10 +135,10 @@ void debug_out(const String& text, const int level, const bool linebreak) {
         if (timestamp) {
             time_t rawtime;
             struct tm *timeinfo;
-            char buffer[21];
+            char buffer[30];
             time(&rawtime);
             timeinfo = localtime(&rawtime);
-            strftime(buffer, 21, "%F %T: ", timeinfo);
+            strftime(buffer, 30, "%F %T: ", timeinfo);
 
             Serial.print(buffer);
             timestamp = false;
