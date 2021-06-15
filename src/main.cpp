@@ -848,8 +848,8 @@ void setup() {
     schedule_recurrent_function_us([]() {
         serialSDS.perform_work();
         serialGPS.perform_work();
-        return false;
-    }, 2);
+        return true;
+    }, 1);
 //    serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
@@ -945,6 +945,8 @@ void setup() {
 	// sometimes parallel sending data and web page will stop nodemcu, watchdogtimer set to 30 seconds
 	wdt_disable();
 	wdt_enable(30000);
+
+	serialSDS.flush();  //drop any packets sent on startup...
 
 	starttime = millis();                                   // store the start time
 	time_point_device_start_ms = starttime;
