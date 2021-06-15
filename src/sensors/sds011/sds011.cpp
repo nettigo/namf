@@ -21,19 +21,6 @@ namespace SDS011 {
     unsigned long hwWtdgErrors = 0;
     unsigned readings;
     unsigned failedReadings;
-    enum {
-        SDS_REPLY_HDR = 10,
-        SDS_REPLY_BODY = 8
-    } SDS_waiting_for;
-
-    typedef enum {
-        SER_UNDEF,
-        SER_HDR,
-        SER_DATA,
-        SER_REPLY,
-        SER_IDLE
-    } SDSSerialState;
-    SDSSerialState currState = SER_UNDEF;
 
     typedef enum {
         POWERON,    //after poweron
@@ -107,34 +94,6 @@ namespace SDS011 {
 //        *pm10_serial = replies[SDS_DATA].data[2] | (replies[SDS_DATA].data[3] << 8);
 //        replies[SDS_DATA].received = false;
         return;
-
-        const uint8_t constexpr hdr_measurement[2] = {0xAA, 0xC0};
-        uint8_t data[8];
-        while (serialSDS.available() > SDS_waiting_for) {
-            switch (SDS_waiting_for) {
-                case SDS_REPLY_HDR:
-                    if (serialSDS.find(hdr_measurement, sizeof(hdr_measurement)))
-                        SDS_waiting_for = SDS_REPLY_BODY;
-                    break;
-                case SDS_REPLY_BODY:
-                    debug_out(FPSTR(DBG_TXT_START_READING), DEBUG_MAX_INFO, 0);
-                    debug_out(FPSTR(SENSORS_SDS011), DEBUG_MAX_INFO, 1);
-                    size_t read = serialSDS.readBytes(data, sizeof(data));
-                    if (read == sizeof(data) && SDS_checksum_valid(data)) {
-                        *pm25_serial = data[0] | (data[1] << 8);
-                        *pm10_serial = data[2] | (data[3] << 8);
-                    } else {
-                        *pm10_serial = -1;
-                        *pm25_serial = -1;
-                    }
-                    SDS_waiting_for = SDS_REPLY_HDR;
-                    for (byte i = 0; i < sizeof(data); i++) {
-                        data[i] = 0;
-                    }
-
-
-            }
-        }
 
     }
 
@@ -372,7 +331,6 @@ namespace SDS011 {
 
     //select proper state, depending on time left to
     unsigned long processState() {
-        int pm25, pm10 = -1;
         unsigned long t = time2Measure();
 //        if (t>1000) t -= 200;
         switch (sensorState) {
