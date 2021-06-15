@@ -85,17 +85,6 @@ namespace SDS011 {
         }
     }
 
-    typedef struct {
-        bool sent;
-        bool received;
-        unsigned long lastRequest;
-        unsigned long lastReply;
-        byte data[5];
-    } SDSReplyInfo;
-
-    SDSReplyInfo replies[SDS_UNKNOWN];
-    unsigned checksumFailed = 0;
-    unsigned long packetCount = 0;
 
     //change state and store timestamp
     void updateState(SDS011State newState) {
@@ -109,9 +98,9 @@ namespace SDS011 {
 #define UPDATE_MIN_MAX(MIN, MAX, SAMPLE) { UPDATE_MIN(MIN, SAMPLE); UPDATE_MAX(MAX, SAMPLE); }
 
     void readSingleSDSPacket(int *pm10_serial, int *pm25_serial) {
-        *pm25_serial = replies[SDS_DATA].data[0] | (replies[SDS_DATA].data[1] << 8);
-        *pm10_serial = replies[SDS_DATA].data[2] | (replies[SDS_DATA].data[3] << 8);
-        replies[SDS_DATA].received = false;
+//        *pm25_serial = replies[SDS_DATA].data[0] | (replies[SDS_DATA].data[1] << 8);
+//        *pm10_serial = replies[SDS_DATA].data[2] | (replies[SDS_DATA].data[3] << 8);
+//        replies[SDS_DATA].received = false;
         return;
 
         const uint8_t constexpr hdr_measurement[2] = {0xAA, 0xC0};
@@ -251,15 +240,6 @@ namespace SDS011 {
         return (data[7] == 0xAB && checksum_is == data[6]);
     }
 
-    void initReplyData() {
-        for (byte i = 0; i < SDS_UNKNOWN; i++) {
-            replies[i].sent = false;
-            replies[i].received = false;
-            replies[i].lastRequest = 0;
-            replies[i].lastReply = 0;
-
-        }
-    }
 
     String sds_internals() {
         String ret = "";
@@ -358,7 +338,6 @@ namespace SDS011 {
             scheduler.registerSensor(SimpleScheduler::SDS011, SDS011::process, FPSTR(SDS011::KEY));
             scheduler.init(SimpleScheduler::SDS011);
             enabled = true;
-            initReplyData();
             debug_out(F("SDS011: start"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SDS011)) {   //de
             debug_out(F("SDS011: stop"), DEBUG_MIN_INFO, 1);
@@ -377,7 +356,7 @@ namespace SDS011 {
         unsigned long timeOutCount = millis();
         SDS_waiting_for = SDS_REPLY_HDR;
         while ((millis() - timeOutCount) < 500 && (pm10 == -1 || pm25 == -1)) {
-            readSingleSDSPacket(&pm10, &pm25);
+            // change to SerialSDS readSingleSDSPacket(&pm10, &pm25);
             delay(5);
         }
         if (pm10 == -1 || pm25 == -1) {
@@ -560,8 +539,7 @@ namespace SDS011 {
 
     void getStatusReport(String &res) {
         if (!enabled) return;
-        SDS_cmd(PmSensorCmd::Start);
-        SDS_cmd(PmSensorCmd::VersionDate);
+
         res += FPSTR(EMPTY_ROW);
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
@@ -599,6 +577,9 @@ namespace SDS011 {
                 return 0;
             case SimpleScheduler::INIT:
                 readings = failedReadings = 0;
+                SDS_cmd(PmSensorCmd::Start);
+                delay(500);
+                SDS_cmd(PmSensorCmd::VersionDate);
                 return processState();
             case SimpleScheduler::RUN:
                 channelSDS.process();
@@ -640,22 +621,24 @@ namespace SDS011 {
         static String version_date = "";
 
         debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
-        if(!replies[SDS_FW_VER].received) {
+
+        if (!channelSDS._replies[SDS_FW_VER].received) {
             is_SDS_running = SDS_cmd(PmSensorCmd::Start);
             is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
         }
 
-        if (replies[SDS_FW_VER].received) {
+        if (channelSDS._replies[SDS_FW_VER].received) {
+            Serial.println("SDS FW VER response OK?");
             char reply[30];
-            byte *buff = replies[SDS_FW_VER].data;
-            char fmt[20];
-            String a = F("%i-%i-%i(%02X%02X)");
-            a.toCharArray(fmt, 20);
-            sprintf_P(reply, fmt, buff[0], buff[1], buff[2], buff[3], buff[4]);
+            byte *buff = channelSDS._replies[SDS_FW_VER].data;
+            snprintf_P(reply, 30, PSTR("20%i-%i-%i(%02X%02X)"), buff[0], buff[1], buff[2], buff[3], buff[4]);
+            Serial.print("***** =>");
+            Serial.println(reply);
             version_date = String(reply);
         } else {
             version_date = F("n/a");
         }
+
         return version_date;
     }
 

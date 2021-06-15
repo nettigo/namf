@@ -710,7 +710,8 @@ static void powerOnTestSensors() {
      debug_out(F("PowerOnTest"),0,1);
     cfg::debug = DEBUG_MED_INFO;
 
-	if (cfg::pms_read) {
+
+    if (cfg::pms_read) {
 		debug_out(F("Read PMS(1,3,5,6,7)003..."), DEBUG_MIN_INFO, 1);
 		PMS_cmd(PmSensorCmd::Start);
 		delay(100);

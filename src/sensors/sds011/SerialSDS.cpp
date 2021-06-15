@@ -123,6 +123,7 @@ void SerialSDS::logReply(ResponseType type) {
             break;
 
         case SDS_FW_VER:
+            Serial.println(F("FIRMWARE VERSION response"));
             break;
 
     }
