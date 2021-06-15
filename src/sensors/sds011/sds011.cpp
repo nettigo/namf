@@ -525,7 +525,9 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
-        res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
+        if (hardwareWatchdog) {
+            res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
+        }
         float fr = 0;
         if (channelSDS.totalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.totalPacketCnt() * 100.0;
         res += table_row_from_value(F("SDS011"), F("Checksum failures"),
