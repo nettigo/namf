@@ -75,6 +75,7 @@ namespace HECA {
             lines[row] += (FPSTR(UNIT_PERCENT));
 
         }
+        return true;
     }
 
     void initCycle() {

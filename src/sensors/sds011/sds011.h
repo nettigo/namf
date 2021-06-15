@@ -12,8 +12,9 @@
 #include "system/debug.h"
 #include "html-content.h"   //just for sensor name, to be removed later
 #include "webserver.h"  //HTML functions
-#include "PCF8574.h"
+//#include "PCF8574.h"
 #include "SerialSDS.h"
+#include <Sds011.h>
 
 namespace SDS011 {
 

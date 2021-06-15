@@ -109,7 +109,7 @@ LiquidCrystal_I2C *char_lcd = nullptr;//(0x27, 16, 2);
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false);
+SoftwareSerial serialSDS;//(PM_SERIAL_RX, PM_SERIAL_TX, false);
 SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
 
 /*****************************************************************

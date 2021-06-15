@@ -11,6 +11,13 @@ namespace SDS011 {
     unsigned long pm10Sum, pm25Sum = 0;
     unsigned readingCount = 0;
     SerialSDS channelSDS(serialSDS);
+
+    Sds011Async<SoftwareSerial> sds011(serialSDS);
+
+    constexpr int pm_tablesize = 15;
+    int pm25_table[pm_tablesize];
+    int pm10_table[pm_tablesize];
+
     bool hardwareWatchdog = 0;
     byte hwWtdgFailedReadings = 0; //after SDS restart this counter is reset, failedReadings is global
     unsigned long hwWtdgErrors = 0;
@@ -89,6 +96,8 @@ namespace SDS011 {
     //change state and store timestamp
     void updateState(SDS011State newState) {
         if (newState == sensorState) return;
+        Serial.print("New state: ");
+        Serial.println(newState);
         sensorState = newState;
         stateChangeTime = millis();
     }
@@ -399,92 +408,72 @@ namespace SDS011 {
                 updateState(STARTUP);
                 return 10;
             case STARTUP:
-                is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-                delay(500);
-                is_SDS_running = SDS_cmd(PmSensorCmd::VersionDate);
+
                 resetReadings();
                 updateState(POST);
                 return 100;
             case POST:
-                if (channelSDS.fetchReading(pm10, pm25)) {
-                    storeReadings(pm10, pm25);
-                }
+
                 if (timeout(STARTUP_TIME)) {
-                    processReadings();
-                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+//                    is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                     updateState(OFF);
                     return 500;
                 }
                 return 20;
             case OFF:
-                if (hardwareWatchdog && hwWtdgFailedReadings > 2) {
-                    Wire.beginTransmission(0x26);
-                    Wire.write(0x0);
-                    byte error = Wire.endTransmission();
-                    Serial.print(F("PCF status: "));
-                    Serial.println(error);
-                    if (error) {
-                        delay(100);
-                        hwWtdgErrors++;
-                    } else {
-                        updateState(HARDWARE_RESTART);
-                        debug_out(F("SDS not responding -> hardware restart !!!! "), DEBUG_ERROR);
-                    }
-                    return 10;
-                }
+
                 if (t < warmupTime + readTime + SDS011_END_TIME)   //aim to finish 2 sec before readingTime
+                {
+                    sds011.set_sleep(false);
                     updateState(START);
+                }
                 return 10;
             case HARDWARE_RESTART:
                 if (timeout(5 * 1000)) {
-                    debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
-                    Wire.beginTransmission(0x26);
-                    delay(1);
-                    Serial.println(Wire.write(0xFF));
-                    byte error = Wire.endTransmission();
-                    Serial.println(error);
-                    if (error) {
-                        hwWtdgErrors++;
-                        delay(100);
-                    } else {
-                        hwWtdgFailedReadings = 0;
-                        updateState(HW_RESTART_CLEANUP);
-                    }
+
                 }
                 return 10;
             case HW_RESTART_CLEANUP:
                 if (timeout(5000)) {
-                    is_SDS_running = SDS_cmd(Stop);
-                    updateState(OFF);
+
                 }
                 return 10;
             case START:
-                is_SDS_running = SDS_cmd(PmSensorCmd::Start);
-                updateState(WARMUP);
+                sds011.on_query_data_auto_completed([](int n) {
+                    Serial.println("Begin Handling SDS011 query data");
+                    int pm25;
+                    int pm10;
+                    Serial.print("n = ");
+                    Serial.println(n);
+                    if (sds011.filter_data(n, pm25_table, pm10_table, pm25, pm10) &&
+                        !isnan(pm10) && !isnan(pm25)) {
+                        last_value_SDS_P1 = float(pm10) / 10;
+                        last_value_SDS_P2 = float(pm25) / 10;
+                        last_value_SDS_P1 = last_value_SDS_P2 = -1;
+                        hwWtdgFailedReadings++;
+                    }
+                    Serial.println("End Handling SDS011 query data");
+                });
+                sds011.perform_work();
+
+                updateState(READING);
                 return 100;
             case WARMUP:
-                if (t < readTime + SDS011_END_TIME)
-                    updateState(READ);
+                updateState(READ);
                 return 10;
             case READ:
-//                serialSDS.flush();
-                resetReadings();
-                SDS_waiting_for = SDS_REPLY_HDR;
                 updateState(READING);
                 return 10;
             case READING:
-                if (channelSDS.fetchReading(pm10, pm25)) {
-                    storeReadings(pm10, pm25);
-                }
-                if (timeout(readTime)) {
+                if (t < SDS011_END_TIME)
                     updateState(STOP);
-                    return 50;
-                }
                 return 20;
             case STOP:
-                processReadings();
+                if (!sds011.query_data_auto_async(pm_tablesize, pm25_table, pm10_table)) {
+                    Serial.println("measurement capture start failed");
+                }
                 debug_out(F("SDS011: end of cycle"), DEBUG_MIN_INFO, 1);
-                is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+                sds011.set_sleep(true);
                 updateState(AFTER_READING);
                 return 100;
             default:
@@ -554,18 +543,41 @@ namespace SDS011 {
 //    }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
+        static unsigned long lastPerform = 0;
         switch (e) {
             case SimpleScheduler::STOP:
-                is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
+                if (sds011.set_sleep(true)) { is_SDS_running = false; }
                 return 0;
             case SimpleScheduler::INIT:
                 readings = failedReadings = 0;
-                SDS_cmd(PmSensorCmd::Start);
+                Serial.println(F("SDS011 INIT ***********\n\n"));
+                Sds011::Report_mode report_mode;
+                sds011.set_sleep(false);
                 delay(500);
-                SDS_cmd(PmSensorCmd::VersionDate);
-                return processState();
+                if (!sds011.get_data_reporting_mode(report_mode)) {
+                    Serial.println("Sds011::get_data_reporting_mode() failed");
+                }
+                if (Sds011::REPORT_ACTIVE != report_mode) {
+                    Serial.println("Turning on Sds011::REPORT_ACTIVE reporting mode");
+                    if (!sds011.set_data_reporting_mode(Sds011::REPORT_ACTIVE)) {
+                        Serial.println("Sds011::set_data_reporting_mode(Sds011::REPORT_ACTIVE) failed");
+                    }
+                }
+                processState();
+                if (sds011.set_sleep(true)) {
+                    is_SDS_running = false;
+                    return 10;
+                } else {
+                    return 1;
+                }
+
             case SimpleScheduler::RUN:
-                channelSDS.process();
+//                channelSDS.process();
+                if (millis() - lastPerform > 100) {
+                    sds011.perform_work();
+//                    Serial.println("PRRFW");
+                    lastPerform = millis();
+                }
                 processState();
                 return 1;
             default:
