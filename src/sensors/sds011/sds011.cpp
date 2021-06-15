@@ -12,6 +12,7 @@ namespace SDS011 {
     Sds011Async<SoftwareSerial> sds011(serialSDS);
 
     constexpr int pm_tablesize = 10;
+    unsigned warmupPackets;
     int pm25_table[pm_tablesize];
     int pm10_table[pm_tablesize];
 
@@ -92,6 +93,7 @@ namespace SDS011 {
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
         setVariableFromHTTP(F("w"), warmupTime, SimpleScheduler::SDS011);
+        warmupPackets = warmupTime/1000;
         setVariableFromHTTP(String(F("r")), readTime, SimpleScheduler::SDS011);
         setBoolVariableFromHTTP(F("dbg"), hardwareWatchdog, SimpleScheduler::SDS011);
 
@@ -205,9 +207,9 @@ namespace SDS011 {
                 return 20;
             case OFF:
 
-                if (t < warmupTime + readTime + SDS011_END_TIME)   //aim to finish 2 sec before readingTime
+                if (t < (warmupPackets + pm_tablesize +1)*1000 + SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
                 {
-                    if (!sds011.set_sleep(false)) { Serial.println(F("\n\nSDS011 nie wstał!\n\n")); };
+                    if (!sds011.set_sleep(false)) { debug_out(F("SDS011 did not wake up..."), DEBUG_ERROR); };
                     updateState(START);
                 }
                 return 10;
@@ -223,11 +225,10 @@ namespace SDS011 {
                 return 10;
             case START:
                 sds011.on_query_data_auto_completed([](int n) {
-                    Serial.println("Begin Handling SDS011 query data");
                     int pm25;
                     int pm10;
-                    Serial.print("n = ");
-                    Serial.println(n);
+                    debug_out(F("n = "), DEBUG_ERROR, 0);
+                    debug_out(String(n), DEBUG_ERROR);
                     if (sds011.filter_data(n, pm25_table, pm10_table, pm25, pm10) &&
                         !isnan(pm10) && !isnan(pm25)) {
 //                        Serial.println(F("NEW DATA yaay!"));
@@ -235,9 +236,9 @@ namespace SDS011 {
                         last_value_SDS_P2 = float(pm25) / 10;
                     } else {
                         last_value_SDS_P1 = last_value_SDS_P2 = -1;
+                        debug_out(F("Failed SDS reading"), DEBUG_ERROR);
                         hwWtdgFailedReadings++;
                     }
-                    Serial.println("End Handling SDS011 query data");
                 });
 //                sds011.perform_work();
                 if (!sds011.query_data_auto_async(pm_tablesize, pm25_table, pm10_table)) {
@@ -312,6 +313,7 @@ namespace SDS011 {
                 return 0;
             case SimpleScheduler::INIT:
                 readings = failedReadings = 0;
+                warmupPackets = warmupTime / 1000;
                 Sds011::Report_mode report_mode;
                 sds011.set_sleep(false);
                 delay(500);
