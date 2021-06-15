@@ -41,43 +41,6 @@ namespace SDS011 {
     unsigned long stateChangeTime = 0;
     SDS011State sensorState = POWERON;
 
-
-    typedef enum {
-        SDS_REPORTING,
-        SDS_DATA,
-        SDS_NEW_DEV_ID,
-        SDS_SLEEP,
-        SDS_PERIOD,
-        SDS_FW_VER,
-        SDS_UNKNOWN
-    } SDSResponseType;
-    const char SRT_0[] PROGMEM = "Reporting mode";
-    const char SRT_1[] PROGMEM = "Data packet";
-    const char SRT_2[] PROGMEM = "New ID";
-    const char SRT_3[] PROGMEM = "Sleep/work";
-    const char SRT_4[] PROGMEM = "Working period";
-    const char SRT_5[] PROGMEM = "FW version";
-    const char SRT_6[] PROGMEM = "Unknown";
-    const char *SRT_NAMES[] PROGMEM = {SRT_0, SRT_1, SRT_2, SRT_3, SRT_4, SRT_5, SRT_6};
-
-    SDSResponseType selectResponse(byte x) {
-        switch (x) {
-            case 7:
-                return SDS_FW_VER;
-            case 8:
-                return SDS_PERIOD;
-            case 6:
-                return SDS_SLEEP;
-            case 5:
-                return SDS_NEW_DEV_ID;
-            case 2:
-                return SDS_REPORTING;
-            default:
-                return SDS_UNKNOWN;
-        }
-    }
-
-
     //change state and store timestamp
     void updateState(SDS011State newState) {
         if (newState == sensorState) return;
