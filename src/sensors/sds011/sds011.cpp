@@ -96,8 +96,6 @@ namespace SDS011 {
     //change state and store timestamp
     void updateState(SDS011State newState) {
         if (newState == sensorState) return;
-        Serial.print("New state: ");
-        Serial.println(newState);
         sensorState = newState;
         stateChangeTime = millis();
     }
@@ -424,7 +422,7 @@ namespace SDS011 {
 
                 if (t < warmupTime + readTime + SDS011_END_TIME)   //aim to finish 2 sec before readingTime
                 {
-                    sds011.set_sleep(false);
+                    if (!sds011.set_sleep(false)) { Serial.println(F("\n\nSDS011 nie wstał!\n\n")); };
                     updateState(START);
                 }
                 return 10;
@@ -447,15 +445,20 @@ namespace SDS011 {
                     Serial.println(n);
                     if (sds011.filter_data(n, pm25_table, pm10_table, pm25, pm10) &&
                         !isnan(pm10) && !isnan(pm25)) {
+//                        Serial.println(F("NEW DATA yaay!"));
                         last_value_SDS_P1 = float(pm10) / 10;
                         last_value_SDS_P2 = float(pm25) / 10;
+                    } else {
                         last_value_SDS_P1 = last_value_SDS_P2 = -1;
                         hwWtdgFailedReadings++;
                     }
                     Serial.println("End Handling SDS011 query data");
                 });
-                sds011.perform_work();
-
+//                sds011.perform_work();
+                if (!sds011.query_data_auto_async(pm_tablesize, pm25_table, pm10_table)) {
+                    Serial.println("measurement capture start failed");
+                }
+//                if (t < SDS011_END_TIME)
                 updateState(READING);
                 return 100;
             case WARMUP:
@@ -469,9 +472,6 @@ namespace SDS011 {
                     updateState(STOP);
                 return 20;
             case STOP:
-                if (!sds011.query_data_auto_async(pm_tablesize, pm25_table, pm10_table)) {
-                    Serial.println("measurement capture start failed");
-                }
                 debug_out(F("SDS011: end of cycle"), DEBUG_MIN_INFO, 1);
                 sds011.set_sleep(true);
                 updateState(AFTER_READING);
@@ -554,6 +554,7 @@ namespace SDS011 {
                 Sds011::Report_mode report_mode;
                 sds011.set_sleep(false);
                 delay(500);
+
                 if (!sds011.get_data_reporting_mode(report_mode)) {
                     Serial.println("Sds011::get_data_reporting_mode() failed");
                 }
@@ -574,6 +575,10 @@ namespace SDS011 {
             case SimpleScheduler::RUN:
 //                channelSDS.process();
                 if (millis() - lastPerform > 100) {
+//                    if (serialSDS.available() > 0) {
+//                        Serial.print(F("Serial available: "));
+//                        Serial.println(serialSDS.available());
+//                    }
                     sds011.perform_work();
 //                    Serial.println("PRRFW");
                     lastPerform = millis();

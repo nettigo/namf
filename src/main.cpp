@@ -917,7 +917,7 @@ void setup() {
     }
 
     if (cfg::gps_read) {
-        serialGPS.begin(9600);
+        serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 32);
         debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
         disable_unneeded_nmea();
     }
