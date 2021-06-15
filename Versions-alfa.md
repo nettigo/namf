@@ -2,6 +2,11 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-39a3 (2021-06-15) (rev c50ee76fbc50d6c59dc495eb8bb09ab6d38ee92c)
+* SDS011 - respect warmup time set in config. For now measurement is fixed and its 10 seconds
+no matter what is set in config
+* SDS011 - better timing for operation to get first measurement ready before sending data 
+
 ### NAMF-2020-39a2 (2021-06-15) (rev f6923c5e079c16461bd45c86b575325b81e2f028)
 * SDS version uses new code
 * Platformio Espressif8266@3.0.0
