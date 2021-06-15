@@ -8,7 +8,6 @@ namespace SDS011 {
     unsigned long warmupTime = WARMUPTIME_SDS_MS;
     unsigned long readTime = READINGTIME_SDS_MS;
     unsigned readingCount = 0;
-    SerialSDS channelSDS(serialSDS);
 
     Sds011Async<SoftwareSerial> sds011(serialSDS);
 
@@ -200,37 +199,6 @@ namespace SDS011 {
         return cmd != PmSensorCmd::Stop;
     }
 
-
-    bool SDS_checksum_valid(const uint8_t (&data)[8]) {
-        uint8_t checksum_is = 0;
-        for (unsigned i = 0; i < 6; ++i) {
-            checksum_is += data[i];
-        }
-        return (data[7] == 0xAB && checksum_is == data[6]);
-    }
-
-
-    String sds_internals() {
-        String ret = "";
-        for (byte i = 0; i < SDS_UNKNOWN; i++) {
-            ret += F("<p>");
-            ret += String(i);
-            ret += F("(");
-            ret += String(FPSTR(SRT_NAMES[i]));
-            ret += F("), ");
-            if (channelSDS._replies[i].received) {
-                ret += F("otrzymano pakiet ");
-                ret += String((millis() - channelSDS._replies[i].lastReply) / 1000);
-                ret += F(" sekund temu.");
-            }
-            for (byte j = 0; j < 5; j++) {
-                ret += String(channelSDS._replies[i].data[j], 16);
-                ret += F(" ");
-            }
-            ret += F("</p>");
-        }
-        return ret;
-    }
 
 
     JsonObject &parseHTTPRequest() {
@@ -481,14 +449,8 @@ namespace SDS011 {
                 }
 
             case SimpleScheduler::RUN:
-//                channelSDS.process();
                 if (millis() - lastPerform > 100) {
-//                    if (serialSDS.available() > 0) {
-//                        Serial.print(F("Serial available: "));
-//                        Serial.println(serialSDS.available());
-//                    }
                     sds011.perform_work();
-//                    Serial.println("PRRFW");
                     lastPerform = millis();
                 }
                 processState();
