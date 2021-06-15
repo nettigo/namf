@@ -171,7 +171,6 @@ namespace SDS011 {
                 if (t < (warmupTime/1000 + pm_tablesize +1)*1000 + SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
                 {
                     if (!sds011.set_sleep(false)) { debug_out(F("SDS011 did not wake up..."), DEBUG_ERROR); };
-                    Serial.println("START");warmupTime / 1000;
                     updateState(START);
                 }
                 return 10;
