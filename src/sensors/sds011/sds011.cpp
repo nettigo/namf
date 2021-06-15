@@ -417,7 +417,7 @@ namespace SDS011 {
                 }
                 return 20;
             case OFF:
-                if (hardwareWatchdog && hwWtdgFailedReadings > 0) {
+                if (hardwareWatchdog && hwWtdgFailedReadings > 2) {
                     Wire.beginTransmission(0x26);
                     Wire.write(0x0);
                     byte error = Wire.endTransmission();
