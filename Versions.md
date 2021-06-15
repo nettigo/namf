@@ -1,3 +1,9 @@
+NAMF-2020-38rc10 (2021-06-15)
+* new SDS code, moved some functionality to separate class, work in progress 
+  to get nonblocking full implementation SDS communication protocol, not just toss
+  some commands to SDS...
+* support for hardware watchdog/restarter for SDS
+
 NAMF-2020-38rc9 (2021-06-07)
 * old (2019 line) code for sending SDS commands (diagnosing SDS problems)
 
