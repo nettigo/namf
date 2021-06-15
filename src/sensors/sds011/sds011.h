@@ -59,6 +59,7 @@ namespace SDS011 {
     void getStatusReport(String &);
 
     String sds_internals();
+
     /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
  *****************************************************************/
@@ -68,7 +69,7 @@ namespace SDS011 {
 /*****************************************************************
  * read SDS011 sensor values                                     *
  *****************************************************************/
-    void sensorSDS(String &s) ;
+    void sensorSDS(String &s);
 }
 
 #endif //NAMF_SENSORS_SDS011

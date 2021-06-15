@@ -33,6 +33,7 @@ public:
         unsigned long lastReply;
         byte data[5];
     } ReplyInfo;
+
     SerialSDS(Stream &serial) : _serial(serial) {
         _currState = SER_UNDEF;
         checksumFailed = 0;
@@ -47,13 +48,16 @@ public:
     }
 
     void process();
-    unsigned checksumErrCnt() {return checksumFailed;}
-    unsigned long totalPacketCnt() {return packetCount;}
+
+    unsigned checksumErrCnt() { return checksumFailed; }
+
+    unsigned long totalPacketCnt() { return packetCount; }
+
     bool readingAvailable();
+
     bool fetchReading(int &pm10, int &pm25);
+
     ReplyInfo _replies[SDS_UNKNOWN];
-
-
 
 
 private:
@@ -64,8 +68,11 @@ private:
     unsigned long packetCount;
 
     bool checksumValid();
+
     void logReply(ResponseType type);
+
     void storeReply();
+
     ResponseType selectResponse(byte x);
 //    const char SRT_0 [];
 //    const char SRT_1 [];

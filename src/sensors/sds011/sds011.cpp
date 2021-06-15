@@ -2,7 +2,7 @@
 
 namespace SDS011 {
     const char KEY[]
-    PROGMEM = "SDS011";
+            PROGMEM = "SDS011";
     bool enabled = false;
     bool printOnLCD = false;
     unsigned long SDS_error_count;
@@ -59,13 +59,13 @@ namespace SDS011 {
         SDS_FW_VER,
         SDS_UNKNOWN
     } SDSResponseType;
-    const char SRT_0 [] PROGMEM = "Reporting mode";
-    const char SRT_1 [] PROGMEM = "Data packet";
-    const char SRT_2 [] PROGMEM = "New ID";
-    const char SRT_3 [] PROGMEM = "Sleep/work";
-    const char SRT_4 [] PROGMEM = "Working period";
-    const char SRT_5 [] PROGMEM = "FW version";
-    const char SRT_6 [] PROGMEM = "Unknown";
+    const char SRT_0[] PROGMEM = "Reporting mode";
+    const char SRT_1[] PROGMEM = "Data packet";
+    const char SRT_2[] PROGMEM = "New ID";
+    const char SRT_3[] PROGMEM = "Sleep/work";
+    const char SRT_4[] PROGMEM = "Working period";
+    const char SRT_5[] PROGMEM = "FW version";
+    const char SRT_6[] PROGMEM = "Unknown";
     const char *SRT_NAMES[] PROGMEM = {SRT_0, SRT_1, SRT_2, SRT_3, SRT_4, SRT_5, SRT_6};
 
     SDSResponseType selectResponse(byte x) {
@@ -192,19 +192,24 @@ namespace SDS011 {
 //    }
     bool SDS_cmd(PmSensorCmd cmd) {
         static constexpr uint8_t start_cmd[] PROGMEM = {
-                0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB
+                0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+                0x06, 0xAB
         };
         static constexpr uint8_t stop_cmd[] PROGMEM = {
-                0xAA, 0xB4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
+                0xAA, 0xB4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+                0x05, 0xAB
         };
         static constexpr uint8_t continuous_mode_cmd[] PROGMEM = {
-                0xAA, 0xB4, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x07, 0xAB
+                0xAA, 0xB4, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+                0x07, 0xAB
         };
         static constexpr uint8_t continuous_mode_cmd2[] PROGMEM = {
-                0xAA, 0xB4, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x01, 0xAB
+                0xAA, 0xB4, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+                0x01, 0xAB
         };
         static constexpr uint8_t version_cmd[] PROGMEM = {
-                0xAA, 0xB4, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x05, 0xAB
+                0xAA, 0xB4, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+                0x05, 0xAB
         };
         constexpr uint8_t cmd_len = 19;
 
@@ -254,8 +259,8 @@ namespace SDS011 {
                 ret += String((millis() - channelSDS._replies[i].lastReply) / 1000);
                 ret += F(" sekund temu.");
             }
-            for (byte j=0; j<5;j++){
-                ret += String(channelSDS._replies[i].data[j],16);
+            for (byte j = 0; j < 5; j++) {
+                ret += String(channelSDS._replies[i].data[j], 16);
                 ret += F(" ");
             }
             ret += F("</p>");
@@ -478,7 +483,7 @@ namespace SDS011 {
                 return 20;
             case STOP:
                 processReadings();
-                debug_out(F("SDS011: end of cycle"),DEBUG_MIN_INFO, 1);
+                debug_out(F("SDS011: end of cycle"), DEBUG_MIN_INFO, 1);
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
                 updateState(AFTER_READING);
                 return 100;
@@ -491,8 +496,8 @@ namespace SDS011 {
         readings++;
         if (last_value_SDS_P2 != -1 && last_value_SDS_P1 != -1) {
 
-            res += Value2Json(F("SDS_P1"),String(last_value_SDS_P1));
-            res += Value2Json(F("SDS_P2"),String(last_value_SDS_P2));
+            res += Value2Json(F("SDS_P1"), String(last_value_SDS_P1));
+            res += Value2Json(F("SDS_P2"), String(last_value_SDS_P2));
         } else {
             failedReadings++;
         }
@@ -507,9 +512,9 @@ namespace SDS011 {
             results(data);
             sendLuftdaten(data, 1, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS_");
         } else {
-            debug_out(F("SDS011 reading procedure not finished, not sending data."),DEBUG_MIN_INFO);
-            debug_out(String(stateChangeTime),DEBUG_MIN_INFO);
-            debug_out(String(sensorState),DEBUG_MIN_INFO);
+            debug_out(F("SDS011 reading procedure not finished, not sending data."), DEBUG_MIN_INFO);
+            debug_out(String(stateChangeTime), DEBUG_MIN_INFO);
+            debug_out(String(sensorState), DEBUG_MIN_INFO);
         }
     }
 

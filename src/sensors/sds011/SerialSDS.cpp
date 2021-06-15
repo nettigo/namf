@@ -61,7 +61,8 @@ void SerialSDS::process() {
         }
     }
 }
-bool SerialSDS::readingAvailable(){
+
+bool SerialSDS::readingAvailable() {
     return _replies[SDS_DATA].received;
 };
 
@@ -81,8 +82,8 @@ bool SerialSDS::checksumValid(void) {
     }
     bool chk = _buff[9] == 0xAB && checksum_is == _buff[8];
     packetCount++;
-    if (!chk){
-        debug_out( F("SDS011 reply checksum failed "),DEBUG_ERROR);
+    if (!chk) {
+        debug_out(F("SDS011 reply checksum failed "), DEBUG_ERROR);
         checksumFailed++;
 //        Serial.println(checksum_is,16);
 //        for (byte i=0; i<10; i++) {
@@ -100,7 +101,7 @@ void SerialSDS::logReply(ResponseType type) {
 //    for (byte i=0; i<5;i++) {Serial.print(x.data[i],16); Serial.print(" ");}
 //    Serial.println();
 //    Serial.print(F("**** SDS**** Odpowiedź z SDS: "));
-    switch(type){
+    switch (type) {
         case SDS_REPORTING:
             Serial.print(F("REPORTING MODE "));
             Serial.print(x.data[0] ? F("SET: ") : F("QUERY: "));
@@ -128,20 +129,21 @@ void SerialSDS::logReply(ResponseType type) {
     }
     Serial.println();
 }
+
 //store reply for command
-void  SerialSDS::storeReply() {
+void SerialSDS::storeReply() {
     ResponseType type;
     type = selectResponse(_buff[2]);
-    debug_out(F("Response type: "),DEBUG_MED_INFO,0);
+    debug_out(F("Response type: "), DEBUG_MED_INFO, 0);
     debug_out(String(type), DEBUG_MED_INFO);
     if (type == SDS_UNKNOWN) { return; }
     _replies[type].received = true;
-    _replies[type].lastReply=millis();
-    for (byte i=0; i<5;i++) _replies[type].data[i] = _buff[3+i];
+    _replies[type].lastReply = millis();
+    for (byte i = 0; i < 5; i++) _replies[type].data[i] = _buff[3 + i];
 
-//        memcpy((void *) buff[3], replies[type].data, 5);
     if (cfg::debug > DEBUG_MIN_INFO) logReply(type);
 }
+
 SerialSDS::ResponseType SerialSDS::selectResponse(byte x) {
     switch (x) {
         case 7:
