@@ -574,6 +574,7 @@ namespace SDS011 {
      *****************************************************************/
     String SDS_version_date() {
         static String version_date = "";
+        version_date.reserve(15);
         unsigned short id = 0;
         bool old_state;
         debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(DBG_TXT_SDS011_VERSION_DATE), DEBUG_MED_INFO, 1);
@@ -583,6 +584,11 @@ namespace SDS011 {
 //                delay(500);
             }
             if (sds011.device_info(version_date, id)) {
+//                version_date += F("(")+String((byte)(id & 0xff),16)+String((byte)(id >> 8),16)+F(")");
+                char hex_id[8];
+                snprintf_P(hex_id, 8, PSTR("(%02X%02X)"), id & 0xff, id >> 8);
+                version_date += hex_id;
+
             } else {
                 version_date = F("n/a");
             }
