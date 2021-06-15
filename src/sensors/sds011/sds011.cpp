@@ -151,7 +151,6 @@ namespace SDS011 {
     //select proper state, depending on time left to
     unsigned long processState() {
         unsigned long t = time2Measure();
-//        if (t>1000) t -= 200;
         switch (sensorState) {
             case POWERON:
                 updateState(STARTUP);
@@ -346,10 +345,8 @@ namespace SDS011 {
         if (version_date.length() < 3) {
             if (!(old_state = is_SDS_running)) {
                 is_SDS_running = sds011.set_sleep(false);
-//                delay(500);
             }
             if (sds011.device_info(version_date, id)) {
-//                version_date += F("(")+String((byte)(id & 0xff),16)+String((byte)(id >> 8),16)+F(")");
                 char hex_id[8];
                 snprintf_P(hex_id, 8, PSTR("(%02X%02X)"), id & 0xff, id >> 8);
                 version_date += hex_id;
