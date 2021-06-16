@@ -320,6 +320,14 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
+        float fr = 0;
+        uint32 err, total;
+        sds011.crc_stats(err,total);
+
+        if (total) fr = err / (float) total * 100.0;
+        res += table_row_from_value(F("SDS011"), F("Checksum failures"),
+                                    String(fr) + F("% ") + String(err) + F("/") + String(
+                                            total), "");
         if (hardwareWatchdog) {
             res += table_row_from_value(F("SDS011"), F("Failed readings"), String(hwWtdgFailedReadings), "");
             res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
