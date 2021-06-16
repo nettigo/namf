@@ -335,6 +335,9 @@ namespace SDS011 {
         }
         if (json.containsKey(F("dbg"))) {
             hardwareWatchdog = json.get<bool>(F("dbg"));
+            Wire.beginTransmission(0x26);
+            Wire.write(0x01);
+            Wire.endTransmission();
         }
 
 
@@ -440,7 +443,7 @@ namespace SDS011 {
                     debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
                     Wire.beginTransmission(0x26);
                     delay(1);
-                    Serial.println(Wire.write(0xFF));
+                    Wire.write(0x01);
                     byte error = Wire.endTransmission();
                     Serial.println(error);
                     if (error) {
