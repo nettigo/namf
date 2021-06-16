@@ -844,12 +844,14 @@ static bool acquireNetworkTime() {
  *****************************************************************/
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
-    serialSDS.begin(9600, SWSERIAL_8N1);
+    serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, 16);
+    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
+
     schedule_recurrent_function_us([]() {
         serialSDS.perform_work();
         serialGPS.perform_work();
         return true;
-    }, 100);
+    }, 200);
 //    serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
