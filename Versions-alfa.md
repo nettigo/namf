@@ -2,6 +2,10 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-39a5 (2021-06-16) (rev d6111748003dbf4a12ac0bc5b0fd7f3260541aa3)
+* enable only one PCF channel in SDS restarter (only one LED is enabled)
+* collect failed SDS packets count (checksum error)
+
 ### NAMF-2020-39a4 (2021-06-16) (rev c1110cde625c6fd0daadfb50adfe59caa425f29b)
 * hardware SDS restarter support
 * code cleanup
