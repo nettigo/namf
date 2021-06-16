@@ -7,7 +7,6 @@ namespace SDS011 {
     bool printOnLCD = false;
     unsigned long warmupTime = WARMUPTIME_SDS_MS;
     unsigned long readTime = READINGTIME_SDS_MS;
-    unsigned readingCount = 0;
 
     Sds011Async<SoftwareSerial> sds011(serialSDS);
 
@@ -29,6 +28,8 @@ namespace SDS011 {
         HARDWARE_RESTART,
         HW_RESTART_CLEANUP,
         START,      // start fan
+        WAKE,       // second start attempt
+        WAKE2,      // third start attempt
         WARMUP,     // run, but no reading saved
         READ,       // start reading
         READING,    // run and collect data
@@ -43,6 +44,8 @@ namespace SDS011 {
     //change state and store timestamp
     void updateState(SDS011State newState) {
         if (newState == sensorState) return;
+        debug_out(F("SDS state change: "), DEBUG_MED_INFO, 0);
+        debug_out(String(newState), DEBUG_MED_INFO);
         sensorState = newState;
         stateChangeTime = millis();
     }
@@ -168,12 +171,37 @@ namespace SDS011 {
                 return 20;
             case OFF:
 
-                if (t < (warmupTime/1000 + pm_tablesize +1)*1000 + SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
+                if (t < (warmupTime / 1000 + pm_tablesize + 2) * 1000 +
+                        SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
                 {
-                    if (!sds011.set_sleep(false)) { debug_out(F("SDS011 did not wake up..."), DEBUG_ERROR); };
-                    updateState(START);
+                    if (!sds011.set_sleep(false)) {
+                        debug_out(F("SDS011 did not wake up..."), DEBUG_ERROR);
+                        updateState(WAKE);
+                    } else {
+                        updateState(START);
+                    };
                 }
                 return 10;
+            case WAKE:
+                if (timeout(300)) {
+                    if (!sds011.set_sleep(false)) {
+                        debug_out(F("SDS011 did not wake up second time..."), DEBUG_ERROR);
+                        updateState(WAKE2);
+                    } else {
+                        updateState(START);
+                    };
+                    return 1;
+                }
+                return 1;
+            case WAKE2:
+                if (timeout(1000)) {
+                    if (!sds011.set_sleep(false)) {
+                        debug_out(F("SDS011 did not wake up third time..."), DEBUG_ERROR);
+                        updateState(START);
+                    };
+                    return 1;
+                }
+                return 1;
             case HARDWARE_RESTART:
                 if (timeout(5 * 1000)) {
 
