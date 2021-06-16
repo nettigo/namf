@@ -2,7 +2,7 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
-### NAMF-2020-39a4 (2021-06-15) (rev c1110cde625c6fd0daadfb50adfe59caa425f29b)
+### NAMF-2020-39a4 (2021-06-16) (rev c1110cde625c6fd0daadfb50adfe59caa425f29b)
 * hardware SDS restarter support
 * code cleanup
 
