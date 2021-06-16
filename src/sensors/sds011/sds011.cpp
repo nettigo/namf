@@ -253,15 +253,16 @@ namespace SDS011 {
 //                        Serial.println(F("NEW DATA yaay!"));
                         last_value_SDS_P1 = float(pm10) / 10;
                         last_value_SDS_P2 = float(pm25) / 10;
-                    } else {
+                    } else {    //no data
                         last_value_SDS_P1 = last_value_SDS_P2 = -1;
                         debug_out(F("Failed SDS reading"), DEBUG_ERROR);
                         hwWtdgFailedReadings++;
                     }
                 });
 //                sds011.perform_work();
-                if (!sds011.query_data_auto_async(pm_tablesize, pm25_table, pm10_table)) {
+                if (!sds011.query_data_auto_async(pm_tablesize, pm25_table, pm10_table)) { //not started at all
                     Serial.println("measurement capture start failed");
+                    hwWtdgFailedReadings++;
                 }
 //                if (t < SDS011_END_TIME)
                 updateState(READING);
