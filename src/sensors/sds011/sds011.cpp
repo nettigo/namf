@@ -120,6 +120,9 @@ namespace SDS011 {
 
         if (json.containsKey(F("dbg"))) {
             hardwareWatchdog = json.get<bool>(F("dbg"));
+            Wire.beginTransmission(0x26);
+            Wire.write(0xFF);
+            Wire.endTransmission();
         }
 
 
@@ -170,7 +173,21 @@ namespace SDS011 {
                 }
                 return 20;
             case OFF:
-
+                if (hardwareWatchdog && hwWtdgFailedReadings > 2) {
+                    Wire.beginTransmission(0x26);
+                    Wire.write(0x0);
+                    byte error = Wire.endTransmission();
+                    Serial.print(F("PCF status: "));
+                    Serial.println(error);
+                    if (error) {
+                        delay(100);
+                        hwWtdgErrors++;
+                    } else {
+                        updateState(HARDWARE_RESTART);
+                        debug_out(F("SDS not responding -> hardware restart !!!! "), DEBUG_ERROR);
+                    }
+                    return 10;
+                }
                 if (t < (warmupTime / 1000 + pm_tablesize + 2) * 1000 +
                         SDS011_END_TIME)   //aim to finish SDS011_END_TIME msec before readingTime
                 {
@@ -204,12 +221,25 @@ namespace SDS011 {
                 return 1;
             case HARDWARE_RESTART:
                 if (timeout(5 * 1000)) {
-
+                    debug_out(F("Starting SDS (power ON)"), DEBUG_ERROR);
+                    Wire.beginTransmission(0x26);
+                    delay(1);
+                    Serial.println(Wire.write(0xFF));
+                    byte error = Wire.endTransmission();
+                    Serial.println(error);
+                    if (error) {
+                        hwWtdgErrors++;
+                        delay(100);
+                    } else {
+                        hwWtdgFailedReadings = 0;
+                        updateState(HW_RESTART_CLEANUP);
+                    }
                 }
                 return 10;
             case HW_RESTART_CLEANUP:
                 if (timeout(5000)) {
-
+                    is_SDS_running = sds011.set_sleep(true);
+                    updateState(OFF);
                 }
                 return 10;
             case START:
