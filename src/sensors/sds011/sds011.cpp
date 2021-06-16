@@ -320,6 +320,7 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
         if (hardwareWatchdog) {
+            res += table_row_from_value(F("SDS011"), F("Failed readings"), String(hwWtdgFailedReadings), "");
             res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
         }
     }
