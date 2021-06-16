@@ -2,6 +2,10 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-39a4 (2021-06-15) (rev c1110cde625c6fd0daadfb50adfe59caa425f29b)
+* hardware SDS restarter support
+* code cleanup
+
 ### NAMF-2020-39a3 (2021-06-15) (rev c50ee76fbc50d6c59dc495eb8bb09ab6d38ee92c)
 * SDS011 - respect warmup time set in config. For now measurement is fixed and its 10 seconds
 no matter what is set in config
