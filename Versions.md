@@ -1,3 +1,8 @@
+NAMF-2020-38rc12 (2021-06-17)
+* good measurement SDS resets failed measurements counter 
+* smaller buffer in SDS Serial
+* compact timestamp when logging to console
+
 NAMF-2020-38rc11 (2021-06-15)
 * fixed version number in binary  
 * hardware SDS restart after 3 missing measurements, not after first 
