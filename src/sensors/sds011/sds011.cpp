@@ -557,6 +557,12 @@ namespace SDS011 {
 //        }
 //    }
 
+    void byteReceived(int cnt) {
+//        debug_out(F("SDS bytes received: "), DEBUG_ERROR,0);
+//        debug_out(String(cnt),DEBUG_ERROR);
+        channelSDS.process();
+    }
+
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
@@ -564,12 +570,14 @@ namespace SDS011 {
                 return 0;
             case SimpleScheduler::INIT:
                 readings = failedReadings = 0;
+                serialSDS.flush();  //drop all packets 'pre-start'
                 SDS_cmd(PmSensorCmd::Start);
                 delay(500);
                 SDS_cmd(PmSensorCmd::VersionDate);
+                serialSDS.onReceive(byteReceived);
                 return processState();
             case SimpleScheduler::RUN:
-                channelSDS.process();
+//                channelSDS.process();
                 processState();
                 return 1;
             default:

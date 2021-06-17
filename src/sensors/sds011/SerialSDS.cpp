@@ -5,7 +5,7 @@
 #include "SerialSDS.h"
 
 void SerialSDS::process() {
-    if (_serial.available()) {
+    while (_serial.available()) {
         byte x;
         static byte idx;
         switch (_currState) {
