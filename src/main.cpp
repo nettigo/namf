@@ -909,7 +909,7 @@ void setup() {
     if (strlen(cfg::wlanssid) > 0) {
         connectWifi();
         got_ntp = acquireNetworkTime();
-        debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
+        debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
         debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
         if(cfg::auto_update) {
             updateFW();
