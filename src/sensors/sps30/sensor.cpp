@@ -344,19 +344,15 @@ namespace SPS30 {
         } else {    //LCD 20x4 or OLED, more real estate
             switch (minor) {
                 case 0:
-                    Serial.println("1");
                     lines[row] = F("SPS: PM1:");
                     lines[row] += String(sum.mc_1p0 / measurement_count, 1);
                     row++;
-                    Serial.println("2");
                     lines[row] = F("PM2.5: ");
                     lines[row] += String(sum.mc_2p5 / measurement_count, 1);
                     row++;
-                    Serial.println("3");
                     lines[row] = F("PM4:   ");
                     lines[row] += String(sum.mc_4p0 / measurement_count, 1);
                     row++;
-                    Serial.println("4");
                     lines[row] = F("PM10:  ");
                     lines[row] += String(sum.mc_10p0 / measurement_count, 1);
                     break;
