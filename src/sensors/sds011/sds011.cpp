@@ -373,6 +373,7 @@ namespace SDS011 {
         if (readingCount > 0) {
             last_value_SDS_P1 = pm10Sum / readingCount / 10.0;
             last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
+            hwWtdgFailedReadings = 0;
         } else {
             last_value_SDS_P1 = last_value_SDS_P2 = -1;
             hwWtdgFailedReadings++;
