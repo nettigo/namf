@@ -1,3 +1,9 @@
+NAMF-2020-38rc13 (2021-06-18)
+* lucky thirteen (?)
+* processing SDS packet using onReceive
+* SDS serial buffer 20 bytes - should fit 2 responses
+* disable interrupts on SDS serial TX
+
 NAMF-2020-38rc12 (2021-06-17)
 * good measurement SDS resets failed measurements counter 
 * smaller buffer in SDS Serial
