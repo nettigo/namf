@@ -558,8 +558,10 @@ namespace SDS011 {
 //    }
 
     void byteReceived(int cnt) {
-//        debug_out(F("SDS bytes received: "), DEBUG_ERROR,0);
-//        debug_out(String(cnt),DEBUG_ERROR);
+        if (cnt>=SDS_SERIAL_BUFF_SIZE) {
+            debug_out(F("SDS buffer full! Size : "), DEBUG_ERROR,0);
+            debug_out(String(cnt),DEBUG_ERROR);
+        }
         channelSDS.process();
     }
 

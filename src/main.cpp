@@ -844,7 +844,7 @@ static bool acquireNetworkTime() {
  *****************************************************************/
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
-    serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, 20);
+    serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
     serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
 
     schedule_recurrent_function_us([]() {
@@ -852,7 +852,7 @@ void setup() {
         serialGPS.perform_work();
         return true;
     }, 200);
-//    serialSDS.enableIntTx(false);
+    serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
     Wire.setClock(100000); // Force bus speed 100 Khz
