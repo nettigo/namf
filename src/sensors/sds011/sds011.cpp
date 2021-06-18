@@ -370,6 +370,7 @@ namespace SDS011 {
 
     //store last values pm
     void processReadings() {
+        readings++;
         if (readingCount > 0) {
             last_value_SDS_P1 = pm10Sum / readingCount / 10.0;
             last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
@@ -377,6 +378,7 @@ namespace SDS011 {
         } else {
             last_value_SDS_P1 = last_value_SDS_P2 = -1;
             hwWtdgFailedReadings++;
+            failedReadings++;
         }
 
     };
@@ -514,10 +516,6 @@ namespace SDS011 {
             const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
             String data;
             results(data);
-            readings++;
-            if (last_value_SDS_P2 == -1 || last_value_SDS_P1 == -1) {
-                failedReadings++;
-            }
             sendLuftdaten(data, 1, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS_");
         } else {
             debug_out(F("SDS011 reading procedure not finished, not sending data."), DEBUG_MIN_INFO);
