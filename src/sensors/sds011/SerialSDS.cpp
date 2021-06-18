@@ -59,6 +59,7 @@ void SerialSDS::process() {
             default:
                 _currState = SER_UNDEF;
         }
+        yield();
     }
 }
 
