@@ -1,3 +1,7 @@
+NAMF-2020-38rc14 ()
+* display total and failed number of SDS readings
+* display time from last update check
+
 NAMF-2020-38rc13 (2021-06-18)
 * lucky thirteen (?)
 * processing SDS packet using onReceive
