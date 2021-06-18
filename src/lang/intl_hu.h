@@ -140,6 +140,7 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SDS011_READTIME[] PROGMEM = "Translate HU: INTL_SDS011_READTIME 🐱;";
  const char INTL_SDS011_WARMUP[] PROGMEM = "Translate HU: INTL_SDS011_WARMUP 🐱;";
  const char INTL_SDS011_LCD_HDR[] PROGMEM = "Translate HU: INTL_SDS011_LCD_HDR 🐱;";
+ const char INTL_SDS011_FAILED_READINGS[] PROGMEM = "Translate HU: INTL_SDS011_FAILED_READINGS 🐱;";
  const char INTL_NTW_WTD_DESC[] PROGMEM = "Translate HU: INTL_NTW_WTD_DESC 🐱;";
  const char INTL_NTW_WTD_HOST[] PROGMEM = "Translate HU: INTL_NTW_WTD_HOST 🐱;";
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate HU: INTL_NTW_WTD_ERROR 🐱;";
