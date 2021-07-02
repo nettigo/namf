@@ -31,17 +31,17 @@ namespace SDS011 {
     SDSSerialState currState = SER_UNDEF;
 
     typedef enum {
-        POWERON,    //after poweron
-        STARTUP,    //first run
-        POST,       //measure data on POST
-        OFF,        // wait for measure period
-        HARDWARE_RESTART,
-        HW_RESTART_CLEANUP,
-        START,      // start fan
-        WARMUP,     // run, but no reading saved
-        READ,       // start reading
-        READING,    // run and collect data
-        STOP,        // turn off
+        POWERON,    // 0 after poweron
+        STARTUP,    // 1 first run
+        POST,       // 2 measure data on POST
+        OFF,        // 3 wait for measure period
+        HARDWARE_RESTART, // 4
+        HW_RESTART_CLEANUP, // 5
+        START,      // 6 start fan
+        WARMUP,     // 7 run, but no reading saved
+        READ,       // 8 start reading
+        READING,    // 9 run and collect data
+        STOP,        // 10 turn off
         AFTER_READING
 
     } SDS011State;
@@ -232,7 +232,11 @@ namespace SDS011 {
                 memcpy_P(buf, version_cmd, cmd_len);
                 break;
         }
+        unsigned long startTime = micros();
         serialSDS.write(buf, cmd_len);
+        unsigned long diff = micros() - startTime;
+        Serial.print(F("SDS command write took (µs): "));
+        Serial.println(diff);
         return cmd != PmSensorCmd::Stop;
     }
 
@@ -563,8 +567,7 @@ namespace SDS011 {
         }
         channelSDS.process();
     }
-
-    unsigned long process(SimpleScheduler::LoopEventType e) {
+    unsigned long internalProcess(SimpleScheduler::LoopEventType e){
         switch (e) {
             case SimpleScheduler::STOP:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
@@ -584,6 +587,31 @@ namespace SDS011 {
             default:
                 return 0;
         }
+    }
+
+    unsigned long process(SimpleScheduler::LoopEventType e) {
+        unsigned long startTime = micros();
+        SDS011State oldSensorState = sensorState;
+        byte avail = serialSDS.available();
+
+        internalProcess(e);
+        unsigned long diff = micros() - startTime;
+        if (diff > 1000) {
+            Serial.print(micros());
+            Serial.print(F(": SDS011 long process: "));
+            Serial.print(diff);
+            Serial.print(F(" internal status "));
+            Serial.print(oldSensorState);
+            Serial.print(F("/"));
+            Serial.print(sensorState);
+            Serial.print (F(" "));
+            Serial.print(avail);
+            Serial.print(F("/"));
+            Serial.print(serialSDS.available());
+
+            Serial.println();
+        }
+
     }
 
     String getConfigHTML(void) {

@@ -105,6 +105,7 @@ namespace SimpleScheduler {
         byte freeSlots(void);
         //String with sensor names (codes)
         String registeredNames();
+        String maxRunTimeSystemName();
 
         void getConfigForms(String &page);
         void getConfigJSON(LoopEntryType);
@@ -125,11 +126,14 @@ namespace SimpleScheduler {
         //how long processing loop took (max)
         unsigned long runTimeMax() {return _runTimeMax;};
         unsigned long lastRunTime() {return _lastRunTime;};
+        LoopEntryType timeMaxSystem() {return _runTimeMaxSystem;};
+        void resetRunTime() { _runTimeMax = 0; _runTimeMaxSystem = EMPTY;}
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];
         byte loopSize;
         unsigned long _runTimeMax;
         unsigned long _lastRunTime;
+        LoopEntryType _runTimeMaxSystem;
 
 
         int findSlot(byte id);
