@@ -31,17 +31,17 @@ namespace SDS011 {
     SDSSerialState currState = SER_UNDEF;
 
     typedef enum {
-        POWERON,    //after poweron
-        STARTUP,    //first run
-        POST,       //measure data on POST
-        OFF,        // wait for measure period
-        HARDWARE_RESTART,
-        HW_RESTART_CLEANUP,
-        START,      // start fan
-        WARMUP,     // run, but no reading saved
-        READ,       // start reading
-        READING,    // run and collect data
-        STOP,        // turn off
+        POWERON,    // 0 after poweron
+        STARTUP,    // 1 first run
+        POST,       // 2 measure data on POST
+        OFF,        // 3 wait for measure period
+        HARDWARE_RESTART, // 4
+        HW_RESTART_CLEANUP, // 5
+        START,      // 6 start fan
+        WARMUP,     // 7 run, but no reading saved
+        READ,       // 8 start reading
+        READING,    // 9 run and collect data
+        STOP,        // 10 turn off
         AFTER_READING
 
     } SDS011State;
@@ -190,6 +190,13 @@ namespace SDS011 {
 //        return cmd != PmSensorCmd::Stop;
 //
 //    }
+
+    void clearIncoming() {
+        serialSDS.flush();
+        if (byte avail = serialSDS.available()) {
+            while(avail--) {serialSDS.read();}
+        }
+    }
     bool SDS_cmd(PmSensorCmd cmd) {
         static constexpr uint8_t start_cmd[] PROGMEM = {
                 0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
@@ -232,6 +239,8 @@ namespace SDS011 {
                 memcpy_P(buf, version_cmd, cmd_len);
                 break;
         }
+        clearIncoming();
+        unsigned long startTime = micros();
         serialSDS.write(buf, cmd_len);
         return cmd != PmSensorCmd::Stop;
     }
