@@ -190,6 +190,13 @@ namespace SDS011 {
 //        return cmd != PmSensorCmd::Stop;
 //
 //    }
+
+    void clearIncoming() {
+        serialSDS.flush();
+        if (byte avail = serialSDS.available()) {
+            while(avail--) {serialSDS.read();}
+        }
+    }
     bool SDS_cmd(PmSensorCmd cmd) {
         static constexpr uint8_t start_cmd[] PROGMEM = {
                 0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
@@ -232,6 +239,7 @@ namespace SDS011 {
                 memcpy_P(buf, version_cmd, cmd_len);
                 break;
         }
+        clearIncoming();
         unsigned long startTime = micros();
         serialSDS.write(buf, cmd_len);
         unsigned long diff = micros() - startTime;
