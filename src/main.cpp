@@ -851,7 +851,7 @@ void setup() {
         serialSDS.perform_work();
         serialGPS.perform_work();
         return true;
-    }, 200);
+    }, 500);
     serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
