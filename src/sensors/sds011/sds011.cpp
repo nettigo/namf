@@ -603,10 +603,11 @@ namespace SDS011 {
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
         unsigned long startTime = micros();
+        unsigned long retVal;
         SDS011State oldSensorState = sensorState;
         byte avail = serialSDS.available();
 
-        internalProcess(e);
+        retVal = internalProcess(e);
         unsigned long diff = micros() - startTime;
         if (diff > 1000) {
             Serial.print(micros());
@@ -623,7 +624,7 @@ namespace SDS011 {
 
             Serial.println();
         }
-
+        return retVal;
     }
 
     String getConfigHTML(void) {
