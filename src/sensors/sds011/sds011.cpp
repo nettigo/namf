@@ -382,10 +382,14 @@ namespace SDS011 {
 
     //store last values pm
     void processReadings() {
+        Serial.println(F("SDS Process readings"));
         readings++;
         if (readingCount > 0) {
             last_value_SDS_P1 = pm10Sum / readingCount / 10.0;
             last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
+            Serial.print(last_value_SDS_P1);
+            Serial.print(F(", "));
+            Serial.println(last_value_SDS_P2);
             hwWtdgFailedReadings = 0;
         } else {
             last_value_SDS_P1 = last_value_SDS_P2 = -1;
