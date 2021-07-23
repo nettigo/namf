@@ -26,9 +26,11 @@ namespace SimpleScheduler {
 
     NAMFScheduler::NAMFScheduler() {
         loopSize = 0;
+#ifdef DBG_NAMF_TIMES
         _runTimeMax = 0;
         _lastRunTime = 0;
         _runTimeMaxSystem = EMPTY;
+#endif
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             _tasks[i].process = nullF;
             _tasks[i].nextRun = 0;
@@ -44,22 +46,24 @@ namespace SimpleScheduler {
             if (_tasks[i].slotID && _tasks[i].nextRun && _tasks[i].nextRun < millis()) {
                 unsigned long startTime = micros();
                 unsigned long nextRun = _tasks[i].process(RUN);
+#ifdef DBG_NAMF_TIMES
                 _lastRunTime = micros() - startTime;
                 if (( _lastRunTime) > 1000*1000) {
                     Serial.printf("Long run time for sensor %s (%lu ms)\n", LET_NAMES[_tasks[i].slotID], startTime/1000);
                 }
-
+#endif
                 if (nextRun) {
                     _tasks[i].nextRun = millis() + nextRun;
                 } else {
                     _tasks[i].nextRun = 0;
                 }
+#ifdef DBG_NAMF_TIMES
                 if (_lastRunTime > _runTimeMax) {
                             _runTimeMax = _lastRunTime;
                             _runTimeMaxSystem = _tasks[i].slotID;
                 }
+#endif
             }
-
 
         }
 
@@ -152,24 +156,25 @@ namespace SimpleScheduler {
     String NAMFScheduler::registeredNames(){
         String t = F("");
 
-        for (byte i=0; i< SCHEDULER_SIZE; i++) {
+        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID != EMPTY) {
-                t+= FPSTR(LET_NAMES[_tasks[i].slotID]);
-                t+= F(" ");
+                t += FPSTR(LET_NAMES[_tasks[i].slotID]);
+                t += F(" ");
             }
         }
         return t;
 
     }
 
- String NAMFScheduler::maxRunTimeSystemName(){
+#ifdef DBG_NAMF_TIMES
+    String NAMFScheduler::maxRunTimeSystemName(){
 
-        String t  = F("");
-        t+= FPSTR(LET_NAMES[scheduler.timeMaxSystem()]);
-        return t;
+            String t  = F("");
+            t+= FPSTR(LET_NAMES[scheduler.timeMaxSystem()]);
+            return t;
 
-    }
-
+        }
+#endif
 
     //takes which screen to display and goes through list of all "display" sensor,
     //counting which one is current. *minor* returns which screen from singe sensor should

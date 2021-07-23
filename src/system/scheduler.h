@@ -105,8 +105,9 @@ namespace SimpleScheduler {
         byte freeSlots(void);
         //String with sensor names (codes)
         String registeredNames();
+#ifdef DBG_NAMF_TIMES
         String maxRunTimeSystemName();
-
+#endif
         void getConfigForms(String &page);
         void getConfigJSON(LoopEntryType);
         void getConfigJSON(String &json);
@@ -123,18 +124,21 @@ namespace SimpleScheduler {
         unsigned countScreens(void);
         void dumpTable();
 
+#ifdef DBG_NAMF_TIMES
         //how long processing loop took (max)
         unsigned long runTimeMax() {return _runTimeMax;};
         unsigned long lastRunTime() {return _lastRunTime;};
         LoopEntryType timeMaxSystem() {return _runTimeMaxSystem;};
         void resetRunTime() { _runTimeMax = 0; _runTimeMaxSystem = EMPTY;}
+#endif
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];
         byte loopSize;
+#ifdef DBG_NAMF_TIMES
         unsigned long _runTimeMax;
         unsigned long _lastRunTime;
         LoopEntryType _runTimeMaxSystem;
-
+#endif
 
         int findSlot(byte id);
     };

@@ -1066,10 +1066,11 @@ void webserver_status_page(void) {
     page_content += table_row_from_value(F("NAMF"),F("Free slots"), String(scheduler.freeSlots()) ,"");
 
     page_content += table_row_from_value(F("NAMF"),F("Sensors"), scheduler.registeredNames() ,"");
-    page_content += table_row_from_value(F("NAMF"),F("Max loop time"), String(scheduler.runTimeMax()) ,F("µs"));
+#ifdef DBG_NAMF_TIMES
+    page_content += table_row_from_value(F("NAMF"),F("Max loop time <a style='display:inline;padding:initial' href='/time'>(reset)</a>"), String(scheduler.runTimeMax()) ,F("µs"));
     page_content += table_row_from_value(F("NAMF"),F("Max time for"), scheduler.maxRunTimeSystemName() ,F(""));
     page_content += table_row_from_value(F("NAMF"),F("Last loop time"), String(scheduler.lastRunTime()) ,F("µs"));
-
+#endif
     page_content += FPSTR(EMPTY_ROW);
     page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
@@ -1167,11 +1168,13 @@ void webserver_prometheus_endpoint() {
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), data_4_prometheus);
 }
 
+#ifdef DBG_NAMF_TIMES
 void webserver_reset_time(){
     scheduler.resetRunTime();
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), F("OK"));
-
 }
+#endif
+
 /*****************************************************************
  * Webserver setup                                               *
  *****************************************************************/
@@ -1195,7 +1198,9 @@ void setup_webserver() {
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
     server.on(F("/dump"), webserver_dump_status);
+#ifdef DBG_NAMF_TIMES
     server.on(F("/time"), webserver_reset_time);
+#endif
     server.onNotFound(webserver_not_found);
 
     debug_out(F("Starting Webserver... "), DEBUG_MIN_INFO, 0);
