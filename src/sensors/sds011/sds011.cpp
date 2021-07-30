@@ -240,11 +240,7 @@ namespace SDS011 {
                 break;
         }
         clearIncoming();
-        unsigned long startTime = micros();
         serialSDS.write(buf, cmd_len);
-        unsigned long diff = micros() - startTime;
-        Serial.print(F("SDS command write took (µs): "));
-        Serial.println(diff);
         return cmd != PmSensorCmd::Stop;
     }
 
@@ -382,14 +378,10 @@ namespace SDS011 {
 
     //store last values pm
     void processReadings() {
-        Serial.println(F("SDS Process readings"));
         readings++;
         if (readingCount > 0) {
             last_value_SDS_P1 = pm10Sum / readingCount / 10.0;
             last_value_SDS_P2 = pm25Sum / readingCount / 10.0;
-            Serial.print(last_value_SDS_P1);
-            Serial.print(F(", "));
-            Serial.println(last_value_SDS_P2);
             hwWtdgFailedReadings = 0;
         } else {
             last_value_SDS_P1 = last_value_SDS_P2 = -1;
@@ -579,7 +571,8 @@ namespace SDS011 {
         }
         channelSDS.process();
     }
-    unsigned long internalProcess(SimpleScheduler::LoopEventType e){
+
+    unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::STOP:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
@@ -599,32 +592,6 @@ namespace SDS011 {
             default:
                 return 0;
         }
-    }
-
-    unsigned long process(SimpleScheduler::LoopEventType e) {
-        unsigned long startTime = micros();
-        unsigned long retVal;
-        SDS011State oldSensorState = sensorState;
-        byte avail = serialSDS.available();
-
-        retVal = internalProcess(e);
-        unsigned long diff = micros() - startTime;
-        if (diff > 1000) {
-            Serial.print(micros());
-            Serial.print(F(": SDS011 long process: "));
-            Serial.print(diff);
-            Serial.print(F(" internal status "));
-            Serial.print(oldSensorState);
-            Serial.print(F("/"));
-            Serial.print(sensorState);
-            Serial.print (F(" "));
-            Serial.print(avail);
-            Serial.print(F("/"));
-            Serial.print(serialSDS.available());
-
-            Serial.println();
-        }
-        return retVal;
     }
 
     String getConfigHTML(void) {

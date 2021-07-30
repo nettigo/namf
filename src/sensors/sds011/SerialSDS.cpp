@@ -84,9 +84,7 @@ bool SerialSDS::checksumValid(void) {
     bool chk = _buff[9] == 0xAB && checksum_is == _buff[8];
     packetCount++;
     if (!chk) {
-        String reply = String(micros());
-        reply += F(": SDS011 reply checksum failed ");
-        debug_out(reply, DEBUG_ERROR);
+        debug_out(F("SDS011 reply checksum failed "), DEBUG_ERROR);
         checksumFailed++;
 //        Serial.println(checksum_is,16);
 //        for (byte i=0; i<10; i++) {
