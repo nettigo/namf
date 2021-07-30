@@ -2,6 +2,35 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-39a7 (2021-07-22) (rev 524f9b9ff6045a1be86d9755877b61c790b76525)
+* SDS011 - count number of power off/on cycles (hw watchdog) 
+
+### NAMF-2020-39a6 (2021-06-17) (rev bb6a2b09283416f22a8403eb7f3b618e675b4439)
+* reset failed SDS measurements counter when good measurement is taken
+
+### NAMF-2020-39a5 (2021-06-16) (rev d6111748003dbf4a12ac0bc5b0fd7f3260541aa3)
+* enable only one PCF channel in SDS restarter (only one LED is enabled)
+* collect failed SDS packets count (checksum error)
+
+### NAMF-2020-39a4 (2021-06-16) (rev c1110cde625c6fd0daadfb50adfe59caa425f29b)
+* hardware SDS restarter support
+* code cleanup
+
+### NAMF-2020-39a3 (2021-06-15) (rev c50ee76fbc50d6c59dc495eb8bb09ab6d38ee92c)
+* SDS011 - respect warmup time set in config. For now measurement is fixed and its 10 seconds
+no matter what is set in config
+* SDS011 - better timing for operation to get first measurement ready before sending data 
+
+### NAMF-2020-39a2 (2021-06-15) (rev f6923c5e079c16461bd45c86b575325b81e2f028)
+* SDS version uses new code
+* Platformio Espressif8266@3.0.0
+* code cleanup
+
+### NAMF-2020-39a1 (2021-06-15) (rev 6f0759c68f8f3ba3928e1a456d2481c6014f4e2b)
+
+* SDS is serviced with https://github.com/dok-net/esp_sds011 
+* Arduino core - 3.0.1dev
+
 ### NAMF-2020-38a5 (2021-06-14) (rev e769f87a22e016ca6750df2d45e75e0fc4c923bc)
 * new SDS code, support for SDS hw watchdog (extra module) 
 
