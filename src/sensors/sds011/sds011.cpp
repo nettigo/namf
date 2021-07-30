@@ -13,6 +13,7 @@ namespace SDS011 {
     SerialSDS channelSDS(serialSDS);
     bool hardwareWatchdog = 0;
     byte hwWtdgFailedReadings = 0; //after SDS restart this counter is reset, failedReadings is global
+    byte hwWtdgCycles = 0; //how many times watchdog took action
     unsigned long hwWtdgErrors = 0;
     unsigned readings;
     unsigned failedReadings;
@@ -432,6 +433,7 @@ namespace SDS011 {
                 return 20;
             case OFF:
                 if (hardwareWatchdog && hwWtdgFailedReadings > 2) {
+                    hwWtdgCycles++;
                     Wire.beginTransmission(0x26);
                     Wire.write(0x0);
                     byte error = Wire.endTransmission();
@@ -537,7 +539,11 @@ namespace SDS011 {
         res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
         res += table_row_from_value(F("SDS011"), FPSTR(INTL_SDS011_FAILED_READINGS), String(failedReadings)+F("/")+String(readings), "");
         if (hardwareWatchdog) {
+            res += table_row_from_value(F("SDS011"), F("Current failed readings"), String(hwWtdgFailedReadings), "");
+            res += table_row_from_value(F("SDS011"), F("Total failed readings"), String(failedReadings), "");
+            res += table_row_from_value(F("SDS011"), F("Watchdog cycles"), String(hwWtdgCycles), "");
             res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
+
         }
         float fr = 0;
         if (channelSDS.totalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.totalPacketCnt() * 100.0;
