@@ -240,7 +240,6 @@ namespace SDS011 {
                 break;
         }
         clearIncoming();
-        unsigned long startTime = micros();
         serialSDS.write(buf, cmd_len);
         return cmd != PmSensorCmd::Stop;
     }

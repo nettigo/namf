@@ -1,4 +1,8 @@
-NAMF-2020-38rc14 ()
+NAMF-2020-38rc15
+* update to Espressif8266@3.1.0 (Arduino Core 3.0.1)
+* tweaks with timings of SoftwareSerial
+
+NAMF-2020-38rc14 (2021-06-19)
 * display total and failed number of SDS readings
 * display time from last update check
 * corrected counting SDS failed/successful readings
