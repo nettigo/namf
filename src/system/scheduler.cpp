@@ -92,30 +92,30 @@ namespace SimpleScheduler {
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
-            templ += F("<hr/><h2>");
-            templ += findSlotDescription(i);
-            templ += F("</h2>");
+            templ.concat(F("<hr/><h2>"));
+            templ.concat(findSlotDescription(i));
+            templ.concat(F("</h2>"));
             boolean checked = findSlot(i) >= 0; // check if sensor is enabled
-            templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
-            templ += F("<br/>");
+            templ.concat(form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true));
+            templ.concat(F("<br/>"));
             String lines[] = {"","","",""};
             if (SimpleScheduler::displaySensor(i,lines)) {
                 checked = sensorWantsDisplay(i);
-                templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
-                templ += F("<div class='spacer'></div>");
+                templ.concat(form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true));
+                templ.concat(F("<div class='spacer'></div>"));
             }
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
-            templ += F("{body}<input type='submit' value='");
-            templ += FPSTR(INTL_SAVE);
-            templ += F("'/></form>\n");
+            templ.concat(F("{body}<input type='submit' value='"));
+            templ.concat(FPSTR(INTL_SAVE));
+            templ.concat(F("'/></form>\n"));
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
-            page += templ;
+            page.concat(templ);
 
         }
-        page += F("</div>");
+        page.concat(F("</div>"));
     }
 
     void NAMFScheduler::unregisterSensor(LoopEntryType slot) {
