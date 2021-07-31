@@ -258,21 +258,21 @@ namespace SDS011 {
     String sds_internals() {
         String ret = "";
         for (byte i = 0; i < SDS_UNKNOWN; i++) {
-            ret += F("<p>");
-            ret += String(i);
-            ret += F("(");
-            ret += String(FPSTR(SRT_NAMES[i]));
-            ret += F("), ");
+            ret.concat(F("<p>"));
+            ret.concat(String(i));
+            ret.concat(F("("));
+            ret.concat(String(FPSTR(SRT_NAMES[i])));
+            ret.concat(F("), "));
             if (channelSDS._replies[i].received) {
-                ret += F("otrzymano pakiet ");
-                ret += String((millis() - channelSDS._replies[i].lastReply) / 1000);
-                ret += F(" sekund temu.");
+                ret.concat(F("otrzymano pakiet "));
+                ret.concat(String((millis() - channelSDS._replies[i].lastReply) / 1000));
+                ret.concat(F(" sekund temu."));
             }
             for (byte j = 0; j < 5; j++) {
-                ret += String(channelSDS._replies[i].data[j], 16);
-                ret += F(" ");
+                ret.concat(String(channelSDS._replies[i].data[j], 16));
+                ret.concat(F(" "));
             }
-            ret += F("</p>");
+            ret.concat(F("</p>"));
         }
         return ret;
     }
@@ -305,29 +305,29 @@ namespace SDS011 {
     bool display(byte rows, byte minor, String lines[]) {
         byte row = 0;
         if (rows == 4) {
-            lines[row] += FPSTR(INTL_SDS011_LCD_HDR);
+            lines[row].concat(FPSTR(INTL_SDS011_LCD_HDR));
         }
         row++;;
-        lines[row] += F("PM2.5:");
-        lines[row] += (check_display_value(last_value_SDS_P2, -1, 1, 6));
-//        lines[row] += (F(" µg/m³"));
+        lines[row].concat(F("PM2.5:"));
+        lines[row].concat((check_display_value(last_value_SDS_P2, -1, 1, 6)));
+//        lines[row].concat((F(" µg/m³"))));
         row++;;
-        lines[row] += F("PM10: ");
-        lines[row] += check_display_value(last_value_SDS_P1, -1, 1, 6);
-//        lines[row] += (F(" µg/m³"));
+        lines[row].concat(F("PM10: "));
+        lines[row].concat(check_display_value(last_value_SDS_P1, -1, 1, 6));
+//        lines[row].concat((F(" µg/m³"))));
 
         return false;
     };
 
     String getConfigJSON() {
         String ret = F("");
-        ret += Var2JsonInt(F("e"), enabled);
-        if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
+        ret.concat(Var2JsonInt(F("e"), enabled));
+        if (printOnLCD) ret.concat(Var2JsonInt(F("d"), printOnLCD));
         addJsonIfNotDefault(ret, F("r"), READINGTIME_SDS_MS, readTime);
         addJsonIfNotDefault(ret, F("w"), WARMUPTIME_SDS_MS, warmupTime);
         addJsonIfNotDefault(ret, F("dbg"), false, hardwareWatchdog);
-//        if (readTime != READINGTIME_SDS_MS) ret += Var2Json(F("r"), readTime);
-//        if (warmupTime != WARMUPTIME_SDS_MS) ret += Var2Json(F("w"), warmupTime);
+//        if (readTime != READINGTIME_SDS_MS) ret.concat(Var2Json(F("r"), readTime));
+//        if (warmupTime != WARMUPTIME_SDS_MS) ret.concat(Var2Json(F("w"), warmupTime));
         return ret;
     };
 
@@ -604,13 +604,13 @@ namespace SDS011 {
         String ret = F("");
         String name;
         setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
-        ret += form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7);
+        ret.concat(form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7));
 
         setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
-        ret += form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7);
+        ret.concat(form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7));
 
         setHTTPVarName(name, F("dbg"), SimpleScheduler::SDS011);
-        ret += form_checkbox(name, F("Hardware restarter"), hardwareWatchdog, true);
+        ret.concat(form_checkbox(name, F("Hardware restarter"), hardwareWatchdog, true));
 
         return ret;
     }
