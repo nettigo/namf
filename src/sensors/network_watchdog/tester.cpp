@@ -70,21 +70,21 @@ namespace NetworkWatchdog {
     void resultsAsHTML(String &page_content) {
         if (!enabled) { return; }
 
-        page_content += FPSTR(EMPTY_ROW);
+        page_content.concat(FPSTR(EMPTY_ROW));
         if (!configured) {
-            page_content += table_row_from_value(FPSTR("NTW WTD"), "Wrong config", "", "");
+            page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Wrong config", "", ""));
             return;
         }
         if (lastCheck == 0) {
-            page_content += table_row_from_value(FPSTR("NTW WTD"), "No test yet", "", "");
+            page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "No test yet", "", ""));
             return;
         }
 
-        page_content += table_row_from_value(FPSTR("NTW WTD"), "Status code", String(currentState), "");
-        page_content += table_row_from_value(FPSTR("NTW WTD"), "Last check", String((millis() - lastCheck) / 1000),
-                                             "sec");
-        page_content += table_row_from_value(FPSTR("NTW WTD"), "Pings", String(lastCheckResult.total_sent), "");
-        page_content += table_row_from_value(FPSTR("NTW WTD"), "Responses", String(lastCheckResult.total_recv), "");
+        page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Status code", String(currentState), ""));
+        page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Last check", String((millis() - lastCheck) / 1000),
+                                             "sec"));
+        page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Pings", String(lastCheckResult.total_sent), ""));
+        page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Responses", String(lastCheckResult.total_recv), ""));
 
     }
 

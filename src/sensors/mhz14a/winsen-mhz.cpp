@@ -54,9 +54,9 @@ namespace MHZ14A {
 
     void resultsAsHTML(String &page_content) {
         if (!enabled) { return; }
-        page_content += FPSTR(EMPTY_ROW);
-        page_content += table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
-                                             F("ppm"));
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(FPSTR(INTL_MHZ14A_VAL), F("CO2"), String(last_value_WINSEN_CO2),
+                                             F("ppm")));
     }
 
     void readConfigJSON(JsonObject &json) {

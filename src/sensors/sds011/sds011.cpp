@@ -533,23 +533,23 @@ namespace SDS011 {
     void getStatusReport(String &res) {
         if (!enabled) return;
 
-        res += FPSTR(EMPTY_ROW);
-        res += table_row_from_value(F("SDS011"), F("Status"), String(sensorState), "");
-        res += table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), "");
-        res += table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), "");
-        res += table_row_from_value(F("SDS011"), FPSTR(INTL_SDS011_FAILED_READINGS), String(failedReadings)+F("/")+String(readings), "");
+        res.concat(FPSTR(EMPTY_ROW));
+        res.concat(table_row_from_value(F("SDS011"), F("Status"), String(sensorState), ""));
+        res.concat(table_row_from_value(F("SDS011"), F("Status change"), String(millis() - stateChangeTime), ""));
+        res.concat(table_row_from_value(F("SDS011"), F("Version data"), SDS_version_date(), ""));
+        res.concat(table_row_from_value(F("SDS011"), FPSTR(INTL_SDS011_FAILED_READINGS), String(failedReadings)+F("/")+String(readings), ""));
         if (hardwareWatchdog) {
-            res += table_row_from_value(F("SDS011"), F("Current failed readings"), String(hwWtdgFailedReadings), "");
-            res += table_row_from_value(F("SDS011"), F("Total failed readings"), String(failedReadings), "");
-            res += table_row_from_value(F("SDS011"), F("Watchdog cycles"), String(hwWtdgCycles), "");
-            res += table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), "");
+            res.concat(table_row_from_value(F("SDS011"), F("Current failed readings"), String(hwWtdgFailedReadings), ""));
+            res.concat(table_row_from_value(F("SDS011"), F("Total failed readings"), String(failedReadings), ""));
+            res.concat(table_row_from_value(F("SDS011"), F("Watchdog cycles"), String(hwWtdgCycles), ""));
+            res.concat(table_row_from_value(F("SDS011"), F("Failed I2C PCF"), String(hwWtdgErrors), ""));
 
         }
         float fr = 0;
         if (channelSDS.totalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.totalPacketCnt() * 100.0;
-        res += table_row_from_value(F("SDS011"), F("Checksum failures"),
+        res.concat(table_row_from_value(F("SDS011"), F("Checksum failures"),
                                     String(fr) + F("% ") + String(channelSDS.checksumErrCnt()) + F("/") + String(
-                                            channelSDS.totalPacketCnt()), "");
+                                            channelSDS.totalPacketCnt()), ""));
     }
 
 //    void popCmd(PmSensorCmd &t) {
@@ -617,11 +617,11 @@ namespace SDS011 {
 
     void resultsAsHTML(String &page_content) {
         if (!enabled) return;
-        page_content += FPSTR(EMPTY_ROW);
-        page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5",
-                                             check_display_value(last_value_SDS_P2, -1, 1, 0), F("µg/m³"));
-        page_content += table_row_from_value(FPSTR(SENSORS_SDS011), "PM10",
-                                             check_display_value(last_value_SDS_P1, -1, 1, 0), F("µg/m³"));
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_SDS011), "PM2.5",
+                                             check_display_value(last_value_SDS_P2, -1, 1, 0), F("µg/m³")));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_SDS011), "PM10",
+                                             check_display_value(last_value_SDS_P1, -1, 1, 0), F("µg/m³")));
     }
 
     /*****************************************************************

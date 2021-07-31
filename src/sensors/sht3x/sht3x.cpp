@@ -121,16 +121,16 @@ namespace SHT3x {
 
     void resultsAsHTML(String &page_content) {
         if (!enabled) {return;}
-        page_content += FPSTR(EMPTY_ROW);
+        page_content.concat(FPSTR(EMPTY_ROW));
         if (cnt == 0) {
-            page_content += table_row_from_value(FPSTR("SHT3X"), FPSTR(INTL_SPS30_NO_RESULT), F(""), "");
+            page_content.concat(table_row_from_value(FPSTR("SHT3X"), FPSTR(INTL_SPS30_NO_RESULT), F(""), ""));
         } else {
-            page_content += F("<tr><td colspan='3'>");
-            page_content += FPSTR(INTL_SHT3X_RESULTS);
-            page_content += F("</td></tr>\n");
+            page_content.concat(F("<tr><td colspan='3'>"));
+            page_content.concat(FPSTR(INTL_SHT3X_RESULTS));
+            page_content.concat(F("</td></tr>\n"));
 
-            page_content += table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_TEMP), String(currentTemp()), F(" °C"));
-            page_content += table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_HUM), String(currentRH()), F(" %"));
+            page_content.concat(table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_TEMP), String(currentTemp()), F(" °C")));
+            page_content.concat(table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_HUM), String(currentRH()), F(" %")));
 
         }
     }
