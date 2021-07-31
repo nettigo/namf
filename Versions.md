@@ -1,5 +1,4 @@
-NAMF-2020-38rc15 ()
-* update to Espressif8266@3.1.0 (Arduino Core 3.0.1)
+NAMF-2020-38rc15 (2021-07-31)
 * tweaks with timings of SoftwareSerial
 * SDS hardware watchdog - count total number of hw cycles
 
