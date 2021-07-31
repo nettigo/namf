@@ -4,6 +4,16 @@
 
 #include "webserver.h"
 
+void webserverPartialSend(String &s) {
+    server.sendContent(s);
+    Serial.println(F("Partial send:"));
+    Serial.println(s.length());
+    Serial.println(s);
+    s = F("");
+}
+void endPartialSend(){
+    server.sendContent(F(""));
+}
 template<typename T, std::size_t N> constexpr std::size_t capacity_null_terminated_char_array(const T(&)[N]) {
     return N - 1;
 }
@@ -318,8 +328,15 @@ void webserver_config_json_save() {
 void webserver_config() {
     if (!webserver_request_auth()) { return; }
 
+    server.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+    server.sendHeader(F("Pragma"), F("no-cache"));
+    server.sendHeader(F("Expires"), F("0"));
+
+    server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), F(""));
+
     String page_content;
-    page_content.reserve(20000);
+    page_content.reserve(5000);
     page_content = make_header(FPSTR(INTL_CONFIGURATION));
     String masked_pwd = "";
     last_page_load = millis();
@@ -328,6 +345,7 @@ void webserver_config() {
     if (wificonfig_loop) {  // scan for wlan ssids
         page_content += FPSTR(WEB_CONFIG_SCRIPT);
     }
+    webserverPartialSend(page_content);
 
     using namespace cfg;
     if (server.method() == HTTP_GET) {
@@ -389,6 +407,8 @@ void webserver_config() {
             page_content.concat(form_checkbox("ssl_madavi", F("HTTPS"), ssl_madavi, false));
             page_content.concat(F(")<br/><br/>\n<b>"));
 
+            webserverPartialSend(page_content);
+
             page_content.concat(FPSTR(INTL_SENSORS));
             page_content.concat(F("</b><br/>"));
             page_content.concat(form_checkbox_sensor("sds_read", FPSTR(INTL_SDS011), sds_read));
@@ -400,6 +420,8 @@ void webserver_config() {
             page_content.concat(form_checkbox_sensor("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read));
             page_content.concat(form_checkbox("gps_read", FPSTR(INTL_NEO6M), gps_read));
             page_content.concat(F("<br/><br/>\n<b>"));
+
+            webserverPartialSend(page_content);
         }
 
         page_content.concat(FPSTR(INTL_MORE_SETTINGS));
@@ -422,6 +444,8 @@ void webserver_config() {
         page_content.concat(form_checkbox("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
         page_content.concat(form_checkbox("has_ledbar_32", FPSTR(INTL_LEDBAR_32), has_ledbar_32));
         page_content.concat(F("</br></br>"));
+
+        webserverPartialSend(page_content);
 
         if (wificonfig_loop) { //outputPower should be able to change in both modes
             page_content.concat(form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
@@ -475,7 +499,11 @@ void webserver_config() {
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("<br/></form>"));
 
+            webserverPartialSend(page_content);
+
             scheduler.getConfigForms(page_content);
+
+            webserverPartialSend(page_content);
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
@@ -660,12 +688,10 @@ void webserver_config() {
         page_content.concat(FPSTR(INTL_SENSOR_IS_REBOOTING));
     }
     page_content.concat(make_footer());
+    webserverPartialSend(page_content);
+    endPartialSend();
 
-    server.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-    server.sendHeader(F("Pragma"), F("no-cache"));
-    server.sendHeader(F("Expires"), F("0"));
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
-
+//send.
     if (server.method() == HTTP_POST) {
         debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
         display_debug(F("Writing config"), F("and restarting"));
