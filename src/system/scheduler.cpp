@@ -153,12 +153,16 @@ namespace SimpleScheduler {
         return SCHEDULER_SIZE - loopSize;
     };
 
+    const __FlashStringHelper * NAMFScheduler::sensorName(LoopEntryType e){
+        return FPSTR(LET_NAMES[e]);
+    };
+
     String NAMFScheduler::registeredNames(){
         String t = F("");
 
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID != EMPTY) {
-                t += FPSTR(LET_NAMES[_tasks[i].slotID]);
+                t += sensorName(_tasks[i].slotID);
                 t += F(" ");
             }
         }

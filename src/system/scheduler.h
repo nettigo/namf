@@ -105,6 +105,8 @@ namespace SimpleScheduler {
         byte freeSlots(void);
         //String with sensor names (codes)
         String registeredNames();
+        //get name for single sensor
+        const __FlashStringHelper * sensorName(LoopEntryType);
 #ifdef DBG_NAMF_TIMES
         String maxRunTimeSystemName();
 #endif
