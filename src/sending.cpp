@@ -106,11 +106,11 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
     String data_4_dusti = FPSTR(data_first_part);
-    data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
-    data_4_dusti += data;
+    data_4_dusti.replace(String(F("{v}")), String(SOFTWARE_VERSION));
+    data_4_dusti.concat(data);
     data_4_dusti.remove(data_4_dusti.length() - 1);
-    data_4_dusti.replace(replace_str, String(""));
-    data_4_dusti += String("]}");
+    data_4_dusti.replace(replace_str, String(F("")));
+    data_4_dusti.concat(String(F("]}")));
     if (data != "") {
         sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
     } else {
@@ -142,66 +142,66 @@ String create_influxdb_string(const String& data) {
     JsonObject& json2data = jsonBuffer.parseObject(data);
     if (json2data.success()) {
         bool first_line = true;
-        data_4_influxdb += F("feinstaub,node=esp8266-");
-        data_4_influxdb += esp_chipid() + F(",");
-        data_4_influxdb += F("fw=");
-        data_4_influxdb += F(SOFTWARE_VERSION);
-        data_4_influxdb += F(",");
-        data_4_influxdb += F("hostname=");
-        data_4_influxdb += cfg::fs_ssid;
-        data_4_influxdb += F(",");
-        data_4_influxdb += F("chann=");
+        data_4_influxdb.concat(F("feinstaub,node=esp8266-"));
+        data_4_influxdb.concat(esp_chipid() + F(","));
+        data_4_influxdb.concat(F("fw="));
+        data_4_influxdb.concat(F(SOFTWARE_VERSION));
+        data_4_influxdb.concat(F(","));
+        data_4_influxdb.concat(F("hostname="));
+        data_4_influxdb.concat(cfg::fs_ssid);
+        data_4_influxdb.concat(F(","));
+        data_4_influxdb.concat(F("chann="));
         switch (cfg::update_channel) {
             case UPDATE_CHANNEL_ALFA:
-                data_4_influxdb += F("alfa");
+                data_4_influxdb.concat(F("alfa"));
                 break;
             case UPDATE_CHANNEL_BETA:
-                data_4_influxdb += F("beta");
+                data_4_influxdb.concat(F("beta"));
                 break;
             case UPDATE_CHANNEL_STABLE:
-                data_4_influxdb += F("stable");
+                data_4_influxdb.concat(F("stable"));
                 break;
             default:
-                data_4_influxdb += F("unknown");
+                data_4_influxdb.concat(F("unknown"));
                 break;
 
 
         }
-        data_4_influxdb += F(" ");
+        data_4_influxdb.concat(F(" "));
         for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = "";
             if (first_line)
                 first_line = false;
             else
-                tmp_str += ",";
-            tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char *>();
-            tmp_str += "=";
+                tmp_str.concat(F(","));
+            tmp_str.concat(json2data["sensordatavalues"][i]["value_type"].as<char *>());
+            tmp_str.concat(F("="));
             if (
                     json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_date")) ||
                     json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_time"))
                     )
-                tmp_str += String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\""));
+                tmp_str.concat(String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\"")));
             else
-                tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
-            data_4_influxdb += tmp_str;
+                tmp_str.concat(json2data["sensordatavalues"][i]["value"].as<char *>());
+            data_4_influxdb.concat(tmp_str);
         }
         if (SDS011::enabled && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
-            data_4_influxdb += F(",SDS_P1=");
-            data_4_influxdb += String(last_value_SDS_P1);
-            data_4_influxdb += F(",SDS_P2=");
-            data_4_influxdb += String(last_value_SDS_P2);
+            data_4_influxdb.concat(F(",SDS_P1="));
+            data_4_influxdb.concat(String(last_value_SDS_P1));
+            data_4_influxdb.concat(F(",SDS_P2="));
+            data_4_influxdb.concat(String(last_value_SDS_P2));
         }
-        data_4_influxdb += F(",measurements=");
-        data_4_influxdb += String(count_sends+1);
-        data_4_influxdb += F(",free=");
-        data_4_influxdb += String(memoryStatsMin.freeHeap);
-        data_4_influxdb += F(",frag=");
-        data_4_influxdb += String(memoryStatsMax.frag);
-        data_4_influxdb += F(",max_block=");
-        data_4_influxdb += String(memoryStatsMin.maxFreeBlock);
-        data_4_influxdb += F(",cont_stack=");
-        data_4_influxdb += String(memoryStatsMin.freeContStack);
-        data_4_influxdb += "\n";
+        data_4_influxdb.concat(F(",measurements="));
+        data_4_influxdb.concat(String(count_sends+1));
+        data_4_influxdb.concat(F(",free="));
+        data_4_influxdb.concat(String(memoryStatsMin.freeHeap));
+        data_4_influxdb.concat(F(",frag="));
+        data_4_influxdb.concat(String(memoryStatsMax.frag));
+        data_4_influxdb.concat(F(",max_block="));
+        data_4_influxdb.concat(String(memoryStatsMin.maxFreeBlock));
+        data_4_influxdb.concat(F(",cont_stack="));
+        data_4_influxdb.concat(String(memoryStatsMin.freeContStack));
+        data_4_influxdb.concat("\n");
     } else {
         debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
     }

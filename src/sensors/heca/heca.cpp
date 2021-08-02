@@ -31,8 +31,8 @@ namespace HECA {
 
     String getConfigJSON(){
         String ret = F("");
-        ret += Var2JsonInt(F("e"), enabled);
-        if (printOnLCD) ret += Var2JsonInt(F("d"), printOnLCD);
+        ret.concat(Var2JsonInt(F("e"), enabled));
+        if (printOnLCD) ret.concat(Var2JsonInt(F("d"), printOnLCD));
         return ret;
     };
 
@@ -53,26 +53,26 @@ namespace HECA {
     bool display(byte rows, byte minor, String lines[]) {
         byte row = 0;
         if (getLCDRows() == 4) {
-            lines[row] += (FPSTR(SENSORS_HECA));
+            lines[row].concat((FPSTR(SENSORS_HECA)));
         }
         row++;
-        lines[row] += (F("RH: "));
-        lines[row] += (check_display_value(last_value_HECA_H, -1, 1, 0));
-        lines[row] += (F(" "));
-        lines[row] += (FPSTR(UNIT_PERCENT));
+        lines[row].concat((F("RH: ")));
+        lines[row].concat((check_display_value(last_value_HECA_H, -1, 1, 0)));
+        lines[row].concat((F(" ")));
+        lines[row].concat((FPSTR(UNIT_PERCENT)));
         row++;
-        lines[row] += (F("T: "));
-        lines[row] += (check_display_value(last_value_HECA_T, -128, 1, 0));
-        lines[row] += (F(" "));
-        lines[row] += (FPSTR(UNIT_CELCIUS_LCD));
-//        lines[row] += (F(" µg/m³"));
+        lines[row].concat((F("T: ")));
+        lines[row].concat((check_display_value(last_value_HECA_T, -128, 1, 0)));
+        lines[row].concat((F(" ")));
+        lines[row].concat((FPSTR(UNIT_CELCIUS_LCD)));
+//        lines[row].concat((F(" µg/m³")));
         if (getLCDRows() == 4) {
             row++;
-            lines[row] += (FPSTR(INTL_HECA_DC));
-            lines[row] += (F(" "));
-            lines[row] += (String(getDutyCycle(),1));
-            lines[row] += (F(" "));
-            lines[row] += (FPSTR(UNIT_PERCENT));
+            lines[row].concat((FPSTR(INTL_HECA_DC)));
+            lines[row].concat((F(" ")));
+            lines[row].concat((String(getDutyCycle(),1)));
+            lines[row].concat((F(" ")));
+            lines[row].concat((FPSTR(UNIT_PERCENT)));
 
         }
         return true;
@@ -235,8 +235,8 @@ namespace HECA {
             last_value_HECA_H = -1.0;
             return s;
         }
-        s += Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T));
-        s += Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H));
+        s.concat(Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T)));
+        s.concat(Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H)));
         return s;
     }
 

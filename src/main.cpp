@@ -1121,8 +1121,8 @@ void loop() {
 		String data = FPSTR(data_first_part);
 		data.replace("{v}", String(SOFTWARE_VERSION));
 		String data_sample_times  = Value2Json(F("samples"), String(sample_count));
-		data_sample_times += Value2Json(String(F("min_micro")), String(min_micro));
-		data_sample_times += Value2Json(String(F("max_micro")), String(max_micro));
+		data_sample_times.concat(Value2Json(String(F("min_micro")), String(min_micro)));
+		data_sample_times.concat(Value2Json(String(F("max_micro")), String(max_micro)));
 
 		String signal_strength = String(WiFi.RSSI());
 		debug_out(F("WLAN signal strength: "), DEBUG_MIN_INFO, 0);
@@ -1136,7 +1136,7 @@ void loop() {
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
         if (cfg::pms_read) {
-			data += result_PMS;
+			data.concat(result_PMS);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1145,7 +1145,7 @@ void loop() {
 			}
 		}
 		if (cfg::dht_read) {
-			data += result_DHT;
+			data.concat(result_DHT);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1154,7 +1154,7 @@ void loop() {
 			}
 		}
 		if (cfg::bmp280_read && (! bmp280_init_failed)) {
-			data += result_BMP280;
+			data.concat(result_BMP280);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BMP280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1163,7 +1163,7 @@ void loop() {
 			}
 		}
 		if (cfg::bme280_read && (! bme280_init_failed)) {
-			data += result_BME280;
+			data.concat(result_BME280);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1174,7 +1174,7 @@ void loop() {
 
 
 		if (cfg::ds18b20_read) {
-			data += result_DS18B20;
+			data.concat(result_DS18B20);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DS18B20): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1184,7 +1184,7 @@ void loop() {
 		}
 
 		if (cfg::gps_read) {
-			data += result_GPS;
+			data.concat(result_GPS);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(GPS): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1200,11 +1200,11 @@ void loop() {
 		if (cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
 		}
-		data_sample_times += Value2Json("signal", signal_strength);
+		data_sample_times.concat(Value2Json("signal", signal_strength));
         data_sample_times.remove(data_sample_times.length()-1);
-		data += data_sample_times;
+		data.concat(data_sample_times)  ;
 
-		data += "]}";
+		data.concat(F("]}"));
 
 		sum_send_time += sendDataToOptionalApis(data);
 

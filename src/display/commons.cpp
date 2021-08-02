@@ -161,7 +161,8 @@ void display_values() {
                 case (DisplayPages::PagePM):
                     display_header = pm25_sensor;
                     if (pm25_sensor != pm10_sensor) {
-                        display_header += " / " + pm25_sensor;
+                        display_header.concat(F(" / "));
+                        display_header.concat(pm25_sensor);
                     }
                     display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6) + " µg/m³";
                     display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6) + " µg/m³";
