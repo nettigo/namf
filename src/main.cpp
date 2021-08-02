@@ -1212,6 +1212,7 @@ void loop() {
 		SimpleScheduler::afterSendData(true);
 
 		server.begin();
+		server.client().setNoDelay(true);
 
 		checkForceRestart();
 

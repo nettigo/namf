@@ -5,10 +5,8 @@
 #include "webserver.h"
 
 void webserverPartialSend(String &s) {
+    server.client().setNoDelay(1);
     server.sendContent(s);
-    Serial.println(F("Partial send:"));
-    Serial.println(s.length());
-    Serial.println(s);
     s = F("");
 }
 void endPartialSend(){
@@ -333,10 +331,10 @@ void webserver_config() {
     server.sendHeader(F("Expires"), F("0"));
 
     server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), F(""));
+//    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), F(""));
 
     String page_content;
-    page_content.reserve(5000);
+    page_content.reserve(16000);
     page_content = make_header(FPSTR(INTL_CONFIGURATION));
     String masked_pwd = "";
     last_page_load = millis();
@@ -345,7 +343,7 @@ void webserver_config() {
     if (wificonfig_loop) {  // scan for wlan ssids
         page_content += FPSTR(WEB_CONFIG_SCRIPT);
     }
-    webserverPartialSend(page_content);
+//    webserverPartialSend(page_content);
 
     using namespace cfg;
     if (server.method() == HTTP_GET) {
@@ -407,7 +405,7 @@ void webserver_config() {
             page_content.concat(form_checkbox("ssl_madavi", F("HTTPS"), ssl_madavi, false));
             page_content.concat(F(")<br/><br/>\n<b>"));
 
-            webserverPartialSend(page_content);
+//            webserverPartialSend(page_content);
 
             page_content.concat(FPSTR(INTL_SENSORS));
             page_content.concat(F("</b><br/>"));
@@ -421,7 +419,7 @@ void webserver_config() {
             page_content.concat(form_checkbox("gps_read", FPSTR(INTL_NEO6M), gps_read));
             page_content.concat(F("<br/><br/>\n<b>"));
 
-            webserverPartialSend(page_content);
+//            webserverPartialSend(page_content);
         }
 
         page_content.concat(FPSTR(INTL_MORE_SETTINGS));
@@ -445,7 +443,7 @@ void webserver_config() {
         page_content.concat(form_checkbox("has_ledbar_32", FPSTR(INTL_LEDBAR_32), has_ledbar_32));
         page_content.concat(F("</br></br>"));
 
-        webserverPartialSend(page_content);
+//        webserverPartialSend(page_content);
 
         if (wificonfig_loop) { //outputPower should be able to change in both modes
             page_content.concat(form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
@@ -499,11 +497,11 @@ void webserver_config() {
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("<br/></form>"));
 
-            webserverPartialSend(page_content);
+//            webserverPartialSend(page_content);
 
             scheduler.getConfigForms(page_content);
 
-            webserverPartialSend(page_content);
+//            webserverPartialSend(page_content);
         }
         if (wificonfig_loop) {  // scan for wlan ssids
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
@@ -688,8 +686,9 @@ void webserver_config() {
         page_content.concat(FPSTR(INTL_SENSOR_IS_REBOOTING));
     }
     page_content.concat(make_footer());
-    webserverPartialSend(page_content);
-    endPartialSend();
+    server.send(200, TXT_CONTENT_TYPE_TEXT_HTML, page_content);
+//    webserverPartialSend(page_content);
+//    endPartialSend();
 
 //send.
     if (server.method() == HTTP_POST) {
@@ -1232,4 +1231,5 @@ void setup_webserver() {
 //	debug_out(IPAddress2String(WiFi.localIP()), DEBUG_MIN_INFO, 1);
     debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
     server.begin();
+    server.client().setNoDelay(true);
 }
