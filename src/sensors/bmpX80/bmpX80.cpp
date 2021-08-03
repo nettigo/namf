@@ -235,6 +235,7 @@ namespace BMPx80 {
                 if (readyBMPx80()) {
                     samplesT = new float[SAMPLE_SIZE];
                     samplesP = new float[SAMPLE_SIZE];
+                    readFromSensor();
                 }
                 return time2Measure() - 5000 -
                        SAMPLE_SIZE * 5000;    //do not deregister - on status page we can write about failure
