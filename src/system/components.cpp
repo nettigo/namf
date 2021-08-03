@@ -29,6 +29,7 @@ namespace SimpleScheduler {
         SHT3x::results(res);
         MHZ14A::getResults(res);
         HECA::getResults(res);
+        BMPx80::results(res);
     }
 
     //push results to Luftdaten/SensorCommunity
@@ -38,6 +39,7 @@ namespace SimpleScheduler {
             SHT3x::sendToLD();
             MHZ14A::sendToLD();
             SDS011::sendToLD();
+            BMPx80::sendToLD();
         }
 
     }
@@ -47,6 +49,8 @@ namespace SimpleScheduler {
         HECA::afterSend(status);
         SPS30::afterSend(status);
         SHT3x::afterSend(status);
+        MHZ14A::afterSend(status);
+        BMPx80::afterSend(status);
 
     }
 
@@ -57,6 +61,7 @@ namespace SimpleScheduler {
         SPS30::resultsAsHTML(res);
         SHT3x::resultsAsHTML(res);
         MHZ14A::resultsAsHTML(res);
+        BMPx80::resultsAsHTML(res);
     }
 
     //collect sensors status
@@ -124,6 +129,8 @@ namespace SimpleScheduler {
                 return SHT3x::getConfigJSON();
             case SimpleScheduler::MHZ14A:
                 return MHZ14A::getConfigJSON();
+            case SimpleScheduler::BMPx80:
+                return BMPx80::getConfigJSON();
             default:
                 return s;
         }
@@ -148,6 +155,9 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::MHZ14A:
                 MHZ14A::readConfigJSON(json);
+                return;
+            case SimpleScheduler::BMPx80:
+                BMPx80::readConfigJSON(json);
                 return;
             default:
                 return;

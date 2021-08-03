@@ -27,7 +27,6 @@
 #include "sending.h"
 #include "sensors/sds011/sds011.h"
 #include "sensors/bme280.h"
-#include "sensors/bmpX80.h"
 #include "sensors/dht.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
@@ -680,14 +679,6 @@ static void powerOnTestSensors() {
 	}
 
 
-	if (cfg::bmp280_read) {
-		debug_out(F("Read BMPx80..."), DEBUG_MIN_INFO, 1);
-		if (initBMPx80()) {
-		    debug_out(F("Check BMPx80 wiring"), DEBUG_MIN_INFO, 1);
-		}
-
-	}
-
 	if (cfg::bme280_read) {
 		debug_out(F("Read BME280..."), DEBUG_MIN_INFO, 1);
 		if (!initBME280(0x76) && !initBME280(0x77)) {
@@ -982,7 +973,6 @@ void loop() {
 	String result_SDS = "";
 	String result_PMS = "";
 	String result_DHT = "";
-	String result_BMP280 = "";
 	String result_BME280 = "";
 	String result_HECA = "";
 	String result_MHZ14 = "";
@@ -1036,11 +1026,6 @@ void loop() {
         if (cfg::dht_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
-		}
-
-		if (cfg::bmp280_read) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BMP280), DEBUG_MAX_INFO, 1);
-			result_BMP280 = sensorBMPx80();                 // getting temperature, humidity and pressure (optional)
 		}
 
 		if (cfg::bme280_read && (! bme280_init_failed)) {
@@ -1106,15 +1091,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-		if (cfg::bmp280_read && (readyBMPx80())) {
-			data.concat(result_BMP280);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BMP280): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_BMP280, BMP280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, sensorPrefixBMPx80());
-				sum_send_time += millis() - start_send;
-			}
-		}
+
 		if (cfg::bme280_read && (! bme280_init_failed)) {
 			data.concat(result_BME280);
 			if (cfg::send2dusti) {
