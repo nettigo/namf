@@ -93,7 +93,6 @@ namespace cfg {
 //};
 
 long int sample_count = 0;
-bool bmp280_init_failed = false;
 bool bme280_init_failed = false;
 bool heca_init_failed = false;
 

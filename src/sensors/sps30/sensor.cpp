@@ -61,7 +61,7 @@ namespace SPS30 {
 
     //Start SPS30 sensor
     unsigned long init() {
-        debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
+        debug_out("************** SPS30 initBMPx80", DEBUG_MIN_INFO, true);
         zeroMeasurementStruct(sum);
         sensirion_i2c_init();
         byte cnt = 0;

@@ -116,7 +116,6 @@ extern char *basic_auth_influx ;
 extern char *basic_auth_custom ;
 
 extern long int sample_count ;
-extern bool bmp280_init_failed ;
 extern bool bme280_init_failed ;
 extern bool heca_init_failed ;
 

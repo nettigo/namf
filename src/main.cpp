@@ -27,9 +27,11 @@
 #include "sending.h"
 #include "sensors/sds011/sds011.h"
 #include "sensors/bme280.h"
+#include "sensors/bmpX80.h"
 #include "sensors/dht.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
+
 
 SimpleScheduler::NAMFScheduler scheduler;
 unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS;
@@ -311,39 +313,6 @@ void connectWifi() {
 	}
 	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
-}
-
-
-
-/*****************************************************************
- * read BMP280 sensor values                                     *
- *****************************************************************/
-static String sensorBMP280() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_BMP280), DEBUG_MED_INFO, 1);
-
-	const auto p = bmp280.readPressure();
-	const auto t = bmp280.readTemperature();
-	if (isnan(p) || isnan(t)) {
-		last_value_BMP280_T = -128.0;
-		last_value_BMP280_P = -1.0;
-		debug_out(String(FPSTR(SENSORS_BMP280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-	} else {
-		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-		debug_out(String(t) + " C", DEBUG_MIN_INFO, 1);
-		debug_out(FPSTR(DBG_TXT_PRESSURE), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(p / 100) + " hPa", DEBUG_MIN_INFO, 1);
-		last_value_BMP280_T = t;
-		last_value_BMP280_P = p;
-		s += Value2Json(F("BMP280_pressure"), Float2String(last_value_BMP280_P));
-		s += Value2Json(F("BMP280_temperature"), Float2String(last_value_BMP280_T));
-	}
-	debug_out("----", DEBUG_MIN_INFO, 1);
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_BMP280), DEBUG_MED_INFO, 1);
-
-	return s;
 }
 
 
@@ -690,22 +659,6 @@ void init_lcd() {
     }
 }
 
-/*****************************************************************
- * Init BMP280                                                   *
- *****************************************************************/
-bool initBMP280(char addr) {
-	debug_out(F("Trying BMP280 sensor on "), DEBUG_MIN_INFO, 0);
-	debug_out(String(addr, HEX), DEBUG_MIN_INFO, 0);
-
-	if (bmp280.begin(addr)) {
-		debug_out(F(" ... found"), DEBUG_MIN_INFO, 1);
-		return true;
-	} else {
-		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
-		return false;
-	}
-}
-
 static void powerOnTestSensors() {
      debug_out(F("PowerOnTest"),0,1);
     cfg::debug = DEBUG_MED_INFO;
@@ -728,11 +681,11 @@ static void powerOnTestSensors() {
 
 
 	if (cfg::bmp280_read) {
-		debug_out(F("Read BMP280..."), DEBUG_MIN_INFO, 1);
-		if (!initBMP280(0x76) && !initBMP280(0x77)) {
-			debug_out(F("Check BMP280 wiring"), DEBUG_MIN_INFO, 1);
-			bmp280_init_failed = 1;
+		debug_out(F("Read BMPx80..."), DEBUG_MIN_INFO, 1);
+		if (initBMPx80()) {
+		    debug_out(F("Check BMPx80 wiring"), DEBUG_MIN_INFO, 1);
 		}
+
 	}
 
 	if (cfg::bme280_read) {
@@ -1085,9 +1038,9 @@ void loop() {
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
 		}
 
-		if (cfg::bmp280_read && (! bmp280_init_failed)) {
+		if (cfg::bmp280_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BMP280), DEBUG_MAX_INFO, 1);
-			result_BMP280 = sensorBMP280();                 // getting temperature, humidity and pressure (optional)
+			result_BMP280 = sensorBMPx80();                 // getting temperature, humidity and pressure (optional)
 		}
 
 		if (cfg::bme280_read && (! bme280_init_failed)) {
@@ -1153,12 +1106,12 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-		if (cfg::bmp280_read && (! bmp280_init_failed)) {
+		if (cfg::bmp280_read && (readyBMPx80())) {
 			data.concat(result_BMP280);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BMP280): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
-				sendLuftdaten(result_BMP280, BMP280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BMP280_");
+				sendLuftdaten(result_BMP280, BMP280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, sensorPrefixBMPx80());
 				sum_send_time += millis() - start_send;
 			}
 		}

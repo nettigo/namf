@@ -89,7 +89,7 @@ namespace SimpleScheduler {
         /******************************************************
          * register sensor/subsytem to to be run by SimpleScheduler
          * slot - enum from SimpleScheduler::LoopEntryType - identifies sensor
-         * processF - function called by scheduler with current status (init/normal run)
+         * processF - function called by scheduler with current status (initBMPx80/normal run)
          * code - key used to store configuration in JSON, suggested practice - use the same name as for enum LoopEntryType, just lowercase
          * name - name of sensor/subsytem. Will be used to display configuration checkbox to enable/disable subsystem
          */

@@ -12,12 +12,14 @@
 #include "system/debug.h"
 
 #include <Adafruit_BMP280.h>
+#include <Adafruit_BMP085.h>
 #include <Adafruit_BME280.h>
 
 /*****************************************************************
  * BMP280 declaration                                               *
  *****************************************************************/
 extern Adafruit_BMP280 bmp280;
+extern Adafruit_BMP085 bmp180;
 
 /*****************************************************************
  * BME280 declaration                                            *

@@ -4,7 +4,6 @@
 
 #include "sensors/bme280.h"
 
-Adafruit_BMP280 bmp280;
 Adafruit_BME280 bme280;
 
 /*****************************************************************
