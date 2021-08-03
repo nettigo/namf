@@ -36,6 +36,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_BASICAUTH[] PROGMEM = "Autoryzacja";
 /* ./src/lang/intl_pl.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/lang/intl_pl.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
+/* ./src/sensors/bmpX80/bmpX80_pl.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 sensor temperatury/ciśnienia.";
 /* ./src/lang/intl_pl.lang */ const char INTL_CANCEL[] PROGMEM = "Anuluj";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Konfiguracja";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION_DELETE[] PROGMEM = "Usunięcie konfiguracji";

@@ -20,6 +20,7 @@ namespace SimpleScheduler {
         MHZ14A,
         SDS011,
         HECA,
+        BMPx80,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
@@ -29,6 +30,8 @@ namespace SimpleScheduler {
     extern const char LET_3 [] PROGMEM;
     extern const char LET_4 [] PROGMEM;
     extern const char LET_5 [] PROGMEM;
+    extern const char LET_6 [] PROGMEM;
+    extern const char LET_7 [] PROGMEM;
     extern const char LET_SIZE [] PROGMEM;
 
     extern const char *LET_NAMES[] PROGMEM;

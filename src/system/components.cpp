@@ -100,6 +100,8 @@ namespace SimpleScheduler {
                 return SHT3x::parseHTTPRequest();
             case SimpleScheduler::MHZ14A:
                 return MHZ14A::parseHTTPRequest();
+            case SimpleScheduler::BMPx80:
+                return BMPx80::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
@@ -196,6 +198,8 @@ namespace SimpleScheduler {
                 return FPSTR(SHT3x::KEY);
             case SimpleScheduler::MHZ14A:
                 return FPSTR(MHZ14A::KEY);
+            case SimpleScheduler::BMPx80:
+                return FPSTR(BMPx80::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
@@ -220,6 +224,8 @@ namespace SimpleScheduler {
                 return FPSTR(INTL_SHT3X_DESC);
             case SimpleScheduler::MHZ14A:
                 return FPSTR(INTL_MHZ14A_DESC);
+            case SimpleScheduler::BMPx80:
+                return FPSTR(INTL_BMPx80_DESC);
             default:
                 return F("");
         }
