@@ -222,6 +222,7 @@ namespace BMPx80 {
     };
 
     void afterSend(bool status) {
+        debug_out(F("BMPx80 - reset stats"),DEBUG_MED_INFO);
         last_value_BMP280_P = currentPressure();
         last_value_BMP280_T = currentTemp();
         sampleCount = 0;
