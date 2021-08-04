@@ -254,6 +254,10 @@ namespace BMPx80 {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
 
+        if (cfg::bmp280_read) { //old setting takes over
+            enabled = true;
+        }
+
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::BMPx80)) {
             scheduler.registerSensor(SimpleScheduler::BMPx80, BMPx80::process, FPSTR(BMPx80::KEY));
