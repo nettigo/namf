@@ -349,6 +349,13 @@ int readAndParseConfigFile(File configFile) {
                     item[F("SDS011")][F("e")] = 1;
                     item[F("SDS011")][F("d")] = 1;
                 }
+                if (cfg::bme280_read) {
+                    if (!item.containsKey(F("BME280"))) {
+                        item.createNestedObject(F("BME280"));
+                    }
+                    item[F("BME280")][F("e")] = 1;
+//                    item[F("BME280")][F("d")] = 1;
+                }
                 if (cfg::heca_read) {
                     if (!item.containsKey(F("HECA"))) {
                         item.createNestedObject(F("HECA"));

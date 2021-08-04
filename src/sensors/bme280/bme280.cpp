@@ -189,10 +189,6 @@ namespace BME280 {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
 
-        if (cfg::bme280_read) { //old setting takes over
-            enabled = true;
-        }
-
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::BME280)) {
             scheduler.registerSensor(SimpleScheduler::BME280, BME280::process, FPSTR(BME280::KEY));
