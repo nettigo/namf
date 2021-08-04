@@ -412,7 +412,7 @@ void webserver_config() {
             page_content.concat(form_checkbox_sensor("sds_read", FPSTR(INTL_SDS011), sds_read));
             page_content.concat(form_checkbox_sensor("pms_read", FPSTR(INTL_PMS), pms_read));
             page_content.concat(form_checkbox_sensor("dht_read", FPSTR(INTL_DHT22), dht_read));
-            page_content.concat(form_checkbox_sensor("bmp280_read", FPSTR(INTL_BMP280), bmp280_read));
+//            page_content.concat(form_checkbox_sensor("bmp280_read", FPSTR(INTL_BMP280), bmp280_read));
             page_content.concat(form_checkbox_sensor("bme280_read", FPSTR(INTL_BME280), bme280_read));
             page_content.concat(form_checkbox_sensor("heca_read", FPSTR(INTL_HECA), heca_read));
             page_content.concat(form_checkbox_sensor("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read));
