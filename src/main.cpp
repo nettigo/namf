@@ -1076,16 +1076,6 @@ void loop() {
 			}
 		}
 
-		if (cfg::bme280_read && (! bme280_init_failed)) {
-			data.concat(result_BME280);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_BME280, BME280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BME280_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-
 
 		if (cfg::ds18b20_read) {
 			data.concat(result_DS18B20);

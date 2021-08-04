@@ -54,6 +54,8 @@ namespace BME280 {
 
 
     void readFromSensor() {
+        Serial.println(F("BME - read from sensor"));
+        Serial.println(sampleCount);
         if (sampleCount >= SAMPLE_SIZE)
             return;
 
@@ -69,11 +71,12 @@ namespace BME280 {
             p = -1.0;
             h = -1;
             debug_out(String(FPSTR(SENSORS_BME280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
+        } else {
+            samplesP[sampleCount] = p;
+            samplesT[sampleCount] = t;
+            samplesH[sampleCount] = h;
+            sampleCount++;
         }
-        samplesP[sampleCount] = p;
-        samplesT[sampleCount] = t;
-        samplesH[sampleCount] = h;
-        sampleCount++;
     }
 
     float currentPressure() {
@@ -83,6 +86,12 @@ namespace BME280 {
         for (byte i = 0; i < sampleCount; i++)
             sum += samplesP[i];
         return sum / sampleCount;
+    }
+
+    float currentPressureHPa() {
+        float ret = currentPressure();
+        if (ret == -1) return -1;
+        return ret/100.0;
     }
 
     float currentTemp() {
@@ -95,7 +104,7 @@ namespace BME280 {
     }
    float currentHumidity() {
         if (sampleCount == 0)
-            return -128;
+            return -1;
         float sum = 0;
         for (byte i = 0; i < sampleCount; i++)
             sum += samplesH[i];
@@ -122,8 +131,8 @@ namespace BME280 {
     };
 
     void results(String &s) {
-        if (!readyBME280())
-            return;
+        if (!enabled) return;
+
         s.concat(Value2Json(F("BME280_temperature"), String(currentTemp())));
         s.concat(Value2Json(F("BME280_pressure"), String(currentPressure())));
         s.concat(Value2Json(F("BME280_humidity"), String(currentHumidity())));
@@ -132,11 +141,10 @@ namespace BME280 {
     void resultsAsHTML(String &page_content) {
         if (!enabled) return;
         page_content.concat(FPSTR(EMPTY_ROW));
-        page_content.concat(FPSTR(EMPTY_ROW));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_TEMPERATURE),
                                                  check_display_value(currentTemp(), -128, 1, 0), F("°C")));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_PRESSURE),
-                                                 check_display_value(currentPressure() / 100, -1, 1, 0), F("hPa")));
+                                                 check_display_value(currentPressureHPa(), -1, 1, 0), F("hPa")));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_HUMIDITY),
                                                  check_display_value(currentHumidity(), -1, 1, 0), F("%")));
 
@@ -155,8 +163,9 @@ namespace BME280 {
 
     void afterSend(bool status) {
         debug_out(F("BME280 - reset stats"), DEBUG_MED_INFO);
-        last_value_BMP280_P = currentPressure();
-        last_value_BMP280_T = currentTemp();
+        last_value_BME280_P = currentPressure();
+        last_value_BME280_T = currentTemp();
+        last_value_BME280_H = currentHumidity();
         sampleCount = 0;
     }
 
@@ -166,13 +175,23 @@ namespace BME280 {
         switch (e) {
             case SimpleScheduler::INIT:
                 initBME280();
+                Serial.print(F("BME init: "));
+                Serial.println(bme280_init_failed);
+                Serial.println(readyBME280());
                 if (readyBME280()) {
+                    Serial.println(F("BME - tworzymy tablice"));
                     samplesT = new float[SAMPLE_SIZE];
                     samplesP = new float[SAMPLE_SIZE];
                     samplesH = new float[SAMPLE_SIZE];
                     sampleCount = 0;
                     readFromSensor();
                 }
+                Serial.print(F("BME - czas do pomiaru"));
+                Serial.println(time2Measure());
+                Serial.println(time2Measure()- 5000 -
+                SAMPLE_SIZE * 5000);
+
+
                 return time2Measure() - 5000 -
                        SAMPLE_SIZE * 5000;    //do not deregister - on status page we can write about failure
             case SimpleScheduler::RUN:
@@ -180,6 +199,7 @@ namespace BME280 {
                     return 10000;
                 }
                 readFromSensor();
+
                 return 5000;
         }
 
