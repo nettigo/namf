@@ -21,6 +21,7 @@ namespace SimpleScheduler {
         SDS011,
         HECA,
         BMPx80,
+        BME280,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 

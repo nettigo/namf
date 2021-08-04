@@ -26,7 +26,7 @@
 #include "webserver.h"
 #include "sending.h"
 #include "sensors/sds011/sds011.h"
-#include "sensors/bme280.h"
+//#include "sensors/bme280.h"
 #include "sensors/dht.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
@@ -679,15 +679,6 @@ static void powerOnTestSensors() {
 	}
 
 
-	if (cfg::bme280_read) {
-		debug_out(F("Read BME280..."), DEBUG_MIN_INFO, 1);
-		if (!initBME280(0x76) && !initBME280(0x77)) {
-			debug_out(F("Check BME280 wiring"), DEBUG_MIN_INFO, 1);
-			bme280_init_failed = 1;
-		} else {
-            sensorBME280();
-        }
-	}
 
 	if (cfg::ds18b20_read) {
 		ds18b20.begin();                                    // Start DS18B20
@@ -1027,13 +1018,6 @@ void loop() {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
 		}
-
-		if (cfg::bme280_read && (! bme280_init_failed)) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BME280), DEBUG_MAX_INFO, 1);
-			result_BME280 = sensorBME280();                 // getting temperature, humidity and pressure (optional)
-
-        }
-
 
 		if (cfg::ds18b20_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DS18B20), DEBUG_MAX_INFO, 1);

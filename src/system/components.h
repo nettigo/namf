@@ -13,6 +13,7 @@
 #include "../sensors/sht3x/sht3x.h"
 #include "../sensors/mhz14a/winsen-mhz.h"
 #include "../sensors/bmpX80/bmpX80.h"
+#include "../sensors/bme280/bme280.h"
 
 namespace SimpleScheduler {
 
