@@ -100,6 +100,8 @@ namespace BME280 {
         float sum = 0;
         for (byte i = 0; i < sampleCount; i++)
             sum += samplesT[i];
+        Serial.print(F("BME curr tem sum: "));
+        Serial.println(sum);
         return sum / sampleCount;
     }
    float currentHumidity() {
@@ -162,6 +164,7 @@ namespace BME280 {
     };
 
     void afterSend(bool status) {
+        if (!enabled) return;
         debug_out(F("BME280 - reset stats"), DEBUG_MED_INFO);
         last_value_BME280_P = currentPressure();
         last_value_BME280_T = currentTemp();
