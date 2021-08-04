@@ -167,12 +167,12 @@ namespace HECA {
         if (dataCount) {
             last_value_HECA_H = rh_total/dataCount;
             last_value_HECA_T = t_total/dataCount;
-            res += Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T));
-            res += Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H));
+            res.concat(Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T)));
+            res.concat(Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H)));
             if (dutyCycleCount) {
-                res += Value2Json(F("HECA_Tdc"), String((float)dutyCycleValT/dutyCycleCount*100));
-                res += Value2Json(F("HECA_RHdc"), String((float)dutyCycleValRH/dutyCycleCount*100));
-                res += Value2Json(F("HECA_dc"), String(getDutyCycle()));
+                res.concat(Value2Json(F("HECA_Tdc"), String((float)dutyCycleValT/dutyCycleCount*100)));
+                res.concat(Value2Json(F("HECA_RHdc"), String((float)dutyCycleValRH/dutyCycleCount*100));
+                res.concat(Value2Json(F("HECA_dc"), String(getDutyCycle())));
             }
         } else {
             last_value_HECA_T = -128.0;
