@@ -190,6 +190,8 @@ namespace BMPx80 {
     };
 
     void results(String &s) {
+        if (!enabled) return;
+
         String key1 = sensorPrefixBMPx80();
         key1.concat(F("temperature"));
         String key2 = sensorPrefixBMPx80();
