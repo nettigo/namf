@@ -171,7 +171,7 @@ namespace HECA {
             res.concat(Value2Json(F("HECA_humidity"), Float2String(last_value_HECA_H)));
             if (dutyCycleCount) {
                 res.concat(Value2Json(F("HECA_Tdc"), String((float)dutyCycleValT/dutyCycleCount*100)));
-                res.concat(Value2Json(F("HECA_RHdc"), String((float)dutyCycleValRH/dutyCycleCount*100));
+                res.concat(Value2Json(F("HECA_RHdc"), String((float)dutyCycleValRH/dutyCycleCount*100)));
                 res.concat(Value2Json(F("HECA_dc"), String(getDutyCycle())));
             }
         } else {
