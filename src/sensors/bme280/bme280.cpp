@@ -62,10 +62,11 @@ namespace BME280 {
         float p = -1;
         float t = -128;
         float h = -1;
-
-        p = bme280.readPressure();
-        t = bme280.readTemperature();
-        h = bme280.readHumidity();
+        if (bme280.takeForcedMeasurement()) {
+            p = bme280.readPressure();
+            t = bme280.readTemperature();
+            h = bme280.readHumidity();
+        }
         if (isnan(p) || isnan(t) || isnan(h)) {
             t = -128.0;
             p = -1.0;
