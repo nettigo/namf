@@ -54,8 +54,6 @@ namespace BME280 {
 
 
     void readFromSensor() {
-        Serial.println(F("BME - read from sensor"));
-        Serial.println(sampleCount);
         if (sampleCount >= SAMPLE_SIZE)
             return;
 
@@ -101,8 +99,6 @@ namespace BME280 {
         float sum = 0;
         for (byte i = 0; i < sampleCount; i++)
             sum += samplesT[i];
-        Serial.print(F("BME curr tem sum: "));
-        Serial.println(sum);
         return sum / sampleCount;
     }
    float currentHumidity() {
@@ -179,22 +175,13 @@ namespace BME280 {
         switch (e) {
             case SimpleScheduler::INIT:
                 initBME280();
-                Serial.print(F("BME init: "));
-                Serial.println(bme280_init_failed);
-                Serial.println(readyBME280());
                 if (readyBME280()) {
-                    Serial.println(F("BME - tworzymy tablice"));
                     samplesT = new float[SAMPLE_SIZE];
                     samplesP = new float[SAMPLE_SIZE];
                     samplesH = new float[SAMPLE_SIZE];
                     sampleCount = 0;
                     readFromSensor();
                 }
-                Serial.print(F("BME - czas do pomiaru"));
-                Serial.println(time2Measure());
-                Serial.println(time2Measure()- 5000 -
-                SAMPLE_SIZE * 5000);
-
 
                 return time2Measure() - 5000 -
                        SAMPLE_SIZE * 5000;    //do not deregister - on status page we can write about failure
