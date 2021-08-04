@@ -1,3 +1,7 @@
+NAMF-2020-38rc16 (2021-08-04 rev 2bb1a84e9122198727466b2f739a712a2edc4694)
+* support for older BMP sensors (BMP180/SHT31 will be used as BME280 replacement)
+* changes to String handling in many places (concat instead of operator +=)
+
 NAMF-2020-38rc15 (2021-07-31)
 * tweaks with timings of SoftwareSerial
 * SDS hardware watchdog - count total number of hw cycles
