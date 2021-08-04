@@ -182,7 +182,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(dht_read);
     copyToJSON_Bool(sds_read);
     copyToJSON_Bool(pms_read);
-    copyToJSON_Bool(bmp280_read);
+//    copyToJSON_Bool(bmp280_read);
     copyToJSON_Bool(bme280_read);
     copyToJSON_Bool(heca_read);
     copyToJSON_Bool(ds18b20_read);
