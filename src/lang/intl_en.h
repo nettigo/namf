@@ -36,6 +36,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_BASICAUTH[] PROGMEM = "Authorization";
 /* ./src/lang/intl_en.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/lang/intl_en.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
+/* ./src/sensors/bmpX80/bmpX80_en.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 humidity/temperature sensor";
 /* ./src/lang/intl_en.lang */ const char INTL_CANCEL[] PROGMEM = "Cancel";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Configuration";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIGURATION_DELETE[] PROGMEM = "Configuration delete";
@@ -167,7 +168,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_PPD42NS[] PROGMEM = "Translate EN: INTL_PPD42NS 🐱;";
  const char INTL_HTU21D[] PROGMEM = "Translate EN: INTL_HTU21D 🐱;";
  const char INTL_BMP180[] PROGMEM = "Translate EN: INTL_BMP180 🐱;";
- const char INTL_BMPx80_DESC[] PROGMEM = "Translate EN: INTL_BMPx80_DESC 🐱;";
 
 
 #endif
