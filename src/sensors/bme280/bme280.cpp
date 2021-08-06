@@ -129,8 +129,13 @@ namespace BME280 {
         return ret;
     };
 
+    bool dataAvailable() {
+        return sampleCount > 0;
+    }
+
     void results(String &s) {
         if (!enabled) return;
+        if (!dataAvailable()) return;
 
         s.concat(Value2Json(F("BME280_temperature"), String(currentTemp())));
         s.concat(Value2Json(F("BME280_pressure"), String(currentPressure())));
@@ -169,7 +174,11 @@ namespace BME280 {
         sampleCount = 0;
     }
 
-
+    unsigned long interval() {
+        unsigned long ret = cfg::sending_intervall_ms;
+        if (ret > 10000) ret -= 10000;
+        return ret / SAMPLE_SIZE;
+    }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
@@ -183,15 +192,16 @@ namespace BME280 {
                     readFromSensor();
                 }
 
-                return time2Measure() - 5000 -
-                       SAMPLE_SIZE * 5000;    //do not deregister - on status page we can write about failure
+                return interval();
             case SimpleScheduler::RUN:
                 if (!readyBME280()) {
                     return 10000;
                 }
                 readFromSensor();
-
-                return 5000;
+                auto left = time2Measure();
+                if (left == 0) left = 100;
+                if (sampleCount >= SAMPLE_SIZE) return left;  // we are full wait till period end
+                return interval();
         }
 
     }

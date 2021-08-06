@@ -188,9 +188,13 @@ namespace BMPx80 {
         if (printOnLCD) ret.concat(Var2JsonInt(F("d"), printOnLCD));
         return ret;
     };
+    bool dataAvailable() {
+        return sampleCount > 0;
+    }
 
     void results(String &s) {
         if (!enabled) return;
+        if (!dataAvailable()) return;
 
         String key1 = sensorPrefixBMPx80();
         key1.concat(F("temperature"));
