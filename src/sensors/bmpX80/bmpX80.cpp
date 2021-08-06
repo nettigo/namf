@@ -104,10 +104,11 @@ namespace BMPx80 {
             t = -128.0;
             p = -1.0;
             debug_out(String(FPSTR(SENSORS_BMP280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
+        } else {
+            samplesP[sampleCount] = p;
+            samplesT[sampleCount] = t;
+            sampleCount++;
         }
-        samplesP[sampleCount] = p;
-        samplesT[sampleCount] = t;
-        sampleCount++;
     }
 
     float currentPressure() {
