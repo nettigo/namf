@@ -162,9 +162,13 @@ namespace HECA {
         return (float)dutyCycleTotal/dutyCycleCount*100;
     }
 
+    bool dataAvailable() {
+        return dataCount > 0;
+    }
+
     void getResults(String &res){
         if (!enabled) return;
-        if (dataCount) {
+        if (dataAvailable()) {
             last_value_HECA_H = rh_total/dataCount;
             last_value_HECA_T = t_total/dataCount;
             res.concat(Value2Json(F("HECA_temperature"), Float2String(last_value_HECA_T)));
