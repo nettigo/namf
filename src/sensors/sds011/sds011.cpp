@@ -510,8 +510,8 @@ namespace SDS011 {
 
     void results(String &res) {
         if (last_value_SDS_P2 != -1 && last_value_SDS_P1 != -1) {
-            res += Value2Json(F("SDS_P1"), String(last_value_SDS_P1));
-            res += Value2Json(F("SDS_P2"), String(last_value_SDS_P2));
+            res.concat(Value2Json(F("SDS_P1"), String(last_value_SDS_P1)));
+            res.concat(Value2Json(F("SDS_P2"), String(last_value_SDS_P2)));
         }
     }
 

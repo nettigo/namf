@@ -222,18 +222,18 @@ namespace SPS30 {
         String tmp;
         tmp.reserve(512);
 
-        tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count));
-        tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count));
-        tmp += Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_N25"), String(sum.nc_2p5 / measurement_count));
-        tmp += Value2Json(F("SPS30_N4"), String(sum.nc_4p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_N10"), String(sum.nc_10p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_TS"), String(sum.typical_particle_size / measurement_count));
+        tmp.concat(Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N25"), String(sum.nc_2p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N4"), String(sum.nc_4p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N10"), String(sum.nc_10p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_TS"), String(sum.typical_particle_size / measurement_count)));
 //        debug_out(tmp,DEBUG_MIN_INFO,true);
-        s += tmp;
+        s.concat(tmp);
     }
 
     //send data to LD API...

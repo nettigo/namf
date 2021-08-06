@@ -151,8 +151,8 @@ namespace SHT3x {
         String tmp;
         tmp.reserve(64);
         tmp = Value2Json(F("SHT3X_temperature"), String(currentTemp()));
-        tmp += Value2Json(F("SHT3X_humidity"), String(currentRH()));
-        s += tmp;
+        tmp.concat(Value2Json(F("SHT3X_humidity"), String(currentRH())));
+        s.concat(tmp);
     }
 
     void afterSend(bool success) {

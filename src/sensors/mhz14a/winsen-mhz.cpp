@@ -49,7 +49,7 @@ namespace MHZ14A {
 
     void getResults(String &str) {
         if (!enabled) return;
-        str += sensorMHZ();
+        str.concat(sensorMHZ());
     };
 
     void resultsAsHTML(String &page_content) {
