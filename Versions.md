@@ -1,7 +1,6 @@
-NAMF-2020-38rc17 ()
+NAMF-2020-38rc17 (2021-08-06 rev a3233a0ad6292fa76d9246f99ad2b211aa0d2f01)
 * BME280 support moved into new scheduler
 * do not send data when no measurements
-
 
 NAMF-2020-38rc16 (2021-08-04 rev 2bb1a84e9122198727466b2f739a712a2edc4694)
 * support for older BMP sensors (BMP180/SHT31 will be used as BME280 replacement)
