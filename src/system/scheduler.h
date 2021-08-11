@@ -18,6 +18,10 @@ namespace SimpleScheduler {
         NTW_WTD,
         SHT3x,
         MHZ14A,
+        SDS011,
+        HECA,
+        BMPx80,
+        BME280,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
@@ -27,6 +31,9 @@ namespace SimpleScheduler {
     extern const char LET_3 [] PROGMEM;
     extern const char LET_4 [] PROGMEM;
     extern const char LET_5 [] PROGMEM;
+    extern const char LET_6 [] PROGMEM;
+    extern const char LET_7 [] PROGMEM;
+    extern const char LET_SIZE [] PROGMEM;
 
     extern const char *LET_NAMES[] PROGMEM;
 
@@ -86,7 +93,7 @@ namespace SimpleScheduler {
         /******************************************************
          * register sensor/subsytem to to be run by SimpleScheduler
          * slot - enum from SimpleScheduler::LoopEntryType - identifies sensor
-         * processF - function called by scheduler with current status (init/normal run)
+         * processF - function called by scheduler with current status (initBMPx80/normal run)
          * code - key used to store configuration in JSON, suggested practice - use the same name as for enum LoopEntryType, just lowercase
          * name - name of sensor/subsytem. Will be used to display configuration checkbox to enable/disable subsystem
          */
@@ -102,7 +109,11 @@ namespace SimpleScheduler {
         byte freeSlots(void);
         //String with sensor names (codes)
         String registeredNames();
-
+        //get name for single sensor
+        const __FlashStringHelper * sensorName(LoopEntryType);
+#ifdef DBG_NAMF_TIMES
+        String maxRunTimeSystemName();
+#endif
         void getConfigForms(String &page);
         void getConfigJSON(LoopEntryType);
         void getConfigJSON(String &json);
@@ -118,11 +129,22 @@ namespace SimpleScheduler {
         //active sensors - how many screens are allocated
         unsigned countScreens(void);
         void dumpTable();
-        //call/check display subroutines for sensor
 
+#ifdef DBG_NAMF_TIMES
+        //how long processing loop took (max)
+        unsigned long runTimeMax() {return _runTimeMax;};
+        unsigned long lastRunTime() {return _lastRunTime;};
+        LoopEntryType timeMaxSystem() {return _runTimeMaxSystem;};
+        void resetRunTime() { _runTimeMax = 0; _runTimeMaxSystem = EMPTY;}
+#endif
     private:
         LoopEntry _tasks[SCHEDULER_SIZE];
         byte loopSize;
+#ifdef DBG_NAMF_TIMES
+        unsigned long _runTimeMax;
+        unsigned long _lastRunTime;
+        LoopEntryType _runTimeMaxSystem;
+#endif
 
         int findSlot(byte id);
     };

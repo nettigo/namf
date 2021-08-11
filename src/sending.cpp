@@ -46,17 +46,17 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
             break;
     }
 
-    debug_out(F("Start connecting to "), DEBUG_MIN_INFO, 0);
-    debug_out(host, DEBUG_MIN_INFO, 1);
+    debug_out(F("Start connecting to "), DEBUG_MED_INFO, 0);
+    debug_out(host, DEBUG_MED_INFO, 1);
 
     HTTPClient *http;
     http = new HTTPClient;
     http->setTimeout(20 * 1000);
     http->setUserAgent(String(SOFTWARE_VERSION) + "/" + esp_chipid());
     http->setReuse(false);
-    debug_out(String(host), DEBUG_MIN_INFO, 1);
-    debug_out(String(httpPort), DEBUG_MIN_INFO, 1);
-    debug_out(String(url), DEBUG_MIN_INFO, 1);
+    debug_out(String(host), DEBUG_MED_INFO, 1);
+    debug_out(String(httpPort), DEBUG_MED_INFO, 1);
+    debug_out(String(url), DEBUG_MED_INFO, 1);
     if (http->begin(*client, host, httpPort, url, ssl)) {
         if (logger == LoggerCustom && (*cfg::user_custom || *cfg::pwd_custom))
         {
@@ -106,18 +106,18 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
  *****************************************************************/
 void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
     String data_4_dusti = FPSTR(data_first_part);
-    data_4_dusti.replace(String("{v}"), String(SOFTWARE_VERSION));
-    data_4_dusti += data;
+    data_4_dusti.replace(String(F("{v}")), String(SOFTWARE_VERSION));
+    data_4_dusti.concat(data);
     data_4_dusti.remove(data_4_dusti.length() - 1);
-    data_4_dusti.replace(replace_str, String(""));
-    data_4_dusti += String("]}");
+    data_4_dusti.replace(replace_str, String(F("")));
+    data_4_dusti.concat(String(F("]}")));
     if (data != "") {
         sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
     } else {
         debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
     }
-    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
-    debugData(data,F("sendLuftdaten data out:"));
+//    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
+//    debugData(data,F("sendLuftdaten data out:"));
 }
 
 /*****************************************************************
@@ -138,71 +138,72 @@ String create_influxdb_string(const String& data) {
     String data_4_influxdb = "";
     debug_out(F("Parse JSON for influx DB"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);
-    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    DynamicJsonBuffer jsonBuffer;
     JsonObject& json2data = jsonBuffer.parseObject(data);
     if (json2data.success()) {
         bool first_line = true;
-        data_4_influxdb += F("feinstaub,node=esp8266-");
-        data_4_influxdb += esp_chipid() + F(",");
-        data_4_influxdb += F("fw=");
-        data_4_influxdb += F(SOFTWARE_VERSION);
-        data_4_influxdb += F(",");
-        data_4_influxdb += F("hostname=");
-        data_4_influxdb += cfg::fs_ssid;
-        data_4_influxdb += F(",");
-        data_4_influxdb += F("chann=");
+        data_4_influxdb.concat(F("feinstaub,node=esp8266-"));
+        data_4_influxdb.concat(esp_chipid() + F(","));
+        data_4_influxdb.concat(F("fw="));
+        data_4_influxdb.concat(F(SOFTWARE_VERSION));
+        data_4_influxdb.concat(F(","));
+        data_4_influxdb.concat(F("hostname="));
+        data_4_influxdb.concat(cfg::fs_ssid);
+        data_4_influxdb.concat(F(","));
+        data_4_influxdb.concat(F("chann="));
         switch (cfg::update_channel) {
             case UPDATE_CHANNEL_ALFA:
-                data_4_influxdb += F("alfa");
+                data_4_influxdb.concat(F("alfa"));
                 break;
             case UPDATE_CHANNEL_BETA:
-                data_4_influxdb += F("beta");
+                data_4_influxdb.concat(F("beta"));
                 break;
             case UPDATE_CHANNEL_STABLE:
-                data_4_influxdb += F("stable");
+                data_4_influxdb.concat(F("stable"));
                 break;
             default:
-                data_4_influxdb += F("unknown");
+                data_4_influxdb.concat(F("unknown"));
                 break;
 
 
         }
-        data_4_influxdb += F(" ");
+        data_4_influxdb.concat(F(" "));
         for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = "";
             if (first_line)
                 first_line = false;
             else
-                tmp_str += ",";
-            tmp_str += json2data["sensordatavalues"][i]["value_type"].as<char *>();
-            tmp_str += "=";
+                tmp_str.concat(F(","));
+            tmp_str.concat(json2data["sensordatavalues"][i]["value_type"].as<char *>());
+            tmp_str.concat(F("="));
             if (
                     json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_date")) ||
                     json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_time"))
                     )
-                tmp_str += String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\""));
+                tmp_str.concat(String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\"")));
             else
-                tmp_str += json2data["sensordatavalues"][i]["value"].as<char *>();
-            data_4_influxdb += tmp_str;
+                tmp_str.concat(json2data["sensordatavalues"][i]["value"].as<char *>());
+            data_4_influxdb.concat(tmp_str);
         }
-        //send SDS values even if no value returned from SDS (debug missing readings)
-        if (cfg::sds_read && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
-            data_4_influxdb += F(",SDS_P1=");
-            data_4_influxdb += String(last_value_SDS_P1);
-            data_4_influxdb += F(",SDS_P2=");
-            data_4_influxdb += String(last_value_SDS_P2);
+#ifdef DBG_NAMF_SDS_NO_DATA
+        if (SDS011::enabled && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
+            data_4_influxdb.concat(F(",SDS_P1="));
+            data_4_influxdb.concat(String(last_value_SDS_P1));
+            data_4_influxdb.concat(F(",SDS_P2="));
+            data_4_influxdb.concat(String(last_value_SDS_P2));
         }
-        data_4_influxdb += F(",measurements=");
-        data_4_influxdb += String(count_sends+1);
-        data_4_influxdb += F(",free=");
-        data_4_influxdb += String(memoryStatsMin.freeHeap);
-        data_4_influxdb += F(",frag=");
-        data_4_influxdb += String(memoryStatsMax.frag);
-        data_4_influxdb += F(",max_block=");
-        data_4_influxdb += String(memoryStatsMin.maxFreeBlock);
-        data_4_influxdb += F(",cont_stack=");
-        data_4_influxdb += String(memoryStatsMin.freeContStack);
-        data_4_influxdb += "\n";
+#endif
+        data_4_influxdb.concat(F(",measurements="));
+        data_4_influxdb.concat(String(count_sends+1));
+        data_4_influxdb.concat(F(",free="));
+        data_4_influxdb.concat(String(memoryStatsMin.freeHeap));
+        data_4_influxdb.concat(F(",frag="));
+        data_4_influxdb.concat(String(memoryStatsMax.frag));
+        data_4_influxdb.concat(F(",max_block="));
+        data_4_influxdb.concat(String(memoryStatsMin.maxFreeBlock));
+        data_4_influxdb.concat(F(",cont_stack="));
+        data_4_influxdb.concat(String(memoryStatsMin.freeContStack));
+        data_4_influxdb.concat("\n");
     } else {
         debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
     }
@@ -214,7 +215,7 @@ String create_influxdb_string(const String& data) {
  * send data as csv to serial out                                *
  *****************************************************************/
 void send_csv(const String& data) {
-    StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+    DynamicJsonBuffer jsonBuffer;
     JsonObject& json2data = jsonBuffer.parseObject(data);
     debug_out(F("CSV Output"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);

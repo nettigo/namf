@@ -8,6 +8,7 @@
 #include "defines.h"
 #include "variables.h"
 #include "helpers.h"
+#include "sensors/sds011/sds011.h"
 
 #ifdef ESP32
 #include <WiFi.h> /// FOR ESP32
@@ -76,16 +77,7 @@ void verifyUpdate (t_httpUpdate_return result) {
 
 
 }
-String sds_report() {
-    String ret = F("");
-    if (cfg::sds_read) {
-        ret += String(SDSfailedReadings) + String(F("-")) + String(SDSreadings);
-        SDSfailedReadings = SDSreadings = 0;
-    } else {
-        ret += F("na-na");
-    }
-    return ret;
-}
+
 void updateFW(const String host, const String port, const String path) {
     debug_out(F("Check for update with "),DEBUG_MIN_INFO,1);
     display_debug(F("Update - check"), F(""));
@@ -94,7 +86,7 @@ void updateFW(const String host, const String port, const String path) {
     debug_out(path,DEBUG_MIN_INFO,1);
     Serial.println(SOFTWARE_VERSION);
     String ver = String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                 String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) + String(" ") + sds_report();
+                 String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG));
     t_httpUpdate_return ret = tryUpdate( host, port, path, ver);
     verifyUpdate(ret);
 };
@@ -106,7 +98,7 @@ void updateFW() {
     display_debug(F("Update - check"), F(""));
 
     t_httpUpdate_return ret = tryUpdate(String(SOFTWARE_VERSION)+ String(" ") + esp_chipid() + String(" ") + "SDS" + String(" ") +
-                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) + String(" ") + sds_report() );
+                                        String(cfg::current_lang) + String(" ") + String(FPSTR(INTL_LANG)) );
     verifyUpdate(ret);
 };
 

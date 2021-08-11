@@ -4,6 +4,92 @@ NAMF-2020-37a (2021-06-04)
 NAMF-2020-37 (2021-04-27)
 * Merged all beta releases (37rcX)
 
+NAMF-2020-38rc17 (2021-08-06 rev a3233a0ad6292fa76d9246f99ad2b211aa0d2f01)
+* BME280 support moved into new scheduler
+* do not send data when no measurements
+
+NAMF-2020-38rc16 (2021-08-04 rev 2bb1a84e9122198727466b2f739a712a2edc4694)
+* support for older BMP sensors (BMP180/SHT31 will be used as BME280 replacement)
+* changes to String handling in many places (concat instead of operator +=)
+
+NAMF-2020-38rc15 (2021-07-31)
+* tweaks with timings of SoftwareSerial
+* SDS hardware watchdog - count total number of hw cycles
+
+NAMF-2020-38rc14 (2021-06-19)
+* display total and failed number of SDS readings
+* display time from last update check
+* corrected counting SDS failed/successful readings
+
+NAMF-2020-38rc13 (2021-06-18)
+* lucky thirteen (?)
+* processing SDS packet using onReceive
+* SDS serial buffer 20 bytes - should fit 2 responses
+* disable interrupts on SDS serial TX
+
+NAMF-2020-38rc12 (2021-06-17)
+* good measurement SDS resets failed measurements counter 
+* smaller buffer in SDS Serial
+* compact timestamp when logging to console
+
+NAMF-2020-38rc11 (2021-06-15)
+* fixed version number in binary  
+* hardware SDS restart after 3 missing measurements, not after first 
+
+NAMF-2020-38rc10 (2021-06-15) (typo in version number, binary built with 39 not 38...)
+* new SDS code, moved some functionality to separate class, work in progress 
+  to get nonblocking full implementation SDS communication protocol, not just toss
+  some commands to SDS...
+* support for hardware watchdog/restarter for SDS
+
+NAMF-2020-38rc9 (2021-06-07)
+* old (2019 line) code for sending SDS commands (diagnosing SDS problems)
+
+NAMF-2020-38rc8 (2021-06-04)
+* fixed update check interval for beta channel
+
+NAMF-2020-38rc7 (2021-05-26)
+* add mDNS TXT field 'manufacturer'
+* when checking for update report number of SDS readings
+
+NAMF-2020-38rc6 (2021-05-20)
+* send TXT record with ID key (NAM-XXXX), to allow Home Assistant to discover NAM if host name is set to different than NAM-XXXX
+* SHT3x sensor used as temp/humidity sensor (not in HECA) can display measurements on LCD
+* rewrite display interface in new scheduler - more simple code, new scheduler displays now both on LCD and OLED
+* SPS30 FW version displayed on /status page
+
+NAMF-2020-38rc5 (2021-05-17)
+
+* with new SDS code result -1 (no data from SDS) is being reported to Influx (not to other APIs) like it was with old code in 37rc3 
+
+NAMF-2020-38rc4 (2021-05-16)
+
+* old HECA/SDS011 enable checkbox enables both sensor and LCD display - to mimic old behaviour
+* subsystem list on /values page is now complete (SDS011 name was missing)
+
+NAMF-2020-38rc3 (2021-05-14)
+
+* if HECA old_style was enabled - force enabling new HECA subsystem. No reconfiguration need after upgrade
+
+NAMF-2020-38rc2 (2021-05-14)
+
+* HECA is now under new scheduler
+* HECA reports duty cycle (how long heater was enabled during current measurement period)
+* SDS011 now display header on LCD 20x4
+* sending hostname to Influx was lost during merge - reenabled
+
+NAMF-2020-38rc1 (2021-05-10)
+
+* aim to finish SDS readings 2 sec before sending time - should not catch SDS during collecting data on sending time
+* log when procedure takes longer than 1s
+* use SoftwareSerial library bundled with Arduino Core
+* added uptime to data.json (in seconds)
+* on /values page there is a link to graphs for given sensor on madavi.de
+
+NAMF-2020-37 (2021-04-27)
+
+* Merged all beta releases (37rcX)
+
 NAMF-2020-37rc5 (2021-04-15)
 * better translation on config page (new scheduler)
 * use subsytem names on /status pages
@@ -29,9 +115,6 @@ NAMF-2020-37rc1 (2021-03-22)
 
 NAMF-2020-36 (2021-03-22)
 
-Merged NAMF-2020-36rc3 and previous
-
-NAMF-2020-36 (2021-03-22)
 Merged NAMF-2020-36rc3 and previous
 
 NAMF-2020-36rc3 (2021-02-20)

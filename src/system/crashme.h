@@ -4,13 +4,13 @@
 #include <Arduino.h>
 
 void crashme(){
-    int* i = NULL;
+    int* i = nullptr;
     *i = 80;
 }
 
 void crashme2(){
-    char *svptr = NULL;
-    static char* str_input = NULL;
+    char *svptr = nullptr;
+    static char* str_input = nullptr;
     const char delim[] = " ";
     char input[] = "bla";
     size_t malloc_amount = (sizeof(char) * 0) & (~3);

@@ -13,10 +13,14 @@ namespace SimpleScheduler {
     const char LET_2 [] PROGMEM = "NTW_WTD";
     const char LET_3 [] PROGMEM = "SHT3x";
     const char LET_4 [] PROGMEM = "MHZ14A";
-    const char LET_5 [] PROGMEM = "SIZE";
+    const char LET_5 [] PROGMEM = "SDS011";
+    const char LET_6 [] PROGMEM = "HECA";
+    const char LET_7 [] PROGMEM = "BMPx80";
+    const char LET_8 [] PROGMEM = "BME280";
+    const char LET_SIZE [] PROGMEM = "SIZE";
 
     const char *LET_NAMES[] PROGMEM = {
-            LET_0, LET_1, LET_2, LET_3, LET_4, LET_5
+            LET_0, LET_1, LET_2, LET_3, LET_4, LET_5, LET_6, LET_7, LET_8, LET_SIZE
     };
 
     unsigned long nullF(LoopEventType event) { return 0; }
@@ -24,6 +28,11 @@ namespace SimpleScheduler {
 
     NAMFScheduler::NAMFScheduler() {
         loopSize = 0;
+#ifdef DBG_NAMF_TIMES
+        _runTimeMax = 0;
+        _lastRunTime = 0;
+        _runTimeMaxSystem = EMPTY;
+#endif
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             _tasks[i].process = nullF;
             _tasks[i].nextRun = 0;
@@ -34,13 +43,28 @@ namespace SimpleScheduler {
 
     void NAMFScheduler::process() {
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            if (_tasks[i].nextRun && _tasks[i].nextRun < millis()) {
+            yield();    // let internals run
+            //run if not EMPTY slot, has set nextRun and time has passed
+            if (_tasks[i].slotID && _tasks[i].nextRun && _tasks[i].nextRun < millis()) {
                 unsigned long nextRun = _tasks[i].process(RUN);
+#ifdef DBG_NAMF_TIMES
+                unsigned long startTime = micros();
+                _lastRunTime = micros() - startTime;
+                if (( _lastRunTime) > 1000*1000) {
+                    Serial.printf("Long run time for sensor %s (%lu ms)\n", LET_NAMES[_tasks[i].slotID], startTime/1000);
+                }
+#endif
                 if (nextRun) {
                     _tasks[i].nextRun = millis() + nextRun;
                 } else {
                     _tasks[i].nextRun = 0;
                 }
+#ifdef DBG_NAMF_TIMES
+                if (_lastRunTime > _runTimeMax) {
+                            _runTimeMax = _lastRunTime;
+                            _runTimeMaxSystem = _tasks[i].slotID;
+                }
+#endif
             }
 
         }
@@ -70,29 +94,30 @@ namespace SimpleScheduler {
             String templ = F(
                     "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
-            templ += F("<hr/><h2>");
-            templ += findSlotDescription(i);
-            templ += F("</h2>");
+            templ.concat(F("<hr/><h2>"));
+            templ.concat(findSlotDescription(i));
+            templ.concat(F("</h2>"));
             boolean checked = findSlot(i) >= 0; // check if sensor is enabled
-            templ += form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true);
-            templ += F("<br/>");
-            if (SimpleScheduler::displaySensor(i)) {
+            templ.concat(form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true));
+            templ.concat(F("<br/>"));
+            String lines[] = {"","","",""};
+            if (SimpleScheduler::displaySensor(i,lines)) {
                 checked = sensorWantsDisplay(i);
-                templ += form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true);
-                templ += F("<div class='spacer'></div>");
+                templ.concat(form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true));
+                templ.concat(F("<div class='spacer'></div>"));
             }
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
-            templ += F("{body}<input type='submit' value='");
-            templ += INTL_SAVE;
-            templ += F("'/></form>\n");
+            templ.concat(F("{body}<input type='submit' value='"));
+            templ.concat(FPSTR(INTL_SAVE));
+            templ.concat(F("'/></form>\n"));
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
-            page += templ;
+            page.concat(templ);
 
         }
-        page += F("</div>");
+        page.concat(F("</div>"));
     }
 
     void NAMFScheduler::unregisterSensor(LoopEntryType slot) {
@@ -130,19 +155,32 @@ namespace SimpleScheduler {
         return SCHEDULER_SIZE - loopSize;
     };
 
+    const __FlashStringHelper * NAMFScheduler::sensorName(LoopEntryType e){
+        return FPSTR(LET_NAMES[e]);
+    };
+
     String NAMFScheduler::registeredNames(){
         String t = F("");
 
-        for (byte i=0; i< SCHEDULER_SIZE; i++) {
+        for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID != EMPTY) {
-                t+= FPSTR(LET_NAMES[_tasks[i].slotID]);
-                t+= F(" ");
+                t += sensorName(_tasks[i].slotID);
+                t += F(" ");
             }
         }
         return t;
 
     }
 
+#ifdef DBG_NAMF_TIMES
+    String NAMFScheduler::maxRunTimeSystemName(){
+
+            String t  = F("");
+            t+= FPSTR(LET_NAMES[scheduler.timeMaxSystem()]);
+            return t;
+
+        }
+#endif
 
     //takes which screen to display and goes through list of all "display" sensor,
     //counting which one is current. *minor* returns which screen from singe sensor should

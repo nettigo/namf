@@ -5,6 +5,7 @@
  *****************************************************************/
 #include "defines.h"
 #include "variables.h"
+#include <Schedule.h>
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
@@ -24,15 +25,15 @@
 #include "html-content.h"
 #include "webserver.h"
 #include "sending.h"
-#include "sensors/sds011.h"
-#include "sensors/bme280.h"
+#include "sensors/sds011/sds011.h"
+//#include "sensors/bme280.h"
 #include "sensors/dht.h"
-#include "sensors/heca.h"
 #include "display/commons.h"
 #include "display/ledbar.h"
 
-SimpleScheduler::NAMFScheduler scheduler;
 
+SimpleScheduler::NAMFScheduler scheduler;
+unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS;
 
 /*****************************************************************
  * send Plantower PMS sensor command start, stop, cont. mode     *
@@ -90,7 +91,7 @@ void readConfig() {
 
 	if (SPIFFS.begin()) {
 		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
-		if (SPIFFS.exists(F("/config.json"))) {
+		if (SPIFFS.exists("/config.json")) {
 			//file exists, reading and loading
 			debug_out(F("reading config file..."), DEBUG_MIN_INFO, 1);
 			File configFile = SPIFFS.open("/config.json", "r");
@@ -311,39 +312,6 @@ void connectWifi() {
 	}
 	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
-}
-
-
-
-/*****************************************************************
- * read BMP280 sensor values                                     *
- *****************************************************************/
-static String sensorBMP280() {
-	String s;
-
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_BMP280), DEBUG_MED_INFO, 1);
-
-	const auto p = bmp280.readPressure();
-	const auto t = bmp280.readTemperature();
-	if (isnan(p) || isnan(t)) {
-		last_value_BMP280_T = -128.0;
-		last_value_BMP280_P = -1.0;
-		debug_out(String(FPSTR(SENSORS_BMP280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-	} else {
-		debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-		debug_out(String(t) + " C", DEBUG_MIN_INFO, 1);
-		debug_out(FPSTR(DBG_TXT_PRESSURE), DEBUG_MIN_INFO, 0);
-		debug_out(Float2String(p / 100) + " hPa", DEBUG_MIN_INFO, 1);
-		last_value_BMP280_T = t;
-		last_value_BMP280_P = p;
-		s += Value2Json(F("BMP280_pressure"), Float2String(last_value_BMP280_P));
-		s += Value2Json(F("BMP280_temperature"), Float2String(last_value_BMP280_T));
-	}
-	debug_out("----", DEBUG_MIN_INFO, 1);
-
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_BMP280), DEBUG_MED_INFO, 1);
-
-	return s;
 }
 
 
@@ -690,52 +658,12 @@ void init_lcd() {
     }
 }
 
-/*****************************************************************
- * Init BMP280                                                   *
- *****************************************************************/
-bool initBMP280(char addr) {
-	debug_out(F("Trying BMP280 sensor on "), DEBUG_MIN_INFO, 0);
-	debug_out(String(addr, HEX), DEBUG_MIN_INFO, 0);
-
-	if (bmp280.begin(addr)) {
-		debug_out(F(" ... found"), DEBUG_MIN_INFO, 1);
-		return true;
-	} else {
-		debug_out(F(" ... not found"), DEBUG_MIN_INFO, 1);
-		return false;
-	}
-}
-
 static void powerOnTestSensors() {
      debug_out(F("PowerOnTest"),0,1);
     cfg::debug = DEBUG_MED_INFO;
-	if (cfg::sds_read) {
-		debug_out(F("Read SDS..."), 0, 1);
-		SDS_cmd(PmSensorCmd::Start);
-		delay(100);
-		SDS_cmd(PmSensorCmd::ContinuousMode);
-        delay(100);
-        int pm10 = 0, pm25 = 0;
-        unsigned timeOutCount = 0;
-        while (timeOutCount < 200 && (pm10 == 0 || pm25 == 0)) {
-            readSingleSDSPacket(&pm10, &pm25);
-            timeOutCount++;
-            delay(5);
-        }
-        if (timeOutCount == 200) {
-            debug_out(F("SDS011 not sending data!"), DEBUG_ERROR, 1);
-        } else {
-            debug_out(F("PM10/2.5:"),  DEBUG_ERROR,1);
-            debug_out(String(pm10/10.0,2),DEBUG_ERROR,1);
-            debug_out(String(pm25/10.0,2),DEBUG_ERROR,1);
-            last_value_SDS_P1 = double(pm10/10.0);
-            last_value_SDS_P2 = double(pm25/10.0);
-        }
-        debug_out(F("Stopping SDS011..."),  DEBUG_ERROR,1);
-        is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-	}
 
-	if (cfg::pms_read) {
+
+    if (cfg::pms_read) {
 		debug_out(F("Read PMS(1,3,5,6,7)003..."), DEBUG_MIN_INFO, 1);
 		PMS_cmd(PmSensorCmd::Start);
 		delay(100);
@@ -751,37 +679,6 @@ static void powerOnTestSensors() {
 	}
 
 
-	if (cfg::bmp280_read) {
-		debug_out(F("Read BMP280..."), DEBUG_MIN_INFO, 1);
-		if (!initBMP280(0x76) && !initBMP280(0x77)) {
-			debug_out(F("Check BMP280 wiring"), DEBUG_MIN_INFO, 1);
-			bmp280_init_failed = 1;
-		}
-	}
-
-	if (cfg::bme280_read) {
-		debug_out(F("Read BME280..."), DEBUG_MIN_INFO, 1);
-		if (!initBME280(0x76) && !initBME280(0x77)) {
-			debug_out(F("Check BME280 wiring"), DEBUG_MIN_INFO, 1);
-			bme280_init_failed = 1;
-		} else {
-            sensorBME280();
-        }
-	}
-
-	if (cfg::heca_read) {
-		debug_out(F("Read HECA (SHT30)..."), DEBUG_MIN_INFO, 1);
-		if (!initHECA()) {
-			debug_out(F("Check HECA (SHT30) wiring"), DEBUG_MIN_INFO, 1);
-			heca_init_failed = 1;
-		} else {
-		    sensorHECA();
-		    debug_out(F("Temp: "),DEBUG_MIN_INFO,0);
-		    debug_out(String(last_value_HECA_T,2),DEBUG_MIN_INFO,1);
-            debug_out(F("Hum: "),DEBUG_MIN_INFO,0);
-            debug_out(String(last_value_HECA_H,2),DEBUG_MIN_INFO,1);
-		}
-	}
 
 	if (cfg::ds18b20_read) {
 		ds18b20.begin();                                    // Start DS18B20
@@ -882,9 +779,19 @@ static bool acquireNetworkTime() {
  *****************************************************************/
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
-    serialSDS.begin(9600);
+    serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
+    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
+
+    schedule_recurrent_function_us([]() {
+        serialSDS.perform_work();
+        serialGPS.perform_work();
+        return true;
+    }, 500);
+    serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
+    Wire.setClock(100000); // Force bus speed 100 Khz
+
 
     cfg::initNonTrivials(esp_chipid().c_str());
 
@@ -914,6 +821,20 @@ void setup() {
 
     powerOnTestSensors();
 
+    //set update check interval
+
+    switch (cfg::update_channel) {
+        case UPDATE_CHANNEL_ALFA:
+            PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 3600 * 1000;
+            break;
+        case UPDATE_CHANNEL_BETA:
+            PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 3 * 3600 * 1000;
+            break;
+        default:
+            PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = ONE_DAY_IN_MS;
+    }
+
+
     setup_webserver();
     display_debug(F("Connecting to"), String(cfg::wlanssid));
     debug_out(F("SSID: '"), DEBUG_ERROR, 0);
@@ -923,7 +844,7 @@ void setup() {
     if (strlen(cfg::wlanssid) > 0) {
         connectWifi();
         got_ntp = acquireNetworkTime();
-        debug_out(F("\nNTP time "), DEBUG_MIN_INFO, 0);
+        debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
         debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
         if(cfg::auto_update) {
             updateFW();
@@ -946,8 +867,12 @@ void setup() {
     //if (MDNS.begin(server_name.c_str())) {
 		
 	if (MDNS.begin(cfg::fs_ssid)) {
-        MDNS.addService("http", "tcp", 80);
-
+        MDNSResponder::hMDNSService hService = MDNS.addService( cfg::fs_ssid, "http", "tcp", 80);
+//        MDNS.addService("http", "tcp", 80);
+        char buff[20];
+        sprintf(buff, "NAM-%u", ESP.getChipId());
+        MDNS.addServiceTxt(hService, "id", buff);
+        MDNS.addServiceTxt(hService, "manufacturer", "Nettigo");
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
@@ -957,6 +882,8 @@ void setup() {
 	// sometimes parallel sending data and web page will stop nodemcu, watchdogtimer set to 30 seconds
 	wdt_disable();
 	wdt_enable(30000);
+
+	serialSDS.flush();  //drop any packets sent on startup...
 
 	starttime = millis();                                   // store the start time
 	time_point_device_start_ms = starttime;
@@ -981,7 +908,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
 		sum_send_time += millis() - start_send;
 	}
-    debugData(data,F("po madavi:"));
 
     if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
@@ -1000,16 +926,13 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	}
 
     if (cfg::send2influx) {
-        debugData(data,F("influx start:"));
         debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
         start_send = millis();
         const String data_4_influxdb = create_influxdb_string(data);
-        debugData(data,F("po influx_string:"));
 
         sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
 		sum_send_time += millis() - start_send;
     }
-    debugData(data,F("po influx "));
 
 	/*		if (send2lora) {
 				debug_out(F("## Sending to LoRa gateway: "), DEBUG_MIN_INFO, 1);
@@ -1030,7 +953,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
 		sum_send_time += millis() - start_send;
 	}
-    debugData(data,F("po custom "));
 
     return sum_send_time;
 }
@@ -1042,7 +964,6 @@ void loop() {
 	String result_SDS = "";
 	String result_PMS = "";
 	String result_DHT = "";
-	String result_BMP280 = "";
 	String result_BME280 = "";
 	String result_HECA = "";
 	String result_MHZ14 = "";
@@ -1077,13 +998,9 @@ void loop() {
 	last_micro = act_micro;
 
     server.handleClient();
+    yield();
 #if !defined(BOOT_FW)
 	if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS) || send_now) {
-		if (cfg::sds_read) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "SDS", DEBUG_MAX_INFO, 1);
-			result_SDS = sensorSDS();
-			starttime_SDS = act_milli;
-		}
 
 		if (cfg::pms_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + "PMS", DEBUG_MAX_INFO, 1);
@@ -1094,32 +1011,12 @@ void loop() {
 	}
 
 	server.handleClient();
-
+    yield();
 	if (send_now) {
-        debugData(String(F("****************** Upload data to APIs*****************************")));
+        debug_out(String(F("****************** Upload data to APIs*****************************")),DEBUG_MED_INFO);
         if (cfg::dht_read) {
 			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_DHT22), DEBUG_MAX_INFO, 1);
 			result_DHT = sensorDHT();                       // getting temperature and humidity (optional)
-		}
-
-		if (cfg::bmp280_read && (! bmp280_init_failed)) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BMP280), DEBUG_MAX_INFO, 1);
-			result_BMP280 = sensorBMP280();                 // getting temperature, humidity and pressure (optional)
-		}
-
-		if (cfg::bme280_read && (! bme280_init_failed)) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_BME280), DEBUG_MAX_INFO, 1);
-            debugData(result_BME280,F("BME  przed:"));
-			result_BME280 = sensorBME280();                 // getting temperature, humidity and pressure (optional)
-            debugData(result_BME280,F("BME po:"));
-
-        }
-
-		if (cfg::heca_read && (! heca_init_failed)) {
-			debug_out(String(FPSTR(DBG_TXT_CALL_SENSOR)) + FPSTR(SENSORS_HECA), DEBUG_MAX_INFO, 1);
-			debugData(result_HECA,F("HECA  przed:"));
-			result_HECA = sensorHECA();                 // getting temperature, humidity and pressure (optional)
-            debugData(result_HECA,F("HECA  po:"));
 		}
 
 		if (cfg::ds18b20_read) {
@@ -1135,6 +1032,7 @@ void loop() {
 	}
 
     cycleDisplay();
+	yield();
 
 	if ((cfg::has_ledbar_32) && (send_now)) {
 		displayLEDBar();
@@ -1145,8 +1043,8 @@ void loop() {
 		String data = FPSTR(data_first_part);
 		data.replace("{v}", String(SOFTWARE_VERSION));
 		String data_sample_times  = Value2Json(F("samples"), String(sample_count));
-		data_sample_times += Value2Json(String(F("min_micro")), String(min_micro));
-		data_sample_times += Value2Json(String(F("max_micro")), String(max_micro));
+		data_sample_times.concat(Value2Json(String(F("min_micro")), String(min_micro)));
+		data_sample_times.concat(Value2Json(String(F("max_micro")), String(max_micro)));
 
 		String signal_strength = String(WiFi.RSSI());
 		debug_out(F("WLAN signal strength: "), DEBUG_MIN_INFO, 0);
@@ -1158,18 +1056,9 @@ void loop() {
 		yield();
 		server.stop();
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
-		if (cfg::sds_read) {
-			data += result_SDS;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(SDS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_SDS, SDS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "SDS_");
-				sum_send_time += millis() - start_send;
-			}
-		}
 
         if (cfg::pms_read) {
-			data += result_PMS;
+			data.concat(result_PMS);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1178,7 +1067,7 @@ void loop() {
 			}
 		}
 		if (cfg::dht_read) {
-			data += result_DHT;
+			data.concat(result_DHT);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1186,38 +1075,10 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
-		if (cfg::bmp280_read && (! bmp280_init_failed)) {
-			data += result_BMP280;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BMP280): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_BMP280, BMP280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BMP280_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-		if (cfg::bme280_read && (! bme280_init_failed)) {
-			data += result_BME280;
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(BME280): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-                debugData(data,F("przed SendLuftdaten:"));
-				sendLuftdaten(result_BME280, BME280_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "BME280_");
-				sum_send_time += millis() - start_send;
-			}
-		}
 
-        if (cfg::heca_read && (! heca_init_failed)) {
-			data += result_HECA;
-//			if (cfg::send2dusti) {
-//				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(HECA): "), DEBUG_MIN_INFO, 1);
-//				start_send = millis();
-//				sendLuftdaten(result_HECA, HECA_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "HECA_");
-//				sum_send_time += millis() - start_send;
-//			}
-		}
 
 		if (cfg::ds18b20_read) {
-			data += result_DS18B20;
+			data.concat(result_DS18B20);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DS18B20): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1227,7 +1088,7 @@ void loop() {
 		}
 
 		if (cfg::gps_read) {
-			data += result_GPS;
+			data.concat(result_GPS);
 			if (cfg::send2dusti) {
 				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(GPS): "), DEBUG_MIN_INFO, 1);
 				start_send = millis();
@@ -1243,12 +1104,11 @@ void loop() {
 		if (cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
 		}
-		data_sample_times += Value2Json("signal", signal_strength);
+		data_sample_times.concat(Value2Json("signal", signal_strength));
         data_sample_times.remove(data_sample_times.length()-1);
-		data += data_sample_times;
+		data.concat(data_sample_times)  ;
 
-		data += "]}";
-        debugData(data,F("po Luftdaten "));
+		data.concat(F("]}"));
 
 		sum_send_time += sendDataToOptionalApis(data);
 
@@ -1256,6 +1116,7 @@ void loop() {
 		SimpleScheduler::afterSendData(true);
 
 		server.begin();
+		server.client().setNoDelay(true);
 
 		checkForceRestart();
 

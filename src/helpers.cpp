@@ -5,6 +5,10 @@
 #include "helpers.h"
 #include "system/scheduler.h"
 
+extern const char UNIT_PERCENT[] PROGMEM = "%";
+extern const char UNIT_CELCIUS[] PROGMEM = "°C";
+extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
+
 int32_t calcWiFiSignalQuality(int32_t rssi) {
     if (rssi > -50) {
         rssi = -50;
@@ -112,6 +116,13 @@ String Var2Json(const String& name, const float value) {
     return s;
 }
 
+void addJsonIfNotDefault(String &str,const  __FlashStringHelper *name, const unsigned long defaultValue, const unsigned long current) {
+    if (defaultValue != current){
+        str += Var2Json(name, current);
+    }
+    return;
+}
+
 
 
 
@@ -122,12 +133,15 @@ void debug_out(const String& text, const int level, const bool linebreak) {
     static bool timestamp=true;
     if (level <= cfg::debug) {
         if (timestamp) {
-            time_t now = time(nullptr);
-            String tmp=(ctime(&now));
-            tmp.trim();
-            tmp+=": ";
-            Serial.print(tmp);
-            timestamp=false;
+            time_t rawtime;
+            struct tm *timeinfo;
+            char buffer[30];
+            time(&rawtime);
+            timeinfo = localtime(&rawtime);
+            strftime(buffer, 30, "%F %T: ", timeinfo);
+
+            Serial.print(buffer);
+            timestamp = false;
         }
 
         if (linebreak) {
@@ -168,7 +182,7 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(dht_read);
     copyToJSON_Bool(sds_read);
     copyToJSON_Bool(pms_read);
-    copyToJSON_Bool(bmp280_read);
+//    copyToJSON_Bool(bmp280_read);
     copyToJSON_Bool(bme280_read);
     copyToJSON_Bool(heca_read);
     copyToJSON_Bool(ds18b20_read);
@@ -236,7 +250,7 @@ int readAndParseConfigFile(File configFile) {
         std::unique_ptr<char[]> buf(new char[size]);
 
         configFile.readBytes(buf.get(), size);
-        StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+        DynamicJsonBuffer jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
         debug_out(F("Config - JSON object memory used:"),DEBUG_MIN_INFO, false);
         debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
@@ -324,8 +338,31 @@ int readAndParseConfigFile(File configFile) {
 #undef setFromJSON
 #undef strcpyFromJSON
             //Sensor configs from simple scheduler
+            if (!json.containsKey(F("sensors")))
+                json.createNestedObject(F("sensors"));
             if (json.containsKey(F("sensors"))) {
                 JsonObject& item = json[F("sensors")];
+                if (cfg::sds_read) {
+                    if (!item.containsKey(F("SDS011"))) {
+                        item.createNestedObject(F("SDS011"));
+                    }
+                    item[F("SDS011")][F("e")] = 1;
+                    item[F("SDS011")][F("d")] = 1;
+                }
+                if (cfg::bme280_read) {
+                    if (!item.containsKey(F("BME280"))) {
+                        item.createNestedObject(F("BME280"));
+                    }
+                    item[F("BME280")][F("e")] = 1;
+//                    item[F("BME280")][F("d")] = 1;
+                }
+                if (cfg::heca_read) {
+                    if (!item.containsKey(F("HECA"))) {
+                        item.createNestedObject(F("HECA"));
+                    }
+                    item[F("HECA")][F("e")] = 1;
+                    item[F("HECA")][F("d")] = 1;
+                }
                 SimpleScheduler::readConfigJSON(item);
             }
             return 0;
@@ -374,6 +411,13 @@ void parseHTTP(const __FlashStringHelper *name, unsigned long &value ){
         value = server.arg(name).toInt();
     }
 };
+
+void parseHTTP(const String name, unsigned long &value ){
+    if (server.hasArg(name)) {
+        value = server.arg(name).toInt();
+    }
+};
+
 void  parseHTTP(const __FlashStringHelper *name, byte &value ){
     if (server.hasArg(name)) {
         value = server.arg(name).toInt();
@@ -400,19 +444,41 @@ void parseHTTP(const String &name, bool &value ){
     }
 };
 
+void setHTTPVarName(String &varName, String const name, byte id) {
+    varName = F("{n}-{s}");
+    varName.replace(F("{s}"), String(id));
+    varName.replace(F("{n}"), name);
+
+}
+
 /* get read and set bool variables for new scheduler. Works with checkbox
  named var_name-SENSOR_ID (var name it is enable or display currently
- Geting enable val from client is code done by each sensor, to make it easier this
+ Getting enable val from client is code done by each sensor, to make it easier this
  helper was created. It supports any bool var.
 */
 void setBoolVariableFromHTTP(String const name, bool &v, byte i){
-    String sensorID = F("{n}-{s}");
-    sensorID.replace(F("{s}"), String(i));
-    sensorID.replace(F("{n}"), name);
+    String sensorID;
+    setHTTPVarName(sensorID, name, i);
     parseHTTP(sensorID, v);
-
-
 }
+
+void setVariableFromHTTP(String const name, unsigned long &v, byte i){
+    String sensorID;
+    setHTTPVarName(sensorID, name, i);
+    parseHTTP(sensorID, v);
+}
+void setVariableFromHTTP(const __FlashStringHelper *name, unsigned long &v, byte i){
+    String sensorID;
+    setHTTPVarName(sensorID, name, i);
+    parseHTTP(sensorID, v);
+    Serial.println(v);
+}
+
+unsigned long time2Measure(void){
+    unsigned long timeFromStart = millis() - starttime;
+    if ( timeFromStart > cfg::sending_intervall_ms) return 0;
+    return cfg::sending_intervall_ms - timeFromStart;
+};
 
 //Form helpers
 //
@@ -486,7 +552,7 @@ String form_submit(const String& value) {
     String s = F(	"<tr>"
                      "<td>&nbsp;</td>"
                      "<td>"
-                     "<input type='submit' name='submit' value='{v}' class='s_red'/>"
+                     "<input type='submit' name='submit' value='{v}' class='s_r'/>"
                      "</td>"
                      "</tr>");
     s.replace("{v}", value);
@@ -609,25 +675,4 @@ String millisToTime(const unsigned long time) {
     tmp += String(t / 1000) + String("s");
     return tmp;
 
-}
-void debugData(const String &d, const __FlashStringHelper  *msg) {
-    PGM_P p = reinterpret_cast<PGM_P>(msg);
-    debugData(d,p);
-}
-void debugData(const String&d, const String&m){
-    debugData(d,m.c_str());
-}
-void debugData(const String &d, const char *msg){
-    Serial.print(F("\n****["));
-    time_t now = time(nullptr);
-    String tmp=(ctime(&now));
-    tmp.trim();
-    Serial.print(tmp);
-    Serial.print(F("]**** "));
-    Serial.print(msg);
-    if (d.endsWith("\n")) {
-        Serial.print(d);
-    } else {
-        Serial.println(d);
-    }
 }

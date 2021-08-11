@@ -16,8 +16,9 @@ const unsigned long READINGTIME_SDS_MS = 5000;
 const unsigned long SAMPLETIME_GPS_MS = 50;
 const unsigned long DISPLAY_UPDATE_INTERVAL_MS = 5000;
 const unsigned long ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
-const unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = 6*3600*1000;        // check for firmware updates once a 6 hours
+extern unsigned long PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS;        // interval for check for firmware update
 const unsigned long DURATION_BEFORE_FORCED_RESTART_MS = ONE_DAY_IN_MS * 28;  // force a reboot every ~4 weeks
+#define SDS_SERIAL_BUFF_SIZE    20
 
 typedef struct memory_stat_t {
     uint32_t freeHeap;
@@ -39,7 +40,7 @@ extern String tmpl(const String& patt, const String& value);
 #define URL_MADAVI "/data.php"
 #define PORT_MADAVI 80
 
-#define HOST_DUSTI "api.luftdaten.info"
+#define HOST_DUSTI "api.sensor.community"
 #define URL_DUSTI "/v1/push-sensor-data/"
 #define PORT_DUSTI 80
 
@@ -59,7 +60,7 @@ extern String tmpl(const String& patt, const String& value);
 #define UPDATE_URL_BETA F("/NAMF/index.php")
 #define UPDATE_PORT 80
 
-#define JSON_BUFFER_SIZE 2200
+#define JSON_BUFFER_SIZE 2600
 
 #define msSince(timestamp_before) (act_milli - (timestamp_before))
 

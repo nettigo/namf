@@ -6,11 +6,17 @@
 #define NAMF_HELPERS_H
 #include "Arduino.h"
 #include <ArduinoJson.h>
+#include "variables.h"
 #include <FS.h>                     // must be first
+
+extern const char UNIT_PERCENT[];
+extern const char UNIT_CELCIUS[];
+extern const unsigned char UNIT_CELCIUS_LCD[];
+
 
 int32_t calcWiFiSignalQuality(int32_t rssi);
 
-void debug_out(const String& text, const int level, const bool linebreak);
+void debug_out(const String& text, const int level, const bool linebreak = true);
 
 //declarations for changing .ino to .cpp
 String Float2String(const double value, uint8_t digits);
@@ -18,7 +24,7 @@ String Float2String(const double value);
 void writeConfig();
 String getConfigString(boolean);
 String getMaskedConfigString();
-int writeConfigRaw(const String &json_string, const char * filename = NULL);
+int writeConfigRaw(const String &json_string, const char * filename = nullptr);
 int readAndParseConfigFile(File);
 String add_sensor_type(const String& sensor_text);
 String Value2Json(const String& type, const String& value);
@@ -30,7 +36,7 @@ String Var2Json(const String& name, const String & value);
 String Var2Json(const String& name, const char * value);
 String Var2Json(const String& name, const float value);
 String Var2Json(const String& name, const unsigned long value);
-//Nettigo NAM 0.3.2 factory firmware - test
+void addJsonIfNotDefault(String &str,const  __FlashStringHelper *name, const unsigned long defaultValue, const unsigned long current);
 
 void parseHTTP(const __FlashStringHelper *, unsigned long & );
 void parseHTTP(const __FlashStringHelper *, bool & );
@@ -39,6 +45,10 @@ void parseHTTP(const String &name, bool &value );
 void parseHTTP(const __FlashStringHelper * , byte &value );
 
 void setBoolVariableFromHTTP(String const name, bool &v, byte i);
+void setVariableFromHTTP(String const name, unsigned long &v, byte i);
+void setHTTPVarName(String &varName, String const name, byte id);
+
+unsigned long time2Measure(void);
 String form_option(String const &name, const String & info, const bool checked = false);
 String form_input(const String& name, const String& info, const String& value, const int length);
 String form_password(const String& name, const String& info, const String& value, const int length);
@@ -51,7 +61,4 @@ void collectMemStats();
 void dumpCurrentMemStats();
 void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
-void debugData(const String&, const String&);
-void debugData(const String&, const char * ="");
-void debugData(const String&, const __FlashStringHelper *);
 #endif //NAMF_HELPERS_H

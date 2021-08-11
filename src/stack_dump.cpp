@@ -4,7 +4,7 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
     cont_t g_cont __attribute__ ((aligned (16)));
     File out;
     boolean dump = true;
-
+    noInterrupts();
     out = SPIFFS.open("/stack_dump", "w");
     time_t now = time(nullptr);
     char tmp[48];
@@ -65,5 +65,6 @@ extern "C" void custom_crash_callback(struct rst_info *rst_info, uint32_t stack,
         out.println(F("<<<stack<<<\n\n\n\n\n\n"));
     }
     out.close();
+    interrupts();
     delay(30);
 }

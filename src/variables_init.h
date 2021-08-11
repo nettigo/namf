@@ -89,15 +89,14 @@ namespace cfg {
     }
 }
 
-enum class PmSensorCmd {
-    Start,
-    Stop,
-    ContinuousMode,
-    VersionDate
-};
+//enum class PmSensorCmd {
+//    Start,
+//    Stop,
+//    ContinuousMode,
+//    VersionDate
+//};
 
 long int sample_count = 0;
-bool bmp280_init_failed = false;
 bool bme280_init_failed = false;
 bool heca_init_failed = false;
 
@@ -107,19 +106,14 @@ int TimeZone = 1;
 /*****************************************************************
  * Display definitions                                           *
  *****************************************************************/
-SSD1306 *display = NULL;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
-LiquidCrystal_I2C *char_lcd = NULL;//(0x27, 16, 2);
+SSD1306 *display = nullptr;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
+LiquidCrystal_I2C *char_lcd = nullptr;//(0x27, 16, 2);
 
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-SoftwareSerial serialSDS(PM_SERIAL_RX, PM_SERIAL_TX, false);
-SoftwareSerial serialGPS(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
-
-/*****************************************************************
- * HECA (SHT30) declaration                                            *
- *****************************************************************/
-ClosedCube_SHT31D heca;
+SoftwareSerial serialSDS;//(PM_SERIAL_RX, PM_SERIAL_TX, false);
+SoftwareSerial serialGPS;//(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
 
 /*****************************************************************
  * DS18B20 declaration                                            *

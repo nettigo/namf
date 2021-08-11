@@ -24,7 +24,9 @@ namespace SHT3x {
     extern void sendToLD();
     extern void results (String &s);
     extern void resultsAsHTML(String &page_content);
-    extern     void afterSend(bool success);
+    extern void afterSend(bool success);
+    extern void display(byte, byte, String[]);
+    bool getDisplaySetting();
 
     }
 #endif //NAMF_SHT3X_H

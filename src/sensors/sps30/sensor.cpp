@@ -61,7 +61,7 @@ namespace SPS30 {
 
     //Start SPS30 sensor
     unsigned long init() {
-        debug_out("************** SPS30 init", DEBUG_MIN_INFO, true);
+        debug_out("************** SPS30 initBMPx80", DEBUG_MIN_INFO, true);
         zeroMeasurementStruct(sum);
         sensirion_i2c_init();
         byte cnt = 0;
@@ -170,7 +170,19 @@ namespace SPS30 {
         return 15 * 1000;
     }
 
-    //callback called after each sending data to APIs Bool parameter tell if there was success, or some API call failed
+    void getStatusReport (String &page_content) {
+        if (!enabled) return;
+        page_content.concat(FPSTR(EMPTY_ROW));
+        uint8_t major, minor;
+        if (sps30_read_firmware_version(&major, &minor) == 0) {
+            page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), String(major)+String(F("."))+String(minor), ""));
+        } else
+            page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), FPSTR(INTL_SPS30_FW_FAIL), ""));
+
+
+
+        }
+        //callback called after each sending data to APIs Bool parameter tell if there was success, or some API call failed
     //in SPS30 it is being used start averaging results
     void afterSend(bool success) {
         zeroMeasurementStruct(sum);
@@ -197,9 +209,9 @@ namespace SPS30 {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
             scheduler.init(SimpleScheduler::SPS30);
             enabled = true;
-            Serial.println(F("SPS30 enabled"));
+            debug_out(F("SPS30 enabled"), DEBUG_MIN_INFO, 1);
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::SPS30)) {   //de
-            Serial.println(F("SPS30: stop"));
+            debug_out(F("SPS30: stop"),DEBUG_MIN_INFO,1);
             scheduler.unregisterSensor(SimpleScheduler::SPS30);
         }
     }
@@ -209,18 +221,19 @@ namespace SPS30 {
         if (!enabled || !started || measurement_count == 0) return;
         String tmp;
         tmp.reserve(512);
-        tmp += Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count));
-        tmp += Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count));
-        tmp += Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_N25"), String(sum.nc_2p5 / measurement_count));
-        tmp += Value2Json(F("SPS30_N4"), String(sum.nc_4p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_N10"), String(sum.nc_10p0 / measurement_count));
-        tmp += Value2Json(F("SPS30_TS"), String(sum.typical_particle_size / measurement_count));
+
+        tmp.concat(Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N25"), String(sum.nc_2p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N4"), String(sum.nc_4p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N10"), String(sum.nc_10p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_TS"), String(sum.typical_particle_size / measurement_count)));
 //        debug_out(tmp,DEBUG_MIN_INFO,true);
-        s += tmp;
+        s.concat(tmp);
     }
 
     //send data to LD API...
@@ -240,133 +253,130 @@ namespace SPS30 {
         const String unit_H = "%";
         const String unit_P = "hPa";
 
-        page_content += FPSTR(EMPTY_ROW);
+        page_content.concat(FPSTR(EMPTY_ROW));
         if (measurement_count == 0) {
-            page_content += table_row_from_value(FPSTR("SPS30"), FPSTR(INTL_SPS30_NO_RESULT), F(""), unit_PM);
+            page_content.concat(table_row_from_value(FPSTR("SPS30"), FPSTR(INTL_SPS30_NO_RESULT), F(""), unit_PM));
 
         } else {
-            page_content += F("<tr><td colspan='3'>");
-            page_content += FPSTR(INTL_SPS30_CONCENTRATIONS);
-            page_content += F("</td></tr>\n");
+            page_content.concat(F("<tr><td colspan='3'>"));
+            page_content.concat(FPSTR(INTL_SPS30_CONCENTRATIONS));
+            page_content.concat(F("</td></tr>\n"));
 
-            page_content += table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0 / measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5 / measurement_count),
-                                                 unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0 / measurement_count), unit_PM);
-            page_content += table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0 / measurement_count),
-                                                 unit_PM);
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0 / measurement_count), unit_PM));
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5 / measurement_count),
+                                                 unit_PM));
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0 / measurement_count), unit_PM));
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0 / measurement_count),
+                                                 unit_PM));
 
-            page_content += F("<tr><td colspan='3'>");
-            page_content += FPSTR(INTL_SPS30_COUNTS);
-            page_content += F("</td></tr>\n");
+            page_content.concat(F("<tr><td colspan='3'>"));
+            page_content.concat(FPSTR(INTL_SPS30_COUNTS));
+            page_content.concat(F("</td></tr>\n"));
 
-            page_content += table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc_0p5 / measurement_count),
-                                                 FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc_1p0 / measurement_count),
-                                                 FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc_2p5 / measurement_count),
-                                                 FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc_4p0 / measurement_count),
-                                                 FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc_10p0 / measurement_count),
-                                                 FPSTR(INTL_SPS30_CONCENTRATION));
-            page_content += table_row_from_value(F("SPS30"), F("TS"),
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc_0p5 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION)));
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc_1p0 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION)));
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc_2p5 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION)));
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc_4p0 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION)));
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc_10p0 / measurement_count),
+                                                 FPSTR(INTL_SPS30_CONCENTRATION)));
+            page_content.concat(table_row_from_value(F("SPS30"), F("TS"),
                                                  String(sum.typical_particle_size / measurement_count),
-                                                 FPSTR(INTL_SPS30_SIZE));
+                                                 FPSTR(INTL_SPS30_SIZE)));
 
         }
 
     }
 
-    bool display(LiquidCrystal_I2C *lcd, byte minor) {
-        if (lcd == NULL) return true;   //I'm here, ready to display
+    void display(byte cols, byte minor, String lines[]) {
         if (!started) {
-            lcd->clear();
-            lcd->println(F("SPS30"));
-            lcd->println(FPSTR(INTL_SPS30_NOT_STARTED));
+            lines[0] = F("SPS30");
+            lines[1] = FPSTR(INTL_SPS30_NOT_STARTED);
+            return;
         }
         if (measurement_count == 0) {
-            lcd->clear();
-            lcd->print(INTL_SPS30_NO_RESULT);
-            return true;
+            lines[0] = F("SPS30");
+            lines[1] = FPSTR(INTL_SPS30_NO_RESULT);
+            return;
         }
+        byte row = 0;
+
         if (getLCDRows() == 2) {    //16x2
-            lcd->clear();
             switch (minor) {
                 case 0:
-                    lcd->print(F("SPS: PM1:"));
-                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("PM2.5: "));
-                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
+                    lines[row] += (F("SPS: PM1:"));
+                    lines[row] += (String(sum.mc_1p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("PM2.5: "));
+                    lines[row] += (String(sum.mc_2p5 / measurement_count, 1));
                     break;
                 case 1:
-                    lcd->print(F("SPS: PM4:"));
-                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("PM10: "));
-                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
+                    lines[row] += (F("SPS: PM4:"));
+                    lines[row] += (String(sum.mc_4p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("PM10: "));
+                    lines[row] += (String(sum.mc_10p0 / measurement_count, 1));
                     break;
                 case 2:
-                    lcd->print(F("SPS: NC1:"));
-                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("NC2.5: "));
-                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
+                    lines[row] += (F("SPS: NC1:"));
+                    lines[row] += (String(sum.nc_1p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("NC2.5: "));
+                    lines[row] += (String(sum.nc_2p5 / measurement_count, 1));
                     break;
                 case 3:
-                    lcd->print(F("SPS: NC4:"));
-                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("NC10: "));
-                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
+                    lines[row] += (F("SPS: NC4:"));
+                    lines[row] += (String(sum.nc_4p0 / measurement_count, 1));
+                    row++;
+                    lines[row] += (F("NC10: "));
+                    lines[row] += (String(sum.nc_10p0 / measurement_count, 1));
                     break;
                 case 4:
-                    lcd->print(F("Typical size:"));
-                    lcd->setCursor(0, 1);
-                    lcd->print(String(sum.typical_particle_size / measurement_count, 2));
+                    lines[row] += (F("Typical size:"));
+                    row++;
+                    lines[row] += (String(sum.typical_particle_size / measurement_count, 2));
 
             }
 
-        } else {    //LCD 20x4, more real estate
-            lcd->clear();
+        } else {    //LCD 20x4 or OLED, more real estate
             switch (minor) {
                 case 0:
-                    lcd->print(getLCDHeader() + F(" SPS: PM1:"));
-                    lcd->print(String(sum.mc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("PM2.5: "));
-                    lcd->print(String(sum.mc_2p5 / measurement_count, 1));
-                    lcd->setCursor(0, 2);
-                    lcd->print(F("PM4:   "));
-                    lcd->print(String(sum.mc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 3);
-                    lcd->print(F("PM10:  "));
-                    lcd->print(String(sum.mc_10p0 / measurement_count, 1));
+                    lines[row] = F("SPS: PM1:");
+                    lines[row] += String(sum.mc_1p0 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("PM2.5: ");
+                    lines[row] += String(sum.mc_2p5 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("PM4:   ");
+                    lines[row] += String(sum.mc_4p0 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("PM10:  ");
+                    lines[row] += String(sum.mc_10p0 / measurement_count, 1);
                     break;
                 case 1:
-                    lcd->print(getLCDHeader() + F(" SPS: NC1:"));
-                    lcd->print(String(sum.nc_1p0 / measurement_count, 1));
-                    lcd->setCursor(0, 1);
-                    lcd->print(F("NC2.5: "));
-                    lcd->print(String(sum.nc_2p5 / measurement_count, 1));
-                    lcd->setCursor(0, 2);
-                    lcd->print(F("NC4:   "));
-                    lcd->print(String(sum.nc_4p0 / measurement_count, 1));
-                    lcd->setCursor(0, 3);
-                    lcd->print(F("NC10:"));
-                    lcd->print(String(sum.nc_10p0 / measurement_count, 1));
-                    lcd->print(F(" TS:"));
-                    lcd->print(String(sum.typical_particle_size / measurement_count, 1));
+                    lines[row] = F(" SPS: NC1:");
+                    lines[row] += String(sum.nc_1p0 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("NC2.5: ");
+                    lines[row] += String(sum.nc_2p5 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("NC4:   ");
+                    lines[row] += String(sum.nc_4p0 / measurement_count, 1);
+                    row++;
+                    lines[row] = F("NC10:");
+                    lines[row] += String(sum.nc_10p0 / measurement_count, 1);
+                    lines[row] += F(" TS:");
+                    lines[row] += String(sum.typical_particle_size / measurement_count, 1);
                     break;
             }
         }
-        return true;
+        return;
     };
 
     bool getDisplaySetting() {
-        Serial.print("printOnLCD SPS:");
-        Serial.println(printOnLCD);
         return printOnLCD;
     };
 

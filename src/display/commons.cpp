@@ -72,12 +72,6 @@ void display_values() {
         pm25_value = last_value_PMS_P2;
         pm25_sensor = FPSTR(SENSORS_PMSx003);
     }
-    if (cfg::sds_read) {
-        pm10_value = last_value_SDS_P1;
-        pm10_sensor = FPSTR(SENSORS_SDS011);
-        pm25_value = last_value_SDS_P2;
-        pm25_sensor = FPSTR(SENSORS_SDS011);
-    }
     if (cfg::dht_read) {
         t_value = last_value_DHT_T;
         t_sensor = FPSTR(SENSORS_DHT22);
@@ -102,24 +96,17 @@ void display_values() {
         p_value = last_value_BME280_P;
         p_sensor = FPSTR(SENSORS_BME280);
     }
-    if (cfg::heca_read) {
-        t_hc_value = last_value_HECA_T;
-        h_hc_value = last_value_HECA_H;
-    }
     if (cfg::gps_read) {
         lat_value = last_value_GPS_lat;
         lon_value = last_value_GPS_lon;
         alt_value = last_value_GPS_alt;
         gps_sensor = "NEO6M";
     }
-    if (cfg::pms_read || cfg::sds_read) {
+    if (cfg::pms_read) {
         screens[static_screen_count++] = DisplayPages::PagePM;
     }
     if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
         screens[static_screen_count++] = DisplayPages::PageTemp;
-    }
-    if (cfg::heca_read) {
-        screens[static_screen_count++] = DisplayPages::PageHECA;
     }
     if (cfg::gps_read) {
         screens[static_screen_count++] = DisplayPages::PageGPS;
@@ -136,7 +123,31 @@ void display_values() {
         if (sensor == SimpleScheduler::EMPTY) {
             next_display_count = 0;
         } else {
-            SimpleScheduler::displaySensor(sensor, char_lcd, minor);
+            String lines[] = {"","","",""};
+            SimpleScheduler::displaySensor(sensor, lines, 20, 4, minor);
+            if (display) {
+                display->clear();
+                display->displayOn();
+//                display->setTextAlignment(TEXT_ALIGN_CENTER);
+//                display->drawString(64, 1, display_header);
+                display->setTextAlignment(TEXT_ALIGN_LEFT);
+                display->drawString(0, 1, lines[0]);
+                display->drawString(0, 16, lines[1]);
+                display->drawString(0, 28, lines[2]);
+                display->drawString(0, 40, lines[3]);
+                display->setTextAlignment(TEXT_ALIGN_CENTER);
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
+                display->display();
+            }
+            if (char_lcd) {
+                char_lcd->clear();
+                for (byte i = 0; i < 4; i++) {
+                    char_lcd->setCursor(0,i);
+                    if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));
+                    char_lcd->print(lines[i]);
+                }
+
+            }
             next_display_count++;
             skipOldDisplay = true;
         }
@@ -150,7 +161,8 @@ void display_values() {
                 case (DisplayPages::PagePM):
                     display_header = pm25_sensor;
                     if (pm25_sensor != pm10_sensor) {
-                        display_header += " / " + pm25_sensor;
+                        display_header.concat(F(" / "));
+                        display_header.concat(pm25_sensor);
                     }
                     display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6) + " µg/m³";
                     display_lines[1] = "PM10:  " + check_display_value(pm10_value, -1, 1, 6) + " µg/m³";
@@ -213,7 +225,7 @@ void display_values() {
                 display->drawString(0, 28, display_lines[1]);
                 display->drawString(0, 40, display_lines[2]);
                 display->setTextAlignment(TEXT_ALIGN_CENTER);
-                display->drawString(64, 52, displayGenerateFooter(static_screen_count));
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
                 display->display();
             }
             if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
@@ -283,13 +295,17 @@ byte getLCDCols(){
 
 byte getLCDRows(){
     if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 2;
-    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) return 4;
+    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || display) return 4;
     return 0;
 
 };
 
-String getLCDHeader(){
-    String ret = String(next_display_count+1)+F("/")+String(static_screen_count+scheduler.countScreens());
+String getLCDHeader(bool longDisp) {
+    String ret = String(next_display_count + 1);
+    if (longDisp)
+        ret += F("/");
+    ret += String(static_screen_count + scheduler.countScreens());
+    ret += F(" ");
     return ret;
 };
 
