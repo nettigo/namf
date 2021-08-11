@@ -1103,6 +1103,17 @@ void webserver_status_page(void) {
     page_content.concat(FPSTR(EMPTY_ROW));
     page_content.concat(table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),""));
     page_content.concat(table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),""));
+    page_content.concat(FPSTR(EMPTY_ROW));
+    String dbg = F("");
+#ifdef DBG_NAMF_TIMES
+    dbg.concat("NAMF_TIMES ");
+#endif
+#ifdef DBG_NAMF_SDS_NO_DATA
+    dbg.concat("SDS_NO_DATA ");
+#endif
+
+    page_content.concat(table_row_from_value(F("DEBUG"),F("Debug options"), dbg, F("")));
+
     page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
     page_content.concat(make_footer());
 
