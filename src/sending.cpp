@@ -185,12 +185,14 @@ String create_influxdb_string(const String& data) {
                 tmp_str.concat(json2data["sensordatavalues"][i]["value"].as<char *>());
             data_4_influxdb.concat(tmp_str);
         }
+#ifdef DBG_NAMF_SDS_NO_DATA
         if (SDS011::enabled && (last_value_SDS_P1 == -1 || last_value_SDS_P2 == -1)) {
             data_4_influxdb.concat(F(",SDS_P1="));
             data_4_influxdb.concat(String(last_value_SDS_P1));
             data_4_influxdb.concat(F(",SDS_P2="));
             data_4_influxdb.concat(String(last_value_SDS_P2));
         }
+#endif
         data_4_influxdb.concat(F(",measurements="));
         data_4_influxdb.concat(String(count_sends+1));
         data_4_influxdb.concat(F(",free="));
