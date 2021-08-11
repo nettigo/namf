@@ -1045,8 +1045,8 @@ void webserver_status_page(void) {
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
     page_content.reserve(10000);
     getTimeHeadings(page_content);
-    page_content += F("<table cellspacing='0' border='1' cellpadding='5'>");
-    page_content += FPSTR(EMPTY_ROW);
+    page_content.concat(F("<table cellspacing='0' border='1' cellpadding='5'>"));
+    page_content.concat(FPSTR(EMPTY_ROW));
     String I2Clist = F("");
     for (uint8_t addr = 0x07; addr <= 0x7F; addr++) {
         // Address the device
@@ -1056,55 +1056,55 @@ void webserver_status_page(void) {
             I2Clist += F(", ");
         }
     }
-    page_content += table_row_from_value(F("I2C"), FPSTR(INTL_I2C_BUS), I2Clist, F(""));
+    page_content.concat(table_row_from_value(F("I2C"), FPSTR(INTL_I2C_BUS), I2Clist, F("")));
 
     SimpleScheduler::getStatusReport(page_content);
     // Check for ACK (detection of device), NACK or error
-    page_content += FPSTR(EMPTY_ROW);
+    page_content.concat(FPSTR(EMPTY_ROW));
     if (sntp_time_is_set) {
         time_t now = time(nullptr);
         String tmp = (ctime(&now));
-        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), tmp, F(""));
+        page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), tmp, F("")));
     } else {
-        page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), FPSTR(INTL_NTP_TIME_NOT_ACC),
-                                             F(""));
+        page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_NTP_TIME), FPSTR(INTL_NTP_TIME_NOT_ACC),
+                                             F("")));
     }
-    page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH), String(WiFi.RSSI()), "dBm");
-    page_content += table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%");
-    page_content += FPSTR(EMPTY_ROW);
-    page_content += table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), "");
-    page_content += table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), "");
-    page_content += table_row_from_value(F("NAM"), FPSTR(INTL_TIME_FROM_UPDATE), millisToTime(msSince(last_update_attempt)), "");
-    page_content += FPSTR(EMPTY_ROW);
-//    page_content += table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,"");
-    page_content += table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,"");
-    page_content += table_row_from_value(F("NAMF"),F("Free slots"), String(scheduler.freeSlots()) ,"");
+    page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH), String(WiFi.RSSI()), "dBm"));
+    page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%"));
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), ""));
+    page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
+    page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_TIME_FROM_UPDATE), millisToTime(msSince(last_update_attempt)), ""));
+    page_content.concat(FPSTR(EMPTY_ROW));
+//    page_content.concat(table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,""));
+    page_content.concat(table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,""));
+    page_content.concat(table_row_from_value(F("NAMF"),F("Free slots"), String(scheduler.freeSlots()) ,""));
 
-    page_content += table_row_from_value(F("NAMF"),F("Sensors"), scheduler.registeredNames() ,"");
+    page_content.concat(table_row_from_value(F("NAMF"),F("Sensors"), scheduler.registeredNames() ,""));
 #ifdef DBG_NAMF_TIMES
-    page_content += table_row_from_value(F("NAMF"),F("Max loop time <a style='display:inline;padding:initial' href='/time'>(reset)</a>"), String(scheduler.runTimeMax()) ,F("µs"));
-    page_content += table_row_from_value(F("NAMF"),F("Max time for"), scheduler.maxRunTimeSystemName() ,F(""));
-    page_content += table_row_from_value(F("NAMF"),F("Last loop time"), String(scheduler.lastRunTime()) ,F("µs"));
+    page_content.concat(table_row_from_value(F("NAMF"),F("Max loop time <a style='display:inline;padding:initial' href='/time'>(reset)</a>"), String(scheduler.runTimeMax()) ,F("µs")));
+    page_content.concat(table_row_from_value(F("NAMF"),F("Max time for"), scheduler.maxRunTimeSystemName() ,F("")));
+    page_content.concat(table_row_from_value(F("NAMF"),F("Last loop time"), String(scheduler.lastRunTime()) ,F("µs")));
 #endif
-    page_content += FPSTR(EMPTY_ROW);
-    page_content += table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),"");
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),""));
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
-    page_content += table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B");
+    page_content.concat(table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B"));
     tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
-    page_content += table_row_from_value(F("ESP"),F("Heap Fragmentation"), tmp,"%");
+    page_content.concat(table_row_from_value(F("ESP"),F("Heap Fragmentation"), tmp,"%"));
     tmp = String(memoryStatsMin.freeContStack) + String("/") + String(memoryStatsMax.freeContStack);
-    page_content += table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B");
+    page_content.concat(table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B"));
     tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
-    page_content += table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B");
-    page_content += table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),"");
-    page_content += table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),"");
-    page_content += table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz");
-    page_content += table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),"");
-    page_content += FPSTR(EMPTY_ROW);
-    page_content += table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),"");
-    page_content += table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),"");
-    page_content += FPSTR(TABLE_TAG_CLOSE_BR);
-    page_content += make_footer();
+    page_content.concat(table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B"));
+    page_content.concat(table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),""));
+    page_content.concat(table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),""));
+    page_content.concat(table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz"));
+    page_content.concat(table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),""));
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),""));
+    page_content.concat(table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),""));
+    page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
+    page_content.concat(make_footer());
 
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 
