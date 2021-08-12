@@ -27,6 +27,7 @@ namespace BME280 {
     void resultsAsHTML(String &);
     void afterSend(bool status);
     void sendToLD();
+    bool isEnabled();
 
 
 }

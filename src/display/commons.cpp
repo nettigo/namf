@@ -105,7 +105,7 @@ void display_values() {
     if (cfg::pms_read) {
         screens[static_screen_count++] = DisplayPages::PagePM;
     }
-    if (cfg::dht_read || cfg::ds18b20_read || cfg::bmp280_read || cfg::bme280_read) {
+    if (cfg::dht_read || cfg::ds18b20_read || BME280::isEnabled()) {
         screens[static_screen_count++] = DisplayPages::PageTemp;
     }
     if (cfg::gps_read) {
