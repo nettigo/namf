@@ -13,9 +13,6 @@
  * Note that the names of these variables can't be easily changed *
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
-unsigned SDSreadings = 0;
-unsigned SDSfailedReadings = 0;
-
 namespace cfg {
     char wlanssid[35] = WLANSSID;
     char wlanpwd[65] = WLANPWD;
@@ -32,7 +29,6 @@ namespace cfg {
 
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;
-
     bool pms_read = PMS_READ;
     bool bmp280_read = BMP280_READ;
     bool bme280_read = BME280_READ;

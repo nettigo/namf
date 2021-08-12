@@ -66,7 +66,6 @@ namespace cfg {
     extern bool send2influx;
     extern bool send2csv;
     extern bool auto_update;
-    extern bool has_display;
     extern u8_t update_channel;
     extern bool has_display;
     extern bool has_lcd1602;
@@ -105,12 +104,18 @@ namespace cfg {
 
 
 
-enum class PmSensorCmd;
+typedef enum  {
+    Start,
+    Stop,
+    ContinuousMode,
+    VersionDate,
+    None
+}PmSensorCmd;
+
 extern char *basic_auth_influx ;
 extern char *basic_auth_custom ;
 
 extern long int sample_count ;
-extern bool bmp280_init_failed ;
 extern bool bme280_init_failed ;
 extern bool heca_init_failed ;
 
@@ -128,11 +133,6 @@ extern LiquidCrystal_I2C * char_lcd;
  *****************************************************************/
 extern SoftwareSerial serialSDS;
 extern SoftwareSerial serialGPS;
-
-/*****************************************************************
- * HECA (SHT30) declaration                                            *
- *****************************************************************/
-extern ClosedCube_SHT31D heca;
 
 /*****************************************************************
  * DS18B20 declaration                                            *
