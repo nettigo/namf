@@ -180,11 +180,11 @@ String getConfigString(boolean maskPwd = false) {
     json_string += Var2Json(F("fs_pwd"), fs_pwd);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
-    copyToJSON_Bool(sds_read);
+//    copyToJSON_Bool(sds_read);
     copyToJSON_Bool(pms_read);
 //    copyToJSON_Bool(bmp280_read);
-    copyToJSON_Bool(bme280_read);
-    copyToJSON_Bool(heca_read);
+//    copyToJSON_Bool(bme280_read);
+//    copyToJSON_Bool(heca_read);
     copyToJSON_Bool(ds18b20_read);
     copyToJSON_Bool(gps_read);
     copyToJSON_Bool(send2dusti);

@@ -88,7 +88,7 @@ void display_values() {
         p_value = last_value_BMP280_P;
         p_sensor = FPSTR(SENSORS_BMP280);
     }
-    if (cfg::bme280_read) {
+    if (BME280::isEnabled()) {
         t_value = last_value_BME280_T;
         t_sensor = FPSTR(SENSORS_BME280);
         h_value = last_value_BME280_H;
