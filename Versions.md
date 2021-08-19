@@ -1,11 +1,7 @@
+NAMF-2020-38 (2021-08-20 )
+
 NAMF-2020-38rc18 (2021-08-13 rev 9a35fdcdec50b2d84e13c0b1b70b1dccf6f45998)
 * this is true pre-stable release. Since there are a lot of changes compared to NAMF-2020-37 this build is test before release (debug settings are identical as in stable, to get 100% there are no problems with fw) 
-
-NAMF-2020-37a (2021-06-04)
-* collect SDS statistics when checking for an update
-
-NAMF-2020-37 (2021-04-27)
-* Merged all beta releases (37rcX)
 
 NAMF-2020-38rc17 (2021-08-06 rev a3233a0ad6292fa76d9246f99ad2b211aa0d2f01)
 * BME280 support moved into new scheduler
@@ -48,7 +44,10 @@ NAMF-2020-38rc10 (2021-06-15) (typo in version number, binary built with 39 not 
 NAMF-2020-38rc9 (2021-06-07)
 * old (2019 line) code for sending SDS commands (diagnosing SDS problems)
 
-NAMF-2020-38rc8 (2021-06-04)
+NAMF-2020-37a (2021-06-04)
+* collect SDS statistics when checking for an update
+
+* NAMF-2020-38rc8 (2021-06-04)
 * fixed update check interval for beta channel
 
 NAMF-2020-38rc7 (2021-05-26)
