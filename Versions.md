@@ -1,4 +1,9 @@
+NAMF-2020-40rc1 (2021-08-23)
+ * Why 40 not 39? 39 was used in alpha fw line and uses different SDS library. We have decided to use code from 38 branch. To avoid confusion 39 is skipped
+ * Bigger SerialSDS buffer to fit PMS sensor response
+
 NAMF-2020-38 (2021-08-20 rev 7fd0940d7453374cd59bf138edfebd840179a224)
+* 38rc18 only with changed version number
 
 NAMF-2020-38rc18 (2021-08-13 rev 9a35fdcdec50b2d84e13c0b1b70b1dccf6f45998)
 * this is true pre-stable release. Since there are a lot of changes compared to NAMF-2020-37 this build is test before release (debug settings are identical as in stable, to get 100% there are no problems with fw) 
