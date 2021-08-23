@@ -1,4 +1,4 @@
-NAMF-2020-38 (2021-08-20 )
+NAMF-2020-38 (2021-08-20 rev 7fd0940d7453374cd59bf138edfebd840179a224)
 
 NAMF-2020-38rc18 (2021-08-13 rev 9a35fdcdec50b2d84e13c0b1b70b1dccf6f45998)
 * this is true pre-stable release. Since there are a lot of changes compared to NAMF-2020-37 this build is test before release (debug settings are identical as in stable, to get 100% there are no problems with fw) 
