@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-40rc1"
+#define SOFTWARE_VERSION  "NAMF-2020-40rc2"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"

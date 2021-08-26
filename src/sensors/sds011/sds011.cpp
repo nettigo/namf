@@ -518,7 +518,6 @@ namespace SDS011 {
     void sendToLD() {
         if (!enabled) return;
         if (sensorState == AFTER_READING) {
-            updateState(OFF);
             const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
             String data;
             results(data);
@@ -530,6 +529,9 @@ namespace SDS011 {
         }
     }
 
+    void afterSend (bool status) {
+        updateState(OFF);
+    }
     void getStatusReport(String &res) {
         if (!enabled) return;
 

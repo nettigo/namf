@@ -49,6 +49,7 @@ namespace SimpleScheduler {
     //did all API collect data?
     void afterSendData(bool status) {
         HECA::afterSend(status);
+        SDS011::afterSend(status);
         SPS30::afterSend(status);
         SHT3x::afterSend(status);
         MHZ14A::afterSend(status);

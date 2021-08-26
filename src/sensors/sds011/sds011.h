@@ -60,6 +60,8 @@ namespace SDS011 {
 
     String sds_internals();
 
+    void afterSend(bool);
+
     /*****************************************************************
  * read SDS011 sensor serial and firmware date                   *
  *****************************************************************/
