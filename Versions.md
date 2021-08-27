@@ -1,9 +1,10 @@
-NAMF-2020-40rc1 (2021-08-23)
- * Why 40 not 39? 39 was used in alpha fw line and uses different SDS library. We have decided to use code from 38 branch. To avoid confusion 39 is skipped
- * Bigger SerialSDS buffer to fit PMS sensor response
-
-NAMF-2020-40rc2 ()
+NAMF-2020-40rc2 (2021-08-27 rev)
 * fixed measurements reading from SDS when NAM is not sending data to SensorCommunity
+* new way to set enabled sensors when no config file. Will allow to run PMS sensor.
+  
+* NAMF-2020-40rc1 (2021-08-23)
+* Why 40 not 39? 39 was used in alpha fw line and uses different SDS library. We have decided to use code from 38 branch. To avoid confusion 39 is skipped
+* Bigger SerialSDS buffer to fit PMS sensor response
 
 * NAMF-2020-40rc1 (2021-08-23)
 * Why 40 not 39? 39 was used in alpha fw line and uses different SDS library. We have decided to use code from 38 branch. To avoid confusion 39 is skipped
