@@ -24,6 +24,11 @@ namespace BMPx80 {
     SensorType currentSensor = NONE;
 
 
+    //ser defaults
+    void setDefaults(void) {
+        enabled = true;
+    }
+
     /*****************************************************************
      * Init BMP280                                                   *
      *****************************************************************/

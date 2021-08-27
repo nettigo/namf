@@ -17,7 +17,11 @@ namespace HECA {
     double rh_total, t_total;
     unsigned dataCount, dutyCycleCount, dutyCycleValT, dutyCycleValRH, dutyCycleTotal;
 
-
+    //set defaults if no config file
+    void setDefaults(void) {
+        enabled = true;
+        printOnLCD = true;
+    }
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);

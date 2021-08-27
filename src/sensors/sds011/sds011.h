@@ -30,6 +30,9 @@ namespace SDS011 {
     /*****************************************************************
  * send SDS011 command (start, stop, continuous mode, version    *
  *****************************************************************/
+
+    void setDefaults();
+
     void SDS_rawcmd(const uint8_t cmd_head1, const uint8_t cmd_head2, const uint8_t cmd_head3);
 
     bool SDS_cmd(PmSensorCmd cmd);

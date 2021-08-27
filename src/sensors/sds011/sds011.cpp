@@ -86,6 +86,11 @@ namespace SDS011 {
         }
     }
 
+    //set default values
+    void setDefaults(void) {
+        enabled = true;
+        printOnLCD = true;
+    }
 
     //change state and store timestamp
     void updateState(SDS011State newState) {

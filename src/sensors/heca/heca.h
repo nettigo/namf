@@ -33,6 +33,7 @@ namespace HECA {
     bool getDisplaySetting();
     bool display(byte rows, byte minor, String lines[]);
     float getDutyCycle();
+    void setDefaults(void);
 }
 
 #endif //NAMF_HECA_H

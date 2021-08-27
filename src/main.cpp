@@ -83,6 +83,14 @@ void disable_unneeded_nmea() {
 	serialGPS.println(F("$PUBX,40,VTG,0,0,0,0*5E"));       // Track made good and ground speed
 }
 
+void setDefaultConfig(void) {
+    SDS011::setDefaults();
+    HECA::setDefaults();
+    BMPx80::setDefaults();
+
+
+}
+
 /*****************************************************************
  * read config from spiffs                                       *
  *****************************************************************/
@@ -100,9 +108,11 @@ void readConfig() {
                 debug_out(F("Config parsed and loaded"), DEBUG_MIN_INFO, true);
             }else{
                 debug_out(F("FAILED config parsing and loading"), DEBUG_ERROR, true);
+                setDefaultConfig();
             };
 		} else {
 			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
+			setDefaultConfig();
 		}
 	} else {
 		debug_out(F("failed to mount FS"), DEBUG_ERROR, 1);
