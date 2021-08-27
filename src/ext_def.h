@@ -92,7 +92,7 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define DHT_API_PIN 7
 
 // SDS011, der etwas teuerere Feinstaubsensor
-#define SDS_READ 1
+#define SDS_READ 0
 #define SDS_API_PIN 1
 
 // PMS1003, PMS300, 3PMS5003, PMS6003, PMS7003
@@ -104,11 +104,11 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define BMP280_API_PIN 3
 
 // BME280, temperature, humidity, pressure
-#define BME280_READ 1
+#define BME280_READ 0
 #define BME280_API_PIN 11
 
 // HECA (SHT30), temperature, pressure
-#define HECA_READ 1
+#define HECA_READ 0
 #define HECA_API_PIN 7
 
 #define WINSEN_MHZ14A_READ 0
