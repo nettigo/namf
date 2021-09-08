@@ -129,8 +129,8 @@ namespace SHT3x {
             page_content.concat(FPSTR(INTL_SHT3X_RESULTS));
             page_content.concat(F("</td></tr>\n"));
 
-            page_content.concat(table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_TEMP), String(currentTemp()), F(" °C")));
-            page_content.concat(table_row_from_value(F("SHT30"), FPSTR(INTL_SHT3x_HUM), String(currentRH()), F(" %")));
+            page_content.concat(table_row_from_value(F("SHT3x"), FPSTR(INTL_SHT3x_TEMP), String(currentTemp()), F(" °C")));
+            page_content.concat(table_row_from_value(F("SHT3x"), FPSTR(INTL_SHT3x_HUM), String(currentRH()), F(" %")));
 
         }
     }
