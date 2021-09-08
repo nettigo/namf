@@ -1,3 +1,6 @@
+NAMF-2020-40rc3 (2021-09-08)
+* make sure all sensors are enabled by default for fresh sensor
+
 NAMF-2020-40rc2 (2021-08-27 rev)
 * fixed measurements reading from SDS when NAM is not sending data to SensorCommunity
 * new way to set enabled sensors when no config file. Will allow to run PMS sensor.
