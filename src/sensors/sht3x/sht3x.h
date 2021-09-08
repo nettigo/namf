@@ -27,6 +27,7 @@ namespace SHT3x {
     extern void afterSend(bool success);
     extern void display(byte, byte, String[]);
     bool getDisplaySetting();
+    void setDefaults();
 
     }
 #endif //NAMF_SHT3X_H

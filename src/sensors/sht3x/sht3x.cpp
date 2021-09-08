@@ -146,6 +146,12 @@ namespace SHT3x {
 
     };
 
+    //enable sensor if no config file
+    void setDefaults(){
+        enabled = true;
+        printOnLCD = true;
+    };
+
     void results(String &s) {
         if (!enabled || cnt == 0) { return; }
         String tmp;
