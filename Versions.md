@@ -12,10 +12,6 @@ NAMF-2020-40rc2 (2021-08-27 rev 52a7388b8f17a4ca54271ce8901959fe837d78bd)
 * Why 40 not 39? 39 was used in alpha fw line and uses different SDS library. We have decided to use code from 38 branch. To avoid confusion 39 is skipped
 * Bigger SerialSDS buffer to fit PMS sensor response
 
-* NAMF-2020-40rc1 (2021-08-23)
-* Why 40 not 39? 39 was used in alpha fw line and uses different SDS library. We have decided to use code from 38 branch. To avoid confusion 39 is skipped
-* Bigger SerialSDS buffer to fit PMS sensor response
-
 NAMF-2020-38 (2021-08-20 rev 7fd0940d7453374cd59bf138edfebd840179a224)
 * 38rc18 only with changed version number
 
