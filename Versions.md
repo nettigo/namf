@@ -1,4 +1,4 @@
-NAMF-2020-40 (2021-09-09 rev)
+NAMF-2020-40 (2021-09-09 rev 2e2b1058652885059ca7f0b205fb1bbbfa4ba977)
 * this is release based on 40rc3 
 
 NAMF-2020-40rc3 (2021-09-08 rev bca0cddde30475881515ed46b054543f95cf7e65)
