@@ -1,3 +1,6 @@
+NAMF-2020-40 (2021-09-09 rev)
+* this is release based on 40rc3 
+
 NAMF-2020-40rc3 (2021-09-08 rev bca0cddde30475881515ed46b054543f95cf7e65)
 * make sure all sensors are enabled by default for fresh sensor
 
