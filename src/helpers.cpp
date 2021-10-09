@@ -220,6 +220,9 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(send2influx);
     json_string += Var2Json(F("host_influx"), host_influx);
     json_string += Var2Json(F("url_influx"), url_influx);
+
+    json_string.concat(Var2Json(F("UUID"), UUID));
+
     copyToJSON_Int(port_influx);
     json_string += Var2Json(F("user_influx"), user_influx);
     json_string += Var2Json(F("pwd_influx"), pwd_influx);
@@ -330,11 +333,14 @@ int readAndParseConfigFile(File configFile) {
                 host_influx = F("");
                 send2influx = 0;
             }
+
+            if (json.containsKey(F("UUID"))) UUID = json.get<String>(F("UUID"));
+
             configFile.close();
             if (pms24_read || pms32_read) {
                 pms_read = 1;
                 writeConfig();
-            }
+            };
 #undef setFromJSON
 #undef strcpyFromJSON
             //Sensor configs from simple scheduler

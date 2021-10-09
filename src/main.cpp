@@ -21,6 +21,7 @@
 #include <time.h>
 #include <coredecls.h>
 #include <assert.h>
+#include "system/reporting.h"
 
 #include "html-content.h"
 #include "webserver.h"
@@ -791,7 +792,7 @@ static bool acquireNetworkTime() {
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
-    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
+    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 32);
 
     schedule_recurrent_function_us([]() {
         serialSDS.perform_work();
@@ -860,6 +861,7 @@ void setup() {
         if(cfg::auto_update) {
             updateFW();
         }
+        Reporting::reportBoot();
     } else {
         startAP();
     }

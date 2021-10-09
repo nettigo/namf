@@ -72,6 +72,9 @@ namespace cfg {
     String host_influx = FPSTR(HOST_INFLUX);
     String url_influx = FPSTR(URL_INFLUX);
 
+    String UUID;
+
+
     unsigned long time_for_wifi_config = 600000;
     unsigned long sending_intervall_ms = 145000;
 

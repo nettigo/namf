@@ -8,7 +8,7 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-40"
+#define SOFTWARE_VERSION  "NAMF-2020-41rc1"
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -95,6 +95,7 @@ namespace cfg {
     extern String host_influx;
     extern String url_influx;
 
+    extern String UUID;
     extern unsigned long time_for_wifi_config;
     extern unsigned long sending_intervall_ms;
 
