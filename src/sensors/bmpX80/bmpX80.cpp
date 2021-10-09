@@ -260,6 +260,7 @@ namespace BMPx80 {
                 readFromSensor();
                 return 5000;
         }
+        return 10000;
 
     }
 

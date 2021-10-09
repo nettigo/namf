@@ -205,6 +205,7 @@ namespace BME280 {
                 if (sampleCount >= SAMPLE_SIZE) return left;  // we are full wait till period end
                 return interval();
         }
+        return 10000;
 
     }
 
