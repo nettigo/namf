@@ -827,6 +827,7 @@ void setup() {
 
     readConfig();
     resetMemoryStats();
+    Reporting::setupHomePhone();
 
     init_display();
     init_lcd();
@@ -1167,6 +1168,7 @@ void loop() {
 	}
 	delay(1);
     collectMemStats();
+    Reporting::homePhone();
 #endif
 //	if (sample_count % 500 == 0) { Serial.println(ESP.getFreeHeap(),DEC); }
 }

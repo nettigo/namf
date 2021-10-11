@@ -83,7 +83,7 @@ String sds_report() {
     String ret = F("");
     if (SDS011::enabled || cfg::sds_read) {
         ret += String(SDS011::failedReadings) + String(F("-")) + String(SDS011::readings);
-        SDS011::failedReadings = SDS011::readings = 0;
+//        SDS011::failedReadings = SDS011::readings = 0;
     } else {
         ret += F("na-na");
     }

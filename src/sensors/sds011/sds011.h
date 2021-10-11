@@ -25,6 +25,10 @@ namespace SDS011 {
 
     extern unsigned readings;
     extern unsigned failedReadings;
+    extern bool hardwareWatchdog;
+    extern byte hwWtdgCycles; //how many times watchdog took action
+    extern unsigned long hwWtdgErrors;
+
 
 
     /*****************************************************************

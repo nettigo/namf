@@ -6,10 +6,41 @@
 #define NAMF_REPORTING_H
 
 #include "helpers.h"
+#include "sensors/sds011.h"
 
 namespace Reporting {
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
     const unsigned reportingHostPort PROGMEM = 80;
+    unsigned long lastPhone = 0;
+    bool first = true;
+
+    //we are using the same code in main loop, but in main namespace we are collecting stats for one
+    //measurement period, here we are collecting for 24 hrs, and just those min/max are sending
+    memory_stat_t memoryStatsMax;
+    memory_stat_t memoryStatsMin;
+
+    void resetMemoryStats() {
+        memoryStatsMax = memory_stat_t{0,0,0, 0};
+        memoryStatsMin = memory_stat_t{UINT32_MAX, UINT16_MAX, UINT8_MAX, UINT32_MAX};
+    }
+    void collectMemStats() {
+        memory_stat_t memoryStats;
+        ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
+
+        if (memoryStats.freeHeap > memoryStatsMax.freeHeap)             memoryStatsMax.freeHeap  = memoryStats.freeHeap;
+        if (memoryStats.maxFreeBlock > memoryStatsMax.maxFreeBlock)     memoryStatsMax.maxFreeBlock  = memoryStats.maxFreeBlock;
+        if (memoryStats.frag > memoryStatsMax.frag)                     memoryStatsMax.frag  = memoryStats.frag;
+
+        if (memoryStats.freeHeap < memoryStatsMin.freeHeap)             memoryStatsMin.freeHeap  = memoryStats.freeHeap;
+        if (memoryStats.maxFreeBlock < memoryStatsMin.maxFreeBlock)     memoryStatsMin.maxFreeBlock  = memoryStats.maxFreeBlock;
+        if (memoryStats.frag < memoryStatsMin.frag)                     memoryStatsMin.frag  = memoryStats.frag;
+
+        uint32_t cont = ESP.getFreeContStack();
+        if (cont > memoryStatsMax.freeContStack)                     memoryStatsMax.freeContStack  = cont;
+        if (cont < memoryStatsMin.freeContStack)                     memoryStatsMin.freeContStack  = cont;
+
+
+    }
 
     void registerSensor() {
         WiFiClient client;
@@ -53,10 +84,10 @@ namespace Reporting {
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
         http.addHeader("Content-Type", "application/json");
 
-        Serial.println(body);
+//        Serial.println(body);
         int httpCode = http.POST(body);
-        Serial.println(httpCode);
-        //server does not have such UUID. Database
+//        Serial.println(httpCode);
+        //server does not have such UUID. Database reset or something other, just re-register next time
         if (httpCode == HTTP_CODE_NOT_FOUND) {
             cfg::UUID = F("");
             writeConfig();
@@ -64,7 +95,60 @@ namespace Reporting {
         }
 
 
+    }
 
+    void setupHomePhone() {
+        resetMemoryStats();
+    }
+
+    void homePhone() {
+        collectMemStats();
+
+        if (
+                (first && millis() - lastPhone > 3 * 60 * 1000) ||
+                millis() - lastPhone > 1*60*60*1000
+        ) {
+            first = false;
+            WiFiClient client;
+            HTTPClient http;
+
+            String body = F("{");
+            body.reserve(1024);
+            if (SDS011::enabled) {
+                body.concat(F("\"SDS\":{"));
+                body.concat(Var2Json(F("failed"), String(SDS011::failedReadings)));
+                body.concat(Var2Json(F("rd"), String(SDS011::readings)));
+                if (SDS011::hardwareWatchdog) {
+                    body.concat(Var2Json(F("wtgCycles"), String(SDS011::hwWtdgCycles)));
+                    body.concat(Var2Json(F("wtgErrs"), String(SDS011::hwWtdgErrors)));
+
+                }
+                SDS011::failedReadings = SDS011::readings = 0;
+
+                body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
+                body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
+
+                Reporting::resetMemoryStats();
+
+                body.remove(body.length() - 1);
+                body.concat(F("},"));
+
+
+            }
+
+            body.remove(body.length() - 1);
+            body.concat(F("}"));
+            String uri = F("/store/");
+            uri.concat(cfg::UUID);
+            http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
+            http.addHeader("Content-Type", "application/json");
+
+            Serial.println(body);
+            int httpCode = http.POST(body);
+            Serial.println(httpCode);
+            //server does not have such UUID. Database reset or something other, just re-register next time
+            lastPhone = millis();
+        }
     }
 
 }
