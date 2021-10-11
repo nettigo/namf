@@ -7,22 +7,37 @@
 
 #include "helpers.h"
 #include "sensors/sds011.h"
+#include <ESP8266WiFi.h>
 
 namespace Reporting {
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
     const unsigned reportingHostPort PROGMEM = 80;
     unsigned long lastPhone = 0;
+    unsigned long lastPeriodicCheck = 0;
     bool first = true;
+    int8_t minRSSI = 255;
+    int8_t maxRSSI = 0;
+#define RPRT_PERIODIC_CHECK_INTERVAL    1000
+
 
     //we are using the same code in main loop, but in main namespace we are collecting stats for one
     //measurement period, here we are collecting for 24 hrs, and just those min/max are sending
     memory_stat_t memoryStatsMax;
     memory_stat_t memoryStatsMin;
 
-    void resetMemoryStats() {
+    void resetMinMaxStats() {
         memoryStatsMax = memory_stat_t{0,0,0, 0};
         memoryStatsMin = memory_stat_t{UINT32_MAX, UINT16_MAX, UINT8_MAX, UINT32_MAX};
+        maxRSSI = -128;
+        minRSSI = 127;
     }
+
+    void collectPeriodicStats(){
+        byte rssi = WiFi.RSSI();
+        if (rssi > maxRSSI) maxRSSI = rssi;
+        if (rssi < minRSSI) minRSSI = rssi;
+    }
+
     void collectMemStats() {
         memory_stat_t memoryStats;
         ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
@@ -98,15 +113,20 @@ namespace Reporting {
     }
 
     void setupHomePhone() {
-        resetMemoryStats();
+        resetMinMaxStats();
     }
 
     void homePhone() {
         collectMemStats();
 
+        if (millis() - lastPeriodicCheck > RPRT_PERIODIC_CHECK_INTERVAL) {
+            collectPeriodicStats();
+            lastPeriodicCheck = millis();
+        }
+
         if (
-                (first && millis() - lastPhone > 3 * 60 * 1000) ||
-                millis() - lastPhone > 1*60*60*1000
+                (first && millis() - lastPhone > 4 * 60 * 1000) ||
+                millis() - lastPhone > ONE_DAY_IN_MS
         ) {
             first = false;
             WiFiClient client;
@@ -127,8 +147,10 @@ namespace Reporting {
 
                 body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
                 body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
+                body.concat(Var2Json(F("minRSSI"),minRSSI));
+                body.concat(Var2Json(F("maxRSSI"),maxRSSI));
 
-                Reporting::resetMemoryStats();
+                Reporting::resetMinMaxStats();
 
                 body.remove(body.length() - 1);
                 body.concat(F("},"));
