@@ -8,8 +8,8 @@
 #include "helpers.h"
 
 namespace Reporting {
-    const char reportingHost[] PROGMEM = "192.168.1.206";
-    const unsigned reportingHostPort PROGMEM = 8080;
+    const char reportingHost[] PROGMEM = "et.nettigo.pl";
+    const unsigned reportingHostPort PROGMEM = 80;
 
     void registerSensor() {
         WiFiClient client;
@@ -31,11 +31,7 @@ namespace Reporting {
     }
 
     void reportBoot() {
-        Serial.println(F("Reprot boot"));
-
         debug_out(F("Report boot..."), DEBUG_MED_INFO);
-        Serial.println(cfg::UUID);
-        Serial.println(cfg::UUID.length());
         if (cfg::UUID.length() < 36) { registerSensor(); }
         if (cfg::UUID.length() < 36) { return; } //failed register
         WiFiClient client;
@@ -46,6 +42,7 @@ namespace Reporting {
         body.concat(Var2Json(F("VER"), SOFTWARE_VERSION));
         body.concat(Var2Json(F("MD5"), ESP.getSketchMD5()));
         body.concat(Var2Json(F("resetReason"), ESP.getResetReason()));
+        body.concat(Var2Json(F("enabledSubsystems"), scheduler.registeredNames()));
         body.remove(body.length() - 1);
         body.concat(F("}"));
 
@@ -57,8 +54,12 @@ namespace Reporting {
         Serial.println(body);
         int httpCode = http.POST(body);
         Serial.println(httpCode);
-        String resp = http.getString();
-        Serial.println(resp);
+        //server does not have such UUID. Database
+        if (httpCode == HTTP_CODE_NOT_FOUND) {
+            cfg::UUID = F("");
+            writeConfig();
+            //well, next time
+        }
 
 
 
