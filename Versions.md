@@ -1,3 +1,6 @@
+NAMF-2020-41rc1 (2021-10-11 rev)
+* we start with diagnostic data collection, opt-out will be possible, now just sending data on sensor boot
+
 NAMF-2020-40 (2021-09-09 rev 2e2b1058652885059ca7f0b205fb1bbbfa4ba977)
 * this is release based on 40rc3 
 
