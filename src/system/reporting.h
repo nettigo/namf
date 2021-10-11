@@ -43,6 +43,8 @@ namespace Reporting {
         body.concat(Var2Json(F("MD5"), ESP.getSketchMD5()));
         body.concat(Var2Json(F("resetReason"), ESP.getResetReason()));
         body.concat(Var2Json(F("enabledSubsystems"), scheduler.registeredNames()));
+        body.concat(Var2Json(F("updateChannel"), cfg::update_channel));
+        body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));
         body.remove(body.length() - 1);
         body.concat(F("}"));
 
