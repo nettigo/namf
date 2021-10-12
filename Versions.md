@@ -1,9 +1,10 @@
-NAMF-2020-41rc2 (2021-10-12 rev )
+NAMF-2020-41rc2 (2021-10-12 rev 0102e07f4cb2f087c3cb0f6e9e4ae520d62642cd)
 * more diagnostic data is sent to Nettigo
 * probably regression on Winsen sensor should be fixed
 
 NAMF-2020-41rc1 (2021-10-11 rev d14fcf4f4708e383e1aef072631061fa2d6ab34b)
 * we start with diagnostic data collection, opt-out will be possible, now just sending data on sensor boot
+* new Platformio Espressif Core (3.2.0) with Arduino Core 3.0.2
 
 NAMF-2020-40 (2021-09-09 rev 2e2b1058652885059ca7f0b205fb1bbbfa4ba977)
 * this is release based on 40rc3 
