@@ -1,3 +1,7 @@
+NAMF-2020-41rc2 (2021-10-12 rev )
+* more diagnostic data is sent to Nettigo
+* probably regression on Winsen sensor should be fixed
+
 NAMF-2020-41rc1 (2021-10-11 rev d14fcf4f4708e383e1aef072631061fa2d6ab34b)
 * we start with diagnostic data collection, opt-out will be possible, now just sending data on sensor boot
 
