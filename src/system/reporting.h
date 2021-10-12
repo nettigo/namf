@@ -125,8 +125,8 @@ namespace Reporting {
         }
 
         if (
-                (first && millis() - lastPhone > 4 * 60 * 1000) ||
-                millis() - lastPhone > ONE_DAY_IN_MS
+                (first && millis() - lastPhone > 15 * 60 * 1000) ||
+                millis() - lastPhone > 8 * 60 * 1000
         ) {
             first = false;
             WiFiClient client;
