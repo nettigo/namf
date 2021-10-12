@@ -792,7 +792,7 @@ static bool acquireNetworkTime() {
 void setup() {
     Serial.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
-    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 32);
+    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
 
     schedule_recurrent_function_us([]() {
         serialSDS.perform_work();
