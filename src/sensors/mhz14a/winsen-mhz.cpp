@@ -267,6 +267,9 @@ namespace MHZ14A {
         unsigned int co2, temp;
         static unsigned long lastRead = millis();
         static unsigned long interval = cfg::sending_intervall_ms / (WINSEN_AVG_SAMPLE + 2);
+//        Serial.println(samplesCount);
+//        Serial.println(millis() - lastRead);
+//        Serial.println(interval);
         if (samplesCount<WINSEN_AVG_SAMPLE && millis() - lastRead > interval)
             if (read_temp_co2(serial, &co2, &temp)) {
 //            debug_out(String("read Winsen"), DEBUG_MIN_INFO, true);

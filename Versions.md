@@ -1,6 +1,7 @@
 NAMF-2020-41rc3 (2021-10-13 rev )
 * going back to Espressif 2.6.2 - memory problems when building /config page
 * fixed interval in reporting diagnostic data
+* fix for Winsen MHZ14A - does now send data
 
 NAMF-2020-41rc2 (2021-10-12 rev 0102e07f4cb2f087c3cb0f6e9e4ae520d62642cd)
 * more diagnostic data is sent to Nettigo
