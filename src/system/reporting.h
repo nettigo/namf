@@ -33,7 +33,7 @@ namespace Reporting {
     }
 
     void collectPeriodicStats(){
-        byte rssi = WiFi.RSSI();
+        int8_t rssi = WiFi.RSSI();
         if (rssi > maxRSSI) maxRSSI = rssi;
         if (rssi < minRSSI) minRSSI = rssi;
     }
