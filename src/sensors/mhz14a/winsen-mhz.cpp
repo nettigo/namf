@@ -240,6 +240,9 @@ namespace MHZ14A {
             sprintf(raw, "RAW: %02X %02X %02X %02X %02X %02X", data[0], data[1], data[2], data[3],
                     data[4], data[5]);
             Serial.println(raw);
+            Serial.print(*temp);
+            Serial.print(F(" "));
+            Serial.println(*co2);
 #endif
         }
         return result;
@@ -254,6 +257,9 @@ namespace MHZ14A {
         serial.begin(9600);
         set_range(serial, RANGE_2K);
         samples = new unsigned int[WINSEN_AVG_SAMPLE];
+        if (samples == nullptr) {
+            debug_out(F("MHZ14A - no array for data"), DEBUG_ERROR);
+        }
         samplesCount = 0;
     }
 
@@ -261,14 +267,13 @@ namespace MHZ14A {
         unsigned int co2, temp;
         static unsigned long lastRead = millis();
         static unsigned long interval = cfg::sending_intervall_ms / (WINSEN_AVG_SAMPLE + 2);
-        static byte index = 0;
-        if (millis() - lastRead > interval)
+        if (samplesCount<WINSEN_AVG_SAMPLE && millis() - lastRead > interval)
             if (read_temp_co2(serial, &co2, &temp)) {
 //            debug_out(String("read Winsen"), DEBUG_MIN_INFO, true);
                 lastRead = millis();
-                samples[index++] = co2;
+                samples[samplesCount++] = co2;
                 last_value_WINSEN_CO2 = co2;
-                if (index >= WINSEN_AVG_SAMPLE) index = 0;
+
             } //else debug_out(String("**** NO read Winsen"), DEBUG_MIN_INFO, true);
     }
 
@@ -277,15 +282,21 @@ namespace MHZ14A {
         samplesCount = 0;
     }
 
+    float currentReading() {
+        unsigned long sum = 0;
+        if (samplesCount == 0) return 0;
+
+        for (byte i = 0; i < samplesCount; i++)
+            sum += samples[i];
+        return sum /(float)samplesCount;
+    }
+
     String sensorMHZ() {
         String s;
-        unsigned long sum = 0;
         if (!samples || samplesCount == 0)
-            return s;
-        for (byte i = 0; i < WINSEN_AVG_SAMPLE; i++)
-            sum += samples[i];
-        if (sum > 0) {
-            s += Value2Json(F("conc_co2_ppm"), String(sum / WINSEN_AVG_SAMPLE));
+        return s;
+        if (currentReading() > 0) {
+            s += Value2Json(F("conc_co2_ppm"), String(currentReading()));
         }
         return s;
     }
