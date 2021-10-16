@@ -90,6 +90,8 @@ namespace SimpleScheduler {
                 return NetworkWatchdog::getConfigHTML();
             case SimpleScheduler::SHT3x:
                 return SHT3x::getConfigHTML();
+            case SimpleScheduler::BMPx80:
+                return BMPx80::getConfigHTML();
             default:
                 return s;
         }

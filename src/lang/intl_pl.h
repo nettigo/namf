@@ -38,6 +38,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/bme280/bme280_pl.lang */ const char INTL_BME280_DESC[] PROGMEM = "BME280 sensor temperatury/ciśnienia/wilgotności.";
 /* ./src/lang/intl_pl.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
 /* ./src/sensors/bmpX80/bmpX80_pl.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 sensor temperatury/ciśnienia.";
+/* ./src/sensors/bmpX80/bmpX80_pl.lang */ const char INTL_BMPx80_INSIDE[] PROGMEM = "Sensor wewnątrz obudowy (nie uwzględniaj temperatury)";
 /* ./src/lang/intl_pl.lang */ const char INTL_CANCEL[] PROGMEM = "Anuluj";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Konfiguracja";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION_DELETE[] PROGMEM = "Usunięcie konfiguracji";

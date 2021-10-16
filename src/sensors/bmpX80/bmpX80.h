@@ -29,6 +29,7 @@ namespace BMPx80 {
     void afterSend(bool status);
     void sendToLD();
     void setDefaults(void);
+    String getConfigHTML(void);
 
 
 }

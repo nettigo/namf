@@ -1,1 +1,2 @@
 INTL_BMPx80_DESC BMP180/280 sensor temperatury/ciśnienia.
+INTL_BMPx80_INSIDE Sensor wewnątrz obudowy (nie uwzględniaj temperatury)

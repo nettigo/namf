@@ -5,6 +5,7 @@ namespace BMPx80 {
     const char KEY[] PROGMEM = "BMPx80";
     bool enabled = false;
     bool printOnLCD = false;
+    bool sensorInsideCase = false;
     const unsigned int SAMPLE_SIZE = 5;
     byte sampleCount = 0;
 
@@ -192,8 +193,10 @@ namespace BMPx80 {
         String ret = F("");
         ret.concat(Var2JsonInt(F("e"), enabled));
         if (printOnLCD) ret.concat(Var2JsonInt(F("d"), printOnLCD));
+        if (sensorInsideCase) ret.concat(Var2JsonInt(F("i"), sensorInsideCase));
         return ret;
     };
+
     bool dataAvailable() {
         return sampleCount > 0;
     }
@@ -202,13 +205,15 @@ namespace BMPx80 {
         if (!enabled) return;
         if (!dataAvailable()) return;
 
-        String key1 = sensorPrefixBMPx80();
-        key1.concat(F("temperature"));
         String key2 = sensorPrefixBMPx80();
         key2.concat(F("pressure"));
-
-        s.concat(Value2Json(key1, String(currentTemp())));
         s.concat(Value2Json(key2, String(currentPressure())));
+
+        if (!sensorInsideCase) {
+            String key1 = sensorPrefixBMPx80();
+            key1.concat(F("temperature"));
+            s.concat(Value2Json(key1, String(currentTemp())));
+        }
     }
 
     void resultsAsHTML(String &page_content){
@@ -219,17 +224,25 @@ namespace BMPx80 {
                                                  check_display_value(currentTemp(), -128, 1, 0), F("°C")));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_PRESSURE),
                                                  check_display_value(currentPressure()/100, -1, 1, 0), F("hPa")));
+    }
 
-
+    String getConfigHTML(void) {
+        String ret = F("");
+        String name;
+        setHTTPVarName(name, F("in"), SimpleScheduler::BMPx80);
+        ret.concat(form_checkbox(name, FPSTR(INTL_BMPx80_INSIDE), sensorInsideCase, true));
+        return ret;
     }
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BMPx80);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::BMPx80);
+        setBoolVariableFromHTTP(String(F("in")), sensorInsideCase, SimpleScheduler::BMPx80);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        ret[F("i")] = sensorInsideCase;
         return ret;
     };
 
@@ -267,6 +280,7 @@ namespace BMPx80 {
     void readConfigJSON(JsonObject &json) {
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
+        sensorInsideCase = json.get<bool>(F("i"));
 
         if (cfg::bmp280_read) { //old setting takes over
             enabled = true;
