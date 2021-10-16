@@ -1,4 +1,4 @@
-NAMF-2020-41rc3 (2021-10-13 rev )
+NAMF-2020-41rc3 (2021-10-13 rev bda18bbc218ae723c61bc3d909504ab5c8d8642a)
 * going back to Espressif 2.6.2 - memory problems when building /config page
 * fixed interval in reporting diagnostic data
 * fix for Winsen MHZ14A - does now send data
