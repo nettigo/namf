@@ -73,7 +73,11 @@ bool SerialSDS::fetchReading(int &pm10, int &pm25) {
     pm10 = _replies[SDS_DATA].data[2] | (_replies[SDS_DATA].data[3] << 8);
     _replies[SDS_DATA].received = false;
     return true;
+}
 
+float SerialSDS::errorRate() {
+    if (packetCount == 0) return 0;
+    return (float)checksumFailed/(float)packetCount * 100.0;
 }
 
 bool SerialSDS::checksumValid(void) {
@@ -83,6 +87,10 @@ bool SerialSDS::checksumValid(void) {
     }
     bool chk = _buff[9] == 0xAB && checksum_is == _buff[8];
     packetCount++;
+    //overflow
+    if (packetCount == 0)   {
+        checksumFailed = 0;
+    }
     if (!chk) {
         debug_out(F("SDS011 reply checksum failed "), DEBUG_ERROR);
         checksumFailed++;

@@ -553,9 +553,9 @@ namespace SDS011 {
 
         }
         float fr = 0;
-        if (channelSDS.totalPacketCnt()) fr = channelSDS.checksumErrCnt() / (float) channelSDS.totalPacketCnt() * 100.0;
+
         res.concat(table_row_from_value(F("SDS011"), F("Checksum failures"),
-                                    String(fr) + F("% ") + String(channelSDS.checksumErrCnt()) + F("/") + String(
+                                    String(channelSDS.errorRate()) + F("% ") + String(channelSDS.checksumErrCnt()) + F("/") + String(
                                             channelSDS.totalPacketCnt()), ""));
     }
 

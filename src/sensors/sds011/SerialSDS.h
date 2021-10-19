@@ -59,12 +59,14 @@ public:
 
     ReplyInfo _replies[SDS_UNKNOWN];
 
+    //checksum errors rate
+    float errorRate();
 
 private:
     Stream &_serial;
     SerialState _currState;
     byte _buff[10];
-    unsigned checksumFailed;
+    unsigned long checksumFailed;
     unsigned long packetCount;
 
     bool checksumValid();
