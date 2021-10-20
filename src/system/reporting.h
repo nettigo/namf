@@ -147,19 +147,16 @@ extern SerialSDS channelSDS(serialSDS);
 
                 }
                 SDS011::failedReadings = SDS011::readings = 0;
-
-                body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
-                body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
-                body.concat(Var2Json(F("minRSSI"),minRSSI));
-                body.concat(Var2Json(F("maxRSSI"),maxRSSI));
-
-                Reporting::resetMinMaxStats();
-
                 body.remove(body.length() - 1);
                 body.concat(F("},"));
-
-
             }
+
+            body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
+            body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
+            body.concat(Var2Json(F("minRSSI"),minRSSI));
+            body.concat(Var2Json(F("maxRSSI"),maxRSSI));
+
+            Reporting::resetMinMaxStats();
 
             body.remove(body.length() - 1);
             body.concat(F("}"));
