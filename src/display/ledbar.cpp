@@ -10,7 +10,7 @@ void displayLEDBar() {
     
     double pm10 = 0;
 
-    if (cfg::sds_read) {
+    if (SDS011::enabled) {
         pm10 = last_value_SDS_P1;
     } else if (cfg::pms_read) {
         pm10 = last_value_PMS_P1;
@@ -35,14 +35,14 @@ void displayLEDBar() {
  *****************************************************************/
 
 void lightLED(byte mode, byte cnt, byte red, byte green, byte blue) {
-    debug_out(F("LEDBAR RGB: "), DEBUG_MIN_INFO,0);
-    debug_out(String(red), DEBUG_MIN_INFO,0);
-    debug_out(F(", "), DEBUG_MIN_INFO,0);
-    debug_out(String(green), DEBUG_MIN_INFO,0);
-    debug_out(F(", "), DEBUG_MIN_INFO,0);
-    debug_out(String(blue), DEBUG_MIN_INFO,1);
-    debug_out(String(cnt), DEBUG_MIN_INFO, 1);
-    debug_out(String(mode), DEBUG_MIN_INFO, 1);
+//    debug_out(F("LEDBAR RGB: "), DEBUG_MIN_INFO,0);
+//    debug_out(String(red), DEBUG_MIN_INFO,0);
+//    debug_out(F(", "), DEBUG_MIN_INFO,0);
+//    debug_out(String(green), DEBUG_MIN_INFO,0);
+//    debug_out(F(", "), DEBUG_MIN_INFO,0);
+//    debug_out(String(blue), DEBUG_MIN_INFO,1);
+//    debug_out(String(cnt), DEBUG_MIN_INFO, 1);
+//    debug_out(String(mode), DEBUG_MIN_INFO, 1);
 
     Wire.beginTransmission(0x32);
     Wire.write(mode);

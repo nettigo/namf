@@ -9,6 +9,7 @@
 #include "defines.h"
 #include "helpers.h"
 #include "html-content.h"
+#include "sensors/sds011/sds011.h"
 void displayLEDBar();
 void lightLED(byte mode, byte cnt, byte red, byte green, byte blue);
 #endif //NAMF_LEDBAR_H
