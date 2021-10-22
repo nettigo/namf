@@ -65,8 +65,6 @@ namespace SDS011 {
 
     void getStatusReport(String &);
 
-    String sds_internals();
-
     void afterSend(bool);
 
     /*****************************************************************

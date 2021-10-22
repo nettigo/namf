@@ -933,21 +933,6 @@ void webserver_debug_level() {
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
-void webserver_sds() {
-    String page_content;
-    if (cfg::www_basicauth_enabled)
-        if (!webserver_request_auth()) { return; }
-    page_content = make_header(FPSTR(INTL_ENABLE_OTA));
-
-
-    page_content += F("<h1>SDS internals</h1>");
-    page_content += SDS011::sds_internals();
-
-    page_content += make_footer();
-
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
-}
-
 /*****************************************************************
  * Webserver remove config                                       *
  *****************************************************************/
@@ -1203,7 +1188,6 @@ void webserver_reset_time(){
  *****************************************************************/
 void setup_webserver() {
     server.on(F("/"), webserver_root);
-    server.on(F("/sds"), webserver_sds);
     server.on(F("/config"), webserver_config);
     server.on(F("/simple_config"), webserver_simple_config);
     server.on(F("/config.json"), HTTP_GET, webserver_config_json);

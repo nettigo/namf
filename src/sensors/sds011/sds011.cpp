@@ -260,28 +260,6 @@ namespace SDS011 {
     }
 
 
-    String sds_internals() {
-        String ret = "";
-        for (byte i = 0; i < SDS_UNKNOWN; i++) {
-            ret.concat(F("<p>"));
-            ret.concat(String(i));
-            ret.concat(F("("));
-            ret.concat(String(FPSTR(SRT_NAMES[i])));
-            ret.concat(F("), "));
-            if (channelSDS._replies[i].received) {
-                ret.concat(F("otrzymano pakiet "));
-                ret.concat(String((millis() - channelSDS._replies[i].lastReply) / 1000));
-                ret.concat(F(" sekund temu."));
-            }
-            for (byte j = 0; j < 5; j++) {
-                ret.concat(String(channelSDS._replies[i].data[j], 16));
-                ret.concat(F(" "));
-            }
-            ret.concat(F("</p>"));
-        }
-        return ret;
-    }
-
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
