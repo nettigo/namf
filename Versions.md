@@ -1,4 +1,4 @@
-NAMF-2020-41rc4 (2021-10-22 rev )
+NAMF-2020-41rc4 (2021-10-22 rev 5cef0c51c14b4f6ed808df84df222f415e895b04)
 * BMP180 has checkbox to indicate that it is inside of NAM case. NAM wont send temperature from that sensor to APIs, since it will higher
 * Fixed LED BAR (used old SDS enable variable)
 * opt out for diagnostic data 
