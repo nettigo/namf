@@ -1,6 +1,7 @@
-NAMF-2020-41rc4 ()
+NAMF-2020-41rc4 (2021-10-22 rev )
 * BMP180 has checkbox to indicate that it is inside of NAM case. NAM wont send temperature from that sensor to APIs, since it will higher
 * Fixed LED BAR (used old SDS enable variable)
+* opt out for diagnostic data 
 
 NAMF-2020-41rc3 (2021-10-13 rev bda18bbc218ae723c61bc3d909504ab5c8d8642a)
 * going back to Espressif 2.6.2 - memory problems when building /config page
