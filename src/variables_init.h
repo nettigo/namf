@@ -54,6 +54,7 @@ namespace cfg {
     float outputPower = TX_OUTPUT_POWER;
     int phyMode = PHY_MODE;
     int debug = DEBUG;
+    bool send_diag = true;
 
     bool ssl_madavi = SSL_MADAVI;
     bool ssl_dusti = SSL_DUSTI;

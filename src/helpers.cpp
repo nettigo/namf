@@ -205,6 +205,8 @@ String getConfigString(boolean maskPwd = false) {
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(has_ledbar_32);
     json_string += Var2Json(F("debug"), debug);
+    json_string += Var2Json(F("send_diag"), send_diag);
+
     json_string += Var2Json(F("sending_intervall_ms"), sending_intervall_ms);
     json_string += Var2Json(F("time_for_wifi_config"), time_for_wifi_config);
     copyToJSON_Int(outputPower);
@@ -307,6 +309,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(show_wifi_info);
             setFromJSON(has_ledbar_32);
             setFromJSON(debug);
+            setFromJSON(send_diag);
             setFromJSON(sending_intervall_ms);
             setFromJSON(time_for_wifi_config);
             setFromJSON(outputPower);

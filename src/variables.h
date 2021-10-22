@@ -78,6 +78,8 @@ namespace cfg {
     extern int phyMode; 
     extern int  debug;
 
+    extern bool send_diag;
+
     extern bool ssl_madavi;
     extern bool ssl_dusti ;
     extern char senseboxid[30];
