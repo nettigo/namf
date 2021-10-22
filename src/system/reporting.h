@@ -79,6 +79,7 @@ extern SerialSDS channelSDS(serialSDS);
     }
 
     void reportBoot() {
+        if (!cfg::send_diag) return;
         debug_out(F("Report boot..."), DEBUG_MED_INFO);
         if (cfg::UUID.length() < 36) { registerSensor(); }
         if (cfg::UUID.length() < 36) { return; } //failed register
@@ -119,6 +120,7 @@ extern SerialSDS channelSDS(serialSDS);
     }
 
     void homePhone() {
+        if (!cfg::send_diag) return;
         collectMemStats();
 
         if (millis() - lastPeriodicCheck > RPRT_PERIODIC_CHECK_INTERVAL) {

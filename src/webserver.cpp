@@ -441,6 +441,7 @@ void webserver_config() {
         page_content.concat(F("</select></br>"));
         page_content.concat(form_checkbox("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
         page_content.concat(form_checkbox("has_ledbar_32", FPSTR(INTL_LEDBAR_32), has_ledbar_32));
+        page_content.concat(form_checkbox("send_diag", FPSTR(INTL_DIAGNOSTIC), send_diag));
         page_content.concat(F("</br></br>"));
 
 //        webserverPartialSend(page_content);

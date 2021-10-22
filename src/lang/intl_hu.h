@@ -53,6 +53,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_DELETE[] PROGMEM = "Törlés";
 /* ./src/lang/intl_hu.lang */ const char INTL_DELETE_CONFIG[] PROGMEM = "A mentett beállítások törlése";
 /* ./src/lang/intl_hu.lang */ const char INTL_DHT22[] PROGMEM = "DHT22 ({t}, {h})";
+/* ./src/lang/intl_hu.lang */ const char INTL_DIAGNOSTIC[] PROGMEM = "Diagnosztikai adatok küldése a Nettigo -nak";
 /* ./src/lang/intl_hu.lang */ const char INTL_DISPLAY[] PROGMEM = "OLED SSD1306";
 /* ./src/lang/intl_hu.lang */ const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 /* ./src/lang/intl_hu.lang */ const char INTL_DURATION_ROUTER_MODE[] PROGMEM = "Hotspot mód időtartama";

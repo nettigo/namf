@@ -28,6 +28,7 @@ INTL_FS_WIFI WiFi Szenzor
 INTL_FS_WIFI_DESCRIPTION WiFi Szenzor konfigurációs módban
 INTL_FS_WIFI_NAME Név
 INTL_MORE_SETTINGS További beállítások
+INTL_DIAGNOSTIC Diagnosztikai adatok küldése a Nettigo -nak
 INTL_AUTO_UPDATE Firmware automatikus frissítése
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Has character LCD

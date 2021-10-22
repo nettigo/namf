@@ -33,6 +33,7 @@ INTL_FS_WIFI WiFi Sensor
 INTL_FS_WIFI_DESCRIPTION WiFi Sensor in configuration mode
 INTL_FS_WIFI_NAME Name
 INTL_MORE_SETTINGS More settings
+INTL_DIAGNOSTIC Send diagnostic data to Nettigo
 INTL_AUTO_UPDATE Auto update firmware, using channel
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Has character LCD

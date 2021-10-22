@@ -33,6 +33,7 @@ INTL_FS_WIFI Czujnik WiFi
 INTL_FS_WIFI_DESCRIPTION Parametry WiFi w trybie konfiguracji czujnika
 INTL_FS_WIFI_NAME Nazwa sieci
 INTL_MORE_SETTINGS Więcej ustawień
+INTL_DIAGNOSTIC Wysyłaj dane diagnostyczne do Nettigo
 INTL_AUTO_UPDATE Aktualizuj firmware automatycznie
 INTL_DISPLAY OLED SSD1306
 INTL_LCD Ma wyświetlacz
