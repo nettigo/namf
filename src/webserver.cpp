@@ -508,7 +508,7 @@ void webserver_config() {
             page_content.concat(form_submit(FPSTR(INTL_SAVE_AND_RESTART)));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("<br/></form>"));
-            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000));</script>"));
+            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);</script>"));
         }
     } else {
 #define readCharParam(param) \
