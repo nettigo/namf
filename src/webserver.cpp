@@ -229,7 +229,7 @@ void webserver_config_json() {
     if (!webserver_request_auth())
     { return; }
     String page_content = getMaskedConfigString();
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), page_content);
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_JSON), page_content);
 }
 
 
