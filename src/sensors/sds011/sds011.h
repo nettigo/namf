@@ -24,6 +24,7 @@ namespace SDS011 {
     extern bool enabled;
 
     extern unsigned readings;
+    extern SerialSDS channelSDS;
     extern unsigned failedReadings;
     extern bool hardwareWatchdog;
     extern byte hwWtdgCycles; //how many times watchdog took action

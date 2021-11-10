@@ -20,7 +20,7 @@ namespace Reporting {
 #define RPRT_PERIODIC_CHECK_INTERVAL    1000
 
 
-extern SerialSDS channelSDS(serialSDS);
+//extern SerialSDS channelSDS(serialSDS);
 
     //we are using the same code in main loop, but in main namespace we are collecting stats for one
     //measurement period, here we are collecting for 24 hrs, and just those min/max are sending
@@ -142,7 +142,7 @@ extern SerialSDS channelSDS(serialSDS);
                 body.concat(F("\"SDS\":{"));
                 body.concat(Var2Json(F("failed"), String(SDS011::failedReadings)));
                 body.concat(Var2Json(F("rd"), String(SDS011::readings)));
-                body.concat(Var2Json(F("CRCerr"), String(channelSDS.errorRate())));
+                body.concat(Var2Json(F("CRCerr"), String(SDS011::channelSDS.errorRate())));
                 if (SDS011::hardwareWatchdog) {
                     body.concat(Var2Json(F("wtgCycles"), String(SDS011::hwWtdgCycles)));
                     body.concat(Var2Json(F("wtgErrs"), String(SDS011::hwWtdgErrors)));
