@@ -119,6 +119,20 @@ namespace Reporting {
         resetMinMaxStats();
     }
 
+    //sending stats interval in hours
+    unsigned sendingInterval() {
+        switch (cfg::update_channel) {
+            case UPDATE_CHANNEL_ALFA:
+            case UPDATE_CHANNEL_BETA:
+                return 8;
+            case UPDATE_CHANNEL_STABLE:
+                return 24;
+            default:
+                return 24;
+        }
+    }
+
+
     void homePhone() {
         if (!cfg::send_diag) return;
         collectMemStats();
@@ -130,7 +144,7 @@ namespace Reporting {
 
         if (
                 (first && millis() - lastPhone > 15 * 60 * 1000) ||
-                millis() - lastPhone > 8 * 60 * 60 *1000
+                millis() - lastPhone > sendingInterval() * 60 * 60 *1000
         ) {
             first = false;
             WiFiClient client;
