@@ -1026,7 +1026,7 @@ void webserver_status_page(void) {
     debug_out(F("output status page"), DEBUG_MIN_INFO, 1);
 
     String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
-    page_content.reserve(10000);
+    page_content.reserve(6000);
     getTimeHeadings(page_content);
     page_content.concat(F("<table cellspacing='0' border='1' cellpadding='5'>"));
     page_content.concat(FPSTR(EMPTY_ROW));
