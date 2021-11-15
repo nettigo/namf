@@ -72,7 +72,7 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
-
+        debug_out(data, DEBUG_MAX_INFO);
         result = http->POST(data);
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
