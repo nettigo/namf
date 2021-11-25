@@ -6,18 +6,13 @@ INTL_WIFI_TX_PWR TX power 0-20.5(dBm)
 INTL_WIFI_PHY_MODE WiFi Phy Mode (1=B / 2=G / 3=N)
 INTL_WIFI_NETWORKS WiFi hálózatok keresése...
 INTL_LANGUAGE Nyelv
-INTL_NO_NETWORKSNem találtam WiFi hálózatot
 INTL_NETWORKS_FOUND Talált WiFi hálózatok:
 INTL_AB_HIER_NUR_ANDERN Haladó beállítások
 INTL_SAVE Mentés
 INTL_SENSORS Szenzorok
 INTL_SDS011 SDS011 ({pm})
 INTL_PMS Plantower PMS(1,3,5,6,7)003 ({pm})
-INTL_HPM Honeywell PM sensor
-INTL_PPD42NS PPD42NS
 INTL_DHT22 DHT22 ({t}, {h})
-INTL_HTU21D HTU21D ({t}, {h})
-INTL_BMP180 BMP180 ({t}, {p})
 INTL_BMP280 BMP280/BMP180 ({t}, {p})
 INTL_BME280 BME280 ({t}, {h}, {p})
 INTL_HECA HECA (SHT30) ({t}, {h})

@@ -579,7 +579,7 @@ String form_select_lang() {
                      //					"<option value='CZ'{s_CZ}>Český (CZ)</option>"
                      "<option value='EN'{s_EN}>English (EN)</option>"
                      "<option value='HU'{s_HU}>Hungarian (HU)</option>"
-                     //					"<option value='ES'{s_ES}>Español (ES)</option>"
+                    "<option value='ES'{s_RO}>Romanesc (RO)</option>"
                      //					"<option value='FR'{s_FR}>Français (FR)</option>"
                      //					"<option value='IT'{s_IT}>Italiano (IT)</option>"
                      //					"<option value='LU'{s_LU}>Lëtzebuergesch (LU)</option>"

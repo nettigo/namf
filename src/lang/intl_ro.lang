@@ -1,0 +1,109 @@
+INTL_MADAVI_LINK Graficele senzorilor pe Madavi
+INTL_TIME_FROM_UPDATE Timpul de la ultima încercare de actualizare
+INTL_NTP_TIME Ora de la serverul NTP
+INTL_NTP_TIME_NOT_ACC Nu este setat
+INTL_I2C_BUS Pe magistrala I2C
+INTL_STATUS_PAGE Starea senzorului
+INTL_UPDATE_ALFA alfa (fw experimental, nu folosiți decât dacă puteți recupera senzorul)
+INTL_UPDATE_BETA beta (teste de stabilitate pentru noile caracteristici)
+INTL_UPDATE_STABLE stabil (a se utiliza în caz de îndoială)
+INTL_LANG RO
+INTL_PM_SENSOR Senzor de pulberi în suspensie
+INTL_CONFIGURATION Configurație
+INTL_WIFI_SETTINGS Setări WiFi
+INTL_WIFI_TX_PWR Puterea TX 0-20,5 (dBm)
+INTL_WIFI_PHY_MODE Mod WiFi Phy (1=B / 2=G / 3=N)
+INTL_WIFI_NETWORKS Încărcare rețele wifi ...
+INTL_LANGUAGE Limbă
+INTL_NO_NETWORKS Nu s-a găsit nicio rețea WiFi
+INTL_NETWORKS_FOUND Rețele găsite:
+INTL_AB_HIER_NUR_ANDERN Setări avansate
+INTL_SAVE Salvați
+INTL_SENSORS Senzorii
+INTL_SDS011 SDS011 ({pm})
+INTL_PMS Plantower PMS(1,3,5,6,7)003 ({pm})
+INTL_DHT22 DHT22 ({t}, {h})
+INTL_BMP280 BMP280/BMP180 ({t}, {p})
+INTL_BME280 BME280 ({t}, {h}, {p})
+INTL_HECA HECA (SHT30) ({t}, {h})
+INTL_DS18B20 DS18B20 ({t})
+INTL_NEO6M GPS (NEO 6M)
+INTL_BASICAUTH Autorizare
+INTL_FS_WIFI Senzor WiFi
+INTL_FS_WIFI_DESCRIPTION Senzorul WiFi în modul de configurare
+INTL_FS_WIFI_NAME Nume
+INTL_MORE_SETTINGS Mai multe setări
+INTL_DIAGNOSTIC Trimiteți datele de diagnosticare către Nettigo
+INTL_AUTO_UPDATE Actualizarea automată a firmware-ului, utilizând canalul
+INTL_DISPLAY OLED SSD1306
+INTL_LCD Dispune de caracter LCD
+INTL_LCD1602_27 LCD 1602 (I2C: 0x27)
+INTL_LCD1602_3F LCD 1602 (I2C: 0x3F)
+INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
+INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
+INTL_LEDBAR_32 RGB LED BAR (I2C: 0x32)
+INTL_SHOW_WIFI_INFO Afișarea informațiilor despre conexiunea WiFi pe ecranul LCD
+INTL_DEBUG_LEVEL Depanare&nbsp;Nivel
+INTL_ENABLE_OTA Activează OTA
+INTL_ENABLE_OTA_REFUSE Activați autorizarea în panoul de configurare pentru a permite încărcarea codului
+INTL_ENABLE_OTA_INFO OTA activată timp de 60 de secunde.
+INTL_MEASUREMENT_INTERVAL Interval de măsurare
+INTL_DURATION_ROUTER_MODE Durata modului router
+INTL_MORE_APIS Mai multe API-uri
+INTL_SEND_TO_OWN_API Trimiteți date către propriul API
+INTL_SERVER Server
+INTL_PATH Calea de acces
+INTL_PORT Portul
+INTL_USER Utilizatorul
+INTL_PASSWORD Parola de acces
+INTL_SEND_TO Trimiteți la {v}
+INTL_READ_FROM Citiți de la {v}
+INTL_SENSOR_IS_REBOOTING Senzorul se restartează.
+INTL_SENSOR_IS_REBOOTING_NOW Senzorul este în curs de repornire. Așteptați câteva secunde și faceți clic pe butonul de mai jos
+INTL_RESTART_DEVICE Reporniți dispozitivul
+INTL_DELETE_CONFIG șterge configurația salvată
+INTL_RESTART_SENSOR Reporniți senzorul
+INTL_HOME Acasă
+INTL_BACK_TO_HOME Înapoi la pagina principală
+INTL_CURRENT_DATA Date curente
+INTL_ACTIVE_SENSORS_MAP Harta senzorilor activi(link extern)
+INTL_CONFIGURATION_DELETE Ștergerea configurației
+INTL_CONFIGURATION_REALLY_DELETE Sunteți sigur că doriți să ștergeți configurația?
+INTL_DELETE Ștergeți
+INTL_CANCEL Anulează
+INTL_REALLY_RESTART_SENSOR Sunteți sigur că doriți să reporniți senzorul?
+INTL_RESTART Reporniți
+INTL_SAVE_AND_RESTART Salvați și reporniți
+INTL_FIRMWARE Versiunea Firmware
+INTL_DEBUG_SETTING_TO Setarea Debug la
+INTL_NONE închis
+INTL_ERROR numai erori
+INTL_WARNING avertismente
+INTL_MIN_INFO Informații minime
+INTL_MED_INFO informații medii
+INTL_MAX_INFO Informații maxime
+INTL_CONFIG_DELETED Configurația este ștearsă
+INTL_CONFIG_CAN_NOT_BE_DELETED Configurația nu poate fi ștearsă
+INTL_CONFIG_NOT_FOUND Configurația nu a fost găsită
+INTL_TIME_TO_MEASUREMENT Încă {v} secunde până la măsurare
+INTL_TIME_SINCE_LAST_MEASUREMENT  secunde de la ultima măsurare.
+INTL_PARTICLES_PER_LITER particule/litru
+INTL_PARTICULATE_MATTER pulberi în suspensie
+INTL_TEMPERATURE temperatura
+INTL_HUMIDITY umiditatea
+INTL_PRESSURE presiunea aerului
+INTL_LATITUDE Latitudine
+INTL_LONGITUDE Longitudine
+INTL_ALTITUDE Altitudine
+INTL_DATE Data
+INTL_TIME Timp
+INTL_SIGNAL_STRENGTH puterea semnalului
+INTL_SIGNAL_QUALITY calitatea semnalului
+INTL_NUMBER_OF_MEASUREMENTS Numărul de măsurători:
+INTL_SENSOR Senzor
+INTL_PARAMETER Parametru
+INTL_VALUE Valoare
+
+LUFTDATEN_INFO_LOGO_SVG <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120px\" height=\"90px\" version=\"1.0\" style=\"shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd\" viewBox=\"0 0 120 90\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g id=\"NAM Logo\"><path fill=\"#fff\" d=\"M50 27c0,1 -1,2 -2,2 -1,0 -2,-1 -2,-2 0,-8 6,-14 14,-14 7,0 13,6 13,14 0,7 -6,13 -13,13l-32 0c-12,0 -21,10 -21,21 0,14 13,23 26,20 2,-1 3,-1 5,-2 1,-1 2,0 3,1 1,1 0,2 -1,3 -10,6 -22,4 -30,-4 -10,-10 -10,-26 0,-36 4,-4 11,-7 18,-7l32 0c8,0 12,-10 6,-16 -6,-6 -16,-1 -16,7zm5 52c0,0 -1,0 -1,0l0 0 -1 -2 -3 0c0,1 0,2 0,2 -1,0 -1,0 -2,0 0,0 0,0 0,0l3 -8c0,0 0,0 0,0l0 0c1,0 2,0 2,0l3 8c0,0 0,0 -1,0l0 0zm6 -13c0,0 0,-8 0,-10 0,-2 1,-2 1,-2l6 0 0 2 -4 0 0 3 4 0 0 2 -4 0 0 3 4 0 0 2 -7 0zm11 0l0 -10 -4 0c0,0 0,-2 2,-2l17 0 0 2 -3 0 0 10 -3 0 0 -10c-2,0 -4,0 -6,0l0 10 -3 0zm16 0c0,0 0,-8 0,-10 0,-2 3,-2 3,-2l0 12 -3 0zm22 -12c2,0 3,0 5,1 1,2 2,3 2,5 0,2 -1,4 -2,5 -2,1 -3,2 -5,2 -1,0 -3,-1 -4,-2 -2,-1 -2,-3 -2,-5 0,-2 0,-3 2,-5 1,-1 3,-1 4,-1zm0 2c-1,0 -1,0 -2,1 -1,1 -1,2 -1,3 0,2 0,3 1,3 0,1 1,2 2,2 1,0 2,-1 3,-2 0,-1 1,-2 1,-3 0,-1 -1,-2 -1,-3 -1,-1 -2,-1 -3,-1zm-62 10c0,0 0,-8 0,-10 0,-2 2,-2 2,-2l7 8c0,0 0,-4 0,-6 0,-2 2,-2 2,-2l0 12 -2 0 -7 -8 0 6 0 2 -2 0 0 0zm55 -6c0,0 -3,0 -3,0 -2,0 -2,2 -2,2l3 0c0,2 0,2 0,2 -1,0 -1,1 -2,1 -1,0 -2,-1 -3,-2 -1,0 -1,-2 -1,-3 0,-1 0,-2 1,-3 1,-1 2,-1 3,-1 1,0 2,0 3,0l1 -1c-2,-1 -3,-1 -4,-1 -1,0 -2,0 -3,0 -1,1 -2,1 -3,2 -1,1 -1,3 -1,4 0,1 0,2 0,3 1,1 1,2 2,2 2,1 3,2 5,2 1,0 3,-1 4,-1l0 -6 0 0zm-52 16l2 0 -1 -2 -1 2zm6 3c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm4 -3l0 3c0,0 -1,0 -1,0 -1,0 -1,0 -1,0l0 -8c0,0 0,0 1,0 1,0 2,0 3,0 1,0 1,1 2,1l0 0c0,2 0,3 -2,4l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm11 1l3 -5c0,0 0,0 0,0l0 0c0,0 0,0 0,0l0 0 1 0c0,0 0,0 0,0l0 8c0,0 0,0 -1,0 0,0 0,0 0,0l0 -4 -2 3c0,0 -1,0 -2,0l-1 -3 0 4c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0 0,0 1,0 1,0l2 5zm13 -1c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm4 -4c0,0 0,0 0,0l4 5 0 -5c0,0 1,0 1,0 0,0 1,0 1,0l0 8c0,1 -1,0 -2,0l0 0 0 0 -3 -5 0 5c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0zm8 8c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm8 -8c0,2 0,2 -3,2l0 6c0,0 0,0 -1,0 0,0 -1,0 -1,0l0 -6c-2,0 -2,0 -2,-2 0,0 0,0 1,0l5 0c1,0 1,0 1,0zm7 4c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm5 1l0 3c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 0,0 1,0 3,0 4,0 2,1 2,4 0,5l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm-85 -18c-3,0 -6,2 -7,4 1,2 4,4 7,4 3,0 5,-2 7,-4 -2,-2 -4,-4 -7,-4zm0 2c1,0 2,1 2,2 0,1 -1,2 -2,2 -2,0 -3,-1 -3,-2 0,-1 1,-2 3,-2zm22 -48c-1,0 -2,0 -3,-1 0,-1 0,-2 1,-3 9,-5 20,-4 28,4 9,8 9,23 0,32 -4,4 -10,7 -16,7l-32 0c-7,0 -12,5 -12,11 0,6 5,11 12,11 7,0 13,-7 11,-14 -1,-1 0,-2 1,-3 2,0 3,1 3,2 3,10 -5,20 -15,20 -9,0 -16,-7 -16,-16 0,-9 7,-16 16,-16l32 0c10,0 18,-8 18,-18 0,-12 -12,-21 -23,-18 -2,0 -3,1 -5,2z\"/></g></svg>
+INTL_MHZ14A Senzor de CO2 Winsen MH-Z14A
+INTL_MHZ14A_VAL WINSEN

@@ -36,7 +36,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_BASICAUTH[] PROGMEM = "Azonosítás";
 /* ./src/lang/intl_hu.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/sensors/bme280/bme280_hu.lang */ const char INTL_BME280_DESC[] PROGMEM = "BME280 páratartalom/hőmérséklet/nyomás érzékelő";
-/* ./src/lang/intl_hu.lang */ const char INTL_BMP180[] PROGMEM = "BMP180 ({t}, {p})";
 /* ./src/lang/intl_hu.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
 /* ./src/sensors/bmpX80/bmpX80_hu.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 hőmérséklet/nyomás érzékelő";
 /* ./src/lang/intl_hu.lang */ const char INTL_CANCEL[] PROGMEM = "Mégse";
@@ -68,8 +67,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
 /* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_DESC[] PROGMEM = "";
 /* ./src/lang/intl_hu.lang */ const char INTL_HOME[] PROGMEM = "Főoldal";
-/* ./src/lang/intl_hu.lang */ const char INTL_HPM[] PROGMEM = "Honeywell PM sensor";
-/* ./src/lang/intl_hu.lang */ const char INTL_HTU21D[] PROGMEM = "HTU21D ({t}, {h})";
 /* ./src/lang/intl_hu.lang */ const char INTL_HUMIDITY[] PROGMEM = "relatív páratartalom";
 /* ./src/lang/intl_hu.lang */ const char INTL_LANG[] PROGMEM = "HU";
 /* ./src/lang/intl_hu.lang */ const char INTL_LANGUAGE[] PROGMEM = "Nyelv";
@@ -93,7 +90,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_NEO6M[] PROGMEM = "GPS (NEO 6M)";
 /* ./src/lang/intl_hu.lang */ const char INTL_NETWORKS_FOUND[] PROGMEM = "Talált WiFi hálózatok:";
 /* ./src/lang/intl_hu.lang */ const char INTL_NONE[] PROGMEM = "off";
-/* ./src/lang/intl_hu.lang */ const char INTL_NO_NETWORKSNem[] PROGMEM = "találtam WiFi hálózatot";
 /* ./src/lang/intl_hu.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Mérések száma:";
 /* ./src/lang/intl_hu.lang */ const char INTL_PARAMETER[] PROGMEM = "Paraméter";
 /* ./src/lang/intl_hu.lang */ const char INTL_PARTICLES_PER_LITER[] PROGMEM = "részecske/liter";
@@ -103,7 +99,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_PMS[] PROGMEM = "Plantower PMS(1,3,5,6,7)003 ({pm})";
 /* ./src/lang/intl_hu.lang */ const char INTL_PM_SENSOR[] PROGMEM = "Szálló por szenzor";
 /* ./src/lang/intl_hu.lang */ const char INTL_PORT[] PROGMEM = "Port";
-/* ./src/lang/intl_hu.lang */ const char INTL_PPD42NS[] PROGMEM = "PPD42NS";
 /* ./src/lang/intl_hu.lang */ const char INTL_PRESSURE[] PROGMEM = "légnyomás";
 /* ./src/lang/intl_hu.lang */ const char INTL_READ_FROM[] PROGMEM = "Read from {v}";
 /* ./src/lang/intl_hu.lang */ const char INTL_REALLY_RESTART_SENSOR[] PROGMEM = "Biztosan újraindítod a szenzort?";
