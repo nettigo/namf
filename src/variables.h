@@ -9,6 +9,8 @@
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
 #define SOFTWARE_VERSION  "NAMF-2020-42rc1"
+// undefine SOFTWARE_BETA in production releases
+#define SOFTWARE_BETA  1
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
