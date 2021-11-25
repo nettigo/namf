@@ -585,7 +585,7 @@ String form_select_lang() {
                      "<option value='EN'{s_EN}>English (EN)</option>"
                      "<option value='HU'{s_HU}>Hungarian (HU)</option>"
                      "<option value='PL'{s_PL}>Polski (PL)</option>"
-                     "<option value='RO'{s_RO}>Romanesc (RO)</option>"
+                     "<option value='RO'{s_RO}>ROMÂNĂ (RO)</option>"
                      "</select>"
                      "</td>"
                      "</tr>");
