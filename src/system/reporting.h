@@ -65,13 +65,13 @@ namespace Reporting {
         String uri = F("/register/");
         uri.concat(esp_chipid());
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-        Serial.println(F("Register"));
-        http.addHeader("Content-Type", "application/json");
+//        Serial.println(F("Register"));
+        http.addHeader(F("Content-Type"), F("application/json"));
         String body = F("");
         int httpCode = http.POST(body);
-        Serial.println(httpCode);
+//        Serial.println(httpCode);
         String resp = http.getString();
-        Serial.println(resp);
+//        Serial.println(resp);
         if (httpCode == HTTP_CODE_OK) {
             cfg::UUID = resp;
             writeConfig();
