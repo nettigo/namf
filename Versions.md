@@ -1,3 +1,10 @@
+NAMF-2020-42rc3 (2021-11-25 rev )
+- make sure to request EN language file if somehow value from config file is on not supported list
+
+NAMF-2020-42rc2 (2021-11-25 rev )
+- fixed SDS reporting to Nettigo
+- Romanian translation
+
 NAMF-2020-41 (2021-11-08 rev )
 - Release based on NAMF-2020-41rc4
 - Fixed typo in JavaScript - fetching available WiFi networks did not work correctly
