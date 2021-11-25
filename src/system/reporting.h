@@ -12,10 +12,13 @@
 namespace Reporting {
 #ifdef SOFTWARE_BETA
     const char reportingHost[] PROGMEM = "et-dev.nettigo.pl";
+    const unsigned reportingHostPort PROGMEM = 3319;
+
 #else
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
+        const unsigned reportingHostPort PROGMEM = 80;
+
 #endif
-    const unsigned reportingHostPort PROGMEM = 80;
     unsigned long lastPhone = 0;
     unsigned long lastPeriodicCheck = 0;
     bool first = true;
