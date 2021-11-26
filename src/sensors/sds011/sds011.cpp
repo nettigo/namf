@@ -595,7 +595,7 @@ namespace SDS011 {
         ret.concat(form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7));
 
         setHTTPVarName(name, F("dbg"), SimpleScheduler::SDS011);
-        ret.concat(form_checkbox(name, F("Hardware restarter"), hardwareWatchdog, true));
+        ret.concat(form_checkbox(name, FPSTR(INTL_SDS011_HWR), hardwareWatchdog, true));
 
         return ret;
     }

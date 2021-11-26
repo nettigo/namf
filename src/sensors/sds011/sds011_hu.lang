@@ -3,4 +3,4 @@ INTL_SDS011_READTIME Measurement time (ms)
 INTL_SDS011_WARMUP Warmup time before measurement (ms)
 INTL_SDS011_LCD_HDR SDS011 readings:
 INTL_SDS011_FAILED_READINGS Readings failed/total (counter reset with update check)
-INTL_SDS011_HWR Hardware SDS restarter
+INTL_SDS011_HWR Hardver újraindító az SDS011-hez

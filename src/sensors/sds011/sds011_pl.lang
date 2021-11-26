@@ -3,3 +3,4 @@ INTL_SDS011_READTIME Czas, w którym jest dokonywany pomiar (ms)
 INTL_SDS011_WARMUP Czas pracy przed rozpoczęciem pomiaru (ms)
 INTL_SDS011_LCD_HDR SDS011 wartosci:
 INTL_SDS011_FAILED_READINGS Liczba braków/wszystkich odczytów z SDS (zerowana przy każdej próbie aktualizacji)
+INTL_SDS011_HWR Sprzętowy restarter dla SDS011

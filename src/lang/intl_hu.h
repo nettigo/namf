@@ -108,6 +108,12 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_SAVE[] PROGMEM = "Mentés";
 /* ./src/lang/intl_hu.lang */ const char INTL_SAVE_AND_RESTART[] PROGMEM = "Mentés és újraindítás";
 /* ./src/lang/intl_hu.lang */ const char INTL_SDS011[] PROGMEM = "SDS011 ({pm})";
+/* ./src/sensors/sds011/sds011_hu.lang */ const char INTL_SDS011_DESC[] PROGMEM = "SDS011 - PM2.5/PM10 sensor";
+/* ./src/sensors/sds011/sds011_hu.lang */ const char INTL_SDS011_FAILED_READINGS[] PROGMEM = "Readings failed/total (counter reset with update check)";
+/* ./src/sensors/sds011/sds011_hu.lang */ const char INTL_SDS011_HWR[] PROGMEM = "Hardver újraindító az SDS011-hez";
+/* ./src/sensors/sds011/sds011_hu.lang */ const char INTL_SDS011_LCD_HDR[] PROGMEM = "SDS011 readings:";
+/* ./src/sensors/sds011/sds011_hu.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "Measurement time (ms)";
+/* ./src/sensors/sds011/sds011_hu.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "Warmup time before measurement (ms)";
 /* ./src/lang/intl_hu.lang */ const char INTL_SEND_TO[] PROGMEM = "Send to {v}";
 /* ./src/lang/intl_hu.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Adatok küldése saját API-nak";
 /* ./src/lang/intl_hu.lang */ const char INTL_SENSOR[] PROGMEM = "Szenzor";
@@ -137,12 +143,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTW_WTD_DESC[] PROGMEM = "Translate HU: INTL_NTW_WTD_DESC 🐱;";
  const char INTL_NTW_WTD_HOST[] PROGMEM = "Translate HU: INTL_NTW_WTD_HOST 🐱;";
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate HU: INTL_NTW_WTD_ERROR 🐱;";
- const char INTL_BMPx80_INSIDE[] PROGMEM = "Translate HU: INTL_BMPx80_INSIDE 🐱;";
- const char INTL_SDS011_DESC[] PROGMEM = "Translate HU: INTL_SDS011_DESC 🐱;";
- const char INTL_SDS011_READTIME[] PROGMEM = "Translate HU: INTL_SDS011_READTIME 🐱;";
- const char INTL_SDS011_WARMUP[] PROGMEM = "Translate HU: INTL_SDS011_WARMUP 🐱;";
- const char INTL_SDS011_LCD_HDR[] PROGMEM = "Translate HU: INTL_SDS011_LCD_HDR 🐱;";
- const char INTL_SDS011_FAILED_READINGS[] PROGMEM = "Translate HU: INTL_SDS011_FAILED_READINGS 🐱;";
  const char INTL_HECA_DC[] PROGMEM = "Translate HU: INTL_HECA_DC 🐱;";
  const char INTL_SPS30_FW_FAIL[] PROGMEM = "Translate HU: INTL_SPS30_FW_FAIL 🐱;";
  const char INTL_SPS30_CONCENTRATION[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATION 🐱;";
@@ -153,6 +153,7 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
+ const char INTL_BMPx80_INSIDE[] PROGMEM = "Translate HU: INTL_BMPx80_INSIDE 🐱;";
  const char INTL_MADAVI_LINK[] PROGMEM = "Translate HU: INTL_MADAVI_LINK 🐱;";
  const char INTL_TIME_FROM_UPDATE[] PROGMEM = "Translate HU: INTL_TIME_FROM_UPDATE 🐱;";
  const char INTL_NTP_TIME[] PROGMEM = "Translate HU: INTL_NTP_TIME 🐱;";
