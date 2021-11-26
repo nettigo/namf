@@ -1,3 +1,7 @@
+NAMF-2020-42rc4 (2021-11-25 rev )
+- added some missing translations
+- updated diagnostic data upload URL 
+
 NAMF-2020-42rc3 (2021-11-25 rev )
 - make sure to request EN language file if somehow value from config file is on not supported list
 
