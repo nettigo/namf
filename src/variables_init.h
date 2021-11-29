@@ -14,8 +14,8 @@
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
 namespace cfg {
-    char wlanssid[35] = WLANSSID;
-    char wlanpwd[65] = WLANPWD;
+    char *wlanssid = nullptr;
+    char *wlanpwd = nullptr;
 
     char current_lang[3] = "PL";
     char *www_username = nullptr;

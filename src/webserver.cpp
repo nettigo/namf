@@ -319,7 +319,18 @@ void webserver_config_json_save() {
 }
 
 
-
+void readPwdParam(char **dst, const String key) {
+    if (server.hasArg(key)) {
+        String masked_pwd = F("");
+        unsigned int respSize = server.arg(key).length();
+        masked_pwd.reserve(respSize);
+            for (uint8_t i=0;i<respSize;i++)
+                masked_pwd += F("*");
+            if (masked_pwd != server.arg(key) || server.arg(key) == F("")) {
+                stringToChar(dst,server.arg(key));
+            }
+    }
+}
 /*****************************************************************
  * Webserver config: show config page                            *
  *****************************************************************/
@@ -357,14 +368,14 @@ void webserver_config() {
             page_content.concat(F("</div><br/>"));
         }
         page_content.concat(FPSTR(TABLE_TAG_OPEN));
-        page_content.concat(form_input("wlanssid", FPSTR(INTL_FS_WIFI_NAME), wlanssid,
-                                   capacity_null_terminated_char_array(wlanssid)));
+        page_content.concat(form_input(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
+                                   35));
         if (!wificonfig_loop) {
-            page_content.concat(form_password("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd,
-                                          capacity_null_terminated_char_array(wlanpwd)));
+            page_content.concat(form_password(F("wlanpwd"), FPSTR(INTL_PASSWORD), wlanpwd,
+                                          65));
         } else {
-            page_content.concat(form_input("wlanpwd", FPSTR(INTL_PASSWORD), "",
-                                       capacity_null_terminated_char_array(wlanpwd)));
+            page_content.concat(form_input(F("wlanpwd"), FPSTR(INTL_PASSWORD), F(""),
+                                       65));
         }
         page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
         page_content.concat(F("<hr/>\n<b>"));
@@ -549,9 +560,11 @@ void webserver_config() {
             }\
         }
 
-        if (server.hasArg("wlanssid") && server.arg("wlanssid") != "") {
-            readCharParam(wlanssid);
-            readPasswdParam(wlanpwd);
+        if (server.hasArg(F("wlanssid")) && server.arg(F("wlanssid")) != F("")) {
+            if (server.hasArg(F("wlanssid"))){
+                stringToChar(&wlanssid,server.arg(F("wlanssid")));
+            }
+            readPwdParam(&wlanpwd,F("wlanpwd"));
         }
         //always allow to change output power
         readFloatParam(outputPower);
@@ -563,9 +576,7 @@ void webserver_config() {
             if (server.hasArg(F("www_username"))){
             stringToChar(&www_username,server.arg(F("www_username")));
             }
-            if (server.hasArg(F("www_password"))){
-                stringToChar(&www_password,server.arg(F("www_password")));
-            }
+            readPwdParam(&www_password,F("www_password"));
 
 //            readPasswdParam(www_password);
             readBoolParam(www_basicauth_enabled);

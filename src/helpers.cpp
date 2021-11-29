@@ -321,16 +321,19 @@ int readAndParseConfigFile(File configFile) {
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
-            strcpyFromJSON(wlanssid);
-            strcpyFromJSON(wlanpwd);
-//            dbg(www_username);
+
+            if (json.containsKey(F("wlanssid"))) stringToChar(&wlanssid, json[F("wlanssid")]);
+            setDefault(&wlanssid, FPSTR(WLANSSID));
+
+            if (json.containsKey(F("wlanpwd"))) stringToChar(&wlanpwd, json[F("wlanpwd")]);
+            setDefault(&wlanpwd, FPSTR(WLANPWD));
+
             if (json.containsKey(F("www_username"))) stringToChar(&www_username, json[F("www_username")]);
-//            dbg(www_username);
             setDefault(&www_username, FPSTR(WWW_USERNAME));
-//            dbg(www_username);
-//            setStringFromJSON(www_password);
+
             if (json.containsKey(F("www_password"))) stringToChar(&www_password, json[F("www_password")]);
             setDefault(&www_password, FPSTR(WWW_PASSWORD));
+
             strcpyFromJSON(fs_ssid);
             strcpyFromJSON(fs_pwd);
             setFromJSON(www_basicauth_enabled);
@@ -568,8 +571,9 @@ String form_password(const String& name, const String& info, const String& value
                      "</td>"
                      "</tr>");
     String password = "";
+    password.reserve(value.length());
     for (uint8_t i = 0; i < value.length(); i++) {
-        password += "*";
+        password.concat(F("*"));
     }
     s.replace("{i}", info);
     s.replace("{n}", name);

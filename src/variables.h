@@ -38,8 +38,8 @@ extern SimpleScheduler::NAMFScheduler scheduler;
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
 namespace cfg {
-    extern char wlanssid[35];
-    extern char wlanpwd[65];
+    extern char *wlanssid;
+    extern char *wlanpwd;
 
     extern char current_lang[3];
     extern char *www_username;

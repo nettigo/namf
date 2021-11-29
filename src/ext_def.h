@@ -4,8 +4,8 @@
 #define CURRENT_LANG INTL_LANG
 
 // Wifi config
-#define WLANSSID ""
-#define WLANPWD ""
+const char WLANSSID[] PROGMEM = "";
+const char WLANPWD[] PROGMEM = "";
 
 // BasicAuth config
 const char WWW_USERNAME[] PROGMEM = "admin";
