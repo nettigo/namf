@@ -13,8 +13,8 @@ const char WWW_PASSWORD[] PROGMEM = "admin";
 #define WWW_BASICAUTH_ENABLED 0
 
 // Sensor Wifi config (config mode)
-#define FS_SSID ""
-#define FS_PWD ""
+const char FS_SSID[] PROGMEM = "";
+const char FS_PWD[] PROGMEM =  "";
 
 // Wohin gehen die Daten?
 #define SEND2DUSTI 1

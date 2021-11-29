@@ -46,8 +46,8 @@ namespace cfg {
     extern char *www_password;
     extern bool www_basicauth_enabled;
 
-    extern char fs_ssid[33];
-    extern char fs_pwd[65];
+    extern char *fs_ssid;
+    extern char *fs_pwd;
 
     extern bool dht_read;
     extern bool sds_read;

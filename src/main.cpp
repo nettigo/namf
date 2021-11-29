@@ -794,6 +794,16 @@ static bool acquireNetworkTime() {
 	return false;
 }
 
+void initNonTrivials(const char *id) {
+    strcpy(cfg::current_lang, CURRENT_LANG);
+    if (cfg::fs_ssid == nullptr || cfg::fs_ssid[0] == '\0') {
+        String ssid = F("NAM-");
+        ssid.concat(id);
+        stringToChar(&cfg::fs_ssid, ssid);
+
+    }
+}
+
 /*****************************************************************
  * The Setup                                                     *
  *****************************************************************/
@@ -813,7 +823,7 @@ void setup() {
     Wire.setClock(100000); // Force bus speed 100 Khz
 
 
-    cfg::initNonTrivials(esp_chipid().c_str());
+    initNonTrivials(esp_chipid().c_str());
 
     Serial.print(F("\nNAMF ver: "));
     Serial.print(SOFTWARE_VERSION);

@@ -22,8 +22,8 @@ namespace cfg {
     char *www_password = nullptr;
     bool www_basicauth_enabled = WWW_BASICAUTH_ENABLED;
 
-    char fs_ssid[33] = FS_SSID;
-    char fs_pwd[65] = FS_PWD;
+    char *fs_ssid = nullptr;
+    char *fs_pwd = nullptr;
 
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;
@@ -78,13 +78,6 @@ namespace cfg {
     unsigned long sending_intervall_ms = 145000;
 
     byte update_channel = UPDATE_CHANNEL_STABLE;
-    void initNonTrivials(const char *id) {
-        strcpy(cfg::current_lang, CURRENT_LANG);
-        if (fs_ssid[0] == '\0') {
-            strcpy(fs_ssid, "NAM-");
-            strcat(fs_ssid, id);
-        }
-    }
 }
 
 //enum class PmSensorCmd {

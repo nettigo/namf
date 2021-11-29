@@ -400,10 +400,10 @@ void webserver_config() {
             page_content.concat(FPSTR(INTL_FS_WIFI_DESCRIPTION));
             page_content.concat(FPSTR(BR_TAG));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
-            page_content.concat(form_input("fs_ssid", FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
-                                       capacity_null_terminated_char_array(fs_ssid)));
-            page_content.concat(form_password("fs_pwd", FPSTR(INTL_PASSWORD), fs_pwd,
-                                          capacity_null_terminated_char_array(fs_pwd)));
+            page_content.concat(form_input(F("fs_ssid"), FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
+                                       35));
+            page_content.concat(form_password(F("fs_pwd"), FPSTR(INTL_PASSWORD), fs_pwd,
+                                          65));
 
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("\n<b>APIs</b><br/>"));
@@ -574,16 +574,20 @@ void webserver_config() {
             readCharParam(current_lang);
 
             if (server.hasArg(F("www_username"))){
-            stringToChar(&www_username,server.arg(F("www_username")));
+                stringToChar(&www_username,server.arg(F("www_username")));
             }
             readPwdParam(&www_password,F("www_password"));
 
 //            readPasswdParam(www_password);
             readBoolParam(www_basicauth_enabled);
             readCharParam(fs_ssid);
-            if (server.hasArg("fs_pwd") &&
-                ((server.arg("fs_pwd").length() > 7) || (server.arg("fs_pwd").length() == 0))) {
-                readPasswdParam(fs_pwd);
+            if (server.hasArg(F("fs_ssid"))){
+                stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
+            }
+            if (server.hasArg(F("fs_pwd")) &&
+                ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
+                readPwdParam(&fs_pwd,F("fs_pwd"));
+
             }
             readBoolParam(send2dusti);
             readBoolParam(ssl_dusti);

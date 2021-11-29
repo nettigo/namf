@@ -334,8 +334,12 @@ int readAndParseConfigFile(File configFile) {
             if (json.containsKey(F("www_password"))) stringToChar(&www_password, json[F("www_password")]);
             setDefault(&www_password, FPSTR(WWW_PASSWORD));
 
-            strcpyFromJSON(fs_ssid);
-            strcpyFromJSON(fs_pwd);
+            if (json.containsKey(F("fs_ssid"))) stringToChar(&fs_ssid, json[F("fs_ssid")]);
+            setDefault(&fs_ssid, FPSTR(FS_SSID));
+            
+            if (json.containsKey(F("fs_pwd"))) stringToChar(&fs_pwd, json[F("fs_pwd")]);
+            setDefault(&fs_pwd, FPSTR(FS_PWD));
+            
             setFromJSON(www_basicauth_enabled);
             setFromJSON(dht_read);
             setFromJSON(sds_read);
