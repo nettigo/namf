@@ -1,4 +1,7 @@
-NAMF-2020-42rc4 (2021-11-25 rev )
+NAMF-2020-42rc5 (2021-11-29 rev)
+- just version bump to get new beta diagnostic data endpoint URL
+
+NAMF-2020-42rc4 (2021-11-25 rev 1155d420d0b9139cfa646ac92d7276ac462136a5)
 - added some missing translations
 - updated diagnostic data upload URL 
 
