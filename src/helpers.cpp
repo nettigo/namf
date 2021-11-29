@@ -316,9 +316,6 @@ int readAndParseConfigFile(File configFile) {
         debug_out(json_string, DEBUG_MED_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
-            if (json.containsKey("SOFTWARE_VERSION")) {
-                strcpy(version_from_local_config, json["SOFTWARE_VERSION"]);
-            }
 
 #define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);

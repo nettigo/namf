@@ -25,8 +25,6 @@ namespace cfg {
     char fs_ssid[33] = FS_SSID;
     char fs_pwd[65] = FS_PWD;
 
-    char version_from_local_config[20] = "";
-
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;
     bool pms_read = PMS_READ;
