@@ -376,10 +376,10 @@ void webserver_config() {
             page_content.concat(FPSTR(INTL_BASICAUTH));
             page_content.concat(F("</b><br/>"));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
-            page_content.concat(form_input("www_username", FPSTR(INTL_USER), www_username,
-                                       capacity_null_terminated_char_array(www_username)));
-            page_content.concat(form_password("www_password", FPSTR(INTL_PASSWORD), www_password,
-                                          capacity_null_terminated_char_array(www_password)));
+            page_content.concat(form_input(F("www_username"), FPSTR(INTL_USER), www_username,
+                                       30));
+            page_content.concat(form_password(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
+                                              30));
             page_content.concat(form_checkbox("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
 
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
@@ -559,8 +559,15 @@ void webserver_config() {
 
         if (!wificonfig_loop) {
             readCharParam(current_lang);
-            readCharParam(www_username);
-            readPasswdParam(www_password);
+
+            if (server.hasArg(F("www_username"))){
+            stringToChar(&www_username,server.arg(F("www_username")));
+            }
+            if (server.hasArg(F("www_password"))){
+                stringToChar(&www_password,server.arg(F("www_password")));
+            }
+
+//            readPasswdParam(www_password);
             readBoolParam(www_basicauth_enabled);
             readCharParam(fs_ssid);
             if (server.hasArg("fs_pwd") &&

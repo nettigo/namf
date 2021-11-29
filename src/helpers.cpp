@@ -19,7 +19,45 @@ int32_t calcWiFiSignalQuality(int32_t rssi) {
     return (rssi + 100) * 2;
 }
 
+//store string as char array, for functions
+unsigned stringToChar(char **dst, const String src) {
+//    Serial.println(F("stringToChar"));
+//    Serial.println(src.c_str());
+    if (*dst != nullptr) {
+//        Serial.println(F("Deleting DST"));
+        delete (*dst);
+    }
+//    Serial.println(F("allocating"));
+    unsigned int len = src.length() + 1;
+    *dst = new char[len];
+//    Serial.println(F("after allocating"));
 
+    if (*dst == nullptr) return 0;   //does it return nullptr or raises Abort? Probaby fails in 3.0.0 ArduinoCore
+//    Serial.println(F("copying..."));
+    strncpy(*dst, src.c_str(), len);
+//    Serial.println(F("copied..."));
+    return len;
+}
+
+unsigned setDefault(char **dst, const __FlashStringHelper *defaultValue) {
+//    Serial.println(F("setDefault"));
+    if (dst == nullptr || !strlen(*dst)) {
+        String src = String(defaultValue);
+//        Serial.println(F("SRC READY"));
+        return stringToChar(dst, src);
+    }
+    return strlen(*dst) + 1;
+}
+
+//same as stringToChar but for JSON char string as source
+unsigned charStringToChar(char *dst, const char *src) {
+    if (dst != nullptr) delete (dst);
+    size_t len = strlen(src);
+    dst = new(char[len + 1]);
+    if (dst == nullptr) return 0;
+    strncpy(dst, src, len+1);
+    return len + 1;
+}
 
 /*****************************************************************
  * convert float to string with a                                *
@@ -250,6 +288,10 @@ void verifyLang(char *cl) {
     if (!strcmp(cl,"RO")) return;
     strcpy(cl,"EN");
 }
+
+void dbg(char *v) { if (v == nullptr) Serial.println(F("NULL")); else Serial.println(v);}
+
+
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
@@ -284,8 +326,14 @@ int readAndParseConfigFile(File configFile) {
             verifyLang(current_lang);
             strcpyFromJSON(wlanssid);
             strcpyFromJSON(wlanpwd);
-            strcpyFromJSON(www_username);
-            strcpyFromJSON(www_password);
+//            dbg(www_username);
+            if (json.containsKey(F("www_username"))) stringToChar(&www_username, json[F("www_username")]);
+//            dbg(www_username);
+            setDefault(&www_username, FPSTR(WWW_USERNAME));
+//            dbg(www_username);
+//            setStringFromJSON(www_password);
+            if (json.containsKey(F("www_password"))) stringToChar(&www_password, json[F("www_password")]);
+            setDefault(&www_password, FPSTR(WWW_PASSWORD));
             strcpyFromJSON(fs_ssid);
             strcpyFromJSON(fs_pwd);
             setFromJSON(www_basicauth_enabled);

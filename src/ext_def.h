@@ -8,8 +8,8 @@
 #define WLANPWD ""
 
 // BasicAuth config
-#define WWW_USERNAME "admin"
-#define WWW_PASSWORD "admin"
+const char WWW_USERNAME[] PROGMEM = "admin";
+const char WWW_PASSWORD[] PROGMEM = "admin";
 #define WWW_BASICAUTH_ENABLED 0
 
 // Sensor Wifi config (config mode)

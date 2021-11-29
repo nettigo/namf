@@ -84,7 +84,13 @@ void disable_unneeded_nmea() {
 	serialGPS.println(F("$PUBX,40,VTG,0,0,0,0*5E"));       // Track made good and ground speed
 }
 
+//This is meant to be run on first time. Not only sets default values for sensors, but also makes sure
+//that pointers are properly inited
 void setDefaultConfig(void) {
+    //init
+    debug_out(F("Set default config for device"), DEBUG_ERROR, 1);
+    stringToChar(&cfg::www_username, F(""));
+    stringToChar(&cfg::www_password, F(""));
     SDS011::setDefaults();
     HECA::setDefaults();
     BMPx80::setDefaults();

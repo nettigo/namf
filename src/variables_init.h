@@ -18,8 +18,8 @@ namespace cfg {
     char wlanpwd[65] = WLANPWD;
 
     char current_lang[3] = "PL";
-    char www_username[65] = WWW_USERNAME;
-    char www_password[65] = WWW_PASSWORD;
+    char *www_username = nullptr;
+    char *www_password = nullptr;
     bool www_basicauth_enabled = WWW_BASICAUTH_ENABLED;
 
     char fs_ssid[33] = FS_SSID;

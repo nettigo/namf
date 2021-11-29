@@ -42,8 +42,8 @@ namespace cfg {
     extern char wlanpwd[65];
 
     extern char current_lang[3];
-    extern char www_username[65];
-    extern char www_password[65];
+    extern char *www_username;
+    extern char *www_password;
     extern bool www_basicauth_enabled;
 
     extern char fs_ssid[33];
