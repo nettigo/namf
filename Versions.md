@@ -1,4 +1,7 @@
-NAMF-2020-42rc5 (2021-11-29 rev)
+NAMF-2020-42rc6 ( rev)
+- moved some config variables to dynamic memory. 
+
+NAMF-2020-42rc5 (2021-11-29 rev 8d2848fa82aad63817deec9dd187e901d1ee1b99)
 - just version bump to get new beta diagnostic data endpoint URL
 
 NAMF-2020-42rc4 (2021-11-25 rev 1155d420d0b9139cfa646ac92d7276ac462136a5)
