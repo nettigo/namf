@@ -2,7 +2,7 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
-### NAMF-2020-42a1 (2021-11-29 rev )
+### NAMF-2020-42a1 (2021-11-29 rev cbcefe113638bfa72fc66634ce49d9bf50e9773b)
 * moved some crucial variables (SSIDs, pwds) to dynamic memory
 
 ### NAMF-2020-39a7 (2021-07-22) (rev 524f9b9ff6045a1be86d9755877b61c790b76525)
