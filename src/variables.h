@@ -85,14 +85,14 @@ namespace cfg {
     extern char senseboxid[30];
 
     extern int port_influx;
-    extern char user_influx[65];
-    extern char pwd_influx[65];
+    extern char *user_influx;
+    extern char *pwd_influx;
 
     extern String host_custom;
     extern String url_custom;
     extern int port_custom;
-    extern char user_custom[65];
-    extern char pwd_custom[65];
+    extern char *user_custom;
+    extern char *pwd_custom;
 
     extern String host_influx;
     extern String url_influx;

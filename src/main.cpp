@@ -93,6 +93,10 @@ void setDefaultConfig(void) {
     stringToChar(&cfg::www_password, FPSTR(WWW_PASSWORD));
     stringToChar(&cfg::wlanssid, FPSTR(WLANSSID));
     stringToChar(&cfg::wlanpwd, FPSTR(WLANPWD));
+    stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
+    stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
+    stringToChar(&cfg::pwd_influx, FPSTR(PWD_INFLUX));
+    stringToChar(&cfg::user_influx, FPSTR(USER_INFLUX));
     SDS011::setDefaults();
     HECA::setDefaults();
     BMPx80::setDefaults();
@@ -106,6 +110,7 @@ void setDefaultConfig(void) {
  *****************************************************************/
 void readConfig() {
 	debug_out(F("mounting FS..."), DEBUG_MIN_INFO, 1);
+    setDefaultConfig();
 
 	if (SPIFFS.begin()) {
 		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
@@ -122,7 +127,6 @@ void readConfig() {
             };
 		} else {
 			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
-			setDefaultConfig();
 		}
 	} else {
 		debug_out(F("failed to mount FS"), DEBUG_ERROR, 1);
@@ -844,6 +848,7 @@ void setup() {
     Serial.println(ESP.getCpuFreqMHz());
 
     readConfig();
+    Serial.println(getConfigString());
     resetMemoryStats();
     Reporting::setupHomePhone();
 

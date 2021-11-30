@@ -33,9 +33,11 @@ unsigned stringToChar(char **dst, const String src) {
 //    Serial.println(F("after allocating"));
 
     if (*dst == nullptr) return 0;   //does it return nullptr or raises Abort? Probaby fails in 3.0.0 ArduinoCore
-//    Serial.println(F("copying..."));
+//    Serial.print(F("copying len: "));
+//    Serial.println(len);
     strncpy(*dst, src.c_str(), len);
 //    Serial.println(F("copied..."));
+//    Serial.println(*dst);
     return len;
 }
 
@@ -195,7 +197,7 @@ void debug_out(const String& text, const int level, const bool linebreak) {
 
 
 //Create string with config as JSON
-String getConfigString(boolean maskPwd = false) {
+String getConfigString(boolean maskPwd) {
     using namespace cfg;
     String json_string = "{";
     debug_out(F("saving config..."), DEBUG_MIN_INFO, 1);
@@ -310,6 +312,7 @@ int readAndParseConfigFile(File configFile) {
         debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
 
         json.printTo(json_string);
+        Serial.println(json_string);
         debug_out(F("File content: "), DEBUG_MED_INFO, 0);
         debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
         debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
@@ -384,14 +387,20 @@ int readAndParseConfigFile(File configFile) {
             if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
             if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
-            strcpyFromJSON(user_custom);
-            strcpyFromJSON(pwd_custom);
+            if (json.containsKey(F("user_custom"))) stringToChar(&user_custom, json[F("user_custom")]);
+            setDefault(&user_custom, FPSTR(USER_CUSTOM));
+            if (json.containsKey(F("pwd_custom"))) stringToChar(&pwd_custom, json[F("pwd_custom")]);
+            setDefault(&pwd_custom, FPSTR(PWD_CUSTOM));
             setFromJSON(send2influx);
+
             if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
             if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
             setFromJSON(port_influx);
-            strcpyFromJSON(user_influx);
-            strcpyFromJSON(pwd_influx);
+            if (json.containsKey(F("user_influx"))) stringToChar(&user_influx, json[F("user_influx")]);
+            setDefault(&user_influx, FPSTR(USER_INFLUX));
+            if (json.containsKey(F("pwd_influx"))) stringToChar(&pwd_influx, json[F("pwd_influx")]);
+            setDefault(&pwd_influx, FPSTR(PWD_INFLUX));
+
             if (host_influx.equals(F("api.luftdaten.info"))) {
                 host_influx = F("");
                 send2influx = 0;

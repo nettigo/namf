@@ -63,5 +63,7 @@ void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
 unsigned stringToChar(char **dst, const String src);
 //void dbg(char *v);
+String getConfigString(boolean maskPwd = false);
+
 
 #endif //NAMF_HELPERS_H

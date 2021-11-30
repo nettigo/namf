@@ -59,14 +59,14 @@ namespace cfg {
     char senseboxid[30] = SENSEBOXID;
 
     int port_influx = PORT_INFLUX;
-    char user_influx[65] = USER_INFLUX;
-    char pwd_influx[65] = PWD_INFLUX;
+    char *user_influx = nullptr;
+    char *pwd_influx = nullptr;
 
     String host_custom = FPSTR(HOST_CUSTOM);
     String url_custom = FPSTR(URL_CUSTOM);
     int port_custom = PORT_CUSTOM;
-    char user_custom[65] = USER_CUSTOM;
-    char pwd_custom[65] = PWD_CUSTOM;
+    char *user_custom = nullptr;
+    char *pwd_custom = nullptr;
 
     String host_influx = FPSTR(HOST_INFLUX);
     String url_influx = FPSTR(URL_INFLUX);
