@@ -294,6 +294,10 @@ void verifyLang(char *cl) {
 void dbg(char *v) { if (v == nullptr) Serial.println(F("NULL")); else Serial.println(v);}
 
 
+void setCharVar(const JsonObject &json, char **var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
+    if (json.containsKey(key)) stringToChar(var, json[key]);
+    if (def != nullptr) setDefault(var, def);
+}
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
@@ -319,30 +323,23 @@ int readAndParseConfigFile(File configFile) {
         debug_out(json_string, DEBUG_MED_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
+            setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(WLANSSID));
+            setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(WLANPWD));
+            setCharVar(json, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
+            setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
+            setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
+            setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+            setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
+            setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
+            setCharVar(json, &user_influx, F("user_influx"), FPSTR(USER_INFLUX));
+            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(PWD_INFLUX));
 
 #define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
 
-            if (json.containsKey(F("wlanssid"))) stringToChar(&wlanssid, json[F("wlanssid")]);
-            setDefault(&wlanssid, FPSTR(WLANSSID));
 
-            if (json.containsKey(F("wlanpwd"))) stringToChar(&wlanpwd, json[F("wlanpwd")]);
-            setDefault(&wlanpwd, FPSTR(WLANPWD));
-
-            if (json.containsKey(F("www_username"))) stringToChar(&www_username, json[F("www_username")]);
-            setDefault(&www_username, FPSTR(WWW_USERNAME));
-
-            if (json.containsKey(F("www_password"))) stringToChar(&www_password, json[F("www_password")]);
-            setDefault(&www_password, FPSTR(WWW_PASSWORD));
-
-            if (json.containsKey(F("fs_ssid"))) stringToChar(&fs_ssid, json[F("fs_ssid")]);
-            setDefault(&fs_ssid, FPSTR(FS_SSID));
-            
-            if (json.containsKey(F("fs_pwd"))) stringToChar(&fs_pwd, json[F("fs_pwd")]);
-            setDefault(&fs_pwd, FPSTR(FS_PWD));
-            
             setFromJSON(www_basicauth_enabled);
             setFromJSON(dht_read);
             setFromJSON(sds_read);
@@ -383,23 +380,15 @@ int readAndParseConfigFile(File configFile) {
                 send2sensemap = 0;
             }
             setFromJSON(send2custom);
-//            strcpyFromJSON(host_custom);
+
             if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
             if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
-            if (json.containsKey(F("user_custom"))) stringToChar(&user_custom, json[F("user_custom")]);
-            setDefault(&user_custom, FPSTR(USER_CUSTOM));
-            if (json.containsKey(F("pwd_custom"))) stringToChar(&pwd_custom, json[F("pwd_custom")]);
-            setDefault(&pwd_custom, FPSTR(PWD_CUSTOM));
             setFromJSON(send2influx);
 
             if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
             if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
             setFromJSON(port_influx);
-            if (json.containsKey(F("user_influx"))) stringToChar(&user_influx, json[F("user_influx")]);
-            setDefault(&user_influx, FPSTR(USER_INFLUX));
-            if (json.containsKey(F("pwd_influx"))) stringToChar(&pwd_influx, json[F("pwd_influx")]);
-            setDefault(&pwd_influx, FPSTR(PWD_INFLUX));
 
             if (host_influx.equals(F("api.luftdaten.info"))) {
                 host_influx = F("");
