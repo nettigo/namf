@@ -117,13 +117,6 @@ DallasTemperature ds18b20(&oneWire);
  *****************************************************************/
 TinyGPSPlus gps;
 
-boolean trigP1 = false;
-boolean trigP2 = false;
-unsigned long trigOnP1;
-unsigned long trigOnP2;
-
-unsigned long lowpulseoccupancyP1 = 0;
-unsigned long lowpulseoccupancyP2 = 0;
 
 bool send_now = false;
 unsigned long starttime;
@@ -141,14 +134,6 @@ bool is_PMS_running = true;
 
 unsigned long sending_time = 0;
 unsigned long last_update_attempt;
-
-int sds_pm10_sum = 0;
-int sds_pm25_sum = 0;
-int sds_val_count = 0;
-int sds_pm10_max = 0;
-int sds_pm10_min = 20000;
-int sds_pm25_max = 0;
-int sds_pm25_min = 20000;
 
 int pms_pm1_sum = 0;
 int pms_pm10_sum = 0;

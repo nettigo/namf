@@ -1187,8 +1187,6 @@ void loop() {
 
 		// Resetting for next sampling
 		last_data_string = data;
-		lowpulseoccupancyP1 = 0;
-		lowpulseoccupancyP2 = 0;
 		sample_count = 0;
 		last_micro = 0;
 		min_micro = 1000000000;

@@ -148,14 +148,6 @@ extern DallasTemperature ds18b20;
  *****************************************************************/
 extern TinyGPSPlus gps;
 
-extern boolean trigP1 ;
-extern boolean trigP2 ;
-extern unsigned long trigOnP1;
-extern unsigned long trigOnP2;
-
-extern unsigned long lowpulseoccupancyP1 ;
-extern unsigned long lowpulseoccupancyP2 ;
-
 extern bool send_now ;
 extern unsigned long starttime;
 extern unsigned long time_point_device_start_ms;
@@ -172,14 +164,6 @@ extern bool is_PMS_running ;
 
 extern unsigned long sending_time ;
 extern unsigned long last_update_attempt;
-
-extern int sds_pm10_sum ;
-extern int sds_pm25_sum ;
-extern int sds_val_count ;
-extern int sds_pm10_max ;
-extern int sds_pm10_min ;
-extern int sds_pm25_max ;
-extern int sds_pm25_min ;
 
 extern int pms_pm1_sum ;
 extern int pms_pm10_sum ;
