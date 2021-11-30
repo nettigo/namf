@@ -41,6 +41,11 @@ namespace cfg {
     extern char *wlanssid;
     extern char *wlanpwd;
 
+    //fallback SSID & pwd
+    extern char *fbssid;
+    extern char *fbpwd;
+
+
     extern char current_lang[3];
     extern char *www_username;
     extern char *www_password;

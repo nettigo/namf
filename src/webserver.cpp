@@ -384,6 +384,15 @@ void webserver_config() {
         page_content.concat(F("</b><br/><br/>\n<b>"));
 
         if (!wificonfig_loop) {
+            page_content.concat(FPSTR(INTL_FALBACK_WIFI));
+            page_content.concat(F("</b><br/>"));
+
+            page_content.concat(form_input(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
+                                           35));
+            page_content.concat(form_password(F("fbpwd"), FPSTR(INTL_PASSWORD), fbpwd,
+                                              65));
+            page_content.concat(F("<br/><b>"));
+
             page_content.concat(FPSTR(INTL_BASICAUTH));
             page_content.concat(F("</b><br/>"));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
@@ -565,6 +574,12 @@ void webserver_config() {
                 stringToChar(&wlanssid,server.arg(F("wlanssid")));
             }
             readPwdParam(&wlanpwd,F("wlanpwd"));
+        }
+        if (server.hasArg(F("fbssid")) && server.arg(F("fbssid")) != F("")) {
+            if (server.hasArg(F("fbssid"))){
+                stringToChar(&fbssid,server.arg(F("fbssid")));
+            }
+            readPwdParam(&fbpwd,F("fbpwd"));
         }
         //always allow to change output power
         readFloatParam(outputPower);

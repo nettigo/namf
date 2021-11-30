@@ -210,14 +210,20 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("wlanssid"), wlanssid);
     //mask WiFi password?
     if (maskPwd) {
-        json_string += Var2Json(F("wlanpwd"), String("***"));
+        json_string += Var2Json(F("wlanpwd"), String(F("****")));
+        json_string += Var2Json(F("fbpwd"), String(F("****")));
+        json_string += Var2Json(F("fs_pwd"), String(F("****")));
+
     } else {
         json_string += Var2Json(F("wlanpwd"), wlanpwd);
+        json_string += Var2Json(F("fbpwd"), fbpwd);
+        json_string += Var2Json(F("fs_pwd"), fs_pwd);
+
     }
     json_string += Var2Json(F("www_username"), www_username);
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
-    json_string += Var2Json(F("fs_pwd"), fs_pwd);
+    json_string += Var2Json(F("fbssid"), fbssid);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
 //    copyToJSON_Bool(sds_read);
@@ -323,8 +329,10 @@ int readAndParseConfigFile(File configFile) {
         debug_out(json_string, DEBUG_MED_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
-            setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(WLANSSID));
-            setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(WLANPWD));
+            setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &fbpwd, F("fbpwd"), FPSTR(EMPTY_STRING));
             setCharVar(json, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
             setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
             setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));

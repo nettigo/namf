@@ -88,11 +88,13 @@ void disable_unneeded_nmea() {
 //that pointers are properly inited
 void setDefaultConfig(void) {
     //init
-    debug_out(F("Set default config for device"), DEBUG_ERROR, 1);
+    debug_out(F("Set default config for device"), DEBUG_MIN_INFO, 1);
     stringToChar(&cfg::www_username, FPSTR(WWW_USERNAME));
     stringToChar(&cfg::www_password, FPSTR(WWW_PASSWORD));
-    stringToChar(&cfg::wlanssid, FPSTR(WLANSSID));
-    stringToChar(&cfg::wlanpwd, FPSTR(WLANPWD));
+    stringToChar(&cfg::wlanssid, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::wlanpwd, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::fbssid, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::fbpwd, FPSTR(EMPTY_STRING));
     stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
     stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
     stringToChar(&cfg::pwd_influx, FPSTR(PWD_INFLUX));
@@ -214,7 +216,6 @@ void wifiConfig() {
 	const IPAddress apIP(192, 168, 4, 1);
 	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
 	WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
-	debug_out(String(WLANPWD), DEBUG_MIN_INFO, 1);
 
 	DNSServer dnsServer;
 	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
@@ -332,7 +333,15 @@ void connectWifi() {
 	waitForWifiToConnect(40);
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (WiFi.status() != WL_CONNECTED) {
-		startAP();
+        if (strlen(cfg::fbssid)) {
+            debug_out(F("Failed to connect to WiFi. Trying to connect to fallback WiFi"), DEBUG_ERROR);
+            debug_out(cfg::fbssid, DEBUG_ERROR);
+            WiFi.begin(cfg::fbssid, cfg::fbpwd); // Start WiFI
+            waitForWifiToConnect(40);
+
+        }
+        if (WiFi.status() != WL_CONNECTED)
+            startAP();
 	}
 	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
@@ -886,6 +895,8 @@ void setup() {
             updateFW();
         }
         Reporting::reportBoot();
+        Serial.println(F(" After Report boot"));
+
     } else {
         startAP();
     }

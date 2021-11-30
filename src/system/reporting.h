@@ -11,8 +11,8 @@
 
 namespace Reporting {
 #ifdef SOFTWARE_BETA
-    const char reportingHost[] PROGMEM = "et-dev.nettigo.pl";
-    const unsigned reportingHostPort PROGMEM = 80;
+    const char reportingHost[]  = "et-dev.nettigo.pl";
+    const unsigned reportingHostPort = 80;
 
 #else
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
@@ -86,6 +86,10 @@ namespace Reporting {
     }
 
     void reportBoot() {
+        Serial.println(F("Report boot"));
+        String h = String(reportingHost);
+        Serial.println(F("Host name created"));
+
         if (!cfg::send_diag) return;
         debug_out(F("Report boot..."), DEBUG_MED_INFO);
         if (cfg::UUID.length() < 36) { registerSensor(); }
@@ -93,8 +97,10 @@ namespace Reporting {
         WiFiClient client;
         HTTPClient http;
 
+
         String body = F("{");
         body.reserve(512);
+        Serial.println(F("Vars created"));
         body.concat(Var2Json(F("VER"), SOFTWARE_VERSION));
         body.concat(Var2Json(F("MD5"), ESP.getSketchMD5()));
         body.concat(Var2Json(F("resetReason"), ESP.getResetReason()));
@@ -103,15 +109,23 @@ namespace Reporting {
         body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));
         body.remove(body.length() - 1);
         body.concat(F("}"));
-
+        Serial.println(F("przed uri"));
         String uri = F("/store/");
         uri.concat(cfg::UUID);
-        http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-        http.addHeader("Content-Type", "application/json");
+        Serial.println(uri);
+        Serial.println(reportingHost);
+        Serial.println(reportingHostPort);
+        Serial.println(ESP.getFreeHeap());
+        Serial.println(ESP.getMaxFreeBlockSize());
 
-//        Serial.println(body);
+        Serial.println(F("begin"));
+        http.begin(client, h, reportingHostPort, uri, false); //HTTP
+        Serial.println(F("after begin"));
+        http.addHeader(F("Content-Type"), F("application/json"));
+
+        Serial.println(body);
         int httpCode = http.POST(body);
-//        Serial.println(httpCode);
+        Serial.println(httpCode);
         //server does not have such UUID. Database reset or something other, just re-register next time
         if (httpCode == HTTP_CODE_NOT_FOUND) {
             cfg::UUID = F("");
@@ -186,7 +200,7 @@ namespace Reporting {
             String uri = F("/store/");
             uri.concat(cfg::UUID);
             http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-            http.addHeader("Content-Type", "application/json");
+            http.addHeader(F("Content-Type"), F("application/json"));
 
             Serial.println(body);
             int httpCode = http.POST(body);

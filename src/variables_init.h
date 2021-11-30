@@ -17,6 +17,9 @@ namespace cfg {
     char *wlanssid = nullptr;
     char *wlanpwd = nullptr;
 
+    char *fbssid = nullptr;
+    char *fbpwd = nullptr;
+
     char current_lang[3] = "PL";
     char *www_username = nullptr;
     char *www_password = nullptr;

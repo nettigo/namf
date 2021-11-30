@@ -63,6 +63,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA włączone na 60 sekund.";
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Włącz autoryzację w panelu konfiguracyjnym, by móc włączyć zdalne ładowanie kodu";
 /* ./src/lang/intl_pl.lang */ const char INTL_ERROR[] PROGMEM = "tylko błędy";
+/* ./src/lang/intl_pl.lang */ const char INTL_FALBACK_WIFI[] PROGMEM = "Alternatywna sieć WiFi";
 /* ./src/lang/intl_pl.lang */ const char INTL_FIRMWARE[] PROGMEM = "Wersja FW";
 /* ./src/lang/intl_pl.lang */ const char INTL_FS_WIFI[] PROGMEM = "Czujnik WiFi";
 /* ./src/lang/intl_pl.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "Parametry WiFi w trybie konfiguracji czujnika";
