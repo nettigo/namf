@@ -313,6 +313,10 @@ void    startAP(void) {
  * WiFi auto connecting script                                   *
  *****************************************************************/
 void connectWifi() {
+    display_debug(F("Connecting to"), String(cfg::wlanssid));
+    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
+    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
+    debug_out(F("'"), DEBUG_ERROR, 1);
 	debug_out(String(WiFi.status()), DEBUG_MIN_INFO, 1);
 	WiFi.disconnect();
 	WiFi.setOutputPower(cfg::outputPower);
@@ -327,13 +331,11 @@ void connectWifi() {
 	WiFi.hostname(cfg::fs_ssid); // Hostname for DHCP Server
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
 
-	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
-
 	waitForWifiToConnect(40);
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (WiFi.status() != WL_CONNECTED) {
         if (strlen(cfg::fbssid)) {
+            display_debug(F("Connecting to"), String(cfg::fbssid));
             debug_out(F("Failed to connect to WiFi. Trying to connect to fallback WiFi"), DEBUG_ERROR);
             debug_out(cfg::fbssid, DEBUG_ERROR);
             WiFi.begin(cfg::fbssid, cfg::fbpwd); // Start WiFI
@@ -881,10 +883,7 @@ void setup() {
 
 
     setup_webserver();
-    display_debug(F("Connecting to"), String(cfg::wlanssid));
-    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
-    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
-    debug_out(F("'"), DEBUG_ERROR, 1);
+
 
     if (strlen(cfg::wlanssid) > 0) {
         connectWifi();
