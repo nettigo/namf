@@ -11,7 +11,7 @@
 
 namespace Reporting {
 #ifdef SOFTWARE_BETA
-    const char reportingHost[]  = "et-dev.nettigo.pl";
+    const char reportingHost[] PROGMEM = "et-dev.nettigo.pl";
     const unsigned reportingHostPort = 80;
 
 #else
@@ -72,13 +72,12 @@ namespace Reporting {
         String uri = F("/register/");
         uri.concat(esp_chipid());
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-        Serial.println(F("Register"));
         http.addHeader(F("Content-Type"), F("application/json"));
         String body = F("");
         int httpCode = http.POST(body);
-        Serial.println(httpCode);
+//        Serial.println(httpCode);
         String resp = http.getString();
-        Serial.println(resp);
+//        Serial.println(resp);
         if (httpCode == HTTP_CODE_OK) {
             cfg::UUID = resp;
             writeConfig();
@@ -86,10 +85,7 @@ namespace Reporting {
     }
 
     void reportBoot() {
-        Serial.println(F("Report boot"));
-        String h = String(reportingHost);
-        Serial.println(F("Host name created"));
-
+//        Serial.println(F("Report boot"));
         if (!cfg::send_diag) return;
         debug_out(F("Report boot..."), DEBUG_MED_INFO);
         if (cfg::UUID.length() < 36) { registerSensor(); }
@@ -100,7 +96,6 @@ namespace Reporting {
 
         String body = F("{");
         body.reserve(512);
-        Serial.println(F("Vars created"));
         body.concat(Var2Json(F("VER"), SOFTWARE_VERSION));
         body.concat(Var2Json(F("MD5"), ESP.getSketchMD5()));
         body.concat(Var2Json(F("resetReason"), ESP.getResetReason()));
@@ -109,18 +104,10 @@ namespace Reporting {
         body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));
         body.remove(body.length() - 1);
         body.concat(F("}"));
-        Serial.println(F("przed uri"));
         String uri = F("/store/");
         uri.concat(cfg::UUID);
-        Serial.println(uri);
-        Serial.println(reportingHost);
-        Serial.println(reportingHostPort);
-        Serial.println(ESP.getFreeHeap());
-        Serial.println(ESP.getMaxFreeBlockSize());
 
-        Serial.println(F("begin"));
-        http.begin(client, h, reportingHostPort, uri, false); //HTTP
-        Serial.println(F("after begin"));
+        http.begin(client, FPSTR(reportingHost), reportingHostPort, uri, false); //HTTP
         http.addHeader(F("Content-Type"), F("application/json"));
 
         Serial.println(body);
@@ -190,6 +177,8 @@ namespace Reporting {
 
             body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
             body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
+            body.concat(Var2Json(F("maxFrag"),memoryStatsMax.frag));
+            body.concat(Var2Json(F("minFrag"),memoryStatsMin.frag));
             body.concat(Var2Json(F("minRSSI"),minRSSI));
             body.concat(Var2Json(F("maxRSSI"),maxRSSI));
 

@@ -386,21 +386,25 @@ void webserver_config() {
         if (!wificonfig_loop) {
             page_content.concat(FPSTR(INTL_FALBACK_WIFI));
             page_content.concat(F("</b><br/>"));
+            page_content.concat(FPSTR(TABLE_TAG_OPEN));
 
             page_content.concat(form_input(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
                                            35));
             page_content.concat(form_password(F("fbpwd"), FPSTR(INTL_PASSWORD), fbpwd,
                                               65));
+            page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
+
             page_content.concat(F("<br/><b>"));
 
             page_content.concat(FPSTR(INTL_BASICAUTH));
             page_content.concat(F("</b><br/>"));
+            page_content.concat(form_checkbox("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
+
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
             page_content.concat(form_input(F("www_username"), FPSTR(INTL_USER), www_username,
                                        30));
             page_content.concat(form_password(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
                                               30));
-            page_content.concat(form_checkbox("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
 
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("\n<b>"));
