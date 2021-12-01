@@ -188,7 +188,7 @@ namespace Reporting {
             body.concat(F("}"));
             String uri = F("/store/");
             uri.concat(cfg::UUID);
-            http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
+            http.begin(client, FPSTR(reportingHost), reportingHostPort, uri ); //HTTP
             http.addHeader(F("Content-Type"), F("application/json"));
 
             Serial.println(body);
