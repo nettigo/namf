@@ -2,6 +2,11 @@
 
 This is list of test/experiment firmwares. If You need to see what have changed in stable/beta see [Versions.md](Versions.md)
 
+### NAMF-2020-42a2 (2021-12-1 rev )
+* moved more variables to dynamic memory
+* new option - Fallback WiFi - on startup, if NAM can not connect to WiFi and fallback is configured then connects to second network.
+
+
 ### NAMF-2020-42a1 (2021-11-29 rev cbcefe113638bfa72fc66634ce49d9bf50e9773b)
 * moved some crucial variables (SSIDs, pwds) to dynamic memory
 
