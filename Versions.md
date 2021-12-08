@@ -1,4 +1,7 @@
-NAMF-2020-42rc6 (2021-12-07 rev)
+NAMF-2020-42rc7 (2021-12-08 rev f848b44f34d24ad104280d0dcf22f7b4c974c79d)
+- do not collect WiFi stats when no connection...
+
+NAMF-2020-42rc6 (2021-12-07 rev 6522bc7facf6c58b68ac2f6a53c90952cf8a2cd7)
 - updated JSON sent to Nettigo on boot time
 
 NAMF-2020-42rc5 (2021-11-29 rev 8d2848fa82aad63817deec9dd187e901d1ee1b99)
