@@ -4,7 +4,8 @@
 
 #ifndef NAMF_REPORTING_H
 #define NAMF_REPORTING_H
-
+#define REPORTING_MINRSSI_NO_VAL 127
+#define REPORTING_MAXRSSI_NO_VAL -128
 #include "helpers.h"
 #include "sensors/sds011.h"
 #include <ESP8266WiFi.h>
@@ -12,7 +13,7 @@
 namespace Reporting {
 #ifdef SOFTWARE_BETA
     const char reportingHost[] PROGMEM = "et-dev.nettigo.pl";
-    const unsigned reportingHostPort PROGMEM = 80;
+    const unsigned reportingHostPort = 80;
 
 #else
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
@@ -37,12 +38,13 @@ namespace Reporting {
     void resetMinMaxStats() {
         memoryStatsMax = memory_stat_t{0,0,0, 0};
         memoryStatsMin = memory_stat_t{UINT32_MAX, UINT16_MAX, UINT8_MAX, UINT32_MAX};
-        maxRSSI = -128;
-        minRSSI = 127;
+        maxRSSI = REPORTING_MAXRSSI_NO_VAL;
+        minRSSI = REPORTING_MINRSSI_NO_VAL;
     }
 
     void collectPeriodicStats(){
         int8_t rssi = WiFi.RSSI();
+        if (rssi == 31 ) return;    //31 means no connection, so it does not make sense to
         if (rssi > maxRSSI) maxRSSI = rssi;
         if (rssi < minRSSI) minRSSI = rssi;
     }
@@ -72,13 +74,12 @@ namespace Reporting {
         String uri = F("/register/");
         uri.concat(esp_chipid());
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-        Serial.println(F("Register"));
         http.addHeader(F("Content-Type"), F("application/json"));
         String body = F("");
         int httpCode = http.POST(body);
-        Serial.println(httpCode);
+//        Serial.println(httpCode);
         String resp = http.getString();
-        Serial.println(resp);
+//        Serial.println(resp);
         if (httpCode == HTTP_CODE_OK) {
             cfg::UUID = resp;
             writeConfig();
@@ -86,12 +87,14 @@ namespace Reporting {
     }
 
     void reportBoot() {
+//        Serial.println(F("Report boot"));
         if (!cfg::send_diag) return;
         debug_out(F("Report boot..."), DEBUG_MED_INFO);
         if (cfg::UUID.length() < 36) { registerSensor(); }
         if (cfg::UUID.length() < 36) { return; } //failed register
         WiFiClient client;
         HTTPClient http;
+
 
         String body = F("{");
         body.reserve(512);
@@ -104,7 +107,6 @@ namespace Reporting {
         body.concat(Var2Json(F("boot"), 1));
         body.remove(body.length() - 1);
         body.concat(F("}"));
-
         String uri = F("/store/");
         uri.concat(cfg::UUID);
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
@@ -177,8 +179,10 @@ namespace Reporting {
 
             body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
             body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
-            body.concat(Var2Json(F("minRSSI"),minRSSI));
-            body.concat(Var2Json(F("maxRSSI"),maxRSSI));
+            body.concat(Var2Json(F("maxFrag"),memoryStatsMax.frag));
+            body.concat(Var2Json(F("minFrag"),memoryStatsMin.frag));
+            if (minRSSI != REPORTING_MINRSSI_NO_VAL) body.concat(Var2Json(F("minRSSI"),minRSSI));
+            if (maxRSSI != REPORTING_MAXRSSI_NO_VAL) body.concat(Var2Json(F("maxRSSI"),maxRSSI));
 
             Reporting::resetMinMaxStats();
 
@@ -186,8 +190,8 @@ namespace Reporting {
             body.concat(F("}"));
             String uri = F("/store/");
             uri.concat(cfg::UUID);
-            http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-            http.addHeader("Content-Type", "application/json");
+            http.begin(client, FPSTR(reportingHost), reportingHostPort, uri ); //HTTP
+            http.addHeader(F("Content-Type"), F("application/json"));
 
             Serial.println(body);
             int httpCode = http.POST(body);
