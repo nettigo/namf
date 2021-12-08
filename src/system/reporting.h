@@ -4,7 +4,8 @@
 
 #ifndef NAMF_REPORTING_H
 #define NAMF_REPORTING_H
-
+#define REPORTING_MINRSSI_NO_VAL 127
+#define REPORTING_MAXRSSI_NO_VAL -128
 #include "helpers.h"
 #include "sensors/sds011.h"
 #include <ESP8266WiFi.h>
@@ -37,12 +38,13 @@ namespace Reporting {
     void resetMinMaxStats() {
         memoryStatsMax = memory_stat_t{0,0,0, 0};
         memoryStatsMin = memory_stat_t{UINT32_MAX, UINT16_MAX, UINT8_MAX, UINT32_MAX};
-        maxRSSI = -128;
-        minRSSI = 127;
+        maxRSSI = REPORTING_MAXRSSI_NO_VAL;
+        minRSSI = REPORTING_MINRSSI_NO_VAL;
     }
 
     void collectPeriodicStats(){
         int8_t rssi = WiFi.RSSI();
+        if (rssi == 31 ) return;    //31 means no connection, so it does not make sense to
         if (rssi > maxRSSI) maxRSSI = rssi;
         if (rssi < minRSSI) minRSSI = rssi;
     }
@@ -180,8 +182,8 @@ namespace Reporting {
             body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
             body.concat(Var2Json(F("maxFrag"),memoryStatsMax.frag));
             body.concat(Var2Json(F("minFrag"),memoryStatsMin.frag));
-            body.concat(Var2Json(F("minRSSI"),minRSSI));
-            body.concat(Var2Json(F("maxRSSI"),maxRSSI));
+            if (minRSSI != REPORTING_MINRSSI_NO_VAL) body.concat(Var2Json(F("minRSSI"),minRSSI));
+            if (maxRSSI != REPORTING_MAXRSSI_NO_VAL) body.concat(Var2Json(F("maxRSSI"),maxRSSI));
 
             Reporting::resetMinMaxStats();
 
