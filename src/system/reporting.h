@@ -73,7 +73,7 @@ namespace Reporting {
         HTTPClient http;
         String uri = F("/register/");
         uri.concat(esp_chipid());
-        http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
+        http.begin(client, FPSTR(reportingHost), reportingHostPort, uri ); //HTTP
         http.addHeader(F("Content-Type"), F("application/json"));
         String body = F("");
         int httpCode = http.POST(body);
