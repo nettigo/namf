@@ -998,19 +998,6 @@ void webserver_reset() {
 }
 
 
-//dump internals on Serial
-void webserver_dump_status(){
-    Serial.println(F("SimpleScheduler table:"));
-    scheduler.dumpTable();
-
-    String page_content = make_header(FPSTR(INTL_STATUS_PAGE));
-    page_content += F("<p>Internal status data dumped to serial</p>");
-    page_content += make_footer();
-
-    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
-
-}
-
 
 /********************************
  *
@@ -1205,7 +1192,6 @@ void setup_webserver() {
     server.on(F("/images"), webserver_images);
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
-    server.on(F("/dump"), webserver_dump_status);
 #ifdef DBG_NAMF_TIMES
     server.on(F("/time"), webserver_reset_time);
 #endif
