@@ -3,3 +3,4 @@ INTL_SDS011_READTIME Timp de măsurare (ms)
 INTL_SDS011_WARMUP Timp de încălzire înainte de măsurare (ms)
 INTL_SDS011_LCD_HDR Citiri SDS011:
 INTL_SDS011_FAILED_READINGS Citiri eșuate/total (contor resetat cu verificarea actualizării)
+INTL_SDS011_HWR Repornire dispozitiv hardware

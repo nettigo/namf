@@ -122,6 +122,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_ro.lang */ const char INTL_SDS011[] PROGMEM = "SDS011 ({pm})";
 /* ./src/sensors/sds011/sds011_ro.lang */ const char INTL_SDS011_DESC[] PROGMEM = "SDS011 - Senzor PM2.5/PM10";
 /* ./src/sensors/sds011/sds011_ro.lang */ const char INTL_SDS011_FAILED_READINGS[] PROGMEM = "Citiri eșuate/total (contor resetat cu verificarea actualizării)";
+/* ./src/sensors/sds011/sds011_ro.lang */ const char INTL_SDS011_HWR[] PROGMEM = "Repornire dispozitiv hardware";
 /* ./src/sensors/sds011/sds011_ro.lang */ const char INTL_SDS011_LCD_HDR[] PROGMEM = "Citiri SDS011:";
 /* ./src/sensors/sds011/sds011_ro.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "Timp de măsurare (ms)";
 /* ./src/sensors/sds011/sds011_ro.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "Timp de încălzire înainte de măsurare (ms)";
