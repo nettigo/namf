@@ -26,6 +26,8 @@ body{font-family:Arial;margin:0;}\
 .spacer{padding:10px;}\
 .r{text-align:right;}\
 td{vertical-align:top;}\
+a.nn{text-decoration:none;display:inline;color:inherit;background:none;padding:2px}\
+a.nn:hover{background:none}\
 a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\
 a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
 a.plain:hover{background:inherit}\
@@ -45,7 +47,7 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 <div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
 <a href='/' style='background:none;width:0;display:inline'><img src='/images?n=l' style='float:left;margin:20px'/></a>\
 <h3 style='margin:0'>{tt}<br>{sname}</h3>\
-<small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4>{h} {n} {t}</h4>";
+<small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4><a class='nn' href='/'>{h}</a> {n} {t}</h4>";
 
 const char BR_TAG[] PROGMEM = "<br/>";
 const char TABLE_TAG_OPEN[] PROGMEM = "<table>";
