@@ -1,0 +1,5 @@
+SENSOR_SHT3 SHT3x
+INTL_SHT3X_DESC SHT3x - senzor de temperatură și umiditate
+INTL_SHT3X_RESULTS Umiditate și temperatură
+INTL_SHT3x_HUM Umiditate relativă
+INTL_SHT3x_TEMP Temperatura

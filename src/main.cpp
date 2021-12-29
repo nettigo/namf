@@ -1115,7 +1115,25 @@ void loop() {
         //add results from new scheduler
         SimpleScheduler::getResults(data);
 
-		if (cfg::send2dusti) {
+        // reconnect to WiFi if disconnected
+        if (WiFi.status() != WL_CONNECTED) {
+            debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
+            WiFi.reconnect();
+            waitForWifiToConnect(20);
+            debug_out("", DEBUG_MIN_INFO, 1);
+            if (WiFi.status() != WL_CONNECTED) {    //still no connection
+                debug_out(F("Still no WiFi, turn off..."),DEBUG_MIN_INFO);
+                WiFi.mode(WIFI_OFF);
+                delay(2000);
+                debug_out(F("WiFi, reconnecting"),DEBUG_MIN_INFO);
+                WiFi.mode(WIFI_STA);
+                WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
+                waitForWifiToConnect(20);
+            }
+        }
+
+
+        if (cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
 		}
 		data_sample_times.concat(Value2Json("signal", signal_strength));
@@ -1143,13 +1161,6 @@ void loop() {
 		debug_out(String(sending_time), DEBUG_MIN_INFO, 1);
 
 
-		// reconnect to WiFi if disconnected
-		if (WiFi.status() != WL_CONNECTED) {
-			debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
-			WiFi.reconnect();
-			waitForWifiToConnect(20);
-			debug_out("", DEBUG_MIN_INFO, 1);
-		}
 
 		// Resetting for next sampling
 		last_data_string = data;

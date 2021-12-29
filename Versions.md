@@ -1,3 +1,23 @@
+NAMF-2020-42rc7 (2021-12-08 rev f848b44f34d24ad104280d0dcf22f7b4c974c79d)
+- do not collect WiFi stats when no connection...
+
+NAMF-2020-42rc6 (2021-12-07 rev 6522bc7facf6c58b68ac2f6a53c90952cf8a2cd7)
+- updated JSON sent to Nettigo on boot time
+
+NAMF-2020-42rc5 (2021-11-29 rev 8d2848fa82aad63817deec9dd187e901d1ee1b99)
+- just version bump to get new beta diagnostic data endpoint URL
+
+NAMF-2020-42rc4 (2021-11-25 rev 1155d420d0b9139cfa646ac92d7276ac462136a5)
+- added some missing translations
+- updated diagnostic data upload URL 
+
+NAMF-2020-42rc3 (2021-11-25 rev )
+- make sure to request EN language file if somehow value from config file is on not supported list
+
+NAMF-2020-42rc2 (2021-11-25 rev )
+- fixed SDS reporting to Nettigo
+- Romanian translation
+
 NAMF-2020-41 (2021-11-08 rev )
 - Release based on NAMF-2020-41rc4
 - Fixed typo in JavaScript - fetching available WiFi networks did not work correctly

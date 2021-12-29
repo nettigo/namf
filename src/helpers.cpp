@@ -242,7 +242,14 @@ String getConfigString(boolean maskPwd = false) {
 String getMaskedConfigString() {
     return getConfigString(true);
 }
-
+//make sure lang is on supported list
+void verifyLang(char *cl) {
+    if (!strcmp(cl,"PL")) return;
+    if (!strcmp(cl,"EN")) return;
+    if (!strcmp(cl,"HU")) return;
+    if (!strcmp(cl,"RO")) return;
+    strcpy(cl,"EN");
+}
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
@@ -274,6 +281,7 @@ int readAndParseConfigFile(File configFile) {
 #define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
+            verifyLang(current_lang);
             strcpyFromJSON(wlanssid);
             strcpyFromJSON(wlanpwd);
             strcpyFromJSON(www_username);
@@ -574,23 +582,14 @@ String form_select_lang() {
                      "<td>{t}</td>"
                      "<td>"
                      "<select name='current_lang'>"
-                     //					"<option value='DE'{s_DE}>Deutsch (DE)</option>"
-                     //					"<option value='BG'{s_BG}>Bulgarian (BG)</option>"
-                     //					"<option value='CZ'{s_CZ}>Český (CZ)</option>"
                      "<option value='EN'{s_EN}>English (EN)</option>"
                      "<option value='HU'{s_HU}>Hungarian (HU)</option>"
-                     //					"<option value='ES'{s_ES}>Español (ES)</option>"
-                     //					"<option value='FR'{s_FR}>Français (FR)</option>"
-                     //					"<option value='IT'{s_IT}>Italiano (IT)</option>"
-                     //					"<option value='LU'{s_LU}>Lëtzebuergesch (LU)</option>"
-                     //					"<option value='NL'{s_NL}>Nederlands (NL)</option>"
                      "<option value='PL'{s_PL}>Polski (PL)</option>"
-                     //					"<option value='PT'{s_PT}>Português (PT)</option>"
-                     //					"<option value='RU'{s_RU}>Русский (RU)</option>"
-                     //					"<option value='SE'{s_SE}>Svenska (SE)</option>"
+                     "<option value='RO'{s_RO}>ROMÂNĂ (RO)</option>"
                      "</select>"
                      "</td>"
                      "</tr>");
+    s.reserve(s.length()+40);
 
     s.replace("{t}", FPSTR(INTL_LANGUAGE));
 

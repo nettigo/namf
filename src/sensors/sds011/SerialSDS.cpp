@@ -136,7 +136,7 @@ void SerialSDS::logReply(ResponseType type) {
             break;
 
     }
-    Serial.println();
+//    Serial.println();
 }
 
 //store reply for command

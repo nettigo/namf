@@ -4,14 +4,22 @@
 
 #ifndef NAMF_REPORTING_H
 #define NAMF_REPORTING_H
-
+#define REPORTING_MINRSSI_NO_VAL 127
+#define REPORTING_MAXRSSI_NO_VAL -128
 #include "helpers.h"
 #include "sensors/sds011.h"
 #include <ESP8266WiFi.h>
 
 namespace Reporting {
+#ifdef SOFTWARE_BETA
+    const char reportingHost[] PROGMEM = "et-dev.nettigo.pl";
+    const unsigned reportingHostPort = 80;
+
+#else
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
-    const unsigned reportingHostPort PROGMEM = 80;
+        const unsigned reportingHostPort PROGMEM = 80;
+
+#endif
     unsigned long lastPhone = 0;
     unsigned long lastPeriodicCheck = 0;
     bool first = true;
@@ -20,7 +28,7 @@ namespace Reporting {
 #define RPRT_PERIODIC_CHECK_INTERVAL    1000
 
 
-extern SerialSDS channelSDS(serialSDS);
+//extern SerialSDS channelSDS(serialSDS);
 
     //we are using the same code in main loop, but in main namespace we are collecting stats for one
     //measurement period, here we are collecting for 24 hrs, and just those min/max are sending
@@ -30,12 +38,13 @@ extern SerialSDS channelSDS(serialSDS);
     void resetMinMaxStats() {
         memoryStatsMax = memory_stat_t{0,0,0, 0};
         memoryStatsMin = memory_stat_t{UINT32_MAX, UINT16_MAX, UINT8_MAX, UINT32_MAX};
-        maxRSSI = -128;
-        minRSSI = 127;
+        maxRSSI = REPORTING_MAXRSSI_NO_VAL;
+        minRSSI = REPORTING_MINRSSI_NO_VAL;
     }
 
     void collectPeriodicStats(){
         int8_t rssi = WiFi.RSSI();
+        if (rssi == 31 ) return;    //31 means no connection, so it does not make sense to
         if (rssi > maxRSSI) maxRSSI = rssi;
         if (rssi < minRSSI) minRSSI = rssi;
     }
@@ -65,13 +74,12 @@ extern SerialSDS channelSDS(serialSDS);
         String uri = F("/register/");
         uri.concat(esp_chipid());
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-        Serial.println(F("Register"));
-        http.addHeader("Content-Type", "application/json");
+        http.addHeader(F("Content-Type"), F("application/json"));
         String body = F("");
         int httpCode = http.POST(body);
-        Serial.println(httpCode);
+//        Serial.println(httpCode);
         String resp = http.getString();
-        Serial.println(resp);
+//        Serial.println(resp);
         if (httpCode == HTTP_CODE_OK) {
             cfg::UUID = resp;
             writeConfig();
@@ -79,12 +87,14 @@ extern SerialSDS channelSDS(serialSDS);
     }
 
     void reportBoot() {
+//        Serial.println(F("Report boot"));
         if (!cfg::send_diag) return;
         debug_out(F("Report boot..."), DEBUG_MED_INFO);
         if (cfg::UUID.length() < 36) { registerSensor(); }
         if (cfg::UUID.length() < 36) { return; } //failed register
         WiFiClient client;
         HTTPClient http;
+
 
         String body = F("{");
         body.reserve(512);
@@ -94,9 +104,9 @@ extern SerialSDS channelSDS(serialSDS);
         body.concat(Var2Json(F("enabledSubsystems"), scheduler.registeredNames()));
         body.concat(Var2Json(F("updateChannel"), cfg::update_channel));
         body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));
+        body.concat(Var2Json(F("boot"), 1));
         body.remove(body.length() - 1);
         body.concat(F("}"));
-
         String uri = F("/store/");
         uri.concat(cfg::UUID);
         http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
@@ -119,6 +129,20 @@ extern SerialSDS channelSDS(serialSDS);
         resetMinMaxStats();
     }
 
+    //sending stats interval in hours
+    unsigned sendingInterval() {
+        switch (cfg::update_channel) {
+            case UPDATE_CHANNEL_ALFA:
+            case UPDATE_CHANNEL_BETA:
+                return 8;
+            case UPDATE_CHANNEL_STABLE:
+                return 24;
+            default:
+                return 24;
+        }
+    }
+
+
     void homePhone() {
         if (!cfg::send_diag) return;
         collectMemStats();
@@ -130,7 +154,7 @@ extern SerialSDS channelSDS(serialSDS);
 
         if (
                 (first && millis() - lastPhone > 15 * 60 * 1000) ||
-                millis() - lastPhone > 8 * 60 * 60 *1000
+                millis() - lastPhone > sendingInterval() * 60 * 60 *1000
         ) {
             first = false;
             WiFiClient client;
@@ -142,7 +166,7 @@ extern SerialSDS channelSDS(serialSDS);
                 body.concat(F("\"SDS\":{"));
                 body.concat(Var2Json(F("failed"), String(SDS011::failedReadings)));
                 body.concat(Var2Json(F("rd"), String(SDS011::readings)));
-                body.concat(Var2Json(F("CRCerr"), String(channelSDS.errorRate())));
+                body.concat(Var2Json(F("CRCerr"), String(SDS011::channelSDS.errorRate())));
                 if (SDS011::hardwareWatchdog) {
                     body.concat(Var2Json(F("wtgCycles"), String(SDS011::hwWtdgCycles)));
                     body.concat(Var2Json(F("wtgErrs"), String(SDS011::hwWtdgErrors)));
@@ -155,8 +179,10 @@ extern SerialSDS channelSDS(serialSDS);
 
             body.concat(Var2Json(F("minMaxFreeBlock"),memoryStatsMin.maxFreeBlock));
             body.concat(Var2Json(F("maxMaxFreeBlock"),memoryStatsMax.maxFreeBlock));
-            body.concat(Var2Json(F("minRSSI"),minRSSI));
-            body.concat(Var2Json(F("maxRSSI"),maxRSSI));
+            body.concat(Var2Json(F("maxFrag"),memoryStatsMax.frag));
+            body.concat(Var2Json(F("minFrag"),memoryStatsMin.frag));
+            if (minRSSI != REPORTING_MINRSSI_NO_VAL) body.concat(Var2Json(F("minRSSI"),minRSSI));
+            if (maxRSSI != REPORTING_MAXRSSI_NO_VAL) body.concat(Var2Json(F("maxRSSI"),maxRSSI));
 
             Reporting::resetMinMaxStats();
 
@@ -164,8 +190,8 @@ extern SerialSDS channelSDS(serialSDS);
             body.concat(F("}"));
             String uri = F("/store/");
             uri.concat(cfg::UUID);
-            http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-            http.addHeader("Content-Type", "application/json");
+            http.begin(client, FPSTR(reportingHost), reportingHostPort, uri ); //HTTP
+            http.addHeader(F("Content-Type"), F("application/json"));
 
             Serial.println(body);
             int httpCode = http.POST(body);
