@@ -143,6 +143,7 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTW_WTD_DESC[] PROGMEM = "Translate HU: INTL_NTW_WTD_DESC 🐱;";
  const char INTL_NTW_WTD_HOST[] PROGMEM = "Translate HU: INTL_NTW_WTD_HOST 🐱;";
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate HU: INTL_NTW_WTD_ERROR 🐱;";
+ const char INTL_BMPx80_INSIDE[] PROGMEM = "Translate HU: INTL_BMPx80_INSIDE 🐱;";
  const char INTL_HECA_DC[] PROGMEM = "Translate HU: INTL_HECA_DC 🐱;";
  const char INTL_SPS30_FW_FAIL[] PROGMEM = "Translate HU: INTL_SPS30_FW_FAIL 🐱;";
  const char INTL_SPS30_CONCENTRATION[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATION 🐱;";
@@ -153,7 +154,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
- const char INTL_BMPx80_INSIDE[] PROGMEM = "Translate HU: INTL_BMPx80_INSIDE 🐱;";
  const char INTL_MADAVI_LINK[] PROGMEM = "Translate HU: INTL_MADAVI_LINK 🐱;";
  const char INTL_TIME_FROM_UPDATE[] PROGMEM = "Translate HU: INTL_TIME_FROM_UPDATE 🐱;";
  const char INTL_NTP_TIME[] PROGMEM = "Translate HU: INTL_NTP_TIME 🐱;";
