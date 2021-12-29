@@ -1,3 +1,6 @@
+NAMF-2020-42 (2021-12-29 rev )
+- merged all changes from 42rcX line
+
 NAMF-2020-42rc7 (2021-12-08 rev f848b44f34d24ad104280d0dcf22f7b4c974c79d)
 - do not collect WiFi stats when no connection...
 
