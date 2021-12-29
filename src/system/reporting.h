@@ -17,7 +17,7 @@ namespace Reporting {
 
 #else
     const char reportingHost[] PROGMEM = "et.nettigo.pl";
-        const unsigned reportingHostPort PROGMEM = 80;
+    const unsigned reportingHostPort = 80;
 
 #endif
     unsigned long lastPhone = 0;
