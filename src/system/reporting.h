@@ -11,7 +11,7 @@
 #include <ESP8266WiFi.h>
 
 namespace Reporting {
-#ifdef SOFTWARE_BETA
+#if SOFTWARE_BETA == 1
     const char reportingHost[] PROGMEM = "et-dev.nettigo.pl";
     const unsigned reportingHostPort = 80;
 
