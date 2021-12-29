@@ -559,6 +559,7 @@ void webserver_config() {
 
         if (!wificonfig_loop) {
             readCharParam(current_lang);
+            readBoolParam(send_diag);
             readCharParam(www_username);
             readPasswdParam(www_password);
             readBoolParam(www_basicauth_enabled);
