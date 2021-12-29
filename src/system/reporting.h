@@ -105,6 +105,7 @@ namespace Reporting {
         body.concat(Var2Json(F("updateChannel"), cfg::update_channel));
         body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));
         body.concat(Var2Json(F("boot"), 1));
+        body.concat(Var2Json(F("lang"), cfg::current_lang));
         body.remove(body.length() - 1);
         body.concat(F("}"));
         String uri = F("/store/");
