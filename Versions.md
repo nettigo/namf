@@ -1,4 +1,4 @@
-NAMF-2020-43rc1 (2021-12-29 rev)
+NAMF-2020-43rc1 (2021-12-29 rev6b574fa5b8cbae67f3f33153dc8e752c1e5324f2)
 - save opt-out for sending data to Nettigo
 - added link to homepage from each sensor page
 
