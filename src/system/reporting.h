@@ -137,9 +137,9 @@ namespace Reporting {
             case UPDATE_CHANNEL_BETA:
                 return 8;
             case UPDATE_CHANNEL_STABLE:
-                return 24;
+                return 12;
             default:
-                return 24;
+                return 12;
         }
     }
 
