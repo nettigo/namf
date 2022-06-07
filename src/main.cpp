@@ -87,7 +87,8 @@ void disable_unneeded_nmea() {
 void setDefaultConfig(void) {
     SDS011::setDefaults();
     HECA::setDefaults();
-    BMPx80::setDefaults();
+//    BMPx80::setDefaults();
+    BME280::setDefaults();
     SHT3x::setDefaults();
 
 

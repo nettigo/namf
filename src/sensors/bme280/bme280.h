@@ -28,6 +28,7 @@ namespace BME280 {
     void afterSend(bool status);
     void sendToLD();
     bool isEnabled();
+    void setDefaults();
 
 
 }

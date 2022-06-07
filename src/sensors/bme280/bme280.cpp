@@ -45,6 +45,12 @@ namespace BME280 {
         }
     }
 
+    //set defaults if no config file
+    void setDefaults(void) {
+        enabled = true;
+        printOnLCD = true;
+    }
+
     bool initBME280() {
         if (initBME280(0x76) || initBME280(0x77)) {
             bme280_init_failed = false;
