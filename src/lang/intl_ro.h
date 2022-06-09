@@ -35,7 +35,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_ro.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Înapoi la pagina principală";
 /* ./src/lang/intl_ro.lang */ const char INTL_BASICAUTH[] PROGMEM = "Autorizare";
 /* ./src/lang/intl_ro.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
-/* ./src/sensors/bme280/bme280_ro.lang */ const char INTL_BME280_DESC[] PROGMEM = "Senzor de umiditate/temperatură/presiune BMPE280";
+/* ./src/sensors/bme280/bme280_ro.lang */ const char INTL_BME280_DESC[] PROGMEM = "Senzor de umiditate/temperatură/presiune BME280";
 /* ./src/lang/intl_ro.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
 /* ./src/sensors/bmpX80/bmpX80_ro.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "Senzor de umiditate/temperatură BMP180/280";
 /* ./src/sensors/bmpX80/bmpX80_ro.lang */ const char INTL_BMPx80_INSIDE[] PROGMEM = "Senzor în interiorul carcasei (nu utilizați citirea temperaturii)";
