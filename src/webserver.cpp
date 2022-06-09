@@ -319,7 +319,18 @@ void webserver_config_json_save() {
 }
 
 
-
+void readPwdParam(char **dst, const String key) {
+    if (server.hasArg(key)) {
+        String masked_pwd = F("");
+        unsigned int respSize = server.arg(key).length();
+        masked_pwd.reserve(respSize);
+            for (uint8_t i=0;i<respSize;i++)
+                masked_pwd += F("*");
+            if (masked_pwd != server.arg(key) || server.arg(key) == F("")) {
+                stringToChar(dst,server.arg(key));
+            }
+    }
+}
 /*****************************************************************
  * Webserver config: show config page                            *
  *****************************************************************/
@@ -357,14 +368,14 @@ void webserver_config() {
             page_content.concat(F("</div><br/>"));
         }
         page_content.concat(FPSTR(TABLE_TAG_OPEN));
-        page_content.concat(form_input("wlanssid", FPSTR(INTL_FS_WIFI_NAME), wlanssid,
-                                   capacity_null_terminated_char_array(wlanssid)));
+        page_content.concat(form_input(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
+                                   35));
         if (!wificonfig_loop) {
-            page_content.concat(form_password("wlanpwd", FPSTR(INTL_PASSWORD), wlanpwd,
-                                          capacity_null_terminated_char_array(wlanpwd)));
+            page_content.concat(form_password(F("wlanpwd"), FPSTR(INTL_PASSWORD), wlanpwd,
+                                          65));
         } else {
-            page_content.concat(form_input("wlanpwd", FPSTR(INTL_PASSWORD), "",
-                                       capacity_null_terminated_char_array(wlanpwd)));
+            page_content.concat(form_input(F("wlanpwd"), FPSTR(INTL_PASSWORD), F(""),
+                                       65));
         }
         page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
         page_content.concat(F("<hr/>\n<b>"));
@@ -373,14 +384,27 @@ void webserver_config() {
         page_content.concat(F("</b><br/><br/>\n<b>"));
 
         if (!wificonfig_loop) {
-            page_content.concat(FPSTR(INTL_BASICAUTH));
+            page_content.concat(FPSTR(INTL_FALBACK_WIFI));
             page_content.concat(F("</b><br/>"));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
-            page_content.concat(form_input("www_username", FPSTR(INTL_USER), www_username,
-                                       capacity_null_terminated_char_array(www_username)));
-            page_content.concat(form_password("www_password", FPSTR(INTL_PASSWORD), www_password,
-                                          capacity_null_terminated_char_array(www_password)));
+
+            page_content.concat(form_input(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
+                                           35));
+            page_content.concat(form_password(F("fbpwd"), FPSTR(INTL_PASSWORD), fbpwd,
+                                              65));
+            page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
+
+            page_content.concat(F("<br/><b>"));
+
+            page_content.concat(FPSTR(INTL_BASICAUTH));
+            page_content.concat(F("</b><br/>"));
             page_content.concat(form_checkbox("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
+
+            page_content.concat(FPSTR(TABLE_TAG_OPEN));
+            page_content.concat(form_input(F("www_username"), FPSTR(INTL_USER), www_username,
+                                       30));
+            page_content.concat(form_password(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
+                                              30));
 
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("\n<b>"));
@@ -389,10 +413,10 @@ void webserver_config() {
             page_content.concat(FPSTR(INTL_FS_WIFI_DESCRIPTION));
             page_content.concat(FPSTR(BR_TAG));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
-            page_content.concat(form_input("fs_ssid", FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
-                                       capacity_null_terminated_char_array(fs_ssid)));
-            page_content.concat(form_password("fs_pwd", FPSTR(INTL_PASSWORD), fs_pwd,
-                                          capacity_null_terminated_char_array(fs_pwd)));
+            page_content.concat(form_input(F("fs_ssid"), FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
+                                       35));
+            page_content.concat(form_password(F("fs_pwd"), FPSTR(INTL_PASSWORD), fs_pwd,
+                                          65));
 
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("\n<b>APIs</b><br/>"));
@@ -479,21 +503,21 @@ void webserver_config() {
             page_content.concat(form_input(F("host_custom"), FPSTR(INTL_SERVER), host_custom, 60));
             page_content.concat(form_input(F("url_custom"), FPSTR(INTL_PATH), url_custom, 60));
             constexpr int max_port_digits = constexprstrlen("65535");
-            page_content.concat(form_input("port_custom", FPSTR(INTL_PORT), String(port_custom), max_port_digits));
-            page_content.concat(form_input("user_custom", FPSTR(INTL_USER), user_custom,
-                                       capacity_null_terminated_char_array(user_custom)));
+            page_content.concat(form_input(F("port_custom"), FPSTR(INTL_PORT), String(port_custom), max_port_digits));
+            page_content.concat(form_input(F("user_custom"), FPSTR(INTL_USER), user_custom,
+                                       35));
             page_content.concat(form_password("pwd_custom", FPSTR(INTL_PASSWORD), pwd_custom,
-                                          capacity_null_terminated_char_array(pwd_custom)));
+                                          35));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(form_checkbox("send2influx", tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")), send2influx));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
             page_content.concat(form_input(F("host_influx"), FPSTR(INTL_SERVER), host_influx, 60));
             page_content.concat(form_input(F("url_influx"), FPSTR(INTL_PATH), url_influx, 60));
             page_content.concat(form_input("port_influx", FPSTR(INTL_PORT), String(port_influx), max_port_digits));
-            page_content.concat(form_input("user_influx", FPSTR(INTL_USER), user_influx,
-                                       capacity_null_terminated_char_array(user_influx)));
-            page_content.concat(form_password("pwd_influx", FPSTR(INTL_PASSWORD), pwd_influx,
-                                          capacity_null_terminated_char_array(pwd_influx)));
+            page_content.concat(form_input(F("user_influx"), FPSTR(INTL_USER), user_influx,
+                                       35));
+            page_content.concat(form_password(F("pwd_influx"), FPSTR(INTL_PASSWORD), pwd_influx,
+                                          35));
             page_content.concat(form_submit(FPSTR(INTL_SAVE_AND_RESTART)));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("<br/></form>"));
@@ -549,9 +573,17 @@ void webserver_config() {
             }\
         }
 
-        if (server.hasArg("wlanssid") && server.arg("wlanssid") != "") {
-            readCharParam(wlanssid);
-            readPasswdParam(wlanpwd);
+        if (server.hasArg(F("wlanssid")) && server.arg(F("wlanssid")) != F("")) {
+            if (server.hasArg(F("wlanssid"))){
+                stringToChar(&wlanssid,server.arg(F("wlanssid")));
+            }
+            readPwdParam(&wlanpwd,F("wlanpwd"));
+        }
+        if (server.hasArg(F("fbssid")) && server.arg(F("fbssid")) != F("")) {
+            if (server.hasArg(F("fbssid"))){
+                stringToChar(&fbssid,server.arg(F("fbssid")));
+            }
+            readPwdParam(&fbpwd,F("fbpwd"));
         }
         //always allow to change output power
         readFloatParam(outputPower);
@@ -559,14 +591,20 @@ void webserver_config() {
 
         if (!wificonfig_loop) {
             readCharParam(current_lang);
-            readBoolParam(send_diag);
-            readCharParam(www_username);
-            readPasswdParam(www_password);
+
+            if (server.hasArg(F("www_username"))){
+                stringToChar(&www_username,server.arg(F("www_username")));
+            }
+            readPwdParam(&www_password,F("www_password"));
+
+//            readPasswdParam(www_password);
             readBoolParam(www_basicauth_enabled);
-            readCharParam(fs_ssid);
-            if (server.hasArg("fs_pwd") &&
-                ((server.arg("fs_pwd").length() > 7) || (server.arg("fs_pwd").length() == 0))) {
-                readPasswdParam(fs_pwd);
+            if (server.hasArg(F("fs_ssid"))){
+                stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
+            }
+            if (server.hasArg(F("fs_pwd")) &&
+                ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
+                readPwdParam(&fs_pwd,F("fs_pwd"));
             }
             readBoolParam(send2dusti);
             readBoolParam(ssl_dusti);
@@ -599,6 +637,12 @@ void webserver_config() {
             readIntParam(port_custom);
             readCharParam(user_custom);
             readPasswdParam(pwd_custom);
+            if (server.hasArg(F("user_custom"))){
+                stringToChar(&user_custom,server.arg(F("user_custom")));
+            }
+            if (server.hasArg(F("pwd_custom"))) {
+                readPwdParam(&pwd_custom,F("pwd_custom"));
+            }
 
             readBoolParam(send2influx);
 
@@ -606,8 +650,13 @@ void webserver_config() {
             parseHTTP(F("url_influx"), url_influx);
 
             readIntParam(port_influx);
-            readCharParam(user_influx);
-            readPasswdParam(pwd_influx);
+
+            if (server.hasArg(F("user_influx"))){
+                stringToChar(&user_influx,server.arg(F("user_influx")));
+            }
+            if (server.hasArg(F("pwd_custom"))) {
+                readPwdParam(&pwd_custom,F("pwd_custom"));
+            }
 
         }
 

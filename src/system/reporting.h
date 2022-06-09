@@ -73,7 +73,7 @@ namespace Reporting {
         HTTPClient http;
         String uri = F("/register/");
         uri.concat(esp_chipid());
-        http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
+        http.begin(client, FPSTR(reportingHost), reportingHostPort, uri ); //HTTP
         http.addHeader(F("Content-Type"), F("application/json"));
         String body = F("");
         int httpCode = http.POST(body);
@@ -110,12 +110,13 @@ namespace Reporting {
         body.concat(F("}"));
         String uri = F("/store/");
         uri.concat(cfg::UUID);
-        http.begin(client, reportingHost, reportingHostPort, uri ); //HTTP
-        http.addHeader("Content-Type", "application/json");
 
-//        Serial.println(body);
+        http.begin(client, FPSTR(reportingHost), reportingHostPort, uri, false); //HTTP
+        http.addHeader(F("Content-Type"), F("application/json"));
+
+        Serial.println(body);
         int httpCode = http.POST(body);
-//        Serial.println(httpCode);
+        Serial.println(httpCode);
         //server does not have such UUID. Database reset or something other, just re-register next time
         if (httpCode == HTTP_CODE_NOT_FOUND) {
             cfg::UUID = F("");

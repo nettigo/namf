@@ -14,18 +14,19 @@
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
 namespace cfg {
-    char wlanssid[35] = WLANSSID;
-    char wlanpwd[65] = WLANPWD;
+    char *wlanssid = nullptr;
+    char *wlanpwd = nullptr;
+
+    char *fbssid = nullptr;
+    char *fbpwd = nullptr;
 
     char current_lang[3] = "PL";
-    char www_username[65] = WWW_USERNAME;
-    char www_password[65] = WWW_PASSWORD;
+    char *www_username = nullptr;
+    char *www_password = nullptr;
     bool www_basicauth_enabled = WWW_BASICAUTH_ENABLED;
 
-    char fs_ssid[33] = FS_SSID;
-    char fs_pwd[65] = FS_PWD;
-
-    char version_from_local_config[20] = "";
+    char *fs_ssid = nullptr;
+    char *fs_pwd = nullptr;
 
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;
@@ -61,14 +62,14 @@ namespace cfg {
     char senseboxid[30] = SENSEBOXID;
 
     int port_influx = PORT_INFLUX;
-    char user_influx[65] = USER_INFLUX;
-    char pwd_influx[65] = PWD_INFLUX;
+    char *user_influx = nullptr;
+    char *pwd_influx = nullptr;
 
     String host_custom = FPSTR(HOST_CUSTOM);
     String url_custom = FPSTR(URL_CUSTOM);
     int port_custom = PORT_CUSTOM;
-    char user_custom[65] = USER_CUSTOM;
-    char pwd_custom[65] = PWD_CUSTOM;
+    char *user_custom = nullptr;
+    char *pwd_custom = nullptr;
 
     String host_influx = FPSTR(HOST_INFLUX);
     String url_influx = FPSTR(URL_INFLUX);
@@ -80,13 +81,6 @@ namespace cfg {
     unsigned long sending_intervall_ms = 145000;
 
     byte update_channel = UPDATE_CHANNEL_STABLE;
-    void initNonTrivials(const char *id) {
-        strcpy(cfg::current_lang, CURRENT_LANG);
-        if (fs_ssid[0] == '\0') {
-            strcpy(fs_ssid, "NAM-");
-            strcat(fs_ssid, id);
-        }
-    }
 }
 
 //enum class PmSensorCmd {
@@ -126,13 +120,6 @@ DallasTemperature ds18b20(&oneWire);
  *****************************************************************/
 TinyGPSPlus gps;
 
-boolean trigP1 = false;
-boolean trigP2 = false;
-unsigned long trigOnP1;
-unsigned long trigOnP2;
-
-unsigned long lowpulseoccupancyP1 = 0;
-unsigned long lowpulseoccupancyP2 = 0;
 
 bool send_now = false;
 unsigned long starttime;
@@ -150,14 +137,6 @@ bool is_PMS_running = true;
 
 unsigned long sending_time = 0;
 unsigned long last_update_attempt;
-
-int sds_pm10_sum = 0;
-int sds_pm25_sum = 0;
-int sds_val_count = 0;
-int sds_pm10_max = 0;
-int sds_pm10_min = 20000;
-int sds_pm25_max = 0;
-int sds_pm25_min = 20000;
 
 int pms_pm1_sum = 0;
 int pms_pm10_sum = 0;

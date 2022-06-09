@@ -60,6 +60,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA enabled for 60 seconds.";
 /* ./src/lang/intl_hu.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Enable authorization in config panel in order to allow code upload";
 /* ./src/lang/intl_hu.lang */ const char INTL_ERROR[] PROGMEM = "only errors";
+/* ./src/lang/intl_hu.lang */ const char INTL_FALBACK_WIFI[] PROGMEM = "Alternatív WiFi hálózat";
 /* ./src/lang/intl_hu.lang */ const char INTL_FIRMWARE[] PROGMEM = "Firmware verzió";
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI[] PROGMEM = "WiFi Szenzor";
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "WiFi Szenzor konfigurációs módban";

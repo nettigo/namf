@@ -19,7 +19,47 @@ int32_t calcWiFiSignalQuality(int32_t rssi) {
     return (rssi + 100) * 2;
 }
 
+//store string as char array, for functions
+unsigned stringToChar(char **dst, const String src) {
+//    Serial.println(F("stringToChar"));
+//    Serial.println(src.c_str());
+    if (*dst != nullptr) {
+//        Serial.println(F("Deleting DST"));
+        delete (*dst);
+    }
+//    Serial.println(F("allocating"));
+    unsigned int len = src.length() + 1;
+    *dst = new char[len];
+//    Serial.println(F("after allocating"));
 
+    if (*dst == nullptr) return 0;   //does it return nullptr or raises Abort? Probaby fails in 3.0.0 ArduinoCore
+//    Serial.print(F("copying len: "));
+//    Serial.println(len);
+    strncpy(*dst, src.c_str(), len);
+//    Serial.println(F("copied..."));
+//    Serial.println(*dst);
+    return len;
+}
+
+unsigned setDefault(char **dst, const __FlashStringHelper *defaultValue) {
+//    Serial.println(F("setDefault"));
+    if (dst == nullptr || !strlen(*dst)) {
+        String src = String(defaultValue);
+//        Serial.println(F("SRC READY"));
+        return stringToChar(dst, src);
+    }
+    return strlen(*dst) + 1;
+}
+
+//same as stringToChar but for JSON char string as source
+unsigned charStringToChar(char *dst, const char *src) {
+    if (dst != nullptr) delete (dst);
+    size_t len = strlen(src);
+    dst = new(char[len + 1]);
+    if (dst == nullptr) return 0;
+    strncpy(dst, src, len+1);
+    return len + 1;
+}
 
 /*****************************************************************
  * convert float to string with a                                *
@@ -157,7 +197,7 @@ void debug_out(const String& text, const int level, const bool linebreak) {
 
 
 //Create string with config as JSON
-String getConfigString(boolean maskPwd = false) {
+String getConfigString(boolean maskPwd) {
     using namespace cfg;
     String json_string = "{";
     debug_out(F("saving config..."), DEBUG_MIN_INFO, 1);
@@ -170,14 +210,20 @@ String getConfigString(boolean maskPwd = false) {
     json_string += Var2Json(F("wlanssid"), wlanssid);
     //mask WiFi password?
     if (maskPwd) {
-        json_string += Var2Json(F("wlanpwd"), String("***"));
+        json_string += Var2Json(F("wlanpwd"), String(F("****")));
+        json_string += Var2Json(F("fbpwd"), String(F("****")));
+        json_string += Var2Json(F("fs_pwd"), String(F("****")));
+
     } else {
         json_string += Var2Json(F("wlanpwd"), wlanpwd);
+        json_string += Var2Json(F("fbpwd"), fbpwd);
+        json_string += Var2Json(F("fs_pwd"), fs_pwd);
+
     }
     json_string += Var2Json(F("www_username"), www_username);
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
-    json_string += Var2Json(F("fs_pwd"), fs_pwd);
+    json_string += Var2Json(F("fbssid"), fbssid);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
 //    copyToJSON_Bool(sds_read);
@@ -250,6 +296,14 @@ void verifyLang(char *cl) {
     if (!strcmp(cl,"RO")) return;
     strcpy(cl,"EN");
 }
+
+void dbg(char *v) { if (v == nullptr) Serial.println(F("NULL")); else Serial.println(v);}
+
+
+void setCharVar(const JsonObject &json, char **var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
+    if (json.containsKey(key)) stringToChar(var, json[key]);
+    if (def != nullptr) setDefault(var, def);
+}
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
@@ -268,26 +322,32 @@ int readAndParseConfigFile(File configFile) {
         debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
 
         json.printTo(json_string);
+        Serial.println(json_string);
         debug_out(F("File content: "), DEBUG_MED_INFO, 0);
         debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
         debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
         debug_out(json_string, DEBUG_MED_INFO, 1);
         if (json.success()) {
             debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
-            if (json.containsKey("SOFTWARE_VERSION")) {
-                strcpy(version_from_local_config, json["SOFTWARE_VERSION"]);
-            }
+            setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &fbpwd, F("fbpwd"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
+            setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
+            setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
+            setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+            setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
+            setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
+            setCharVar(json, &user_influx, F("user_influx"), FPSTR(USER_INFLUX));
+            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(PWD_INFLUX));
 
 #define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
-            strcpyFromJSON(wlanssid);
-            strcpyFromJSON(wlanpwd);
-            strcpyFromJSON(www_username);
-            strcpyFromJSON(www_password);
-            strcpyFromJSON(fs_ssid);
-            strcpyFromJSON(fs_pwd);
+
+
             setFromJSON(www_basicauth_enabled);
             setFromJSON(dht_read);
             setFromJSON(sds_read);
@@ -328,18 +388,16 @@ int readAndParseConfigFile(File configFile) {
                 send2sensemap = 0;
             }
             setFromJSON(send2custom);
-//            strcpyFromJSON(host_custom);
+
             if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
             if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
-            strcpyFromJSON(user_custom);
-            strcpyFromJSON(pwd_custom);
             setFromJSON(send2influx);
+
             if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
             if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
             setFromJSON(port_influx);
-            strcpyFromJSON(user_influx);
-            strcpyFromJSON(pwd_influx);
+
             if (host_influx.equals(F("api.luftdaten.info"))) {
                 host_influx = F("");
                 send2influx = 0;
@@ -523,8 +581,9 @@ String form_password(const String& name, const String& info, const String& value
                      "</td>"
                      "</tr>");
     String password = "";
+    password.reserve(value.length());
     for (uint8_t i = 0; i < value.length(); i++) {
-        password += "*";
+        password.concat(F("*"));
     }
     s.replace("{i}", info);
     s.replace("{n}", name);

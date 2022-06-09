@@ -38,18 +38,21 @@ extern SimpleScheduler::NAMFScheduler scheduler;
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
 namespace cfg {
-    extern char wlanssid[35];
-    extern char wlanpwd[65];
+    extern char *wlanssid;
+    extern char *wlanpwd;
+
+    //fallback SSID & pwd
+    extern char *fbssid;
+    extern char *fbpwd;
+
 
     extern char current_lang[3];
-    extern char www_username[65];
-    extern char www_password[65];
+    extern char *www_username;
+    extern char *www_password;
     extern bool www_basicauth_enabled;
 
-    extern char fs_ssid[33];
-    extern char fs_pwd[65];
-
-    extern char version_from_local_config[20];
+    extern char *fs_ssid;
+    extern char *fs_pwd;
 
     extern bool dht_read;
     extern bool sds_read;
@@ -87,14 +90,14 @@ namespace cfg {
     extern char senseboxid[30];
 
     extern int port_influx;
-    extern char user_influx[65];
-    extern char pwd_influx[65];
+    extern char *user_influx;
+    extern char *pwd_influx;
 
     extern String host_custom;
     extern String url_custom;
     extern int port_custom;
-    extern char user_custom[65];
-    extern char pwd_custom[65];
+    extern char *user_custom;
+    extern char *pwd_custom;
 
     extern String host_influx;
     extern String url_influx;
@@ -150,14 +153,6 @@ extern DallasTemperature ds18b20;
  *****************************************************************/
 extern TinyGPSPlus gps;
 
-extern boolean trigP1 ;
-extern boolean trigP2 ;
-extern unsigned long trigOnP1;
-extern unsigned long trigOnP2;
-
-extern unsigned long lowpulseoccupancyP1 ;
-extern unsigned long lowpulseoccupancyP2 ;
-
 extern bool send_now ;
 extern unsigned long starttime;
 extern unsigned long time_point_device_start_ms;
@@ -174,14 +169,6 @@ extern bool is_PMS_running ;
 
 extern unsigned long sending_time ;
 extern unsigned long last_update_attempt;
-
-extern int sds_pm10_sum ;
-extern int sds_pm25_sum ;
-extern int sds_val_count ;
-extern int sds_pm10_max ;
-extern int sds_pm10_min ;
-extern int sds_pm25_max ;
-extern int sds_pm25_min ;
 
 extern int pms_pm1_sum ;
 extern int pms_pm10_sum ;

@@ -84,7 +84,21 @@ void disable_unneeded_nmea() {
 	serialGPS.println(F("$PUBX,40,VTG,0,0,0,0*5E"));       // Track made good and ground speed
 }
 
+//This is meant to be run on first time. Not only sets default values for sensors, but also makes sure
+//that pointers are properly inited
 void setDefaultConfig(void) {
+    //init
+    debug_out(F("Set default config for device"), DEBUG_MIN_INFO, 1);
+    stringToChar(&cfg::www_username, FPSTR(WWW_USERNAME));
+    stringToChar(&cfg::www_password, FPSTR(WWW_PASSWORD));
+    stringToChar(&cfg::wlanssid, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::wlanpwd, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::fbssid, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::fbpwd, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
+    stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
+    stringToChar(&cfg::pwd_influx, FPSTR(PWD_INFLUX));
+    stringToChar(&cfg::user_influx, FPSTR(USER_INFLUX));
     SDS011::setDefaults();
     HECA::setDefaults();
 //    BMPx80::setDefaults();
@@ -99,6 +113,7 @@ void setDefaultConfig(void) {
  *****************************************************************/
 void readConfig() {
 	debug_out(F("mounting FS..."), DEBUG_MIN_INFO, 1);
+    setDefaultConfig();
 
 	if (SPIFFS.begin()) {
 		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
@@ -115,7 +130,6 @@ void readConfig() {
             };
 		} else {
 			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
-			setDefaultConfig();
 		}
 	} else {
 		debug_out(F("failed to mount FS"), DEBUG_ERROR, 1);
@@ -203,7 +217,6 @@ void wifiConfig() {
 	const IPAddress apIP(192, 168, 4, 1);
 	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
 	WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
-	debug_out(String(WLANPWD), DEBUG_MIN_INFO, 1);
 
 	DNSServer dnsServer;
 	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
@@ -301,6 +314,10 @@ void    startAP(void) {
  * WiFi auto connecting script                                   *
  *****************************************************************/
 void connectWifi() {
+    display_debug(F("Connecting to"), String(cfg::wlanssid));
+    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
+    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
+    debug_out(F("'"), DEBUG_ERROR, 1);
 	debug_out(String(WiFi.status()), DEBUG_MIN_INFO, 1);
 	WiFi.disconnect();
 	WiFi.setOutputPower(cfg::outputPower);
@@ -315,13 +332,19 @@ void connectWifi() {
 	WiFi.hostname(cfg::fs_ssid); // Hostname for DHCP Server
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
 
-	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
-
 	waitForWifiToConnect(40);
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (WiFi.status() != WL_CONNECTED) {
-		startAP();
+        if (strlen(cfg::fbssid)) {
+            display_debug(F("Connecting to"), String(cfg::fbssid));
+            debug_out(F("Failed to connect to WiFi. Trying to connect to fallback WiFi"), DEBUG_ERROR);
+            debug_out(cfg::fbssid, DEBUG_ERROR);
+            WiFi.begin(cfg::fbssid, cfg::fbpwd); // Start WiFI
+            waitForWifiToConnect(40);
+
+        }
+        if (WiFi.status() != WL_CONNECTED)
+            startAP();
 	}
 	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
@@ -787,6 +810,16 @@ static bool acquireNetworkTime() {
 	return false;
 }
 
+void initNonTrivials(const char *id) {
+    strcpy(cfg::current_lang, CURRENT_LANG);
+    if (cfg::fs_ssid == nullptr || cfg::fs_ssid[0] == '\0') {
+        String ssid = F("NAM-");
+        ssid.concat(id);
+        stringToChar(&cfg::fs_ssid, ssid);
+
+    }
+}
+
 /*****************************************************************
  * The Setup                                                     *
  *****************************************************************/
@@ -806,7 +839,7 @@ void setup() {
     Wire.setClock(100000); // Force bus speed 100 Khz
 
 
-    cfg::initNonTrivials(esp_chipid().c_str());
+    initNonTrivials(esp_chipid().c_str());
 
     Serial.print(F("\nNAMF ver: "));
     Serial.print(SOFTWARE_VERSION);
@@ -827,6 +860,7 @@ void setup() {
     Serial.println(ESP.getCpuFreqMHz());
 
     readConfig();
+    Serial.println(getConfigString());
     resetMemoryStats();
     Reporting::setupHomePhone();
 
@@ -850,10 +884,7 @@ void setup() {
 
 
     setup_webserver();
-    display_debug(F("Connecting to"), String(cfg::wlanssid));
-    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
-    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
-    debug_out(F("'"), DEBUG_ERROR, 1);
+
 
     if (strlen(cfg::wlanssid) > 0) {
         connectWifi();
@@ -864,6 +895,8 @@ void setup() {
             updateFW();
         }
         Reporting::reportBoot();
+        Serial.println(F(" After Report boot"));
+
     } else {
         startAP();
     }
@@ -1165,8 +1198,6 @@ void loop() {
 
 		// Resetting for next sampling
 		last_data_string = data;
-		lowpulseoccupancyP1 = 0;
-		lowpulseoccupancyP2 = 0;
 		sample_count = 0;
 		last_micro = 0;
 		min_micro = 1000000000;
