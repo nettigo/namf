@@ -89,7 +89,7 @@ void setDefaultConfig(void) {
     HECA::setDefaults();
 //    BMPx80::setDefaults();
     BME280::setDefaults();
-    SHT3x::setDefaults();
+//    SHT3x::setDefaults();
 
 
 }
