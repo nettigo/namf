@@ -98,9 +98,16 @@ void webserver_not_found() {
 
 void webserver_images() {
     if (server.arg("n") == F("l")) {
-//		debug_out(F("output luftdaten.info logo..."), DEBUG_MAX_INFO, 1);
+        server.sendHeader(F("Cache-Control"), F("max-age=604800"));
         server.send(200, FPSTR(TXT_CONTENT_TYPE_IMAGE_SVG), FPSTR(LUFTDATEN_INFO_LOGO_SVG));
-    } else {
+    } else if (server.arg("n") == F("c"))  {    //config CSS
+        server.sendHeader(F("Cache-Control"), F("max-age=604800"));
+        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_CSS), FPSTR(CONFIG_CSS));
+    } else if (server.arg("n") == F("j"))  {    //config JS
+        server.sendHeader(F("Cache-Control"), F("max-age=604800"));
+        server.send(200, FPSTR(TXT_CONTENT_TYPE_APPLICATION_JS), FPSTR(CONFIG_JS));
+    }
+    else {
         webserver_not_found();
     }
 }
@@ -174,8 +181,13 @@ void webserver_root() {
  * html helper functions                                         *
  *****************************************************************/
 
-String make_header(const String& title) {
-    String s = FPSTR(WEB_PAGE_HEADER);
+String make_header(const String& title, bool configPage) {
+    String s;
+    if (configPage)
+        s = FPSTR(CONFIG_WEB_PAGE_HEADER);
+    else
+        s = FPSTR(WEB_PAGE_HEADER);
+
     s.replace("{tt}", FPSTR(INTL_PM_SENSOR));
     s.replace("{h}", FPSTR(INTL_HOME));
     if (title != " ") {
@@ -218,8 +230,12 @@ String make_header(const String& title) {
     return s;
 }
 
-String make_footer() {
-    String s = FPSTR(WEB_PAGE_FOOTER);
+String make_footer(bool configPage) {
+    String s;
+    if (configPage)
+        s = FPSTR(CONFIG_WEB_PAGE_FOOTER);
+    else
+        s = FPSTR(WEB_PAGE_FOOTER);
     s.replace("{t}", FPSTR(INTL_BACK_TO_HOME));
     return s;
 }
@@ -334,6 +350,232 @@ void readPwdParam(char **dst, const String key) {
 /*****************************************************************
  * Webserver config: show config page                            *
  *****************************************************************/
+
+void webserverConfigBasic(String  & page_content) {
+}
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-macro-parentheses"
+void parse_config_request(String &page_content) {
+    using namespace cfg;
+    String masked_pwd = "";
+
+#define readCharParam(param) \
+        if (server.hasArg(#param)){ \
+            server.arg(#param).toCharArray(param, sizeof(param)); \
+        }
+
+#define readBoolParam(param) \
+        param = false; \
+        if (server.hasArg(#param)){ \
+            (param) = server.arg(#param) == "1";\
+        }
+
+#define readIntParam(param) \
+        if (server.hasArg(#param)){ \
+            param = server.arg(#param).toInt(); \
+        }
+
+#define readFloatParam(param) \
+        if (server.hasArg(#param)){ \
+            param = server.arg(#param).toFloat(); \
+        }
+
+#define readTimeParam(param) \
+        if (server.hasArg(#param)){ \
+            int val = server.arg(#param).toInt(); \
+            param = val*1000; \
+        }
+
+#define readPasswdParam(param) \
+        if (server.hasArg(#param)){ \
+            masked_pwd = ""; \
+            for (uint8_t i=0;i<server.arg(#param).length();i++) \
+                masked_pwd += "*"; \
+            if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
+                server.arg(#param).toCharArray(param, sizeof(param)); \
+            }\
+        }
+
+    if (server.hasArg(F("wlanssid")) && server.arg(F("wlanssid")) != F("")) {
+        if (server.hasArg(F("wlanssid"))){
+            stringToChar(&wlanssid,server.arg(F("wlanssid")));
+        }
+        readPwdParam(&wlanpwd,F("wlanpwd"));
+    }
+    if (server.hasArg(F("fbssid")) && server.arg(F("fbssid")) != F("")) {
+        if (server.hasArg(F("fbssid"))){
+            stringToChar(&fbssid,server.arg(F("fbssid")));
+        }
+        readPwdParam(&fbpwd,F("fbpwd"));
+    }
+    //always allow to change output power
+    readFloatParam(outputPower);
+    readIntParam(phyMode);
+
+    if (!wificonfig_loop) {
+        readCharParam(current_lang);
+
+        if (server.hasArg(F("www_username"))){
+            stringToChar(&www_username,server.arg(F("www_username")));
+        }
+        readPwdParam(&www_password,F("www_password"));
+
+//            readPasswdParam(www_password);
+        readBoolParam(www_basicauth_enabled);
+        if (server.hasArg(F("fs_ssid"))){
+            stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
+        }
+        if (server.hasArg(F("fs_pwd")) &&
+            ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
+            readPwdParam(&fs_pwd,F("fs_pwd"));
+        }
+        readBoolParam(send2dusti);
+        readBoolParam(ssl_dusti);
+        readBoolParam(send2madavi);
+        readBoolParam(ssl_madavi);
+        readBoolParam(dht_read);
+        readBoolParam(sds_read);
+        readBoolParam(pms_read);
+        readBoolParam(bmp280_read);
+        readBoolParam(bme280_read);
+        readBoolParam(heca_read);
+        readBoolParam(ds18b20_read);
+        readBoolParam(gps_read);
+
+        readIntParam(debug);
+        readTimeParam(sending_intervall_ms);
+        readTimeParam(time_for_wifi_config);
+
+        readBoolParam(send2csv);
+
+        readBoolParam(send2fsapp);
+
+        readBoolParam(send2sensemap);
+        readCharParam(senseboxid);
+
+        readBoolParam(send2custom);
+        parseHTTP(F("host_custom"), host_custom);
+        parseHTTP(F("url_custom"), url_custom);
+
+        readIntParam(port_custom);
+        readCharParam(user_custom);
+        readPasswdParam(pwd_custom);
+        if (server.hasArg(F("user_custom"))){
+            stringToChar(&user_custom,server.arg(F("user_custom")));
+        }
+        if (server.hasArg(F("pwd_custom"))) {
+            readPwdParam(&pwd_custom,F("pwd_custom"));
+        }
+
+        readBoolParam(send2influx);
+
+        parseHTTP(F("host_influx"), host_influx);
+        parseHTTP(F("url_influx"), url_influx);
+
+        readIntParam(port_influx);
+
+        if (server.hasArg(F("user_influx"))){
+            stringToChar(&user_influx,server.arg(F("user_influx")));
+        }
+        if (server.hasArg(F("pwd_custom"))) {
+            readPwdParam(&pwd_custom,F("pwd_custom"));
+        }
+
+    }
+
+    readBoolParam(auto_update);
+    parseHTTP(F("channel"), update_channel);
+
+    readBoolParam(has_display);
+    has_lcd1602 = false;
+    has_lcd1602_27 = false;
+    has_lcd2004_27 = false;
+    has_lcd2004_3f = false;
+    if (server.hasArg("has_lcd")) {
+        switch (server.arg("lcd_type").toInt()) {
+            case 1:
+                has_lcd1602_27 = true;
+                break;
+            case 2:
+                has_lcd1602 = true;
+                break;
+            case 3:
+                has_lcd2004_27 = true;
+                break;
+            case 4:
+                has_lcd2004_3f = true;
+                break;
+        }
+    }
+    readBoolParam(show_wifi_info);
+    readBoolParam(has_ledbar_32);
+
+#undef readCharParam
+#undef readBoolParam
+#undef readIntParam
+#undef readTimeParam
+#undef readPasswdParam
+
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Luftdaten.info")), String(send2dusti)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Madavi")), String(send2madavi)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DHT"), String(dht_read)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("PMS(1,3,5,6,7)003")), String(pms_read)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP280"), String(bmp280_read)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("GPS")), String(gps_read)));
+    page_content.concat(line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update)));
+    page_content.concat(String(update_channel));
+    page_content.concat(line_from_value(FPSTR(INTL_DISPLAY), String(has_display)));
+    page_content.concat(line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27)));
+    page_content.concat(line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602)));
+    page_content.concat(line_from_value(FPSTR(INTL_LCD2004_27), String(has_lcd2004_27)));
+    page_content.concat(line_from_value(FPSTR(INTL_LCD2004_3F), String(has_lcd2004_3f)));
+    page_content.concat(line_from_value(FPSTR(INTL_SHOW_WIFI_INFO), String(show_wifi_info)));
+    page_content.concat(line_from_value(FPSTR(INTL_LEDBAR_32), String(has_ledbar_32)));
+    page_content.concat(line_from_value(FPSTR(INTL_DEBUG_LEVEL), String(debug)));
+    page_content.concat(line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms/1000)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("CSV")), String(send2csv)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Feinstaub-App")), String(send2fsapp)));
+    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("opensensemap")), String(send2sensemap)));
+    page_content.concat(F("<br/>senseBox-ID "));
+    page_content.concat(senseboxid);
+    page_content.concat(F("<br/><br/>"));
+    page_content.concat(line_from_value(FPSTR(INTL_SEND_TO_OWN_API), String(send2custom)));
+    page_content.concat(line_from_value(FPSTR(INTL_SERVER), host_custom));
+    page_content.concat(line_from_value(FPSTR(INTL_PATH), url_custom));
+    page_content.concat(line_from_value(FPSTR(INTL_PORT), String(port_custom)));
+    page_content.concat(line_from_value(FPSTR(INTL_USER), user_custom));
+    page_content.concat(line_from_value(FPSTR(INTL_PASSWORD), pwd_custom));
+    page_content.concat(F("<br/><br/>InfluxDB: "));
+    page_content.concat(String(send2influx));
+    page_content.concat(line_from_value(FPSTR(INTL_SERVER), host_influx));
+    page_content.concat(line_from_value(FPSTR(INTL_PATH), url_influx));
+    page_content.concat(line_from_value(FPSTR(INTL_PORT), String(port_influx)));
+    page_content.concat(line_from_value(FPSTR(INTL_USER), user_influx));
+    page_content.concat(line_from_value(FPSTR(INTL_PASSWORD), pwd_influx));
+    page_content.concat(F("<br/><br/>"));
+    page_content.concat(FPSTR(INTL_SENSOR_IS_REBOOTING));
+
+    if (server.method() == HTTP_POST) {
+        debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
+        display_debug(F("Writing config"), F("and restarting"));
+        writeConfig();
+        delay(500);
+        ESP.restart();
+    }
+
+}
+#pragma clang diagnostic pop
+
+void tabTemplate(String &page_content, const __FlashStringHelper *id, const __FlashStringHelper *name){
+    page_content.concat(F("<button class=\"tablinks\" onclick=\"tab(event, '"));
+    page_content.concat(id);
+    page_content.concat(F("')\">"));
+    page_content.concat(name);
+    page_content.concat(F("</button>\n"));
+}
+
 void webserver_config() {
     if (!webserver_request_auth()) { return; }
 
@@ -346,8 +588,7 @@ void webserver_config() {
 
     String page_content;
     page_content.reserve(16000);
-    page_content = make_header(FPSTR(INTL_CONFIGURATION));
-    String masked_pwd = "";
+    page_content = make_header(FPSTR(INTL_CONFIGURATION), true);
     last_page_load = millis();
 
     debug_out(F("output config page ..."), DEBUG_MIN_INFO, 1);
@@ -358,7 +599,14 @@ void webserver_config() {
 
     using namespace cfg;
     if (server.method() == HTTP_GET) {
+        page_content.concat(F("<div class=\"tab\">\n"));
+        tabTemplate(page_content, F("basic"), FPSTR(INTL_TAB_BASIC));
+        tabTemplate(page_content, F("api"), FPSTR(INTL_TAB_API));
+        tabTemplate(page_content, F("sensors"), FPSTR(INTL_TAB_SENSORS));
+        tabTemplate(page_content, F("adv"), FPSTR(INTL_TAB_ADVANCED));
+        page_content.concat(F("</div>"));
         page_content.concat(F("<form method='POST' action='/config' style='width:100%;'>\n<b>"));
+        page_content.concat(F("<div id='basic' class='tabcontent'>"));
         page_content.concat(FPSTR(INTL_WIFI_SETTINGS));
         page_content.concat(F("</b><br/>"));
         debug_out(F("output config page 1"), DEBUG_MIN_INFO, 1);
@@ -367,6 +615,7 @@ void webserver_config() {
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));
             page_content.concat(F("</div><br/>"));
         }
+
         page_content.concat(FPSTR(TABLE_TAG_OPEN));
         page_content.concat(form_input(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
                                    35));
@@ -384,6 +633,8 @@ void webserver_config() {
         page_content.concat(F("</b><br/><br/>\n<b>"));
 
         if (!wificonfig_loop) {
+            webserverConfigBasic(page_content);
+
             page_content.concat(FPSTR(INTL_FALBACK_WIFI));
             page_content.concat(F("</b><br/>"));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
@@ -535,217 +786,16 @@ void webserver_config() {
             page_content.concat(F("<br/></form>"));
             page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);</script>"));
         }
+
     } else {
-#define readCharParam(param) \
-        if (server.hasArg(#param)){ \
-            server.arg(#param).toCharArray(param, sizeof(param)); \
-        }
-
-#define readBoolParam(param) \
-        param = false; \
-        if (server.hasArg(#param)){ \
-            param = server.arg(#param) == "1";\
-        }
-
-#define readIntParam(param) \
-        if (server.hasArg(#param)){ \
-            param = server.arg(#param).toInt(); \
-        }
-
-#define readFloatParam(param) \
-        if (server.hasArg(#param)){ \
-            param = server.arg(#param).toFloat(); \
-        }
-
-#define readTimeParam(param) \
-        if (server.hasArg(#param)){ \
-            int val = server.arg(#param).toInt(); \
-            param = val*1000; \
-        }
-
-#define readPasswdParam(param) \
-        if (server.hasArg(#param)){ \
-            masked_pwd = ""; \
-            for (uint8_t i=0;i<server.arg(#param).length();i++) \
-                masked_pwd += "*"; \
-            if (masked_pwd != server.arg(#param) || server.arg(#param) == "") {\
-                server.arg(#param).toCharArray(param, sizeof(param)); \
-            }\
-        }
-
-        if (server.hasArg(F("wlanssid")) && server.arg(F("wlanssid")) != F("")) {
-            if (server.hasArg(F("wlanssid"))){
-                stringToChar(&wlanssid,server.arg(F("wlanssid")));
-            }
-            readPwdParam(&wlanpwd,F("wlanpwd"));
-        }
-        if (server.hasArg(F("fbssid")) && server.arg(F("fbssid")) != F("")) {
-            if (server.hasArg(F("fbssid"))){
-                stringToChar(&fbssid,server.arg(F("fbssid")));
-            }
-            readPwdParam(&fbpwd,F("fbpwd"));
-        }
-        //always allow to change output power
-        readFloatParam(outputPower);
-        readIntParam(phyMode);
-
-        if (!wificonfig_loop) {
-            readCharParam(current_lang);
-
-            if (server.hasArg(F("www_username"))){
-                stringToChar(&www_username,server.arg(F("www_username")));
-            }
-            readPwdParam(&www_password,F("www_password"));
-
-//            readPasswdParam(www_password);
-            readBoolParam(www_basicauth_enabled);
-            if (server.hasArg(F("fs_ssid"))){
-                stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
-            }
-            if (server.hasArg(F("fs_pwd")) &&
-                ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
-                readPwdParam(&fs_pwd,F("fs_pwd"));
-            }
-            readBoolParam(send2dusti);
-            readBoolParam(ssl_dusti);
-            readBoolParam(send2madavi);
-            readBoolParam(ssl_madavi);
-            readBoolParam(dht_read);
-            readBoolParam(sds_read);
-            readBoolParam(pms_read);
-            readBoolParam(bmp280_read);
-            readBoolParam(bme280_read);
-            readBoolParam(heca_read);
-            readBoolParam(ds18b20_read);
-            readBoolParam(gps_read);
-
-            readIntParam(debug);
-            readTimeParam(sending_intervall_ms);
-            readTimeParam(time_for_wifi_config);
-
-            readBoolParam(send2csv);
-
-            readBoolParam(send2fsapp);
-
-            readBoolParam(send2sensemap);
-            readCharParam(senseboxid);
-
-            readBoolParam(send2custom);
-            parseHTTP(F("host_custom"), host_custom);
-            parseHTTP(F("url_custom"), url_custom);
-
-            readIntParam(port_custom);
-            readCharParam(user_custom);
-            readPasswdParam(pwd_custom);
-            if (server.hasArg(F("user_custom"))){
-                stringToChar(&user_custom,server.arg(F("user_custom")));
-            }
-            if (server.hasArg(F("pwd_custom"))) {
-                readPwdParam(&pwd_custom,F("pwd_custom"));
-            }
-
-            readBoolParam(send2influx);
-
-            parseHTTP(F("host_influx"), host_influx);
-            parseHTTP(F("url_influx"), url_influx);
-
-            readIntParam(port_influx);
-
-            if (server.hasArg(F("user_influx"))){
-                stringToChar(&user_influx,server.arg(F("user_influx")));
-            }
-            if (server.hasArg(F("pwd_custom"))) {
-                readPwdParam(&pwd_custom,F("pwd_custom"));
-            }
-
-        }
-
-        readBoolParam(auto_update);
-        parseHTTP(F("channel"), update_channel);
-
-        readBoolParam(has_display);
-        has_lcd1602 = false;
-        has_lcd1602_27 = false;
-        has_lcd2004_27 = false;
-        has_lcd2004_3f = false;
-        if (server.hasArg("has_lcd")) {
-            switch (server.arg("lcd_type").toInt()) {
-                case 1:
-                    has_lcd1602_27 = true;
-                    break;
-                case 2:
-                    has_lcd1602 = true;
-                    break;
-                case 3:
-                    has_lcd2004_27 = true;
-                    break;
-                case 4:
-                    has_lcd2004_3f = true;
-                    break;
-            }
-        }
-        readBoolParam(show_wifi_info);
-        readBoolParam(has_ledbar_32);
-
-#undef readCharParam
-#undef readBoolParam
-#undef readIntParam
-#undef readTimeParam
-#undef readPasswdParam
-
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Luftdaten.info")), String(send2dusti)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Madavi")), String(send2madavi)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DHT"), String(dht_read)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("PMS(1,3,5,6,7)003")), String(pms_read)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP280"), String(bmp280_read)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("GPS")), String(gps_read)));
-        page_content.concat(line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update)));
-        page_content.concat(String(update_channel));
-        page_content.concat(line_from_value(FPSTR(INTL_DISPLAY), String(has_display)));
-        page_content.concat(line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27)));
-        page_content.concat(line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602)));
-        page_content.concat(line_from_value(FPSTR(INTL_LCD2004_27), String(has_lcd2004_27)));
-        page_content.concat(line_from_value(FPSTR(INTL_LCD2004_3F), String(has_lcd2004_3f)));
-        page_content.concat(line_from_value(FPSTR(INTL_SHOW_WIFI_INFO), String(show_wifi_info)));
-        page_content.concat(line_from_value(FPSTR(INTL_LEDBAR_32), String(has_ledbar_32)));
-        page_content.concat(line_from_value(FPSTR(INTL_DEBUG_LEVEL), String(debug)));
-        page_content.concat(line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms/1000)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("CSV")), String(send2csv)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Feinstaub-App")), String(send2fsapp)));
-        page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("opensensemap")), String(send2sensemap)));
-        page_content.concat(F("<br/>senseBox-ID "));
-        page_content.concat(senseboxid);
-        page_content.concat(F("<br/><br/>"));
-        page_content.concat(line_from_value(FPSTR(INTL_SEND_TO_OWN_API), String(send2custom)));
-        page_content.concat(line_from_value(FPSTR(INTL_SERVER), host_custom));
-        page_content.concat(line_from_value(FPSTR(INTL_PATH), url_custom));
-        page_content.concat(line_from_value(FPSTR(INTL_PORT), String(port_custom)));
-        page_content.concat(line_from_value(FPSTR(INTL_USER), user_custom));
-        page_content.concat(line_from_value(FPSTR(INTL_PASSWORD), pwd_custom));
-        page_content.concat(F("<br/><br/>InfluxDB: "));
-        page_content.concat(String(send2influx));
-        page_content.concat(line_from_value(FPSTR(INTL_SERVER), host_influx));
-        page_content.concat(line_from_value(FPSTR(INTL_PATH), url_influx));
-        page_content.concat(line_from_value(FPSTR(INTL_PORT), String(port_influx)));
-        page_content.concat(line_from_value(FPSTR(INTL_USER), user_influx));
-        page_content.concat(line_from_value(FPSTR(INTL_PASSWORD), pwd_influx));
-        page_content.concat(F("<br/><br/>"));
-        page_content.concat(FPSTR(INTL_SENSOR_IS_REBOOTING));
+        parse_config_request(page_content);
     }
-    page_content.concat(make_footer());
+    page_content.concat(make_footer(true));
     server.send(200, TXT_CONTENT_TYPE_TEXT_HTML, page_content);
 //    webserverPartialSend(page_content);
 //    endPartialSend();
 
 //send.
-    if (server.method() == HTTP_POST) {
-        debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
-        display_debug(F("Writing config"), F("and restarting"));
-        writeConfig();
-        delay(500);
-        ESP.restart();
-    }
 }
 
 /**************************************************************************

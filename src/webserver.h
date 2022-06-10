@@ -48,8 +48,8 @@ void webserver_root();
  * html helper functions                                         *
  *****************************************************************/
 
-String make_header(const String& title);
-String make_footer();
+String make_header(const String& title, bool configPage=false);
+String make_footer(bool configPage = false);
 //Webserver - current config as JSON (txt) to save
 void webserver_config_json();
 //Webserver - force update with custom URL

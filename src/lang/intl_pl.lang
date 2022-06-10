@@ -1,3 +1,7 @@
+INTL_TAB_BASIC Podstawy
+INTL_TAB_API API
+INTL_TAB_SENSORS Sensory
+INTL_TAB_ADVANCED Zaawansowane
 INTL_FALBACK_WIFI Alternatywna sieć WiFi
 INTL_TIME_FROM_UPDATE Czas od próby aktualizacji
 INTL_MADAVI_LINK Wykresy z sensora na Madavi
