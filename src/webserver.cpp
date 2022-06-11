@@ -273,13 +273,13 @@ void webserver_config_force_update() {
         page_content += F("<form method='POST' action='/forceUpdate' style='width:100%;'>");
         page_content += F("HOST:<input name=\"host\" value=");
         page_content += UPDATE_HOST;
-        page_content += ("></br>");
+        page_content += ("><br/>");
         page_content += F("PORT:<input name=\"port\" value=");
         page_content += UPDATE_PORT;
-        page_content += ("></br>");
+        page_content += ("><br/>");
         page_content += F("PATH:<input name=\"path\" value=");
         page_content += UPDATE_URL;
-        page_content += ("></br>");
+        page_content += ("><br/>");
         page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
         page_content += F("</form>");
         page_content += make_footer();
@@ -321,10 +321,10 @@ void webserver_config_json_save() {
         }
 
     }else {
-        page_content += F("<a href=\"/config.json\" target=\"_blank\">Sensor config in JSON</a></br></br>");
+        page_content += F("<a href=\"/config.json\" target=\"_blank\">Sensor config in JSON</a><br/><br/>");
 
         page_content += F("<form name=\"json_form\" method='POST' action='/configSave.json' style='width:100%;'>");
-        page_content += F("<textarea id=\"json\" name=\"json\" rows=\"10\" cols=\"120\"></textarea></br>");
+        page_content += F("<textarea id=\"json\" name=\"json\" rows=\"10\" cols=\"120\"></textarea><br/>");
         page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
         page_content += F("</form>");
         page_content += make_footer();
@@ -584,11 +584,15 @@ void webserver_config() {
     server.sendHeader(F("Expires"), F("0"));
 
     server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+
 //    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), F(""));
 
     String page_content;
-    page_content.reserve(16000);
+    page_content.reserve(5000);
     page_content = make_header(FPSTR(INTL_CONFIGURATION), true);
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    page_content = F("");
+
     last_page_load = millis();
 
     debug_out(F("output config page ..."), DEBUG_MIN_INFO, 1);
@@ -598,6 +602,7 @@ void webserver_config() {
 //    webserverPartialSend(page_content);
 
     using namespace cfg;
+//    webserverPartialSend(page_content);
     if (server.method() == HTTP_GET) {
         page_content.concat(F("<div class=\"tab\">\n"));
         tabTemplate(page_content, F("basic"), FPSTR(INTL_TAB_BASIC));
@@ -605,8 +610,8 @@ void webserver_config() {
         tabTemplate(page_content, F("sensors"), FPSTR(INTL_TAB_SENSORS));
         tabTemplate(page_content, F("adv"), FPSTR(INTL_TAB_ADVANCED));
         page_content.concat(F("</div>"));
-        page_content.concat(F("<form method='POST' action='/config' style='width:100%;'>\n<b>"));
-        page_content.concat(F("<div id='basic' class='tabcontent'>"));
+        page_content.concat(F("<form method='POST' action='/config' style='width:100%;'>"));
+        page_content.concat(F("<div id='basic' class='tabcontent'><b>"));
         page_content.concat(FPSTR(INTL_WIFI_SETTINGS));
         page_content.concat(F("</b><br/>"));
         debug_out(F("output config page 1"), DEBUG_MIN_INFO, 1);
@@ -618,19 +623,20 @@ void webserver_config() {
 
         page_content.concat(FPSTR(TABLE_TAG_OPEN));
         page_content.concat(form_input(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
-                                   35));
+                                       35));
         if (!wificonfig_loop) {
             page_content.concat(form_password(F("wlanpwd"), FPSTR(INTL_PASSWORD), wlanpwd,
-                                          65));
+                                              65));
         } else {
             page_content.concat(form_input(F("wlanpwd"), FPSTR(INTL_PASSWORD), F(""),
-                                       65));
+                                           65));
         }
         page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
         page_content.concat(F("<hr/>\n<b>"));
 
         page_content.concat(FPSTR(INTL_AB_HIER_NUR_ANDERN));
         page_content.concat(F("</b><br/><br/>\n<b>"));
+        webserverPartialSend(page_content);
 
         if (!wificonfig_loop) {
             webserverConfigBasic(page_content);
@@ -653,7 +659,7 @@ void webserver_config() {
 
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
             page_content.concat(form_input(F("www_username"), FPSTR(INTL_USER), www_username,
-                                       30));
+                                           30));
             page_content.concat(form_password(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
                                               30));
 
@@ -665,9 +671,9 @@ void webserver_config() {
             page_content.concat(FPSTR(BR_TAG));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
             page_content.concat(form_input(F("fs_ssid"), FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
-                                       35));
+                                           35));
             page_content.concat(form_password(F("fs_pwd"), FPSTR(INTL_PASSWORD), fs_pwd,
-                                          65));
+                                              65));
 
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(F("\n<b>APIs</b><br/>"));
@@ -704,22 +710,22 @@ void webserver_config() {
         page_content.concat(form_option(String(UPDATE_CHANNEL_STABLE), FPSTR(INTL_UPDATE_STABLE), update_channel == UPDATE_CHANNEL_STABLE));
         page_content.concat(form_option(String(UPDATE_CHANNEL_BETA), FPSTR(INTL_UPDATE_BETA), update_channel == UPDATE_CHANNEL_BETA));
         page_content.concat(form_option(String(UPDATE_CHANNEL_ALFA), FPSTR(INTL_UPDATE_ALFA), update_channel == UPDATE_CHANNEL_ALFA));
-        page_content.concat(F("</select></br>"));
+        page_content.concat(F("</select><br/>"));
         page_content.concat(form_checkbox("has_display", FPSTR(INTL_DISPLAY), has_display));
         page_content.concat(form_checkbox("has_lcd", FPSTR(INTL_LCD),
-                                      has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27, false));
+                                          has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27, false));
         page_content.concat(F(" <select name=\"lcd_type\">"));
         page_content.concat(form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27));
         page_content.concat(form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602));
         page_content.concat(form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27));
         page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
-        page_content.concat(F("</select></br>"));
+        page_content.concat(F("</select><br/>"));
         page_content.concat(form_checkbox("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
         page_content.concat(form_checkbox("has_ledbar_32", FPSTR(INTL_LEDBAR_32), has_ledbar_32));
         page_content.concat(form_checkbox("send_diag", FPSTR(INTL_DIAGNOSTIC), send_diag));
-        page_content.concat(F("</br></br>"));
+        page_content.concat(F("<br/><br/>"));
 
-//        webserverPartialSend(page_content);
+        webserverPartialSend(page_content);
 
         if (wificonfig_loop) { //outputPower should be able to change in both modes
             page_content.concat(form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
@@ -730,9 +736,9 @@ void webserver_config() {
             page_content.concat(form_select_lang());
             page_content.concat(form_input("debug", FPSTR(INTL_DEBUG_LEVEL), String(debug), 1));
             page_content.concat(form_input("sending_intervall_ms", FPSTR(INTL_MEASUREMENT_INTERVAL),
-                                       String(sending_intervall_ms / 1000), 5));
+                                           String(sending_intervall_ms / 1000), 5));
             page_content.concat(form_input("time_for_wifi_config", FPSTR(INTL_DURATION_ROUTER_MODE),
-                                       String(time_for_wifi_config / 1000), 5));
+                                           String(time_for_wifi_config / 1000), 5));
             page_content.concat(form_input("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
             page_content.concat(form_input("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
@@ -747,7 +753,7 @@ void webserver_config() {
             page_content.concat(form_checkbox("send2sensemap", tmpl(FPSTR(INTL_SEND_TO), F("OpenSenseMap")), send2sensemap));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
             page_content.concat(form_input("senseboxid", "senseBox-ID: ", senseboxid,
-                                       capacity_null_terminated_char_array(senseboxid)));
+                                           capacity_null_terminated_char_array(senseboxid)));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(form_checkbox("send2custom", FPSTR(INTL_SEND_TO_OWN_API), send2custom));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
@@ -756,9 +762,9 @@ void webserver_config() {
             constexpr int max_port_digits = constexprstrlen("65535");
             page_content.concat(form_input(F("port_custom"), FPSTR(INTL_PORT), String(port_custom), max_port_digits));
             page_content.concat(form_input(F("user_custom"), FPSTR(INTL_USER), user_custom,
-                                       35));
+                                           35));
             page_content.concat(form_password("pwd_custom", FPSTR(INTL_PASSWORD), pwd_custom,
-                                          35));
+                                              35));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
             page_content.concat(form_checkbox("send2influx", tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")), send2influx));
             page_content.concat(FPSTR(TABLE_TAG_OPEN));
@@ -766,14 +772,15 @@ void webserver_config() {
             page_content.concat(form_input(F("url_influx"), FPSTR(INTL_PATH), url_influx, 60));
             page_content.concat(form_input("port_influx", FPSTR(INTL_PORT), String(port_influx), max_port_digits));
             page_content.concat(form_input(F("user_influx"), FPSTR(INTL_USER), user_influx,
-                                       35));
+                                           35));
             page_content.concat(form_password(F("pwd_influx"), FPSTR(INTL_PASSWORD), pwd_influx,
-                                          35));
+                                              35));
             page_content.concat(form_submit(FPSTR(INTL_SAVE_AND_RESTART)));
             page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
+            page_content.concat(F("</div>"));   //tabcontent
             page_content.concat(F("<br/></form>"));
 
-//            webserverPartialSend(page_content);
+            webserverPartialSend(page_content);
 
             scheduler.getConfigForms(page_content);
 
@@ -791,9 +798,8 @@ void webserver_config() {
         parse_config_request(page_content);
     }
     page_content.concat(make_footer(true));
-    server.send(200, TXT_CONTENT_TYPE_TEXT_HTML, page_content);
-//    webserverPartialSend(page_content);
-//    endPartialSend();
+    webserverPartialSend(page_content);
+    endPartialSend();
 
 //send.
 }

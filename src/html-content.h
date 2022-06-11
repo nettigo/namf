@@ -22,7 +22,7 @@ const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
 <title>{t}</title>\
 <meta name='viewport' content='width=device-width'>\
-<style type='text/css'>\
+<style>\
 body{font-family:Arial;margin:0;}\
 .content{margin:10px;}\
 .spacer{padding:10px;}\
@@ -33,7 +33,7 @@ a.nn:hover{background:none}\
 a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\
 a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
 a.plain:hover{background:inherit}\
-a:hover{background:#1A4};\
+a:hover{background:#1A4}\
 .wifi{background:none;color:blue;padding:5px;display:inline;}\
 input[type='text']{width:100%;}\
 input[type='password']{width:100%;}\
@@ -43,7 +43,6 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 .s_o{background:#F80;}\
 .s_o:hover{background:#E70;}\
 #ncf hr{margin:25px 10px;}\
-#ncf {max-width:800px;}\
 </style>\
 </head><body>\
 <div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
@@ -54,8 +53,8 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 const char CONFIG_WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
 <title>{t}</title>\
-<meta name='viewport' content='width=device-width'>\
-<style type='text/css'>\
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\
+<style>\
 body{font-family:Arial;margin:0;}\
 .content{margin:10px;}\
 .spacer{padding:10px;}\
@@ -66,7 +65,7 @@ a.nn:hover{background:none}\
 a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\
 a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
 a.plain:hover{background:inherit}\
-a:hover{background:#1A4};\
+a:hover{background:#1A4}\
 .wifi{background:none;color:blue;padding:5px;display:inline;}\
 input[type='text']{width:100%;}\
 input[type='password']{width:100%;}\
@@ -76,7 +75,6 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 .s_o{background:#F80;}\
 .s_o:hover{background:#E70;}\
 #ncf hr{margin:25px 10px;}\
-#ncf {max-width:800px;}\
 </style>\
 <link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c\" />\
 </head><body>\
@@ -110,7 +108,12 @@ const char CONFIG_CSS[] PROGMEM = ".tab {\n"
                                   "    padding: 6px 12px;\n"
                                   "    border: 1px solid #ccc;\n"
                                   "    border-top: none;\n"
-                                  "}";
+                                  "}\n"
+                                  ".gc { display: grid;grid-template-columns: 0.4fr 0.4fr auto; max-width:900px}\n"
+                                   "@media screen and (max-width: 499px){.gc{grid-template-columns: 0.5fr 0.3fr auto;}}"
+                                  ".gc > div {padding: 10px}\n"
+                                  ".c2 {grid-column-start:2;grid-column-end: 4}\n"
+                                  ".row {grid-column-start:1;grid-column-end: 4}";
 const char CONFIG_JS[] PROGMEM =
         "function tab(evt, tabName) {\n"
         "    var i, tabcontent, tablinks;\n"

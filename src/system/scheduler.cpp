@@ -87,35 +87,34 @@ namespace SimpleScheduler {
 
     void NAMFScheduler::getConfigForms(String &page) {
         String s = F("");
-        page += F("<div id='ncf'>");
+        page.concat( F("<div id='ncf' >"));
         LoopEntryType i = EMPTY;
         i++;
         for (; i < NAMF_LOOP_SIZE; i++) {
             String templ = F(
-                    "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
+                    "<form method='POST' class='gc' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
             );
-            templ.concat(F("<hr/><h2>"));
+            templ.concat(F("<div class='row'><hr/><h2>"));
             templ.concat(findSlotDescription(i));
-            templ.concat(F("</h2>"));
+            templ.concat(F("</h2></div>"));
             boolean checked = findSlot(i) >= 0; // check if sensor is enabled
-            templ.concat(form_checkbox(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked, true));
-            templ.concat(F("<br/>"));
+            templ.concat(formCheckboxGrid(F("enabled-{sensor}"), FPSTR(INTL_ENABLE), checked));
             String lines[] = {"","","",""};
             if (SimpleScheduler::displaySensor(i,lines)) {
                 checked = sensorWantsDisplay(i);
-                templ.concat(form_checkbox(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked, true));
-                templ.concat(F("<div class='spacer'></div>"));
+                templ.concat(formCheckboxGrid(F("display-{sensor}"), FPSTR(INTL_DISPLAY_NEW), checked));
             }
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
-            templ.concat(F("{body}<input type='submit' value='"));
+            templ.concat(F("{body}<div class='row'><input type='submit' value='"));
             templ.concat(FPSTR(INTL_SAVE));
-            templ.concat(F("'/></form>\n"));
+            templ.concat(F("'/></div></form>\n"));
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
             page.concat(templ);
-
+            if (page.length() > 1500)
+                webserverPartialSend(page);
         }
         page.concat(F("</div>"));
     }

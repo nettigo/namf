@@ -589,13 +589,13 @@ namespace SDS011 {
         String ret = F("");
         String name;
         setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
-        ret.concat(form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7));
+        ret.concat(formInputGrid(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7));
 
         setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
-        ret.concat(form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7));
+        ret.concat(formInputGrid(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7));
 
         setHTTPVarName(name, F("dbg"), SimpleScheduler::SDS011);
-        ret.concat(form_checkbox(name, FPSTR(INTL_SDS011_HWR), hardwareWatchdog, true));
+        ret.concat(formCheckboxGrid(name, FPSTR(INTL_SDS011_HWR), hardwareWatchdog));
 
         return ret;
     }

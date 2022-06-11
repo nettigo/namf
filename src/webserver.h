@@ -47,7 +47,7 @@ void webserver_root();
 /*****************************************************************
  * html helper functions                                         *
  *****************************************************************/
-
+void webserverPartialSend(String &s);
 String make_header(const String& title, bool configPage=false);
 String make_footer(bool configPage = false);
 //Webserver - current config as JSON (txt) to save

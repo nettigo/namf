@@ -557,6 +557,18 @@ unsigned long time2Measure(void){
 
 //Form helpers
 //
+String formInputGrid(const String& name, const String& info, const String& value, const int length) {
+    String s = F(	"<div>{i}</div><div class='c2'>"
+                     "<input type='text' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
+                     "</div>");
+    String t_value = value;
+    t_value.replace("'", "&#39;");
+    s.replace("{i}", info);
+    s.replace("{n}", name);
+    s.replace("{v}", t_value);
+    s.replace("{l}", String(length));
+    return s;
+}
 String form_input(const String& name, const String& info, const String& value, const int length) {
     String s = F(	"<tr>"
                      "<td>{i} </td>"
@@ -572,14 +584,18 @@ String form_input(const String& name, const String& info, const String& value, c
     s.replace("{l}", String(length));
     return s;
 }
-
+const char form_password_templ[] PROGMEM = "<tr>"
+                                           "<td>{i} </td>"
+                                           "<td style='width:90%;'>"
+                                           "<input type='password' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
+                                           "</td>"
+                                           "</tr>";
 String form_password(const String& name, const String& info, const String& value, const int length) {
-    String s = F(	"<tr>"
-                     "<td>{i} </td>"
-                     "<td style='width:90%;'>"
-                     "<input type='password' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
-                     "</td>"
-                     "</tr>");
+    unsigned size = strlen_P(form_password_templ) + 1 ;
+    size += name.length() + info.length() + value.length() - 9;
+
+    String s;
+    s.reserve(size);
     String password = "";
     password.reserve(value.length());
     for (uint8_t i = 0; i < value.length(); i++) {
@@ -592,8 +608,37 @@ String form_password(const String& name, const String& info, const String& value
     return s;
 }
 
+const char formCheckboxGrid_templ[] PROGMEM = "<div><label for='{n}'>{i}</label></div><div class='c2'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/></div>";
+String formCheckboxGrid(const String& name, const String& info, const bool checked) {
+
+    unsigned size = strlen_P(formCheckboxGrid_templ) + 1 ;
+    size += name.length() + info.length();
+    size += checked ? 19 : 0;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(formCheckboxGrid_templ);
+    if (checked) {
+        s.replace("{c}", F(" checked='checked'"));
+    } else {
+        s.replace("{c}", "");
+    };
+    s.replace("{i}", info);
+    s.replace("{n}", name);
+    return s;
+}
+
+const char form_checkbox_templ[] PROGMEM = "<label for='{n}'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/> {i}</label><br/>";
 String form_checkbox(const String& name, const String& info, const bool checked, const bool linebreak) {
-    String s = F("<label for='{n}'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/> {i}</label><br/>");
+
+    unsigned size = strlen_P(form_checkbox_templ) + 1 ;
+    size += name.length() + info.length();
+    size += checked ? 19 : 0;
+    size += linebreak ? 6 : 0;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(form_checkbox_templ);
     if (checked) {
         s.replace("{c}", F(" checked='checked'"));
     } else {

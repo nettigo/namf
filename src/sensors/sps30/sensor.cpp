@@ -31,7 +31,7 @@ namespace SPS30 {
     //taken to average
     String getConfigHTML(void) {
         String ret = F("");
-        ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
+        ret += formInputGrid(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
         return ret;
     }
 
