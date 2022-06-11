@@ -230,7 +230,7 @@ namespace BMPx80 {
         String ret = F("");
         String name;
         setHTTPVarName(name, F("in"), SimpleScheduler::BMPx80);
-        ret.concat(form_checkbox(name, FPSTR(INTL_BMPx80_INSIDE), sensorInsideCase, true));
+        ret.concat(formCheckboxGrid(name, FPSTR(INTL_BMPx80_INSIDE), sensorInsideCase));
         return ret;
     }
 
