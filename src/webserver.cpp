@@ -634,49 +634,32 @@ void webserver_config(){
             page_content.concat(formInputGrid(F("wlanpwd"), FPSTR(INTL_PASSWORD), F(""),
                                            65));
         }
-        page_content.concat(F("<hr/>"));
 
-        page_content.concat(formSectionHeader(FPSTR(INTL_AB_HIER_NUR_ANDERN), 2));
+        page_content.concat(formSectionHeader(FPSTR(INTL_BASICAUTH)));
+        page_content.concat(formCheckboxGrid("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
+
+        page_content.concat(formInputGrid(F("www_username"), FPSTR(INTL_USER), www_username,
+                                          30));
+        page_content.concat(formPasswordGrid(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
+                                             30));
+
+        page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
+                                                 has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27));
+        page_content.concat(F("<div><select name=\"lcd_type\">"));
+        page_content.concat(form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27));
+        page_content.concat(form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602));
+        page_content.concat(form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27));
+        page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
+        page_content.concat(F("</select></div>"));
+        page_content.concat(formCheckboxGrid("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
+
+
         webserverPartialSend(page_content);
 
-        if (!wificonfig_loop) {
-            webserverConfigBasic(page_content);
-
-            page_content.concat(formSectionHeader(FPSTR(INTL_FALBACK_WIFI)));
-
-            page_content.concat(formInputGrid(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
-                                           35));
-            page_content.concat(formPasswordGrid(F("fbpwd"), FPSTR(INTL_PASSWORD), fbpwd,
-                                              65));
-            page_content.concat(formSectionHeader(FPSTR(INTL_BASICAUTH)));
-            page_content.concat(formCheckboxGrid("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
-
-            page_content.concat(formInputGrid(F("www_username"), FPSTR(INTL_USER), www_username,
-                                           30));
-            page_content.concat(formPasswordGrid(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
-                                              30));
-
-            page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
-            page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));
-
-            page_content.concat(formInputGrid(F("fs_ssid"), FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
-                                           35));
-            page_content.concat(formPasswordGrid(F("fs_pwd"), FPSTR(INTL_PASSWORD), fs_pwd,
-                                              65));
-
-
-
-            webserverPartialSend(page_content);
-        }
 
         page_content.concat(form_select_lang());
-        page_content.concat(formInputGrid("debug", FPSTR(INTL_DEBUG_LEVEL), String(debug), 1));
         page_content.concat(formInputGrid("sending_intervall_ms", FPSTR(INTL_MEASUREMENT_INTERVAL),
                                        String(sending_intervall_ms / 1000), 5));
-        page_content.concat(formInputGrid("time_for_wifi_config", FPSTR(INTL_DURATION_ROUTER_MODE),
-                                       String(time_for_wifi_config / 1000), 5));
-        page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
-        page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
 
         page_content.concat(F("</div>"));   //grid
@@ -738,6 +721,29 @@ void webserver_config(){
         page_content.concat(F("<div id='adv' class='tabcontent'>"));
         page_content.concat(F("<div class='gc'>"));
         formSectionHeader(page_content, FPSTR(INTL_MORE_SETTINGS));
+        page_content.concat(formSectionHeader(FPSTR(INTL_FALBACK_WIFI)));
+
+        page_content.concat(formInputGrid(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
+                                          35));
+        page_content.concat(formPasswordGrid(F("fbpwd"), FPSTR(INTL_PASSWORD), fbpwd,
+                                             65));
+        page_content.concat(formInputGrid("debug", FPSTR(INTL_DEBUG_LEVEL), String(debug), 1));
+        page_content.concat(formInputGrid("time_for_wifi_config", FPSTR(INTL_DURATION_ROUTER_MODE),
+                                          String(time_for_wifi_config / 1000), 5));
+        page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
+        page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
+
+        page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
+        page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));
+
+        page_content.concat(formInputGrid(F("fs_ssid"), FPSTR(INTL_FS_WIFI_NAME), fs_ssid,
+                                          35));
+        page_content.concat(formPasswordGrid(F("fs_pwd"), FPSTR(INTL_PASSWORD), fs_pwd,
+                                             65));
+
+
+
+        webserverPartialSend(page_content);
 
         page_content.concat(formCheckboxOpenGrid("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update));
         page_content.concat(F("<div><select name=\"channel\">"));
@@ -749,19 +755,11 @@ void webserver_config(){
                                         update_channel == UPDATE_CHANNEL_ALFA));
         page_content.concat(F("</select></div>"));
         page_content.concat(formCheckboxGrid("has_display", FPSTR(INTL_DISPLAY), has_display));
-        page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
-                                          has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27));
-        page_content.concat(F("<div><select name=\"lcd_type\">"));
-        page_content.concat(form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27));
-        page_content.concat(form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602));
-        page_content.concat(form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27));
-        page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
-        page_content.concat(F("</select></div>"));
-        page_content.concat(formCheckboxGrid("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
         page_content.concat(formCheckboxGrid("has_ledbar_32", FPSTR(INTL_LEDBAR_32), has_ledbar_32));
         page_content.concat(formCheckboxGrid("send_diag", FPSTR(INTL_DIAGNOSTIC), send_diag));
 
         webserverPartialSend(page_content);
+
 
         if (wificonfig_loop) { //outputPower should be able to change in both modes
             page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
