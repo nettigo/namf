@@ -104,6 +104,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "To nie jest poprawny adres IP";
 /* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "IP adres, który pingować (IP)";
 /* ./src/lang/intl_pl.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Liczba pomiarów:";
+/* ./src/lang/intl_pl.lang */ const char INTL_OTHER_APIS[] PROGMEM = "Inne API";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARAMETER[] PROGMEM = "Parametr";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARTICLES_PER_LITER[] PROGMEM = "cząsteczek/litr";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARTICULATE_MATTER[] PROGMEM = "pył zawieszony";

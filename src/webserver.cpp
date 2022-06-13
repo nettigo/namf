@@ -685,22 +685,20 @@ void webserver_config(){
 
         page_content.concat(F("<div id='api' class='tabcontent'>"));
         page_content.concat(F("<div class='gc'>"));
-        page_content.concat(formCheckboxGrid("send2dusti", F("API Sensor Community"), send2dusti));
+        formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), F("API Sensor Community")));
+
+        page_content.concat(formCheckboxGrid("send2dusti", FPSTR(INTL_ENABLE), send2dusti));
         page_content.concat(formCheckboxGrid("ssl_dusti", F("HTTPS"), ssl_dusti));
         page_content.concat(formCheckboxGrid("send2madavi", F("API Madavi.de"), send2madavi));
         page_content.concat(formCheckboxGrid("ssl_madavi", F("HTTPS"), ssl_madavi));
 
-        page_content.concat(formCheckboxGrid("send2csv", tmpl(FPSTR(INTL_SEND_TO), F("CSV")), send2csv));
-        page_content.concat(formCheckboxGrid("send2fsapp", tmpl(FPSTR(INTL_SEND_TO), F("Feinstaub-App")), send2fsapp));
-
-
         webserverPartialSend(page_content);
 
-        page_content.concat(
-                formCheckboxGrid("send2sensemap", tmpl(FPSTR(INTL_SEND_TO), F("OpenSenseMap")), send2sensemap));
-        page_content.concat(formInputGrid("senseboxid", "senseBox-ID: ", senseboxid,
-                                       capacity_null_terminated_char_array(senseboxid)));
-        page_content.concat(formCheckboxGrid("send2custom", FPSTR(INTL_SEND_TO_OWN_API), send2custom));
+
+        formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), FPSTR(INTL_SEND_TO_OWN_API)));
+
+
+        page_content.concat(formCheckboxGrid("send2custom", FPSTR(INTL_ENABLE), send2custom));
         page_content.concat(formInputGrid(F("host_custom"), FPSTR(INTL_SERVER), host_custom, 60));
         page_content.concat(formInputGrid(F("url_custom"), FPSTR(INTL_PATH), url_custom, 60));
         constexpr int max_port_digits = constexprstrlen("65535");
@@ -709,7 +707,9 @@ void webserver_config(){
                                        35));
         page_content.concat(formPasswordGrid("pwd_custom", FPSTR(INTL_PASSWORD), pwd_custom,
                                           35));
-        page_content.concat(formCheckboxGrid("send2influx", tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")), send2influx));
+
+        formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")));
+        page_content.concat(formCheckboxGrid("send2influx", FPSTR(INTL_ENABLE), send2influx));
         page_content.concat(formInputGrid(F("host_influx"), FPSTR(INTL_SERVER), host_influx, 60));
         page_content.concat(formInputGrid(F("url_influx"), FPSTR(INTL_PATH), url_influx, 60));
         page_content.concat(formInputGrid("port_influx", FPSTR(INTL_PORT), String(port_influx), max_port_digits));
@@ -717,6 +717,17 @@ void webserver_config(){
                                        35));
         page_content.concat(formPasswordGrid(F("pwd_influx"), FPSTR(INTL_PASSWORD), pwd_influx,
                                           35));
+
+        formSectionHeader(page_content,  FPSTR(INTL_OTHER_APIS));
+
+        page_content.concat(formCheckboxGrid("send2csv", tmpl(FPSTR(INTL_SEND_TO), F("CSV")), send2csv));
+        page_content.concat(formCheckboxGrid("send2fsapp", tmpl(FPSTR(INTL_SEND_TO), F("Feinstaub-App")), send2fsapp));
+        formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), F("OpenSenseMap")));
+        page_content.concat(
+                formCheckboxGrid("send2sensemap", FPSTR(INTL_ENABLE), send2sensemap));
+        page_content.concat(formInputGrid("senseboxid", "senseBox-ID: ", senseboxid,
+                                          capacity_null_terminated_char_array(senseboxid)));
+
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
         page_content.concat(F("</div>"));   //grid
         page_content.concat(F("</div>"));   //tabcontent
