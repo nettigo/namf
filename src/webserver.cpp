@@ -648,7 +648,7 @@ void webserver_config(){
 
         page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
                                                  has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27));
-        page_content.concat(F("<div><select name=\"lcd_type\">"));
+        page_content.concat(F("<div class='c2'><select name=\"lcd_type\">"));
         page_content.concat(form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27));
         page_content.concat(form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602));
         page_content.concat(form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27));
@@ -750,7 +750,7 @@ void webserver_config(){
         webserverPartialSend(page_content);
 
         page_content.concat(formCheckboxOpenGrid("auto_update", FPSTR(INTL_AUTO_UPDATE), auto_update));
-        page_content.concat(F("<div><select name=\"channel\">"));
+        page_content.concat(F("<div class='c2'><select name=\"channel\">"));
         page_content.concat(form_option(String(UPDATE_CHANNEL_STABLE), FPSTR(INTL_UPDATE_STABLE),
                                         update_channel == UPDATE_CHANNEL_STABLE));
         page_content.concat(form_option(String(UPDATE_CHANNEL_BETA), FPSTR(INTL_UPDATE_BETA),
