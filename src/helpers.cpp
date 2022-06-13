@@ -661,9 +661,9 @@ String formPasswordGrid(const String& name, const String& info, const String& va
 
 const char formCheckboxGrid_templ[] PROGMEM = "<div><input type='checkbox' name='{n}' value='1' id='{n}' {c}/></div><div class='c2'><label for='{n}'>{i}</label></div>";
 String formCheckboxGrid(const String& name, const String& info, const bool checked) {
-
+    String newInfo = add_sensor_type(info);
     unsigned size = strlen_P(formCheckboxGrid_templ) + 1 ;
-    size += name.length() + info.length();
+    size += name.length() + newInfo.length();
     size += checked ? 19 : 0;
 
     String s;
@@ -674,7 +674,7 @@ String formCheckboxGrid(const String& name, const String& info, const bool check
     } else {
         s.replace("{c}", "");
     };
-    s.replace("{i}", info);
+    s.replace("{i}", newInfo);
     s.replace("{n}", name);
     return s;
 }
@@ -682,9 +682,10 @@ String formCheckboxGrid(const String& name, const String& info, const bool check
 const char formCheckboxOpenGrid_templ[] PROGMEM = "<div><input type='checkbox' name='{n}' value='1' id='{n}' {c}/></div><div><label for='{n}'>{i}</label></div>";
 //Use only columns 1 & 2 from grid
 String formCheckboxOpenGrid(const String& name, const String& info, const bool checked) {
+    String newInfo = add_sensor_type(info);
 
     unsigned size = strlen_P(formCheckboxOpenGrid_templ) + 1 ;
-    size += name.length() + info.length();
+    size += name.length() + newInfo.length();
     size += checked ? 19 : 0;
 
     String s;
@@ -695,7 +696,7 @@ String formCheckboxOpenGrid(const String& name, const String& info, const bool c
     } else {
         s.replace("{c}", "");
     };
-    s.replace("{i}", info);
+    s.replace("{i}", newInfo);
     s.replace("{n}", name);
     return s;
 }
