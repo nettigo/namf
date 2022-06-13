@@ -56,7 +56,6 @@ const char CONFIG_WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\
 <style>\
 body{font-family:Arial;margin:0;}\
-.content{margin:10px;}\
 .spacer{padding:10px;}\
 .r{text-align:right;}\
 td{vertical-align:top;}\
@@ -67,8 +66,6 @@ a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;wi
 a.plain:hover{background:inherit}\
 a:hover{background:#1A4}\
 .wifi{background:none;color:blue;padding:5px;display:inline;}\
-input[type='text']{width:100%;}\
-input[type='password']{width:100%;}\
 input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 .s_r{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
 .s_r:hover {background:#E33;}\
@@ -105,13 +102,11 @@ const char CONFIG_CSS[] PROGMEM = ".tab {\n"
                                   "}\n"
                                   ".tabcontent {\n"
                                   "    display: none;\n"
-                                  "    padding: 6px 12px;\n"
+                                  "    padding: 6px 0px;\n"
                                   "    border: 1px solid #ccc;\n"
                                   "    border-top: none;\n"
                                   "}\n"
-                                  ".gc { display: grid;grid-template-columns: 0.4fr 0.4fr auto; max-width:900px}\n"
-                                   "@media screen and (max-width: 499px){.gc{grid-template-columns: 0.5fr 0.3fr auto;}}"
-                                  ".gc > div {padding: 10px}\n"
+                                  ".gc { display: grid;grid-template-columns: auto auto auto ; grid-gap: 10px}\n"
                                   ".c2 {grid-column-start:2;grid-column-end: 4}\n"
                                   ".row {grid-column-start:1;grid-column-end: 4}";
 const char CONFIG_JS[] PROGMEM =

@@ -557,6 +557,36 @@ unsigned long time2Measure(void){
 
 //Form helpers
 //
+
+// bold
+// 0 - use <b>
+// 1 - use <h1>
+// 2 - use <h2>
+// 3 - do not use any tags
+String formSectionHeader(String &page_content, const String& name, byte bold) {
+    page_content.concat(formSectionHeader(name, bold));
+}
+
+String formSectionHeader(const String& name, byte bold) {
+
+    String s;
+    switch (bold){
+        case(1):
+            s = F("<div class='row'><h1>{n}</h1></div>\n");
+            break;
+        case(2):
+            s = F("<div class='row'><h2>{n}</h2></div>\n");
+            break;
+        case(3):
+            s = F("<div class='row'>{n}</div>\n");
+            break;
+        default:
+            s = F("<div class='row'><b>{n}</b></div>\n");
+    }
+    s.replace("{n}", name);
+    return s;
+}
+
 String formInputGrid(const String& name, const String& info, const String& value, const int length) {
     String s = F(	"<div>{i}</div><div class='c2'>"
                      "<input type='text' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
@@ -596,6 +626,27 @@ String form_password(const String& name, const String& info, const String& value
 
     String s;
     s.reserve(size);
+    s = FPSTR(form_password_templ);
+    String password = "";
+    password.reserve(value.length());
+    for (uint8_t i = 0; i < value.length(); i++) {
+        password.concat(F("*"));
+    }
+    s.replace("{i}", info);
+    s.replace("{n}", name);
+    s.replace("{v}", password);
+    s.replace("{l}", String(length));
+    return s;
+}
+const char formPasswordGrid_templ[] PROGMEM = "<div>{i}</div><div class='c2'><input type='password' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/></div>\n";
+
+String formPasswordGrid(const String& name, const String& info, const String& value, const int length) {
+    unsigned size = strlen_P(formPasswordGrid_templ) + 1 ;
+    size += name.length() + info.length() + value.length() - 9;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(formPasswordGrid_templ);
     String password = "";
     password.reserve(value.length());
     for (uint8_t i = 0; i < value.length(); i++) {
@@ -608,7 +659,7 @@ String form_password(const String& name, const String& info, const String& value
     return s;
 }
 
-const char formCheckboxGrid_templ[] PROGMEM = "<div><label for='{n}'>{i}</label></div><div class='c2'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/></div>";
+const char formCheckboxGrid_templ[] PROGMEM = "<div><input type='checkbox' name='{n}' value='1' id='{n}' {c}/></div><div class='c2'><label for='{n}'>{i}</label></div>";
 String formCheckboxGrid(const String& name, const String& info, const bool checked) {
 
     unsigned size = strlen_P(formCheckboxGrid_templ) + 1 ;
@@ -618,6 +669,27 @@ String formCheckboxGrid(const String& name, const String& info, const bool check
     String s;
     s.reserve(size);
     s = FPSTR(formCheckboxGrid_templ);
+    if (checked) {
+        s.replace("{c}", F(" checked='checked'"));
+    } else {
+        s.replace("{c}", "");
+    };
+    s.replace("{i}", info);
+    s.replace("{n}", name);
+    return s;
+}
+
+const char formCheckboxOpenGrid_templ[] PROGMEM = "<div><input type='checkbox' name='{n}' value='1' id='{n}' {c}/></div><div><label for='{n}'>{i}</label></div>";
+//Use only columns 1 & 2 from grid
+String formCheckboxOpenGrid(const String& name, const String& info, const bool checked) {
+
+    unsigned size = strlen_P(formCheckboxOpenGrid_templ) + 1 ;
+    size += name.length() + info.length();
+    size += checked ? 19 : 0;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(formCheckboxOpenGrid_templ);
     if (checked) {
         s.replace("{c}", F(" checked='checked'"));
     } else {
@@ -679,20 +751,22 @@ String form_submit(const String& value) {
     s.replace("{v}", value);
     return s;
 }
+String formSubmitGrid(const String& value) {
+    String s = F(	"<div class='row'><input type='submit' name='submit' value='{v}' class='s_r'/></div>");
+    s.replace("{v}", value);
+    return s;
+}
 
 String form_select_lang() {
     String s_select = F(" selected='selected'");
-    String s = F(	"<tr>"
-                     "<td>{t}</td>"
-                     "<td>"
+    String s = F(	"<div>{t}</div><div class='c2'>"
                      "<select name='current_lang'>"
                      "<option value='EN'{s_EN}>English (EN)</option>"
                      "<option value='HU'{s_HU}>Hungarian (HU)</option>"
                      "<option value='PL'{s_PL}>Polski (PL)</option>"
                      "<option value='RO'{s_RO}>ROMÂNĂ (RO)</option>"
                      "</select>"
-                     "</td>"
-                     "</tr>");
+                     "</div>");
     s.reserve(s.length()+40);
 
     s.replace("{t}", FPSTR(INTL_LANGUAGE));

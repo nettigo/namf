@@ -25,8 +25,8 @@
     border-top: none;
 }
 
-.gc { display: grid;grid-template-columns: 0.4fr 0.4fr auto;max-width:900px}
-@media screen and (max-width: 499px){.gc{grid-template-columns: 0.5fr 0.3fr auto;}}
+.gc { display: grid;grid-template-columns: 40% 40% auto;max-width:900px}
+@media screen and (max-width: 499px){.gc{grid-template-columns: 50% 40% auto;}}
 .gc > div {padding: 10px}
 .c2 {grid-column-start:2;grid-column-end: 4}
 .row {grid-column-start:1;grid-column-end: 4}
