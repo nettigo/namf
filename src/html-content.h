@@ -106,7 +106,7 @@ const char CONFIG_CSS[] PROGMEM = ".tab {\n"
                                   "    border: 1px solid #ccc;\n"
                                   "    border-top: none;\n"
                                   "}\n"
-                                  ".gc { display: grid;grid-template-columns: auto auto auto ; row-gap 2px; column-gap: 10px;max-width:900px;}\n"
+                                  ".gc { display: grid;grid-template-columns: auto auto auto ; row-gap: 2px; column-gap: 10px;max-width:900px;}\n"
                                   ".c2 {grid-column-start:2;grid-column-end: 4}\n"
                                   ".row {grid-column-start:1;grid-column-end: 4}";
 const char CONFIG_JS[] PROGMEM =

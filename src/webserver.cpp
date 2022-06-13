@@ -636,12 +636,15 @@ void webserver_config(){
         }
 
         page_content.concat(formSectionHeader(FPSTR(INTL_BASICAUTH)));
-        page_content.concat(formCheckboxGrid("www_basicauth_enabled", FPSTR(INTL_BASICAUTH), www_basicauth_enabled));
+        page_content.concat(formCheckboxGrid("www_basicauth_enabled", FPSTR(INTL_ENABLE), www_basicauth_enabled));
 
         page_content.concat(formInputGrid(F("www_username"), FPSTR(INTL_USER), www_username,
                                           30));
         page_content.concat(formPasswordGrid(F("www_password"), FPSTR(INTL_PASSWORD), www_password,
                                              30));
+
+
+        page_content.concat(formSectionHeader(FPSTR(INTL_MORE_SETTINGS)));
 
         page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
                                                  has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27));
@@ -660,6 +663,7 @@ void webserver_config(){
         page_content.concat(form_select_lang());
         page_content.concat(formInputGrid("sending_intervall_ms", FPSTR(INTL_MEASUREMENT_INTERVAL),
                                        String(sending_intervall_ms / 1000), 5));
+        formSectionHeader(page_content, F(""),2); //spacer
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
 
         page_content.concat(F("</div>"));   //grid
