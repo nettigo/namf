@@ -83,7 +83,7 @@ input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
 const char CONFIG_CSS[] PROGMEM = ".tab {\n"
                                   "    overflow: hidden;\n"
                                   "    border: 1px solid #ccc;\n"
-                                  "    background-color: #f1f1f1;\n"
+                                  "    background-color: #f1f1f1; max-width:920px\n"
                                   "}\n"
                                   ".tab button {\n"
                                   "    background-color: inherit;\n"

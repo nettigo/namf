@@ -753,7 +753,7 @@ String form_submit(const String& value) {
     return s;
 }
 String formSubmitGrid(const String& value) {
-    String s = F(	"<div class='row'><input type='submit' name='submit' value='{v}' class='s_r'/></div>");
+    String s = F(	"<div><input type='submit' name='submit' value='{v}' class='s_r'/></div>");
     s.replace("{v}", value);
     return s;
 }

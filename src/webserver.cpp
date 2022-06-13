@@ -769,6 +769,9 @@ void webserver_config(){
             page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
             page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
         }
+
+        page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
+
         page_content.concat(F("</div>")); //grid
         page_content.concat(F("</div>")); //tabcontent
 
