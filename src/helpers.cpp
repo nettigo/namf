@@ -572,16 +572,16 @@ String formSectionHeader(const String& name, byte bold) {
     String s;
     switch (bold){
         case(1):
-            s = F("<div class='row'><h1>{n}</h1></div>\n");
+            s = F("<div class='row sect'><h1>{n}</h1></div>\n");
             break;
         case(2):
-            s = F("<div class='row'><h2>{n}</h2></div>\n");
+            s = F("<div class='row sect'><h2>{n}</h2></div>\n");
             break;
         case(3):
-            s = F("<div class='row'>{n}</div>\n");
+            s = F("<div class='row sect'>{n}</div>\n");
             break;
         default:
-            s = F("<div class='row'><b>{n}</b></div>\n");
+            s = F("<div class='row sect'><b>{n}</b></div>\n");
     }
     s.replace("{n}", name);
     return s;

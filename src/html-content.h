@@ -108,6 +108,7 @@ const char CONFIG_CSS[] PROGMEM = ".tab {\n"
                                   "}\n"
                                   ".gc { display: grid;grid-template-columns: auto auto auto ; row-gap: 2px; column-gap: 10px;max-width:900px;}\n"
                                   "@media screen and (min-width: 499px){.gc{margin-left:20px;}}\n"
+                                  ".sect:not(:first-child){margin-top:10px;}\n"
                                   ".c2 {grid-column-start:2;grid-column-end: 4}\n"
                                   ".row {grid-column-start:1;grid-column-end: 4}";
 const char CONFIG_JS[] PROGMEM =
