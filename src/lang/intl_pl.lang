@@ -54,13 +54,13 @@ INTL_DEBUG_LEVEL Poziom&nbsp;debugowania
 INTL_MEASUREMENT_INTERVAL Czas między pomiarami (sek.)
 INTL_DURATION_ROUTER_MODE Czas trwania w trybie routera (sek.)
 INTL_MORE_APIS Kolejne API
-INTL_SEND_TO_OWN_API Wysyłaj dane do własnego API
+INTL_SEND_TO_OWN_API własne API
 INTL_SERVER Adres serwera
 INTL_PATH Ścieżka
 INTL_PORT Port
 INTL_USER Nazwa użytkownika
 INTL_PASSWORD Hasło
-INTL_SEND_TO Wysyłaj dane do {v}
+INTL_SEND_TO Wysyłaj dane do: {v}
 INTL_READ_FROM Czytaj z {v}
 INTL_SENSOR_IS_REBOOTING Ponowne uruchamianie czujnika.
 INTL_SENSOR_IS_REBOOTING_NOW Trwa restart urządzenia... Za kilkanaście sekund kliknij przycisk poniżej.

@@ -128,8 +128,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_LCD_HDR[] PROGMEM = "SDS011 wartosci:";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "Czas, w którym jest dokonywany pomiar (ms)";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "Czas pracy przed rozpoczęciem pomiaru (ms)";
-/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO[] PROGMEM = "Wysyłaj dane do {v}";
-/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Wysyłaj dane do własnego API";
+/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO[] PROGMEM = "Wysyłaj dane do: {v}";
+/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "własne API";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR[] PROGMEM = "Czujnik";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSORS[] PROGMEM = "Sensory";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Ponowne uruchamianie czujnika.";
