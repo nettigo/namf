@@ -521,45 +521,8 @@ void parse_config_request(String &page_content) {
 #undef readTimeParam
 #undef readPasswdParam
 
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Luftdaten.info")), String(send2dusti)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Madavi")), String(send2madavi)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DHT"), String(dht_read)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("PMS(1,3,5,6,7)003")), String(pms_read)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "BMP280"), String(bmp280_read)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), "DS18B20"), String(ds18b20_read)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_READ_FROM), F("GPS")), String(gps_read)));
-    page_content.concat(line_from_value(FPSTR(INTL_AUTO_UPDATE), String(auto_update)));
-    page_content.concat(String(update_channel));
-    page_content.concat(line_from_value(FPSTR(INTL_DISPLAY), String(has_display)));
-    page_content.concat(line_from_value(FPSTR(INTL_LCD1602_27), String(has_lcd1602_27)));
-    page_content.concat(line_from_value(FPSTR(INTL_LCD1602_3F), String(has_lcd1602)));
-    page_content.concat(line_from_value(FPSTR(INTL_LCD2004_27), String(has_lcd2004_27)));
-    page_content.concat(line_from_value(FPSTR(INTL_LCD2004_3F), String(has_lcd2004_3f)));
-    page_content.concat(line_from_value(FPSTR(INTL_SHOW_WIFI_INFO), String(show_wifi_info)));
-    page_content.concat(line_from_value(FPSTR(INTL_LEDBAR_32), String(has_ledbar_32)));
-    page_content.concat(line_from_value(FPSTR(INTL_DEBUG_LEVEL), String(debug)));
-    page_content.concat(line_from_value(FPSTR(INTL_MEASUREMENT_INTERVAL), String(sending_intervall_ms/1000)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("CSV")), String(send2csv)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("Feinstaub-App")), String(send2fsapp)));
-    page_content.concat(line_from_value(tmpl(FPSTR(INTL_SEND_TO), F("opensensemap")), String(send2sensemap)));
-    page_content.concat(F("<br/>senseBox-ID "));
-    page_content.concat(senseboxid);
-    page_content.concat(F("<br/><br/>"));
-    page_content.concat(line_from_value(FPSTR(INTL_SEND_TO_OWN_API), String(send2custom)));
-    page_content.concat(line_from_value(FPSTR(INTL_SERVER), host_custom));
-    page_content.concat(line_from_value(FPSTR(INTL_PATH), url_custom));
-    page_content.concat(line_from_value(FPSTR(INTL_PORT), String(port_custom)));
-    page_content.concat(line_from_value(FPSTR(INTL_USER), user_custom));
-    page_content.concat(line_from_value(FPSTR(INTL_PASSWORD), pwd_custom));
-    page_content.concat(F("<br/><br/>InfluxDB: "));
-    page_content.concat(String(send2influx));
-    page_content.concat(line_from_value(FPSTR(INTL_SERVER), host_influx));
-    page_content.concat(line_from_value(FPSTR(INTL_PATH), url_influx));
-    page_content.concat(line_from_value(FPSTR(INTL_PORT), String(port_influx)));
-    page_content.concat(line_from_value(FPSTR(INTL_USER), user_influx));
-    page_content.concat(line_from_value(FPSTR(INTL_PASSWORD), pwd_influx));
-    page_content.concat(F("<br/><br/>"));
-    page_content.concat(FPSTR(INTL_SENSOR_IS_REBOOTING));
+
+    page_content.concat(formSectionHeader(FPSTR(INTL_SENSOR_IS_REBOOTING), 1));
 
 }
 #pragma clang diagnostic pop

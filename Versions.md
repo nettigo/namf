@@ -1,3 +1,10 @@
+NAMF-2020-44rc1 ()
+- merged changes from alpha version 42a2:
+  - not allocating memory for unused variables
+  - fallback WiFi - secondary WiFi network to connect by NAM if no primary network. Useful when You have many sensors managed by single organization. You can provide secondary WiFi credentials to work with when NAM is in lab/service.
+- New config page layout, much more readable
+
+
 NAMF-2020-43 (2021-12-31 rev 5c2012c8d7d9f8358873ebb1478ff4dcd69c2c44)
 - based on 43rc1
 - sensors on stable software send diagnostic data each 12h not 24h

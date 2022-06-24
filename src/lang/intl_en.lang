@@ -1,3 +1,9 @@
+INTL_ENABLE Enable
+INTL_OTHER_APIS Other API
+INTL_TAB_BASIC Basic
+INTL_TAB_API API
+INTL_TAB_SENSORS Sensors
+INTL_TAB_ADVANCED Advanced
 INTL_FALBACK_WIFI Fallback WiFi
 INTL_MADAVI_LINK Sensor graphs on Madavi
 INTL_TIME_FROM_UPDATE Time from last update attempt
