@@ -561,14 +561,6 @@ void parse_config_request(String &page_content) {
     page_content.concat(F("<br/><br/>"));
     page_content.concat(FPSTR(INTL_SENSOR_IS_REBOOTING));
 
-    if (server.method() == HTTP_POST) {
-        debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
-        display_debug(F("Writing config"), F("and restarting"));
-        writeConfig();
-        delay(500);
-        ESP.restart();
-    }
-
 }
 #pragma clang diagnostic pop
 
@@ -663,7 +655,6 @@ void webserver_config(){
         page_content.concat(form_select_lang());
         page_content.concat(formInputGrid("sending_intervall_ms", FPSTR(INTL_MEASUREMENT_INTERVAL),
                                        String(sending_intervall_ms / 1000), 5));
-        formSectionHeader(page_content, F(""),2); //spacer
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
 
         page_content.concat(F("</div>"));   //grid
@@ -801,6 +792,15 @@ void webserver_config(){
     page_content.concat(make_footer(true));
     webserverPartialSend(page_content);
     endPartialSend();
+
+    if (server.method() == HTTP_POST) {
+        debug_out(F("Writing config and restarting"), DEBUG_MIN_INFO, true);
+        display_debug(F("Writing config"), F("and restarting"));
+        writeConfig();
+        delay(500);
+        ESP.restart();
+    }
+
 
 //send.
 }
