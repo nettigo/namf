@@ -1,3 +1,4 @@
+INTL_USE_HTTPS Use encrypted connection (HTTPS)
 INTL_ENABLE Enable
 INTL_OTHER_APIS Other API
 INTL_TAB_BASIC Basic

@@ -163,6 +163,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_UPDATE_BETA[] PROGMEM = "beta (stability testing for new features)";
 /* ./src/lang/intl_en.lang */ const char INTL_UPDATE_STABLE[] PROGMEM = "stable (use if in doubt)";
 /* ./src/lang/intl_en.lang */ const char INTL_USER[] PROGMEM = "User";
+/* ./src/lang/intl_en.lang */ const char INTL_USE_HTTPS[] PROGMEM = "Use encrypted connection (HTTPS)";
 /* ./src/lang/intl_en.lang */ const char INTL_VALUE[] PROGMEM = "Value";
 /* ./src/lang/intl_en.lang */ const char INTL_WARNING[] PROGMEM = "warnings";
 /* ./src/lang/intl_en.lang */ const char INTL_WIFI_NETWORKS[] PROGMEM = "Loading wifi networks ...";
