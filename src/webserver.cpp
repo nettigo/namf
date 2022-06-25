@@ -630,7 +630,8 @@ void webserver_config(){
 
         page_content.concat(formCheckboxGrid("send2dusti", FPSTR(INTL_ENABLE), send2dusti));
         page_content.concat(formCheckboxGrid("ssl_dusti", FPSTR(INTL_USE_HTTPS), ssl_dusti));
-        page_content.concat(formCheckboxGrid("send2madavi", F("API Madavi.de"), send2madavi));
+        formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), F("API Madavi.de")));
+        page_content.concat(formCheckboxGrid("send2madavi", FPSTR(INTL_ENABLE), send2madavi));
         page_content.concat(formCheckboxGrid("ssl_madavi", FPSTR(INTL_USE_HTTPS), ssl_madavi));
 
         webserverPartialSend(page_content);
