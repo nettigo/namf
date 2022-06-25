@@ -216,7 +216,12 @@ void wifiConfig() {
 	WiFi.mode(WIFI_AP);
 	const IPAddress apIP(192, 168, 4, 1);
 	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-	WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
+    if (cfg::fs_pwd == nullptr || !strcmp(cfg::fs_pwd, "")) {
+        debug_out(F("Starting AP with default password"), DEBUG_MIN_INFO);
+        WiFi.softAP(cfg::fs_ssid, "nettigo123", selectChannelForAp(wifiInfo, count_wifiInfo));
+    } else {
+        WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
+    }
 
 	DNSServer dnsServer;
 	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);

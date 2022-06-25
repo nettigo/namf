@@ -3,6 +3,7 @@ NAMF-2020-44rc1 ()
   - not allocating memory for unused variables
   - fallback WiFi - secondary WiFi network to connect by NAM if no primary network. Useful when You have many sensors managed by single organization. You can provide secondary WiFi credentials to work with when NAM is in lab/service.
 - New config page layout, much more readable
+- **IMPORTANT** now sensor in config mode does not start with unencrypted network. Uses _nettigo123_ as password, SSID NAM-XXXXXX or other if set in config
 
 
 NAMF-2020-43 (2021-12-31 rev 5c2012c8d7d9f8358873ebb1478ff4dcd69c2c44)
