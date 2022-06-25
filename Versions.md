@@ -1,4 +1,4 @@
-NAMF-2020-44rc1 ()
+NAMF-2020-44rc1 (2022-06-25 rev 375f766f48ec64f6901bebd11d77f11558dfea1f)
 - merged changes from alpha version 42a2:
   - not allocating memory for unused variables
   - fallback WiFi - secondary WiFi network to connect by NAM if no primary network. Useful when You have many sensors managed by single organization. You can provide secondary WiFi credentials to work with when NAM is in lab/service.
