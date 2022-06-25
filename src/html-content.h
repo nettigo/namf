@@ -22,58 +22,40 @@ const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
 <title>{t}</title>\
 <meta name='viewport' content='width=device-width'>\
-<style>\
-body{font-family:Arial;margin:0;}\
-.content{margin:10px;}\
-.spacer{padding:10px;}\
-.r{text-align:right;}\
-td{vertical-align:top;}\
-a.nn{text-decoration:none;display:inline;color:inherit;background:none;padding:2px}\
-a.nn:hover{background:none}\
-a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\
-a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
-a.plain:hover{background:inherit}\
-a:hover{background:#1A4}\
-.wifi{background:none;color:blue;padding:5px;display:inline;}\
-input[type='text']{width:100%;}\
-input[type='password']{width:100%;}\
-input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
-.s_r{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
-.s_r:hover {background:#E33;}\
-.s_o{background:#F80;}\
-.s_o:hover{background:#E70;}\
-#ncf hr{margin:25px 10px;}\
-</style>\
+<link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c1\" />\
 </head><body>\
 <div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
 <a href='/' style='background:none;width:0;display:inline'><img src='/images?n=l' style='float:left;margin:20px'/></a>\
 <h3 style='margin:0'>{tt}<br>{sname}</h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4><a class='nn' href='/'>{h}</a> {n} {t}</h4>";
 
+const char COMMON_CSS[] PROGMEM = "body{font-family:Arial;margin:0;}\n"
+                                  ".content{margin:10px;}\n"
+                                  ".spacer{padding:10px;}\n"
+                                  ".r{text-align:right;}\n"
+                                  "td{vertical-align:top;}\n"
+                                  "a.nn{text-decoration:none;display:inline;color:inherit;background:none;padding:2px}\n"
+                                  "a.nn:hover{background:none}\n"
+                                  "a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\n"
+                                  "a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\n"
+                                  "a.plain:hover{background:inherit}\n"
+                                  "a:hover{background:#1A4}\n"
+                                  ".wifi{background:none;color:blue;padding:5px;display:inline;}\n"
+                                  "input[type='text']{width:100%;}\n"
+                                  "input[type='password']{width:100%;}\n"
+                                  "input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\n"
+                                  ".s_r{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\n"
+                                  ".s_r:hover {background:#E33;}\n"
+                                  ".s_o{background:#F80;}\n"
+                                  ".s_o:hover{background:#E70;}\n"
+                                  "#ncf hr{margin:25px 10px;}";
+
 const char CONFIG_WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
 <title>{t}</title>\
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\
-<style>\
-body{font-family:Arial;margin:0;}\
-.spacer{padding:10px;}\
-.r{text-align:right;}\
-td{vertical-align:top;}\
-a.nn{text-decoration:none;display:inline;color:inherit;background:none;padding:2px}\
-a.nn:hover{background:none}\
-a.plain{text-decoration:underline;display:inline;color:blue;background:inherit;}\
-a{text-decoration:none;padding:10px;background:#2B4;color:white;display:block;width:auto;border-radius:5px;}\
-a.plain:hover{background:inherit}\
-a:hover{background:#1A4}\
-.wifi{background:none;color:blue;padding:5px;display:inline;}\
-input[type='submit']{border-radius:5px;font-size:medium;padding:5px;}\
-.s_r{padding:9px !important;width:100%;border-style:none;background:#D44;color:white;text-align:left;}\
-.s_r:hover {background:#E33;}\
-.s_o{background:#F80;}\
-.s_o:hover{background:#E70;}\
-#ncf hr{margin:25px 10px;}\
-</style>\
 <link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c\" />\
+<link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c1\" />\
 </head><body>\
 <div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
 <a href='/' style='background:none;width:0;display:inline'><img src='/images?n=l' style='float:left;margin:20px'/></a>\

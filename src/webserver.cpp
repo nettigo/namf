@@ -107,6 +107,9 @@ void webserver_images() {
     } else if (server.arg("n") == F("c"))  {    //config CSS
         server.sendHeader(F("Cache-Control"), F("max-age=604800"));
         server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_CSS), FPSTR(CONFIG_CSS));
+    } else if (server.arg("n") == F("c1"))  {    //common CSS
+        server.sendHeader(F("Cache-Control"), F("max-age=604800"));
+        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_CSS), FPSTR(COMMON_CSS));
     } else if (server.arg("n") == F("j"))  {    //config JS
         server.sendHeader(F("Cache-Control"), F("max-age=604800"));
         server.send(200, FPSTR(TXT_CONTENT_TYPE_APPLICATION_JS), FPSTR(CONFIG_JS));
