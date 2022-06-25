@@ -8,7 +8,6 @@ INTL_WIFI_PHY_MODE WiFi Phy Mode (1=B / 2=G / 3=N)
 INTL_WIFI_NETWORKS WiFi hálózatok keresése...
 INTL_LANGUAGE Nyelv
 INTL_NETWORKS_FOUND Talált WiFi hálózatok:
-INTL_AB_HIER_NUR_ANDERN Haladó beállítások
 INTL_SAVE Mentés
 INTL_SENSORS Szenzorok
 INTL_SDS011 SDS011 ({pm})
@@ -53,7 +52,6 @@ INTL_RESTART_SENSOR A szenzor újraindítása
 INTL_HOME Főoldal
 INTL_BACK_TO_HOME Vissza a főoldalra
 INTL_CURRENT_DATA Aktuális adatok
-INTL_ACTIVE_SENSORS_MAP Aktív szenzorok térképe (külső link)
 INTL_CONFIGURATION_DELETE Beállítások törlése
 INTL_CONFIGURATION_REALLY_DELETE Biztosan törölni akarod a beállításokat?
 INTL_DELETE Törlés

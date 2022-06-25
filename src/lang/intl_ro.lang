@@ -18,7 +18,6 @@ INTL_WIFI_NETWORKS Încărcare rețele wifi ...
 INTL_LANGUAGE Limbă
 INTL_NO_NETWORKS Nu s-a găsit nicio rețea WiFi
 INTL_NETWORKS_FOUND Rețele găsite:
-INTL_AB_HIER_NUR_ANDERN Setări avansate
 INTL_SAVE Salvați
 INTL_SENSORS Senzorii
 INTL_SDS011 SDS011 ({pm})
@@ -67,7 +66,6 @@ INTL_RESTART_SENSOR Reporniți senzorul
 INTL_HOME Acasă
 INTL_BACK_TO_HOME Înapoi la pagina principală
 INTL_CURRENT_DATA Date curente
-INTL_ACTIVE_SENSORS_MAP Harta senzorilor activi(link extern)
 INTL_CONFIGURATION_DELETE Ștergerea configurației
 INTL_CONFIGURATION_REALLY_DELETE Sunteți sigur că doriți să ștergeți configurația?
 INTL_DELETE Ștergeți

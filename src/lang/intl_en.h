@@ -28,8 +28,6 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_en_H
 #define LANG_DEF_en_H
 
-/* ./src/lang/intl_en.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Advanced settings";
-/* ./src/lang/intl_en.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Active sensors map(external link)";
 /* ./src/lang/intl_en.lang */ const char INTL_ALTITUDE[] PROGMEM = "Altitude";
 /* ./src/lang/intl_en.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Auto update firmware, using channel";
 /* ./src/lang/intl_en.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Back to home page";
@@ -104,6 +102,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "This is not proper IP";
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "Address to ping (IP)";
 /* ./src/lang/intl_en.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Number of measurements:";
+/* ./src/lang/intl_en.lang */ const char INTL_OTHER_APIS[] PROGMEM = "Other API";
 /* ./src/lang/intl_en.lang */ const char INTL_PARAMETER[] PROGMEM = "Parameter";
 /* ./src/lang/intl_en.lang */ const char INTL_PARTICLES_PER_LITER[] PROGMEM = "particles/liter";
 /* ./src/lang/intl_en.lang */ const char INTL_PARTICULATE_MATTER[] PROGMEM = "particulate matter";
@@ -151,6 +150,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - high precision particle matter sensor";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_en.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Sensor status";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_ADVANCED[] PROGMEM = "Advanced";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_API[] PROGMEM = "API";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_BASIC[] PROGMEM = "Basic";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_SENSORS[] PROGMEM = "Sensors";
 /* ./src/lang/intl_en.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperature";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME[] PROGMEM = "Time";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME_FROM_UPDATE[] PROGMEM = "Time from last update attempt";
@@ -168,11 +171,6 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_WIFI_TX_PWR[] PROGMEM = "TX power 0-20.5(dBm)";
 /* ./src/lang/intl_en.lang */ const char LUFTDATEN_INFO_LOGO_SVG[] PROGMEM = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120px\" height=\"90px\" version=\"1.0\" style=\"shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd\" viewBox=\"0 0 120 90\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g id=\"NAM Logo\"><path fill=\"#fff\" d=\"M50 27c0,1 -1,2 -2,2 -1,0 -2,-1 -2,-2 0,-8 6,-14 14,-14 7,0 13,6 13,14 0,7 -6,13 -13,13l-32 0c-12,0 -21,10 -21,21 0,14 13,23 26,20 2,-1 3,-1 5,-2 1,-1 2,0 3,1 1,1 0,2 -1,3 -10,6 -22,4 -30,-4 -10,-10 -10,-26 0,-36 4,-4 11,-7 18,-7l32 0c8,0 12,-10 6,-16 -6,-6 -16,-1 -16,7zm5 52c0,0 -1,0 -1,0l0 0 -1 -2 -3 0c0,1 0,2 0,2 -1,0 -1,0 -2,0 0,0 0,0 0,0l3 -8c0,0 0,0 0,0l0 0c1,0 2,0 2,0l3 8c0,0 0,0 -1,0l0 0zm6 -13c0,0 0,-8 0,-10 0,-2 1,-2 1,-2l6 0 0 2 -4 0 0 3 4 0 0 2 -4 0 0 3 4 0 0 2 -7 0zm11 0l0 -10 -4 0c0,0 0,-2 2,-2l17 0 0 2 -3 0 0 10 -3 0 0 -10c-2,0 -4,0 -6,0l0 10 -3 0zm16 0c0,0 0,-8 0,-10 0,-2 3,-2 3,-2l0 12 -3 0zm22 -12c2,0 3,0 5,1 1,2 2,3 2,5 0,2 -1,4 -2,5 -2,1 -3,2 -5,2 -1,0 -3,-1 -4,-2 -2,-1 -2,-3 -2,-5 0,-2 0,-3 2,-5 1,-1 3,-1 4,-1zm0 2c-1,0 -1,0 -2,1 -1,1 -1,2 -1,3 0,2 0,3 1,3 0,1 1,2 2,2 1,0 2,-1 3,-2 0,-1 1,-2 1,-3 0,-1 -1,-2 -1,-3 -1,-1 -2,-1 -3,-1zm-62 10c0,0 0,-8 0,-10 0,-2 2,-2 2,-2l7 8c0,0 0,-4 0,-6 0,-2 2,-2 2,-2l0 12 -2 0 -7 -8 0 6 0 2 -2 0 0 0zm55 -6c0,0 -3,0 -3,0 -2,0 -2,2 -2,2l3 0c0,2 0,2 0,2 -1,0 -1,1 -2,1 -1,0 -2,-1 -3,-2 -1,0 -1,-2 -1,-3 0,-1 0,-2 1,-3 1,-1 2,-1 3,-1 1,0 2,0 3,0l1 -1c-2,-1 -3,-1 -4,-1 -1,0 -2,0 -3,0 -1,1 -2,1 -3,2 -1,1 -1,3 -1,4 0,1 0,2 0,3 1,1 1,2 2,2 2,1 3,2 5,2 1,0 3,-1 4,-1l0 -6 0 0zm-52 16l2 0 -1 -2 -1 2zm6 3c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm4 -3l0 3c0,0 -1,0 -1,0 -1,0 -1,0 -1,0l0 -8c0,0 0,0 1,0 1,0 2,0 3,0 1,0 1,1 2,1l0 0c0,2 0,3 -2,4l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm11 1l3 -5c0,0 0,0 0,0l0 0c0,0 0,0 0,0l0 0 1 0c0,0 0,0 0,0l0 8c0,0 0,0 -1,0 0,0 0,0 0,0l0 -4 -2 3c0,0 -1,0 -2,0l-1 -3 0 4c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0 0,0 1,0 1,0l2 5zm13 -1c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm4 -4c0,0 0,0 0,0l4 5 0 -5c0,0 1,0 1,0 0,0 1,0 1,0l0 8c0,1 -1,0 -2,0l0 0 0 0 -3 -5 0 5c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 1,0zm8 8c0,0 -1,0 -1,0l0 -8c0,0 1,0 1,0 1,0 1,0 1,0l0 8c0,0 0,0 -1,0zm8 -8c0,2 0,2 -3,2l0 6c0,0 0,0 -1,0 0,0 -1,0 -1,0l0 -6c-2,0 -2,0 -2,-2 0,0 0,0 1,0l5 0c1,0 1,0 1,0zm7 4c0,6 -8,6 -8,0 0,-6 8,-6 8,0zm-2 0c0,-1 0,-1 0,-2l0 0c-1,-1 -2,-1 -3,0l0 0c-2,1 -1,5 2,5 1,-1 1,-2 1,-3zm5 1l0 3c0,0 -1,0 -2,0 0,0 0,0 0,0l0 -8c0,0 0,0 0,0 1,0 3,0 4,0 2,1 2,4 0,5l2 3c1,0 0,0 0,0l0 0c-1,0 -1,0 -2,0l-2 -3 0 0zm0 -1c1,0 2,0 2,-1 0,-1 -1,-1 -2,-1l0 2zm-85 -18c-3,0 -6,2 -7,4 1,2 4,4 7,4 3,0 5,-2 7,-4 -2,-2 -4,-4 -7,-4zm0 2c1,0 2,1 2,2 0,1 -1,2 -2,2 -2,0 -3,-1 -3,-2 0,-1 1,-2 3,-2zm22 -48c-1,0 -2,0 -3,-1 0,-1 0,-2 1,-3 9,-5 20,-4 28,4 9,8 9,23 0,32 -4,4 -10,7 -16,7l-32 0c-7,0 -12,5 -12,11 0,6 5,11 12,11 7,0 13,-7 11,-14 -1,-1 0,-2 1,-3 2,0 3,1 3,2 3,10 -5,20 -15,20 -9,0 -16,-7 -16,-16 0,-9 7,-16 16,-16l32 0c10,0 18,-8 18,-18 0,-12 -12,-21 -23,-18 -2,0 -3,1 -5,2z\"/></g></svg>";
 /* ./src/sensors/sht3x/sht3x_en.lang */ const char SENSOR_SHT3[] PROGMEM = "SHT3x";
- const char INTL_OTHER_APIS[] PROGMEM = "Translate EN: INTL_OTHER_APIS 🐱;";
- const char INTL_TAB_BASIC[] PROGMEM = "Translate EN: INTL_TAB_BASIC 🐱;";
- const char INTL_TAB_API[] PROGMEM = "Translate EN: INTL_TAB_API 🐱;";
- const char INTL_TAB_SENSORS[] PROGMEM = "Translate EN: INTL_TAB_SENSORS 🐱;";
- const char INTL_TAB_ADVANCED[] PROGMEM = "Translate EN: INTL_TAB_ADVANCED 🐱;";
 
 
 #endif

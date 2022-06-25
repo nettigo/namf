@@ -28,8 +28,6 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_hu_H
 #define LANG_DEF_hu_H
 
-/* ./src/lang/intl_hu.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Haladó beállítások";
-/* ./src/lang/intl_hu.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Aktív szenzorok térképe (külső link)";
 /* ./src/lang/intl_hu.lang */ const char INTL_ALTITUDE[] PROGMEM = "Tengerszint feletti magasság";
 /* ./src/lang/intl_hu.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Firmware automatikus frissítése";
 /* ./src/lang/intl_hu.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Vissza a főoldalra";
@@ -155,6 +153,12 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
+ const char INTL_ENABLE[] PROGMEM = "Translate HU: INTL_ENABLE 🐱;";
+ const char INTL_OTHER_APIS[] PROGMEM = "Translate HU: INTL_OTHER_APIS 🐱;";
+ const char INTL_TAB_BASIC[] PROGMEM = "Translate HU: INTL_TAB_BASIC 🐱;";
+ const char INTL_TAB_API[] PROGMEM = "Translate HU: INTL_TAB_API 🐱;";
+ const char INTL_TAB_SENSORS[] PROGMEM = "Translate HU: INTL_TAB_SENSORS 🐱;";
+ const char INTL_TAB_ADVANCED[] PROGMEM = "Translate HU: INTL_TAB_ADVANCED 🐱;";
  const char INTL_MADAVI_LINK[] PROGMEM = "Translate HU: INTL_MADAVI_LINK 🐱;";
  const char INTL_TIME_FROM_UPDATE[] PROGMEM = "Translate HU: INTL_TIME_FROM_UPDATE 🐱;";
  const char INTL_NTP_TIME[] PROGMEM = "Translate HU: INTL_NTP_TIME 🐱;";
@@ -167,12 +171,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
  const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Translate HU: INTL_SENSOR_IS_REBOOTING_NOW 🐱;";
  const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
- const char INTL_ENABLE[] PROGMEM = "Translate HU: INTL_ENABLE 🐱;";
- const char INTL_OTHER_APIS[] PROGMEM = "Translate HU: INTL_OTHER_APIS 🐱;";
- const char INTL_TAB_BASIC[] PROGMEM = "Translate HU: INTL_TAB_BASIC 🐱;";
- const char INTL_TAB_API[] PROGMEM = "Translate HU: INTL_TAB_API 🐱;";
- const char INTL_TAB_SENSORS[] PROGMEM = "Translate HU: INTL_TAB_SENSORS 🐱;";
- const char INTL_TAB_ADVANCED[] PROGMEM = "Translate HU: INTL_TAB_ADVANCED 🐱;";
 
 
 #endif

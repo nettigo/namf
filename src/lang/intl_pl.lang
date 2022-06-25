@@ -24,7 +24,6 @@ INTL_WIFI_NETWORKS Ładowanie sieci WiFi...
 INTL_LANGUAGE Język
 INTL_NO_NETWORKS Nie znaleziono sieci WiFi
 INTL_NETWORKS_FOUND Znalezione sieci: 
-INTL_AB_HIER_NUR_ANDERN Ustawienia zaawansowane
 INTL_SAVE Zapisz
 INTL_SENSORS Sensory
 INTL_SDS011 SDS011 ({pm})
@@ -70,7 +69,6 @@ INTL_RESTART_SENSOR Uruchom ponownie czujnik
 INTL_HOME Strona startowa
 INTL_BACK_TO_HOME Powrót do strony startowej
 INTL_CURRENT_DATA Obecne wskazania
-INTL_ACTIVE_SENSORS_MAP Mapa aktywnych czujników (link zewnętrzny)
 INTL_CONFIGURATION_DELETE Usunięcie konfiguracji
 INTL_CONFIGURATION_REALLY_DELETE Czy na pewno chcesz usunąć konfigurację?
 INTL_DELETE Usuń

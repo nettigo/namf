@@ -28,8 +28,6 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_ro_H
 #define LANG_DEF_ro_H
 
-/* ./src/lang/intl_ro.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Setări avansate";
-/* ./src/lang/intl_ro.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Harta senzorilor activi(link extern)";
 /* ./src/lang/intl_ro.lang */ const char INTL_ALTITUDE[] PROGMEM = "Altitudine";
 /* ./src/lang/intl_ro.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Actualizarea automată a firmware-ului, utilizând canalul";
 /* ./src/lang/intl_ro.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Înapoi la pagina principală";
