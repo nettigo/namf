@@ -222,7 +222,6 @@ namespace BMPx80 {
     void resultsAsHTML(String &page_content){
         if (!enabled) return;
         page_content.concat(FPSTR(EMPTY_ROW));
-        page_content.concat(FPSTR(EMPTY_ROW));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_TEMPERATURE),
                                                  check_display_value(currentTemp(), -128, 1, 0), F("°C")));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_PRESSURE),
