@@ -80,10 +80,13 @@ namespace BMPx80 {
         switch (currentSensor) {
             case NONE:
                 String(F("")).toCharArray(buff, 8);
+                break;
             case BMP_280:
                 String(F("BMP280_")).toCharArray(buff, 8);
+                break;
             case BMP_180:
                 String(F("BMP_")).toCharArray(buff, 8);
+                break;
         }
         return buff;
     }
