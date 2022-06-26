@@ -24,9 +24,9 @@ const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <meta name='viewport' content='width=device-width'>\
 <link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c1\" />\
 </head><body>\
-<div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
-<a href='/' style='background:none;width:0;display:inline'><img src='/images?n=l' style='float:left;margin:20px'/></a>\
-<h3 style='margin:0'>{tt}<br>{sname}</h3>\
+<div class='hdr'>\
+<a href='/'><img src='/images?n=l'/></a>\
+<h3>{tt}<br><a href='http://{sname}.local'>{sname}</a></h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4><a class='nn' href='/'>{h}</a> {n} {t}</h4>";
 
 const char COMMON_CSS[] PROGMEM = "body{font-family:Arial;margin:0;}\n"
@@ -48,7 +48,11 @@ const char COMMON_CSS[] PROGMEM = "body{font-family:Arial;margin:0;}\n"
                                   ".s_r:hover {background:#E33;}\n"
                                   ".s_o{background:#F80;}\n"
                                   ".s_o:hover{background:#E70;}\n"
-                                  "#ncf hr{margin:25px 10px;}";
+                                  ".hdr a{background:none;width:0;display:inline; color:black;padding:0px}\n"
+                                  ".hdr{min-height:135px;background-color:#2B4;margin-bottom:20px}\n"
+                                  ".hdr img{float:left;margin:20px}\n"
+                                  ".hdr h3{margin:0; padding:20px 0 0 0;}\n"
+                                  "#ncf hr{margin:25px 10px;}\n";
 
 const char CONFIG_WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
@@ -57,9 +61,9 @@ const char CONFIG_WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c\" />\
 <link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c1\" />\
 </head><body>\
-<div style='min-height:135px;background-color:#2B4;margin-bottom:20px'>\
-<a href='/' style='background:none;width:0;display:inline'><img src='/images?n=l' style='float:left;margin:20px'/></a>\
-<h3 style='margin:0'>{tt}<br>{sname}</h3>\
+<div class='hdr'>\
+<a href='/'><img src='/images?n=l'/></a>\
+<h3>{tt}<br><a href='http://{sname}.local'>{sname}</a></h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4><a class='nn' href='/'>{h}</a> {n} {t}</h4>";
 
 const char CONFIG_CSS[] PROGMEM = ".tab {\n"
