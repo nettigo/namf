@@ -578,8 +578,6 @@ void webserver_config(){
             page_content.concat(F("<div id='wifilist' class='row'>"));
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));
             page_content.concat(F("</div>"));
-        }
-        if (wificonfig_loop) {  // scan for wlan ssids
             page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);</script>"));
         }
 
