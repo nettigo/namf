@@ -234,6 +234,13 @@ namespace BMPx80 {
         return ret;
     }
 
+    void getStatusReport(String &res) {
+        if (!enabled) return;
+        res.concat(FPSTR(EMPTY_ROW));
+        res.concat(table_row_from_value(F("BMx80"), F("Sensor type"), String(currentSensor), ""));
+
+    }
+
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BMPx80);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::BMPx80);

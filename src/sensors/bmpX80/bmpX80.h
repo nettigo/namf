@@ -31,7 +31,7 @@ namespace BMPx80 {
     void setDefaults(void);
     String getConfigHTML(void);
 
-
+    void getStatusReport(String &res);
 }
 
 #endif //NAMF_SENSORS_BMPX80_H

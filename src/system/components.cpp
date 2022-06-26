@@ -74,6 +74,7 @@ namespace SimpleScheduler {
         HECA::getStatusReport(res);
         SPS30::getStatusReport(res);
         SDS011::getStatusReport(res);
+        BMPx80::getStatusReport(res);
         NetworkWatchdog::resultsAsHTML(res);
 
     }
