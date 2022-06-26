@@ -569,7 +569,7 @@ void webserver_config(){
         tabTemplate(page_content, F("sensors"), FPSTR(INTL_TAB_SENSORS));
 
         page_content.concat(F("</div>"));
-        page_content.concat(F("<form method='POST' action='/config'  >"));
+        page_content.concat(F("<form method='POST' id='oldForm' action='/config'  >"));
         page_content.concat(F("<div id='basic' class='tabcontent'>"));
         page_content.concat(F("<div class='gc'>"));
         page_content.concat( formSectionHeader(FPSTR(INTL_WIFI_SETTINGS)));
@@ -754,6 +754,15 @@ void webserver_config(){
     webserverPartialSend(page_content);
     page_content.concat(F("<br>"));
     page_content.concat(String(maxSizeTemp));
+    page_content.concat(F("<script>const beforeUnloadListener = (event) => {\n"
+                          "  event.preventDefault();\n"
+                          "  return event.returnValue = \"Are1 you sure you want to exit?\";"
+                          "};"
+                          "function warn(){addEventListener(\"beforeunload\", beforeUnloadListener, {capture: true});};\n"
+                          "function submit(){removeEventListener(\"beforeunload\", beforeUnloadListener, {capture: true});};\n"
+                          "document.querySelectorAll(\"#oldForm input:not(#ncf input)\").forEach(e=>{e.addEventListener(\"change\",warn)});\n"
+                          "document.querySelector(\"#oldForm\").addEventListener(\"submit\",submit,false);\n"
+                          "</script>"));
     page_content.concat(make_footer(true));
     webserverPartialSend(page_content);
     endPartialSend();
