@@ -4,15 +4,15 @@
 
 (c) Nettigo 2020
 
-Language translation file for Nettigo Air Monitor 
+Language translation file for Nettigo Air Monitor
 
 For changes in translations do them in corresponding .lang file. File with translations has format:
 
 KEY[SPACE]translation string
 
 So entry in file:
-INTL_DS18B20 Sensor DS18B20 ({t}) 
-Will become 
+INTL_DS18B20 Sensor DS18B20 ({t})
+Will become
 const char INTL_DS18B20[] PROGMEM = "Sensor DS18B20 ({t})";
 in this file.
 
@@ -22,7 +22,7 @@ Files with .lang extension are searched in following directories and it's subdir
 ./src/lang/
 ./src/sensors/
 ./src/system/
-*/ 
+*/
 
 
 #ifndef LANG_DEF_pl_H
@@ -35,9 +35,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Powrót do strony startowej";
 /* ./src/lang/intl_pl.lang */ const char INTL_BASICAUTH[] PROGMEM = "Autoryzacja";
 /* ./src/lang/intl_pl.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
-/* ./src/sensors/bme280/bme280_pl.lang */ const char INTL_BME280_DESC[] PROGMEM = "BME280 sensor temperatury/ciśnienia/wilgotności.";
+/* ./src/sensors/bme280/bme280_pl.lang */ const char INTL_BME280_DESC[] PROGMEM = "BME280 – sensor temperatury/ciśnienia/wilgotności";
 /* ./src/lang/intl_pl.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
-/* ./src/sensors/bmpX80/bmpX80_pl.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 sensor temperatury/ciśnienia.";
+/* ./src/sensors/bmpX80/bmpX80_pl.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 – sensor temperatury/ciśnienia";
 /* ./src/sensors/bmpX80/bmpX80_pl.lang */ const char INTL_BMPx80_INSIDE[] PROGMEM = "Sensor wewnątrz obudowy (nie uwzględniaj temperatury)";
 /* ./src/lang/intl_pl.lang */ const char INTL_CANCEL[] PROGMEM = "Anuluj";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Konfiguracja";
@@ -70,7 +70,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_FS_WIFI_NAME[] PROGMEM = "Nazwa sieci";
 /* ./src/lang/intl_pl.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
 /* ./src/sensors/heca/heca_pl.lang */ const char INTL_HECA_DC[] PROGMEM = "Grzanie";
-/* ./src/sensors/heca/heca_pl.lang */ const char INTL_HECA_DESC[] PROGMEM = "HECA (SHT30) (temperatura, wilgotność), utrzymanie wilgotności poniżej 70%";
+/* ./src/sensors/heca/heca_pl.lang */ const char INTL_HECA_DESC[] PROGMEM = "HECA (SHT30) (temperatura, wilgotność) – utrzymanie wilgotności poniżej 70%";
 /* ./src/lang/intl_pl.lang */ const char INTL_HOME[] PROGMEM = "Strona startowa";
 /* ./src/lang/intl_pl.lang */ const char INTL_HUMIDITY[] PROGMEM = "wilgotność";
 /* ./src/lang/intl_pl.lang */ const char INTL_I2C_BUS[] PROGMEM = "Na szynie I2C";
@@ -88,8 +88,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_MAX_INFO[] PROGMEM = "maks. info";
 /* ./src/lang/intl_pl.lang */ const char INTL_MEASUREMENT_INTERVAL[] PROGMEM = "Czas między pomiarami (sek.)";
 /* ./src/lang/intl_pl.lang */ const char INTL_MED_INFO[] PROGMEM = "śr. info";
-/* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A CO2 sensor";
-/* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A - CO2 sensor";
+/* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A[] PROGMEM = "Winsen MH-Z14A – sensor CO2";
+/* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A_DESC[] PROGMEM = "Winsen MHZ14A – CO2 sensor";
 /* ./src/sensors/mhz14a/mhz14a_pl.lang */ const char INTL_MHZ14A_VAL[] PROGMEM = "WINSEN MH-Z14A";
 /* ./src/lang/intl_pl.lang */ const char INTL_MIN_INFO[] PROGMEM = "min. info";
 /* ./src/lang/intl_pl.lang */ const char INTL_MORE_APIS[] PROGMEM = "Kolejne API";
@@ -100,9 +100,9 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_NO_NETWORKS[] PROGMEM = "Nie znaleziono sieci WiFi";
 /* ./src/lang/intl_pl.lang */ const char INTL_NTP_TIME[] PROGMEM = "Czas z NTP";
 /* ./src/lang/intl_pl.lang */ const char INTL_NTP_TIME_NOT_ACC[] PROGMEM = "Nie ustawione";
-/* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_DESC[] PROGMEM = "Network Watchdog - zrestartuje sensor jeśli nie będzie łączności";
+/* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_DESC[] PROGMEM = "Network Watchdog – restart sensora, gdy brak łączności z Internetem";
 /* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "To nie jest poprawny adres IP";
-/* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "IP adres, który pingować (IP)";
+/* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "Adres IP, który będzie pingowany";
 /* ./src/lang/intl_pl.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Liczba pomiarów:";
 /* ./src/lang/intl_pl.lang */ const char INTL_OTHER_APIS[] PROGMEM = "Inne API";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARAMETER[] PROGMEM = "Parametr";
@@ -122,7 +122,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_SAVE[] PROGMEM = "Zapisz";
 /* ./src/lang/intl_pl.lang */ const char INTL_SAVE_AND_RESTART[] PROGMEM = "Zapisz i zrestartuj";
 /* ./src/lang/intl_pl.lang */ const char INTL_SDS011[] PROGMEM = "SDS011 ({pm})";
-/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_DESC[] PROGMEM = "SDS011 - Czujnik PM2.5/PM10";
+/* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_DESC[] PROGMEM = "SDS011 – Czujnik PM2.5/PM10";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_FAILED_READINGS[] PROGMEM = "Liczba braków/wszystkich odczytów z SDS (zerowana przy każdej próbie aktualizacji)";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_HWR[] PROGMEM = "Sprzętowy restarter dla SDS011";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_LCD_HDR[] PROGMEM = "SDS011 wartosci:";
@@ -136,7 +136,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Trwa restart urządzenia... Za kilkanaście sekund kliknij przycisk poniżej.";
 /* ./src/lang/intl_pl.lang */ const char INTL_SERVER[] PROGMEM = "Adres serwera";
 /* ./src/lang/intl_pl.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Pokaż status WiFi na LCD";
-/* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - czujnik temperatury i wilgotności";
+/* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x – czujnik temperatury i wilgotności";
 /* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Temperatura i wilgotność";
 /* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3x_HUM[] PROGMEM = "Wilgotność wzgl.";
 /* ./src/sensors/sht3x/sht3x_pl.lang */ const char INTL_SHT3x_TEMP[] PROGMEM = "Temperatura";
@@ -149,7 +149,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Nie działa";
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_NO_RESULT[] PROGMEM = "brak rezultatów";
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_REFRESH[] PROGMEM = "Odstęp w sek. między pomiarami";
-/* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - precyzyjny czujnik pyłów zawieszonych";
+/* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 – precyzyjny czujnik pyłów zawieszonych";
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_pl.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Status sensora";
 /* ./src/lang/intl_pl.lang */ const char INTL_TAB_ADVANCED[] PROGMEM = "Zaawansowane";
