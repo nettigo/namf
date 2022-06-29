@@ -26,7 +26,7 @@ INTL_WIFI_PHY_MODE Tryb pracy WiFi (1=B / 2=G / 3=N)
 INTL_WIFI_NETWORKS Ładowanie sieci WiFi...
 INTL_LANGUAGE Język
 INTL_NO_NETWORKS Nie znaleziono sieci WiFi
-INTL_NETWORKS_FOUND Znalezione sieci:
+INTL_NETWORKS_FOUND Znalezione sieci: 
 INTL_SAVE Zapisz
 INTL_SENSORS Sensory
 INTL_SDS011 SDS011 ({pm})
