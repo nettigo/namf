@@ -1,6 +1,7 @@
 NAMF-2020-44rc2 ()
 - When change in old form was made display warning during saving config from new scheduler (they are in separate forms)
 - Fixed bug - BMP280 was sending data to APIs as BMP180
+- https://AQI.eco is now treated as separate API. Can be configured old way as third party API, or directly.
 
 NAMF-2020-44rc1 (2022-06-25 rev 375f766f48ec64f6901bebd11d77f11558dfea1f)
 - merged changes from alpha version 42a2:
