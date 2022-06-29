@@ -67,6 +67,7 @@ namespace cfg {
     extern bool send2sensemap;
     extern bool send2fsapp;
     extern bool send2custom;
+    extern bool send2aqi;
     extern bool send2lora;
     extern bool send2influx;
     extern bool send2csv;
@@ -98,6 +99,9 @@ namespace cfg {
     extern int port_custom;
     extern char *user_custom;
     extern char *pwd_custom;
+
+    extern String token_AQI;
+    extern String assign_token_AQI;
 
     extern String host_influx;
     extern String url_influx;

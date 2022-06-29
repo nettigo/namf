@@ -41,6 +41,7 @@ namespace cfg {
     bool send2sensemap = SEND2SENSEMAP;
     bool send2fsapp = SEND2FSAPP;
     bool send2custom = SEND2CUSTOM;
+    bool send2aqi = SEND2AQI;
     bool send2lora = SEND2LORA;
     bool send2influx = SEND2INFLUX;
     bool send2csv = SEND2CSV;
@@ -70,6 +71,10 @@ namespace cfg {
     int port_custom = PORT_CUSTOM;
     char *user_custom = nullptr;
     char *pwd_custom = nullptr;
+
+    String token_AQI = FPSTR(EMPTY_STRING);
+    String assign_token_AQI = FPSTR(EMPTY_STRING);
+
 
     String host_influx = FPSTR(HOST_INFLUX);
     String url_influx = FPSTR(URL_INFLUX);

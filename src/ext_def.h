@@ -15,7 +15,8 @@ const char WWW_PASSWORD[] PROGMEM = "admin";
 const char FS_SSID[] PROGMEM = "";
 const char FS_PWD[] PROGMEM =  "";
 
-// Wohin gehen die Daten?
+//Where send data
+#define SEND2AQI 0
 #define SEND2DUSTI 1
 #define SSL_DUSTI 0
 #define SEND2MADAVI 1
@@ -38,7 +39,8 @@ enum LoggerEntry
 	LoggerSensemap,
 	LoggerFSapp,
 	LoggerInflux,
-	LoggerCustom
+	LoggerCustom,
+	LoggerAQI
 };
 
 // IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
@@ -54,8 +56,7 @@ const char PWD_CUSTOM[] PROGMEM= "";
 const char HOST_INFLUX[] PROGMEM = "influx.server";
 const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
-const char USER_INFLUX[] PROGMEM = "";
-const char PWD_INFLUX[] PROGMEM = "";
+
 
 // define pins for I2C
 #define I2C_PIN_SCL D4

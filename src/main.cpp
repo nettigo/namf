@@ -97,8 +97,8 @@ void setDefaultConfig(void) {
     stringToChar(&cfg::fbpwd, FPSTR(EMPTY_STRING));
     stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
     stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
-    stringToChar(&cfg::pwd_influx, FPSTR(PWD_INFLUX));
-    stringToChar(&cfg::user_influx, FPSTR(USER_INFLUX));
+    stringToChar(&cfg::pwd_influx, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::user_influx, FPSTR(EMPTY_STRING));
     SDS011::setDefaults();
     HECA::setDefaults();
 //    BMPx80::setDefaults();
@@ -1004,6 +1004,18 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
+		sum_send_time += millis() - start_send;
+	}
+
+	if (cfg::send2aqi) {
+		String data_4_custom = data;
+		data_4_custom.remove(0, 1);
+		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
+        String path = F("/update/");
+        path.concat(cfg::token_AQI);
+		start_send = millis();
+		sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
 		sum_send_time += millis() - start_send;
 	}
 

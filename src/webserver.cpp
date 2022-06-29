@@ -474,6 +474,8 @@ void parse_config_request(String &page_content) {
         if (server.hasArg(F("pwd_custom"))) {
             readPwdParam(&pwd_custom,F("pwd_custom"));
         }
+        readBoolParam(send2aqi);
+        parseHTTP(F("token_AQI"), token_AQI);
 
         readBoolParam(send2influx);
 
@@ -638,7 +640,13 @@ void webserver_config(){
         webserverPartialSend(page_content);
 
 
+        formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), FPSTR(INTL_AQI_ECO_API)));
+        page_content.concat(formCheckboxGrid("send2aqi", FPSTR(INTL_ENABLE), send2aqi));
+        page_content.concat(formInputGrid(F("token_AQI"), FPSTR(INTL_AQI_TOKEN), token_AQI, 60));
+
+
         formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), FPSTR(INTL_SEND_TO_OWN_API)));
+
 
 
         page_content.concat(formCheckboxGrid("send2custom", FPSTR(INTL_ENABLE), send2custom));
@@ -650,6 +658,8 @@ void webserver_config(){
                                        35));
         page_content.concat(formPasswordGrid("pwd_custom", FPSTR(INTL_PASSWORD), pwd_custom,
                                           35));
+
+        webserverPartialSend(page_content);
 
         formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")));
         page_content.concat(formCheckboxGrid("send2influx", FPSTR(INTL_ENABLE), send2influx));

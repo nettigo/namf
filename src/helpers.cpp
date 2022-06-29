@@ -265,6 +265,10 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("user_custom"), user_custom);
     json_string += Var2Json(F("pwd_custom"), pwd_custom);
 
+    copyToJSON_Bool(send2aqi);
+    json_string += Var2Json(F("token_AQI"), token_AQI);
+
+    json_string += Var2Json(F("host_custom"), host_custom);
     copyToJSON_Bool(send2influx);
     json_string += Var2Json(F("host_influx"), host_influx);
     json_string += Var2Json(F("url_influx"), url_influx);
@@ -339,8 +343,8 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
             setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
             setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
-            setCharVar(json, &user_influx, F("user_influx"), FPSTR(USER_INFLUX));
-            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(PWD_INFLUX));
+            setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
 
 #define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
@@ -392,6 +396,11 @@ int readAndParseConfigFile(File configFile) {
             if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
             if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
+
+            setFromJSON(send2aqi);
+
+            if (json.containsKey(F("token_AQI"))) token_AQI =  json.get<String>(F("token_AQI"));
+
             setFromJSON(send2influx);
 
             if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));

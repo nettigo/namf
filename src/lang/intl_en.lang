@@ -1,3 +1,5 @@
+INTL_AQI_TOKEN Sensor token from aqi.eco
+INTL_AQI_ECO_API API aqi.eco
 INTL_USE_HTTPS Use encrypted connection (HTTPS)
 INTL_ENABLE Enable
 INTL_OTHER_APIS Other API
