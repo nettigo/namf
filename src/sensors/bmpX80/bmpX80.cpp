@@ -138,52 +138,6 @@ namespace BMPx80 {
         return sum/sampleCount;
     }
 
-    /*****************************************************************
-     * read BMP280 sensor values                                     *
-     *****************************************************************/
-    String sensorBMPx80() {
-        String s = F("");
-
-        debug_out(String(FPSTR(DBG_TXT_START_READING)) + FPSTR(SENSORS_BMP280), DEBUG_MED_INFO, true);
-        float p = -1;
-        float t = -128;
-        String t_desc, p_desc;
-        switch (currentSensor) {
-            case NONE:
-                return s;
-            case BMP_180:
-                p = (float) bmp180.readPressure();
-                t = bmp180.readTemperature();
-                t_desc = String(F("BMP_temperature"));
-                p_desc = String(F("BMP_pressure"));
-                break;
-            case BMP_280:
-                p = bmp280.readPressure();
-                t = bmp280.readTemperature();
-                t_desc = String(F("BMP280_temperature"));
-                p_desc = String(F("BMP280_pressure"));
-                break;
-        }
-        if (isnan(p) || isnan(t)) {
-            last_value_BMP280_T = -128.0;
-            last_value_BMP280_P = -1.0;
-            debug_out(String(FPSTR(SENSORS_BMP280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
-        } else {
-            //            debug_out(FPSTR(DBG_TXT_TEMPERATURE), DEBUG_MIN_INFO, 0);
-            //            debug_out(String(t) + " C", DEBUG_MIN_INFO, 1);
-            //            debug_out(FPSTR(DBG_TXT_PRESSURE), DEBUG_MIN_INFO, 0);
-            //            debug_out(Float2String(p / 100) + " hPa", DEBUG_MIN_INFO, 1);
-            last_value_BMP280_T = t;
-            last_value_BMP280_P = p;
-            s += Value2Json(p_desc, Float2String(last_value_BMP280_P));
-            s += Value2Json(t_desc, Float2String(last_value_BMP280_T));
-        }
-        debug_out(s, DEBUG_MIN_INFO, 1);
-
-        debug_out(String(FPSTR(DBG_TXT_END_READING)) + FPSTR(SENSORS_BMP280), DEBUG_MED_INFO, 1);
-
-        return s;
-    }
     void sendToLD(){
         const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
