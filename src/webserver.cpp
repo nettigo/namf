@@ -979,7 +979,10 @@ void webserver_debug_level() {
     String page_content = make_header(FPSTR(INTL_DEBUG_LEVEL));
     last_page_load = millis();
     debug_out(F("output change debug level page..."), DEBUG_MIN_INFO, 1);
-
+    page_content.concat(F("<pre id='logField'>"));
+    page_content.concat(Debug.popLines());
+    page_content.concat(("</pre>\n"));
+    page_content.concat(FPSTR(DEBUG_JS));
     if (server.hasArg("lvl")) {
         const int lvl = server.arg("lvl").toInt();
         if (lvl >= 0 && lvl <= 5) {
@@ -1262,6 +1265,13 @@ void webserver_reset_time(){
 }
 #endif
 
+
+static void webserver_serial() {
+    String payload(Debug.popLines());
+    server.send(payload.length() ? 200 : 204, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), payload);
+}
+
+
 /*****************************************************************
  * Webserver setup                                               *
  *****************************************************************/
@@ -1275,6 +1285,7 @@ void setup_webserver() {
     server.on(F("/wifi"), webserver_wifi);
     server.on(F("/values"), webserver_values);
     server.on(F("/debug"), webserver_debug_level);
+    server.on(F("/serial"), webserver_serial);
     server.on(F("/ota"), webserver_enable_ota);
     server.on(F("/removeConfig"), webserver_removeConfig);
     server.on(F("/reset"), webserver_reset);

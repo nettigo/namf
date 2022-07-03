@@ -240,4 +240,18 @@ extern const char data_first_part[] ;
 extern memory_stat_t memoryStatsMax;
 extern memory_stat_t memoryStatsMin;
 
+
+class LoggingSerial : public HardwareSerial {
+
+public:
+    LoggingSerial();
+    size_t write(uint8_t c) override;
+    size_t write(const uint8_t *buffer, size_t size) override;
+    String popLines();
+
+private:
+    std::unique_ptr<circular_queue<uint8_t> > m_buffer;
+};
+
+extern class LoggingSerial Debug;
 #endif //AIRROHR_FIRMWARE_VARIABLES_H

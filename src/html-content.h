@@ -117,6 +117,13 @@ const char CONFIG_JS[] PROGMEM =
         "    evt.currentTarget.className += \" active\";\n"
         "}\n"
         "document.getElementsByClassName('tablinks')[0].click()";
+
+const char DEBUG_JS[] PROGMEM = "<script>function updateLog() {\n"
+                                 "fetch('/serial').then(r => r.text()).then((r) => {\n"
+                                 "document.getElementById('logField').innerText += r;}).catch(err => console.log(err));};\n"
+                                 "setInterval(updateLog, 2000);</script>\n";
+
+
 const char BR_TAG[] PROGMEM = "<br/>";
 const char TABLE_TAG_OPEN[] PROGMEM = "<table>";
 const char TABLE_TAG_CLOSE_BR[] PROGMEM = "</table>";

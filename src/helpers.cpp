@@ -9,6 +9,42 @@ extern const char UNIT_PERCENT[] PROGMEM = "%";
 extern const char UNIT_CELCIUS[] PROGMEM = "°C";
 extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
 
+
+LoggingSerial Debug;
+
+LoggingSerial::LoggingSerial()
+        : HardwareSerial(UART0)
+        , m_buffer(new circular_queue<uint8_t>(512))
+{
+}
+
+
+size_t LoggingSerial::write(uint8_t c)
+{
+    m_buffer->push(c);
+    return HardwareSerial::write(c);
+}
+
+size_t LoggingSerial::write(const uint8_t *buffer, size_t size)
+{
+    m_buffer->push_n(buffer, size);
+    return HardwareSerial::write(buffer, size);
+}
+
+String LoggingSerial::popLines()
+{
+    String r;
+    while (m_buffer->available() > 0) {
+        uint8_t c = m_buffer->pop();
+        r += (char) c;
+
+        if (c == '\n' && r.length() > m_buffer->available())
+            break;
+    }
+    return r;
+}
+
+
 int32_t calcWiFiSignalQuality(int32_t rssi) {
     if (rssi > -50) {
         rssi = -50;
@@ -180,15 +216,15 @@ void debug_out(const String& text, const int level, const bool linebreak) {
             timeinfo = localtime(&rawtime);
             strftime(buffer, 30, "%F %T: ", timeinfo);
 
-            Serial.print(buffer);
+            Debug.print(buffer);
             timestamp = false;
         }
 
         if (linebreak) {
             timestamp = true;
-            Serial.println(text);
+            Debug.println(text);
         } else {
-            Serial.print(text);
+            Debug.print(text);
         }
     }
 }
