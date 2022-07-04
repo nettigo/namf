@@ -124,7 +124,7 @@ void webserver_images() {
  * -Provide BasicAuth for all page contexts except /values and images
  *****************************************************************/
 bool webserver_request_auth() {
-    debug_out(F("validate request auth..."), DEBUG_MIN_INFO, 1);
+    debug_out(F("validate request auth..."), DEBUG_MAX_INFO, 1);
     if (cfg::www_basicauth_enabled && ! wificonfig_loop) {
         if (!server.authenticate(cfg::www_username, cfg::www_password)) {
             server.requestAuthentication();
@@ -172,13 +172,7 @@ void webserver_root() {
         page_content.replace(F("{status}"), FPSTR(INTL_STATUS_PAGE));
         page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
         page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
-        page_content.replace(F("{debug_level}"), FPSTR(INTL_DEBUG_LEVEL));
-        page_content.replace(F("{none}"), FPSTR(INTL_NONE));
-        page_content.replace(F("{error}"), FPSTR(INTL_ERROR));
-        page_content.replace(F("{warning}"), FPSTR(INTL_WARNING));
-        page_content.replace(F("{min_info}"), FPSTR(INTL_MIN_INFO));
-        page_content.replace(F("{med_info}"), FPSTR(INTL_MED_INFO));
-        page_content.replace(F("{max_info}"), FPSTR(INTL_MAX_INFO));
+        page_content.replace(F("{debug}"), FPSTR(INTL_DEBUG));
         page_content += make_footer();
         server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
     }
@@ -983,6 +977,15 @@ void webserver_debug_level() {
     page_content.concat(Debug.popLines());
     page_content.concat(("</div>\n"));
     page_content.concat(FPSTR(DEBUG_JS));
+    page_content.concat(FPSTR(WEB_DEBUG_PAGE_CONTENT));
+    page_content.replace(F("{debug_level}"), FPSTR(INTL_DEBUG_LEVEL));
+    page_content.replace(F("{none}"), FPSTR(INTL_NONE));
+    page_content.replace(F("{error}"), FPSTR(INTL_ERROR));
+    page_content.replace(F("{warning}"), FPSTR(INTL_WARNING));
+    page_content.replace(F("{min_info}"), FPSTR(INTL_MIN_INFO));
+    page_content.replace(F("{med_info}"), FPSTR(INTL_MED_INFO));
+    page_content.replace(F("{max_info}"), FPSTR(INTL_MAX_INFO));
+
     if (server.hasArg("lvl")) {
         const int lvl = server.arg("lvl").toInt();
         if (lvl >= 0 && lvl <= 5) {

@@ -145,7 +145,10 @@ const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a
 <a href='/config'>&#128295; {conf}</a><br/>\
 <a href='/status'>&#x1FA7A; {status}</a><br/>\
 <a href='/reset'>&#128260; {restart}</a><br/>\
-<table style='width:100%;'>\
+<a href='/debug'>&#128027; {debug}</a><br/>\
+<br/><a href='/removeConfig' class='s_o'>&#128293; {conf_delete}</a><br/>\
+";
+const char WEB_DEBUG_PAGE_CONTENT[] PROGMEM = "<table style='width:100%;'>\
 <tr><td colspan='3'>&#128027; <b>{debug_level}</b></td></tr>\
 <tr><td style='width:33%;'><a href='/debug?lvl=0'>{none}</a></td>\
 <td style='width:33%;'><a href='/debug?lvl=1'>{error}</a></td>\
@@ -155,10 +158,7 @@ const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a
 <td><a href='/debug?lvl=4'>{med_info}</a></td>\
 <td><a href='/debug?lvl=5'>{max_info}</a></td>\
 </tr>\
-</table>\
-<br/><a href='/removeConfig' class='s_o'>&#128293; {conf_delete}</a><br/>\
-";
-
+</table>\0";
 const char WEB_CONFIG_SCRIPT[] PROGMEM = "<script>\
 function setSSID(ssid){document.getElementById('wlanssid').value=ssid.innerText||ssid.textContent;document.getElementById('wlanpwd').focus();}\
 function load_wifi_list(){var x=new XMLHttpRequest();x.open('GET','/wifi');x.onload = function(){if (x.status === 200) {document.getElementById('wifilist').innerHTML = x.responseText;}};x.send();}\
