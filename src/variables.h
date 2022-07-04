@@ -251,6 +251,8 @@ public:
 
 private:
     std::unique_ptr<circular_queue<uint8_t> > m_buffer;
+//    const Delegate<uint8_t&&>countLines(uint8_t);
+//    unsigned lineCount;
 };
 
 extern class LoggingSerial Debug;

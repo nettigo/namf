@@ -14,8 +14,9 @@ LoggingSerial Debug;
 
 LoggingSerial::LoggingSerial()
         : HardwareSerial(UART0)
-        , m_buffer(new circular_queue<uint8_t>(512))
+        , m_buffer(new circular_queue<uint8_t>(1024))
 {
+//    lineCount = 0;
 }
 
 
@@ -31,15 +32,20 @@ size_t LoggingSerial::write(const uint8_t *buffer, size_t size)
     return HardwareSerial::write(buffer, size);
 }
 
+//const Delegate<uint8_t&&, uint8_t> LoggingSerial::countLines(uint8_t c) {
+//    if (c == '\n') {lineCount++;}
+//}
 String LoggingSerial::popLines()
 {
     String r;
+//    lineCount = 0;
+//    m_buffer->for_each(countLines);
     while (m_buffer->available() > 0) {
         uint8_t c = m_buffer->pop();
         r += (char) c;
 
-        if (c == '\n' && r.length() > m_buffer->available())
-            break;
+//        if (c == '\n' && r.length() > m_buffer->available())
+//            break;
     }
     return r;
 }
