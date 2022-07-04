@@ -829,7 +829,7 @@ void initNonTrivials(const char *id) {
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
-    Serial.begin(115200);                    // Output to Serial at 9600 baud
+    Debug.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
     serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
 
@@ -846,26 +846,26 @@ void setup() {
 
     initNonTrivials(esp_chipid().c_str());
 
-    Serial.print(F("\nNAMF ver: "));
-    Serial.print(SOFTWARE_VERSION);
-    Serial.print(F("/"));
-    Serial.println(INTL_LANG);
-    Serial.print(F("Chip ID: "));
-    Serial.println(esp_chipid());
+    debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
+    debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
+    debug_out(F("/"), DEBUG_ERROR, false);
+    debug_out(FPSTR(INTL_LANG), DEBUG_ERROR);
+    debug_out(F("Chip ID: "), DEBUG_ERROR, false);
+    debug_out(esp_chipid(), DEBUG_ERROR);
 
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);
-    Serial.print(F("SPIFFS size (kB): "));
-    Serial.println(fs_info.totalBytes/(1024));
+    debug_out(F("SPIFFS (kB): "), DEBUG_ERROR, false);
+    debug_out(String(fs_info.totalBytes/(1024)), DEBUG_ERROR);
 
-    Serial.print(F("Free sketch space (kB): "));
-    Serial.println(ESP.getFreeSketchSpace()/1024);
-    Serial.print(F("CPU freq (MHz): "));
-    Serial.println(ESP.getCpuFreqMHz());
+    debug_out(F("Free sketch space (kB): "), DEBUG_ERROR, false);
+    debug_out(String(ESP.getFreeSketchSpace()/1024), DEBUG_ERROR);
+    debug_out(F("CPU freq (MHz): "), DEBUG_ERROR, false);
+    debug_out(String(ESP.getCpuFreqMHz()), DEBUG_ERROR);
 
     readConfig();
-    Serial.println(getConfigString());
+    debug_out(getConfigString(), DEBUG_MED_INFO);
     resetMemoryStats();
     Reporting::setupHomePhone();
 

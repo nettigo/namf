@@ -2,6 +2,7 @@ NAMF-2020-44rc2 ()
 - When change in old form was made display warning during saving config from new scheduler (they are in separate forms)
 - Fixed bug - BMP280 was sending data to APIs as BMP180
 - https://AQI.eco is now treated as separate API. Can be configured old way as third party API, or directly.
+- debug logs are stored in buffer - can be retrieved by WWW interface. Since there is a lot of messages during startup, there is no chance to get all of them stored before webserver is ready, so boot messages are always not complete. This feature is mostly for debug when sensor is up & running.
 
 NAMF-2020-44rc1 (2022-06-25 rev 375f766f48ec64f6901bebd11d77f11558dfea1f)
 - merged changes from alpha version 42a2:
