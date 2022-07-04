@@ -1267,6 +1267,8 @@ void webserver_reset_time(){
 
 
 static void webserver_serial() {
+    if (!webserver_request_auth()) { return; }
+
     String payload(Debug.popLines());
 
     server.send(payload.length() ? 200 : 204, FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN), payload);
