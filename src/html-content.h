@@ -120,7 +120,10 @@ const char CONFIG_JS[] PROGMEM =
 
 const char DEBUG_JS[] PROGMEM = "<script>function updateLog() {\n"
                                  "fetch('/serial').then(r => r.text()).then((r) => {\n"
-                                 "document.getElementById('logField').innerText += r;}).catch(err => console.log(err));};\n"
+                                 "document.getElementById('logField').innerText += r;}).catch(err => console.log(err));\n"
+                                 "var el = document.getElementById('logField')\n"
+                                 "el.scrollTop = el.scrollHeight\n"
+                                 "};\n"
                                  "setInterval(updateLog, 2000);</script>\n";
 
 

@@ -362,7 +362,6 @@ int readAndParseConfigFile(File configFile) {
         debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
 
         json.printTo(json_string);
-        Serial.println(json_string);
         debug_out(F("File content: "), DEBUG_MED_INFO, 0);
         debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
         debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
@@ -591,7 +590,6 @@ void setVariableFromHTTP(const __FlashStringHelper *name, unsigned long &v, byte
     String sensorID;
     setHTTPVarName(sensorID, name, i);
     parseHTTP(sensorID, v);
-    Serial.println(v);
 }
 
 unsigned long time2Measure(void){
