@@ -960,7 +960,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
     if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
@@ -969,14 +971,18 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sensemap_path.replace("BOXID", cfg::senseboxid);
 		sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
 	if (cfg::send2fsapp) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
     if (cfg::send2influx) {
         debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
@@ -985,6 +991,8 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 
         sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
 		sum_send_time += millis() - start_send;
+        server.handleClient();
+
     }
 
 	/*		if (send2lora) {
@@ -995,7 +1003,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2csv) {
 		debug_out(F("## Sending as csv: "), DEBUG_MIN_INFO, 1);
 		send_csv(data);
-	}
+        server.handleClient();
+
+    }
 
 	if (cfg::send2custom) {
 		String data_4_custom = data;
@@ -1005,7 +1015,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
 	if (cfg::send2aqi) {
 		String data_4_custom = data;
@@ -1017,7 +1029,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
     return sum_send_time;
 }
@@ -1119,7 +1133,7 @@ void loop() {
 
 		server.handleClient();
 		yield();
-		server.stop();
+//		server.stop();
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
         if (cfg::pms_read) {
@@ -1131,6 +1145,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 		if (cfg::dht_read) {
 			data.concat(result_DHT);
 			if (cfg::send2dusti) {
@@ -1140,6 +1155,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 
 
 		if (cfg::ds18b20_read) {
@@ -1151,6 +1167,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 
 		if (cfg::gps_read) {
 			data.concat(result_GPS);
@@ -1161,6 +1178,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 
 
         //add results from new scheduler
@@ -1198,8 +1216,7 @@ void loop() {
 		//as for now we do not collect sending status, so we assume sending was successful
 		SimpleScheduler::afterSendData(true);
 
-		server.begin();
-		server.client().setNoDelay(true);
+//		server.client().setNoDelay(true);
 
 		checkForceRestart();
 
@@ -1210,10 +1227,11 @@ void loop() {
 		sending_time = (4 * sending_time + sum_send_time) / 5;
 		debug_out(F("Time for sending data (ms): "), DEBUG_MIN_INFO, 0);
 		debug_out(String(sending_time), DEBUG_MIN_INFO, 1);
+        server.handleClient();
 
 
 
-		// Resetting for next sampling
+        // Resetting for next sampling
 		last_data_string = data;
 		sample_count = 0;
 		last_micro = 0;

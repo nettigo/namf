@@ -37,11 +37,18 @@ namespace SimpleScheduler {
     void sendToSC(void) {
         if (cfg::send2dusti) {
             SPS30::sendToLD();
+            server.handleClient();
             SHT3x::sendToLD();
+            server.handleClient();
             MHZ14A::sendToLD();
+            server.handleClient();
             SDS011::sendToLD();
+            server.handleClient();
             BMPx80::sendToLD();
+            server.handleClient();
             BME280::sendToLD();
+            server.handleClient();
+
         }
 
     }
