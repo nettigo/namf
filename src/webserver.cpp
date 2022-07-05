@@ -973,7 +973,7 @@ void webserver_debug_level() {
     String page_content = make_header(FPSTR(INTL_DEBUG_LEVEL));
     last_page_load = millis();
     debug_out(F("output change debug level page..."), DEBUG_MIN_INFO, 1);
-    page_content.concat(F("<div id='logField' style='height:300px;font-family:monospace;overflow-y:scroll'>"));
+    page_content.concat(F("<div id='logField' style='height:300px;font-family:monospace;overflow-y:scroll;white-space:break-spaces'>"));
     page_content.concat(Debug.popLines());
     page_content.concat(("</div>\n"));
     page_content.concat(FPSTR(DEBUG_JS));
