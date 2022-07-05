@@ -248,11 +248,13 @@ public:
     size_t write(uint8_t c) override;
     size_t write(const uint8_t *buffer, size_t size) override;
     String popLines();
+    void stopWebCopy(void);    //stop copying data to buffer available via network (passwords)
+    void resumeWebCopy(void);   // enable copying data
 
 private:
     std::unique_ptr<circular_queue<uint8_t> > m_buffer;
-//    const Delegate<uint8_t&&>countLines(uint8_t);
-//    unsigned lineCount;
+    bool skipBuffer;
+
 };
 
 extern class LoggingSerial Debug;

@@ -16,19 +16,26 @@ LoggingSerial::LoggingSerial()
         : HardwareSerial(UART0)
         , m_buffer(new circular_queue<uint8_t>(1024))
 {
-//    lineCount = 0;
+    skipBuffer = false;
 }
 
+void LoggingSerial::stopWebCopy(void) {
+    skipBuffer = true;
+}
+
+void LoggingSerial::resumeWebCopy(void) {
+    skipBuffer = false;
+}
 
 size_t LoggingSerial::write(uint8_t c)
 {
-    m_buffer->push(c);
+    if (!skipBuffer) m_buffer->push(c);
     return HardwareSerial::write(c);
 }
 
 size_t LoggingSerial::write(const uint8_t *buffer, size_t size)
 {
-    m_buffer->push_n(buffer, size);
+    if (!skipBuffer) m_buffer->push_n(buffer, size);
     return HardwareSerial::write(buffer, size);
 }
 
@@ -355,7 +362,7 @@ int readAndParseConfigFile(File configFile) {
     bool pms24_read = false;
     bool pms32_read = false;
     if (configFile) {
-        debug_out(F("opened config file..."), DEBUG_MIN_INFO, 1);
+        debug_out(F("opened config file..."), DEBUG_MED_INFO, 1);
         const size_t size = configFile.size();
         // Allocate a buffer to store contents of the file.
         std::unique_ptr<char[]> buf(new char[size]);
@@ -363,16 +370,16 @@ int readAndParseConfigFile(File configFile) {
         configFile.readBytes(buf.get(), size);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
-        debug_out(F("Config - JSON object memory used:"),DEBUG_MIN_INFO, false);
-        debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
+        debug_out(F("Config - JSON object memory used:"),DEBUG_MED_INFO, false);
+        debug_out(String(jsonBuffer.size()),DEBUG_MED_INFO);
 
         json.printTo(json_string);
-        debug_out(F("File content: "), DEBUG_MED_INFO, 0);
-        debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
-        debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
-        debug_out(json_string, DEBUG_MED_INFO, 1);
+        debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
+        debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
+        debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
+        debug_out(json_string, DEBUG_MAX_INFO, 1);
         if (json.success()) {
-            debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
+            debug_out(F("JSON parsed"), DEBUG_MED_INFO, 1);
             setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(EMPTY_STRING));
             setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
             setCharVar(json, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
@@ -511,8 +518,10 @@ int writeConfigRaw(const String &json_string, const char * filename) {
     }
     if (configFile) {
         configFile.print(json_string);
-        debug_out(F("Config written: "), DEBUG_MIN_INFO, 0);
+        debug_out(F("Config written OK."), DEBUG_MIN_INFO, 0);
+        Debug.stopWebCopy();
         debug_out(json_string, DEBUG_MIN_INFO, 1);
+        Debug.resumeWebCopy();
         configFile.close();
         return 0;
     } else {
