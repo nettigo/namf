@@ -1,3 +1,4 @@
+INTL_DEBUG Logging settings
 INTL_AQI_TOKEN Sensor token from aqi.eco
 INTL_AQI_ECO_API API aqi.eco
 INTL_USE_HTTPS Use encrypted connection (HTTPS)

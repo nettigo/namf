@@ -153,6 +153,7 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
+ const char INTL_DEBUG[] PROGMEM = "Translate HU: INTL_DEBUG 🐱;";
  const char INTL_AQI_TOKEN[] PROGMEM = "Translate HU: INTL_AQI_TOKEN 🐱;";
  const char INTL_AQI_ECO_API[] PROGMEM = "Translate HU: INTL_AQI_ECO_API 🐱;";
  const char INTL_USE_HTTPS[] PROGMEM = "Translate HU: INTL_USE_HTTPS 🐱;";
@@ -174,7 +175,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
  const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Translate HU: INTL_SENSOR_IS_REBOOTING_NOW 🐱;";
  const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
- const char INTL_DEBUG[] PROGMEM = "Translate HU: INTL_DEBUG 🐱;";
 
 
 #endif
