@@ -242,7 +242,6 @@ void debug_out(const String& text, const int level, const bool linebreak) {
 String getConfigString(boolean maskPwd) {
     using namespace cfg;
     String json_string = "{";
-    debug_out(F("saving config..."), DEBUG_MIN_INFO, 1);
 
 #define copyToJSON_Bool(varname) json_string += Var2Json(#varname,varname);
 #define copyToJSON_Int(varname) json_string += Var2Json(#varname,varname);
@@ -527,6 +526,7 @@ int writeConfigRaw(const String &json_string, const char * filename) {
  */
 
 void writeConfig(){
+    debug_out(F("saving config..."), DEBUG_MIN_INFO);
     String json_string  = getConfigString();
     writeConfigRaw(json_string);
 }

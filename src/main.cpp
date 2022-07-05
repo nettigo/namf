@@ -88,7 +88,7 @@ void disable_unneeded_nmea() {
 //that pointers are properly inited
 void setDefaultConfig(void) {
     //init
-    debug_out(F("Set default config for device"), DEBUG_MIN_INFO, 1);
+    debug_out(F("Set defaults"), DEBUG_MIN_INFO, 1);
     stringToChar(&cfg::www_username, FPSTR(WWW_USERNAME));
     stringToChar(&cfg::www_password, FPSTR(WWW_PASSWORD));
     stringToChar(&cfg::wlanssid, FPSTR(EMPTY_STRING));
@@ -112,18 +112,18 @@ void setDefaultConfig(void) {
  * read config from spiffs                                       *
  *****************************************************************/
 void readConfig() {
-	debug_out(F("mounting FS..."), DEBUG_MIN_INFO, 1);
     setDefaultConfig();
+    debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
 
 	if (SPIFFS.begin()) {
-		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
+		debug_out(F("OK"), DEBUG_MIN_INFO, 1);
 		if (SPIFFS.exists("/config.json")) {
 			//file exists, reading and loading
-			debug_out(F("reading config file..."), DEBUG_MIN_INFO, 1);
+			debug_out(F("reading config"), DEBUG_MED_INFO, 1);
 			File configFile = SPIFFS.open("/config.json", "r");
             if (!readAndParseConfigFile(configFile)){
                 //not failed opening & reading
-                debug_out(F("Config parsed and loaded"), DEBUG_MIN_INFO, true);
+                debug_out(F("Config parsed"), DEBUG_MIN_INFO, true);
             }else{
                 debug_out(F("FAILED config parsing and loading"), DEBUG_ERROR, true);
                 setDefaultConfig();
@@ -132,7 +132,7 @@ void readConfig() {
 			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
 		}
 	} else {
-		debug_out(F("failed to mount FS"), DEBUG_ERROR, 1);
+		debug_out(F("\nFailed mount FS!"), DEBUG_ERROR, 1);
 	}
 }
 
