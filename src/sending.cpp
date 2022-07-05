@@ -54,9 +54,9 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     http->setTimeout(20 * 1000);
     http->setUserAgent(String(SOFTWARE_VERSION) + "/" + esp_chipid());
     http->setReuse(false);
-    debug_out(String(host), DEBUG_MED_INFO, 1);
-    debug_out(String(httpPort), DEBUG_MED_INFO, 1);
-    debug_out(String(url), DEBUG_MED_INFO, 1);
+    debug_out(String(host), DEBUG_MAX_INFO, 1);
+    debug_out(String(httpPort), DEBUG_MAX_INFO, 1);
+    debug_out(String(url), DEBUG_MAX_INFO, 1);
     if (http->begin(*client, host, httpPort, url, ssl)) {
         if (logger == LoggerCustom && (*cfg::user_custom || *cfg::pwd_custom))
         {
@@ -80,11 +80,11 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         } else {
             debug_out(F("Not succeeded "), DEBUG_MIN_INFO, 1);
         }
-        debug_out(F("Request result: "), DEBUG_MIN_INFO, 0);
-        debug_out(String(result), DEBUG_MIN_INFO, 1);
+        debug_out(F("Request result: "), DEBUG_MED_INFO, 0);
+        debug_out(String(result), DEBUG_MED_INFO, 1);
         if (result != 204 && http->getString().length() > 0) {
-            debug_out(F("Details:"), DEBUG_MIN_INFO, 1);
-            debug_out(http->getString(), DEBUG_MIN_INFO, 1);
+            debug_out(F("Details:"), DEBUG_MED_INFO, 1);
+            debug_out(http->getString(), DEBUG_MED_INFO, 1);
         }
 
 
@@ -92,8 +92,8 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         debug_out(F("Failed connecting"), DEBUG_MIN_INFO, 1);
     }
     http->end();
-    debug_out(F("End connecting to "), DEBUG_MIN_INFO, 0);
-    debug_out(host, DEBUG_MIN_INFO, 1);
+    debug_out(F("End connecting to "), DEBUG_MED_INFO, 0);
+    debug_out(host, DEBUG_MED_INFO);
     delete (http);
     delete (client);
 
@@ -114,7 +114,7 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     if (data != "") {
         sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
     } else {
-        debug_out(F("No data sent..."), DEBUG_MIN_INFO, 1);
+        debug_out(F("No data sent..."), DEBUG_MED_INFO, 1);
     }
 //    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
 //    debugData(data,F("sendLuftdaten data out:"));
