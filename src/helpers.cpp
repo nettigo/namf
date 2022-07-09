@@ -39,14 +39,9 @@ size_t LoggingSerial::write(const uint8_t *buffer, size_t size)
     return HardwareSerial::write(buffer, size);
 }
 
-//const Delegate<uint8_t&&, uint8_t> LoggingSerial::countLines(uint8_t c) {
-//    if (c == '\n') {lineCount++;}
-//}
 String LoggingSerial::popLines()
 {
     String r;
-//    lineCount = 0;
-//    m_buffer->for_each(countLines);
     while (m_buffer->available() > 0) {
         uint8_t c = m_buffer->pop();
         r += (char) c;
@@ -377,7 +372,9 @@ int readAndParseConfigFile(File configFile) {
         debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
         debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
         debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
+        Debug.stopWebCopy();
         debug_out(json_string, DEBUG_MAX_INFO, 1);
+        Debug.resumeWebCopy();
         if (json.success()) {
             debug_out(F("JSON parsed"), DEBUG_MED_INFO, 1);
             setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(EMPTY_STRING));
@@ -509,7 +506,9 @@ int readAndParseConfigFile(File configFile) {
  * write config to spiffs                                        *
  *****************************************************************/
 int writeConfigRaw(const String &json_string, const char * filename) {
-    debug_out(json_string, DEBUG_MIN_INFO, 1);
+    Debug.stopWebCopy();
+    debug_out(json_string, DEBUG_MAX_INFO, 1);
+    Debug.resumeWebCopy();
     File configFile;
     if (filename) {
         configFile = SPIFFS.open(filename, "w");
