@@ -513,6 +513,8 @@ namespace SDS011 {
     }
 
     void afterSend (bool status) {
+        //Make sure SDS011 sensor is OFF
+        SDS_cmd(PmSensorCmd::Stop);
         updateState(OFF);
     }
     void getStatusReport(String &res) {

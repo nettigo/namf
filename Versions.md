@@ -1,5 +1,6 @@
 NAMF-2020-44rc3 ( rev)
 - use 'nettigo.pl' as password for WiFi network in setup mode
+- make sure that when data was sent to APi SDS011 is put into sleep, not left running until next measurement
 
 NAMF-2020-44rc2 (2022-07-09 rev 292cf2049d3e6d2ee6dcb302556abe5f3fe1e333)
 - When change in old form was made display warning during saving config from new scheduler (they are in separate forms)
