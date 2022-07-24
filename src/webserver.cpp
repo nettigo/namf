@@ -756,8 +756,8 @@ void webserver_config(){
         parse_config_request(page_content);
     }
     webserverPartialSend(page_content);
-    page_content.concat(F("<br>"));
-    page_content.concat(String(maxSizeTemp));
+//    page_content.concat(F("<br>"));
+//    page_content.concat(String(maxSizeTemp));
     page_content.concat(F("<script>const beforeUnloadListener = (event) => {\n"
                           "  event.preventDefault();\n"
                           "  return event.returnValue = \"Are1 you sure you want to exit?\";"

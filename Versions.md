@@ -1,3 +1,6 @@
+NAMF-2020-44rc3 ( rev)
+- use 'nettigo.pl' as password for WiFi network in setup mode
+
 NAMF-2020-44rc2 (2022-07-09 rev 292cf2049d3e6d2ee6dcb302556abe5f3fe1e333)
 - When change in old form was made display warning during saving config from new scheduler (they are in separate forms)
 - Fixed bug - BMP280 was sending data to APIs as BMP180
