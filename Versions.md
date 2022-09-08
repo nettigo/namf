@@ -1,5 +1,6 @@
 NAMF-2020-44rc4 (2022-09-08 rev )
 - more descriptive message when saving config (sensors managed by new scheduler)
+- sensor order (config page) is updated - SDS, HECA & BME are first ones
 
 NAMF-2020-44rc3 (2022-07-24 rev 72832ed93b3e4898bef3b35c539f9280c66b3bec)
 - use 'nettigo.pl' as password for WiFi network in setup mode
