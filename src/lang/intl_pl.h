@@ -46,6 +46,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_CAN_NOT_BE_DELETED[] PROGMEM = "Konfiguracja nie może zostać usunięta";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_DELETED[] PROGMEM = "Usunięto konfigurację";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_NOT_FOUND[] PROGMEM = "Nie znaleziono konfiguracji";
+/* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_SAVED[] PROGMEM = "Konfiguracja zapisana.";
 /* ./src/lang/intl_pl.lang */ const char INTL_CURRENT_DATA[] PROGMEM = "Obecne wskazania";
 /* ./src/lang/intl_pl.lang */ const char INTL_DATE[] PROGMEM = "Data";
 /* ./src/lang/intl_pl.lang */ const char INTL_DEBUG[] PROGMEM = "Ustawienia logowania";

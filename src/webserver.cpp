@@ -801,9 +801,6 @@ void webserver_simple_config() {
         if (server.hasArg(F("sensor"))) {
             SimpleScheduler::LoopEntryType sensor;
             sensor = static_cast<SimpleScheduler::LoopEntryType>(server.arg(F("sensor")).toInt());
-            page_content += F("Sensor val: ");
-            page_content += String(sensor);
-            page_content += F("<br>");
             JsonObject &ret = SimpleScheduler::parseHTTPConfig(sensor);
             ret.printTo(Serial);
             if (ret.containsKey(F("err"))){
@@ -813,6 +810,10 @@ void webserver_simple_config() {
 
             } else {
                 SimpleScheduler::readConfigJSON(sensor, ret);
+                page_content.concat("<h3>");
+                page_content.concat(SimpleScheduler::findSlotKey(sensor));
+                page_content.concat("</h3>");
+                page_content.concat(FPSTR(INTL_CONFIG_SAVED));
             }
 
             writeConfig();
