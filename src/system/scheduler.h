@@ -15,14 +15,14 @@ namespace SimpleScheduler {
 
     typedef enum {
         EMPTY,
-        SPS30,
-        NTW_WTD,
-        SHT3x,
-        MHZ14A,
         SDS011,
         HECA,
-        BMPx80,
         BME280,
+        SHT3x,
+        BMPx80,
+        SPS30,
+        NTW_WTD,
+        MHZ14A,
         NAMF_LOOP_SIZE
     } LoopEntryType;
 
