@@ -43,6 +43,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_CONFIG_CAN_NOT_BE_DELETED[] PROGMEM = "A beállítások törlése sikertelen.";
 /* ./src/lang/intl_hu.lang */ const char INTL_CONFIG_DELETED[] PROGMEM = "Beállítások törölve";
 /* ./src/lang/intl_hu.lang */ const char INTL_CONFIG_NOT_FOUND[] PROGMEM = "Beállítások nem találhatóak";
+/* ./src/lang/intl_hu.lang */ const char INTL_CONFIG_SAVED[] PROGMEM = "A konfiguráció mentve";
 /* ./src/lang/intl_hu.lang */ const char INTL_CURRENT_DATA[] PROGMEM = "Aktuális adatok";
 /* ./src/lang/intl_hu.lang */ const char INTL_DATE[] PROGMEM = "Dátum";
 /* ./src/lang/intl_hu.lang */ const char INTL_DEBUG_LEVEL[] PROGMEM = "Debug&nbsp;Level";
@@ -153,7 +154,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
- const char INTL_CONFIG_SAVED[] PROGMEM = "Translate HU: INTL_CONFIG_SAVED 🐱;";
  const char INTL_DEBUG[] PROGMEM = "Translate HU: INTL_DEBUG 🐱;";
  const char INTL_AQI_TOKEN[] PROGMEM = "Translate HU: INTL_AQI_TOKEN 🐱;";
  const char INTL_AQI_ECO_API[] PROGMEM = "Translate HU: INTL_AQI_ECO_API 🐱;";
