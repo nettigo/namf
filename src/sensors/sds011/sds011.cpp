@@ -385,7 +385,7 @@ namespace SDS011 {
 
 #define STARTUP_TIME  5000
 //how many ms before read time reading cycle should be fished
-#define SDS011_END_TIME 2000
+#define SDS011_END_TIME 5000
 
     //select proper state, depending on time left to
     unsigned long processState() {
