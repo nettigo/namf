@@ -107,7 +107,10 @@ bool SerialSDS::checksumValid(void) {
 
 void SerialSDS::logReply(ResponseType type) {
     ReplyInfo x = _replies[type];
-//    for (byte i=0; i<5;i++) {Serial.print(x.data[i],16); Serial.print(" ");}
+    debug_out(F("SDS packet"),DEBUG_MAX_INFO);
+    for (byte i=0; i<5;i++) {debug_out(String(x.data[i],16),DEBUG_MAX_INFO, 0); debug_out(F(" "), DEBUG_MAX_INFO, 0);}
+    debug_out(F(""),DEBUG_MAX_INFO);
+
 //    Serial.println();
 //    Serial.print(F("**** SDS**** Odpowiedź z SDS: "));
     switch (type) {
