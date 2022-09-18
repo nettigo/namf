@@ -1,3 +1,6 @@
+NAMF-2020-44rc5 ()
+- make safe time between ending SDS011 measurement and sending to API 5 sec (was 2 sec)
+- 
 NAMF-2020-44rc4 (2022-09-08 rev ceabe601ee16457e752bf39c720f8697a1f116c7)
 - more descriptive message when saving config (sensors managed by new scheduler)
 - sensor order (config page) is updated - SDS, HECA & BME are first ones
