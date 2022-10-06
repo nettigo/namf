@@ -36,6 +36,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/bme280/bme280_hu.lang */ const char INTL_BME280_DESC[] PROGMEM = "BME280 páratartalom/hőmérséklet/nyomás érzékelő";
 /* ./src/lang/intl_hu.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
 /* ./src/sensors/bmpX80/bmpX80_hu.lang */ const char INTL_BMPx80_DESC[] PROGMEM = "BMP180/280 hőmérséklet/nyomás érzékelő";
+/* ./src/sensors/bmpX80/bmpX80_hu.lang */ const char INTL_BMPx80_INSIDE[] PROGMEM = "Érzékelő a házon belül (ne használjon hőmérséklet-leolvasást)";
 /* ./src/lang/intl_hu.lang */ const char INTL_CANCEL[] PROGMEM = "Mégse";
 /* ./src/lang/intl_hu.lang */ const char INTL_CONFIGURATION[] PROGMEM = "Konfiguráció";
 /* ./src/lang/intl_hu.lang */ const char INTL_CONFIGURATION_DELETE[] PROGMEM = "Beállítások törlése";
@@ -143,7 +144,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTW_WTD_DESC[] PROGMEM = "Translate HU: INTL_NTW_WTD_DESC 🐱;";
  const char INTL_NTW_WTD_HOST[] PROGMEM = "Translate HU: INTL_NTW_WTD_HOST 🐱;";
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate HU: INTL_NTW_WTD_ERROR 🐱;";
- const char INTL_BMPx80_INSIDE[] PROGMEM = "Translate HU: INTL_BMPx80_INSIDE 🐱;";
  const char INTL_HECA_DC[] PROGMEM = "Translate HU: INTL_HECA_DC 🐱;";
  const char INTL_SPS30_FW_FAIL[] PROGMEM = "Translate HU: INTL_SPS30_FW_FAIL 🐱;";
  const char INTL_SPS30_CONCENTRATION[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATION 🐱;";
