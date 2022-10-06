@@ -9,14 +9,14 @@
 
 namespace SimpleScheduler {
     const char LET_0 [] PROGMEM = "EMPTY";
-    const char LET_1 [] PROGMEM = "SPS30";
-    const char LET_2 [] PROGMEM = "NTW_WTD";
-    const char LET_3 [] PROGMEM = "SHT3x";
-    const char LET_4 [] PROGMEM = "MHZ14A";
-    const char LET_5 [] PROGMEM = "SDS011";
-    const char LET_6 [] PROGMEM = "HECA";
-    const char LET_7 [] PROGMEM = "BMPx80";
-    const char LET_8 [] PROGMEM = "BME280";
+    const char LET_1 [] PROGMEM = "SDS011";
+    const char LET_2 [] PROGMEM = "HECA";
+    const char LET_3 [] PROGMEM = "BME280";
+    const char LET_4 [] PROGMEM = "SHT3x";
+    const char LET_5 [] PROGMEM = "BMPx80";
+    const char LET_6 [] PROGMEM = "SPS30";
+    const char LET_7 [] PROGMEM = "NTW_WTD";
+    const char LET_8 [] PROGMEM = "MHZ14A";
     const char LET_SIZE [] PROGMEM = "SIZE";
 
     const char *LET_NAMES[] PROGMEM = {
