@@ -1,4 +1,4 @@
-NAMF-2020-44 (2020-10-06 rev)
+NAMF-2020-44 (2020-10-06 rev b36d65f7acda9739dd43e5990c161eb55baa0d58)
 - merged all changes from 44rc5
 - fixed subsystem names on /status page. After changing order of sensors on config page matching names was not sorted in /status page
 
