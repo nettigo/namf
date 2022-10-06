@@ -9,6 +9,50 @@ extern const char UNIT_PERCENT[] PROGMEM = "%";
 extern const char UNIT_CELCIUS[] PROGMEM = "°C";
 extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
 
+
+LoggingSerial Debug;
+
+LoggingSerial::LoggingSerial()
+        : HardwareSerial(UART0)
+        , m_buffer(new circular_queue<uint8_t>(1024))
+{
+    skipBuffer = false;
+}
+
+void LoggingSerial::stopWebCopy(void) {
+    skipBuffer = true;
+}
+
+void LoggingSerial::resumeWebCopy(void) {
+    skipBuffer = false;
+}
+
+size_t LoggingSerial::write(uint8_t c)
+{
+    if (!skipBuffer) m_buffer->push(c);
+    return HardwareSerial::write(c);
+}
+
+size_t LoggingSerial::write(const uint8_t *buffer, size_t size)
+{
+    if (!skipBuffer) m_buffer->push_n(buffer, size);
+    return HardwareSerial::write(buffer, size);
+}
+
+String LoggingSerial::popLines()
+{
+    String r;
+    while (m_buffer->available() > 0) {
+        uint8_t c = m_buffer->pop();
+        r += (char) c;
+
+//        if (c == '\n' && r.length() > m_buffer->available())
+//            break;
+    }
+    return r;
+}
+
+
 int32_t calcWiFiSignalQuality(int32_t rssi) {
     if (rssi > -50) {
         rssi = -50;
@@ -19,7 +63,47 @@ int32_t calcWiFiSignalQuality(int32_t rssi) {
     return (rssi + 100) * 2;
 }
 
+//store string as char array, for functions
+unsigned stringToChar(char **dst, const String src) {
+//    Serial.println(F("stringToChar"));
+//    Serial.println(src.c_str());
+    if (*dst != nullptr) {
+//        Serial.println(F("Deleting DST"));
+        delete (*dst);
+    }
+//    Serial.println(F("allocating"));
+    unsigned int len = src.length() + 1;
+    *dst = new char[len];
+//    Serial.println(F("after allocating"));
 
+    if (*dst == nullptr) return 0;   //does it return nullptr or raises Abort? Probaby fails in 3.0.0 ArduinoCore
+//    Serial.print(F("copying len: "));
+//    Serial.println(len);
+    strncpy(*dst, src.c_str(), len);
+//    Serial.println(F("copied..."));
+//    Serial.println(*dst);
+    return len;
+}
+
+unsigned setDefault(char **dst, const __FlashStringHelper *defaultValue) {
+//    Serial.println(F("setDefault"));
+    if (dst == nullptr || !strlen(*dst)) {
+        String src = String(defaultValue);
+//        Serial.println(F("SRC READY"));
+        return stringToChar(dst, src);
+    }
+    return strlen(*dst) + 1;
+}
+
+//same as stringToChar but for JSON char string as source
+unsigned charStringToChar(char *dst, const char *src) {
+    if (dst != nullptr) delete (dst);
+    size_t len = strlen(src);
+    dst = new(char[len + 1]);
+    if (dst == nullptr) return 0;
+    strncpy(dst, src, len+1);
+    return len + 1;
+}
 
 /*****************************************************************
  * convert float to string with a                                *
@@ -140,15 +224,15 @@ void debug_out(const String& text, const int level, const bool linebreak) {
             timeinfo = localtime(&rawtime);
             strftime(buffer, 30, "%F %T: ", timeinfo);
 
-            Serial.print(buffer);
+            Debug.print(buffer);
             timestamp = false;
         }
 
         if (linebreak) {
             timestamp = true;
-            Serial.println(text);
+            Debug.println(text);
         } else {
-            Serial.print(text);
+            Debug.print(text);
         }
     }
 }
@@ -157,10 +241,9 @@ void debug_out(const String& text, const int level, const bool linebreak) {
 
 
 //Create string with config as JSON
-String getConfigString(boolean maskPwd = false) {
+String getConfigString(boolean maskPwd) {
     using namespace cfg;
     String json_string = "{";
-    debug_out(F("saving config..."), DEBUG_MIN_INFO, 1);
 
 #define copyToJSON_Bool(varname) json_string += Var2Json(#varname,varname);
 #define copyToJSON_Int(varname) json_string += Var2Json(#varname,varname);
@@ -170,14 +253,20 @@ String getConfigString(boolean maskPwd = false) {
     json_string += Var2Json(F("wlanssid"), wlanssid);
     //mask WiFi password?
     if (maskPwd) {
-        json_string += Var2Json(F("wlanpwd"), String("***"));
+        json_string += Var2Json(F("wlanpwd"), String(F("****")));
+        json_string += Var2Json(F("fbpwd"), String(F("****")));
+        json_string += Var2Json(F("fs_pwd"), String(F("****")));
+
     } else {
         json_string += Var2Json(F("wlanpwd"), wlanpwd);
+        json_string += Var2Json(F("fbpwd"), fbpwd);
+        json_string += Var2Json(F("fs_pwd"), fs_pwd);
+
     }
     json_string += Var2Json(F("www_username"), www_username);
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
-    json_string += Var2Json(F("fs_pwd"), fs_pwd);
+    json_string += Var2Json(F("fbssid"), fbssid);
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
 //    copyToJSON_Bool(sds_read);
@@ -219,6 +308,10 @@ String getConfigString(boolean maskPwd = false) {
     json_string += Var2Json(F("user_custom"), user_custom);
     json_string += Var2Json(F("pwd_custom"), pwd_custom);
 
+    copyToJSON_Bool(send2aqi);
+    json_string += Var2Json(F("token_AQI"), token_AQI);
+
+    json_string += Var2Json(F("host_custom"), host_custom);
     copyToJSON_Bool(send2influx);
     json_string += Var2Json(F("host_influx"), host_influx);
     json_string += Var2Json(F("url_influx"), url_influx);
@@ -250,13 +343,21 @@ void verifyLang(char *cl) {
     if (!strcmp(cl,"RO")) return;
     strcpy(cl,"EN");
 }
+
+void dbg(char *v) { if (v == nullptr) Serial.println(F("NULL")); else Serial.println(v);}
+
+
+void setCharVar(const JsonObject &json, char **var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
+    if (json.containsKey(key)) stringToChar(var, json[key]);
+    if (def != nullptr) setDefault(var, def);
+}
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
     bool pms24_read = false;
     bool pms32_read = false;
     if (configFile) {
-        debug_out(F("opened config file..."), DEBUG_MIN_INFO, 1);
+        debug_out(F("opened config file..."), DEBUG_MED_INFO, 1);
         const size_t size = configFile.size();
         // Allocate a buffer to store contents of the file.
         std::unique_ptr<char[]> buf(new char[size]);
@@ -264,30 +365,37 @@ int readAndParseConfigFile(File configFile) {
         configFile.readBytes(buf.get(), size);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
-        debug_out(F("Config - JSON object memory used:"),DEBUG_MIN_INFO, false);
-        debug_out(String(jsonBuffer.size()),DEBUG_MIN_INFO, true);
+        debug_out(F("Config - JSON object memory used:"),DEBUG_MED_INFO, false);
+        debug_out(String(jsonBuffer.size()),DEBUG_MED_INFO);
 
         json.printTo(json_string);
-        debug_out(F("File content: "), DEBUG_MED_INFO, 0);
-        debug_out(String(buf.get()), DEBUG_MED_INFO, 1);
-        debug_out(F("JSON Buffer content: "), DEBUG_MED_INFO, 0);
-        debug_out(json_string, DEBUG_MED_INFO, 1);
+        debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
+        debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
+        debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
+        Debug.stopWebCopy();
+        debug_out(json_string, DEBUG_MAX_INFO, 1);
+        Debug.resumeWebCopy();
         if (json.success()) {
-            debug_out(F("parsed json..."), DEBUG_MIN_INFO, 1);
-            if (json.containsKey("SOFTWARE_VERSION")) {
-                strcpy(version_from_local_config, json["SOFTWARE_VERSION"]);
-            }
+            debug_out(F("JSON parsed"), DEBUG_MED_INFO, 1);
+            setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &fbpwd, F("fbpwd"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
+            setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
+            setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
+            setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+            setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
+            setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
+            setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
 
 #define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
-            strcpyFromJSON(wlanssid);
-            strcpyFromJSON(wlanpwd);
-            strcpyFromJSON(www_username);
-            strcpyFromJSON(www_password);
-            strcpyFromJSON(fs_ssid);
-            strcpyFromJSON(fs_pwd);
+
+
             setFromJSON(www_basicauth_enabled);
             setFromJSON(dht_read);
             setFromJSON(sds_read);
@@ -328,18 +436,21 @@ int readAndParseConfigFile(File configFile) {
                 send2sensemap = 0;
             }
             setFromJSON(send2custom);
-//            strcpyFromJSON(host_custom);
+
             if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
             if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
             setFromJSON(port_custom);
-            strcpyFromJSON(user_custom);
-            strcpyFromJSON(pwd_custom);
+
+            setFromJSON(send2aqi);
+
+            if (json.containsKey(F("token_AQI"))) token_AQI =  json.get<String>(F("token_AQI"));
+
             setFromJSON(send2influx);
+
             if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
             if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
             setFromJSON(port_influx);
-            strcpyFromJSON(user_influx);
-            strcpyFromJSON(pwd_influx);
+
             if (host_influx.equals(F("api.luftdaten.info"))) {
                 host_influx = F("");
                 send2influx = 0;
@@ -395,7 +506,9 @@ int readAndParseConfigFile(File configFile) {
  * write config to spiffs                                        *
  *****************************************************************/
 int writeConfigRaw(const String &json_string, const char * filename) {
-    debug_out(json_string, DEBUG_MIN_INFO, 1);
+    Debug.stopWebCopy();
+    debug_out(json_string, DEBUG_MAX_INFO, 1);
+    Debug.resumeWebCopy();
     File configFile;
     if (filename) {
         configFile = SPIFFS.open(filename, "w");
@@ -404,8 +517,10 @@ int writeConfigRaw(const String &json_string, const char * filename) {
     }
     if (configFile) {
         configFile.print(json_string);
-        debug_out(F("Config written: "), DEBUG_MIN_INFO, 0);
+        debug_out(F("Config written OK."), DEBUG_MIN_INFO, 0);
+        Debug.stopWebCopy();
         debug_out(json_string, DEBUG_MIN_INFO, 1);
+        Debug.resumeWebCopy();
         configFile.close();
         return 0;
     } else {
@@ -419,6 +534,7 @@ int writeConfigRaw(const String &json_string, const char * filename) {
  */
 
 void writeConfig(){
+    debug_out(F("saving config..."), DEBUG_MIN_INFO);
     String json_string  = getConfigString();
     writeConfigRaw(json_string);
 }
@@ -488,7 +604,6 @@ void setVariableFromHTTP(const __FlashStringHelper *name, unsigned long &v, byte
     String sensorID;
     setHTTPVarName(sensorID, name, i);
     parseHTTP(sensorID, v);
-    Serial.println(v);
 }
 
 unsigned long time2Measure(void){
@@ -499,6 +614,48 @@ unsigned long time2Measure(void){
 
 //Form helpers
 //
+
+// bold
+// 0 - use <b>
+// 1 - use <h1>
+// 2 - use <h2>
+// 3 - do not use any tags
+String formSectionHeader(String &page_content, const String& name, byte bold) {
+    page_content.concat(formSectionHeader(name, bold));
+}
+
+String formSectionHeader(const String& name, byte bold) {
+
+    String s;
+    switch (bold){
+        case(1):
+            s = F("<div class='row sect'><h1>{n}</h1></div>\n");
+            break;
+        case(2):
+            s = F("<div class='row sect'><h2>{n}</h2></div>\n");
+            break;
+        case(3):
+            s = F("<div class='row sect'>{n}</div>\n");
+            break;
+        default:
+            s = F("<div class='row sect'><b>{n}</b></div>\n");
+    }
+    s.replace("{n}", name);
+    return s;
+}
+
+String formInputGrid(const String& name, const String& info, const String& value, const int length) {
+    String s = F(	"<div>{i}</div><div class='c2'>"
+                     "<input type='text' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
+                     "</div>");
+    String t_value = value;
+    t_value.replace("'", "&#39;");
+    s.replace("{i}", info);
+    s.replace("{n}", name);
+    s.replace("{v}", t_value);
+    s.replace("{l}", String(length));
+    return s;
+}
 String form_input(const String& name, const String& info, const String& value, const int length) {
     String s = F(	"<tr>"
                      "<td>{i} </td>"
@@ -514,17 +671,43 @@ String form_input(const String& name, const String& info, const String& value, c
     s.replace("{l}", String(length));
     return s;
 }
-
+const char form_password_templ[] PROGMEM = "<tr>"
+                                           "<td>{i} </td>"
+                                           "<td style='width:90%;'>"
+                                           "<input type='password' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
+                                           "</td>"
+                                           "</tr>";
 String form_password(const String& name, const String& info, const String& value, const int length) {
-    String s = F(	"<tr>"
-                     "<td>{i} </td>"
-                     "<td style='width:90%;'>"
-                     "<input type='password' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/>"
-                     "</td>"
-                     "</tr>");
+    unsigned size = strlen_P(form_password_templ) + 1 ;
+    size += name.length() + info.length() + value.length() - 9;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(form_password_templ);
     String password = "";
+    password.reserve(value.length());
     for (uint8_t i = 0; i < value.length(); i++) {
-        password += "*";
+        password.concat(F("*"));
+    }
+    s.replace("{i}", info);
+    s.replace("{n}", name);
+    s.replace("{v}", password);
+    s.replace("{l}", String(length));
+    return s;
+}
+const char formPasswordGrid_templ[] PROGMEM = "<div>{i}</div><div class='c2'><input type='password' name='{n}' id='{n}' placeholder='{i}' value='{v}' maxlength='{l}'/></div>\n";
+
+String formPasswordGrid(const String& name, const String& info, const String& value, const int length) {
+    unsigned size = strlen_P(formPasswordGrid_templ) + 1 ;
+    size += name.length() + info.length() + value.length() - 9;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(formPasswordGrid_templ);
+    String password = "";
+    password.reserve(value.length());
+    for (uint8_t i = 0; i < value.length(); i++) {
+        password.concat(F("*"));
     }
     s.replace("{i}", info);
     s.replace("{n}", name);
@@ -533,8 +716,59 @@ String form_password(const String& name, const String& info, const String& value
     return s;
 }
 
+const char formCheckboxGrid_templ[] PROGMEM = "<div class='row'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/><label for='{n}'>{i}</label></div>";
+String formCheckboxGrid(const String& name, const String& info, const bool checked) {
+    String newInfo = add_sensor_type(info);
+    unsigned size = strlen_P(formCheckboxGrid_templ) + 1 ;
+    size += name.length() + newInfo.length();
+    size += checked ? 19 : 0;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(formCheckboxGrid_templ);
+    if (checked) {
+        s.replace("{c}", F(" checked='checked'"));
+    } else {
+        s.replace("{c}", "");
+    };
+    s.replace("{i}", newInfo);
+    s.replace("{n}", name);
+    return s;
+}
+
+const char formCheckboxOpenGrid_templ[] PROGMEM = "<div><input type='checkbox' name='{n}' value='1' id='{n}' {c}/><label for='{n}'>{i}</label></div>";
+//Use only columns 1 & 2 from grid
+String formCheckboxOpenGrid(const String& name, const String& info, const bool checked) {
+    String newInfo = add_sensor_type(info);
+
+    unsigned size = strlen_P(formCheckboxOpenGrid_templ) + 1 ;
+    size += name.length() + newInfo.length();
+    size += checked ? 19 : 0;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(formCheckboxOpenGrid_templ);
+    if (checked) {
+        s.replace("{c}", F(" checked='checked'"));
+    } else {
+        s.replace("{c}", "");
+    };
+    s.replace("{i}", newInfo);
+    s.replace("{n}", name);
+    return s;
+}
+
+const char form_checkbox_templ[] PROGMEM = "<label for='{n}'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/> {i}</label><br/>";
 String form_checkbox(const String& name, const String& info, const bool checked, const bool linebreak) {
-    String s = F("<label for='{n}'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/> {i}</label><br/>");
+
+    unsigned size = strlen_P(form_checkbox_templ) + 1 ;
+    size += name.length() + info.length();
+    size += checked ? 19 : 0;
+    size += linebreak ? 6 : 0;
+
+    String s;
+    s.reserve(size);
+    s = FPSTR(form_checkbox_templ);
     if (checked) {
         s.replace("{c}", F(" checked='checked'"));
     } else {
@@ -575,20 +809,22 @@ String form_submit(const String& value) {
     s.replace("{v}", value);
     return s;
 }
+String formSubmitGrid(const String& value) {
+    String s = F(	"<div><input type='submit' name='submit' value='{v}' class='s_r'/></div>");
+    s.replace("{v}", value);
+    return s;
+}
 
 String form_select_lang() {
     String s_select = F(" selected='selected'");
-    String s = F(	"<tr>"
-                     "<td>{t}</td>"
-                     "<td>"
+    String s = F(	"<div>{t}</div><div class='c2'>"
                      "<select name='current_lang'>"
                      "<option value='EN'{s_EN}>English (EN)</option>"
                      "<option value='HU'{s_HU}>Hungarian (HU)</option>"
                      "<option value='PL'{s_PL}>Polski (PL)</option>"
                      "<option value='RO'{s_RO}>ROMÂNĂ (RO)</option>"
                      "</select>"
-                     "</td>"
-                     "</tr>");
+                     "</div>");
     s.reserve(s.length()+40);
 
     s.replace("{t}", FPSTR(INTL_LANGUAGE));

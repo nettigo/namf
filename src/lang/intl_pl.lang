@@ -1,3 +1,15 @@
+INTL_CONFIG_SAVED Konfiguracja zapisana.
+INTL_DEBUG Ustawienia logowania
+INTL_AQI_TOKEN Token sensora z aqi.eco
+INTL_AQI_ECO_API API aqi.eco
+INTL_USE_HTTPS Używaj połączenia szyfrowanego (HTTPS)
+INTL_ENABLE Włącz
+INTL_OTHER_APIS Inne API
+INTL_TAB_BASIC Podstawy
+INTL_TAB_API API
+INTL_TAB_SENSORS Sensory
+INTL_TAB_ADVANCED Zaawansowane
+INTL_FALBACK_WIFI Alternatywna sieć WiFi
 INTL_TIME_FROM_UPDATE Czas od próby aktualizacji
 INTL_MADAVI_LINK Wykresy z sensora na Madavi
 INTL_NTP_TIME Czas z NTP
@@ -17,7 +29,6 @@ INTL_WIFI_NETWORKS Ładowanie sieci WiFi...
 INTL_LANGUAGE Język
 INTL_NO_NETWORKS Nie znaleziono sieci WiFi
 INTL_NETWORKS_FOUND Znalezione sieci: 
-INTL_AB_HIER_NUR_ANDERN Ustawienia zaawansowane
 INTL_SAVE Zapisz
 INTL_SENSORS Sensory
 INTL_SDS011 SDS011 ({pm})
@@ -47,13 +58,13 @@ INTL_DEBUG_LEVEL Poziom&nbsp;debugowania
 INTL_MEASUREMENT_INTERVAL Czas między pomiarami (sek.)
 INTL_DURATION_ROUTER_MODE Czas trwania w trybie routera (sek.)
 INTL_MORE_APIS Kolejne API
-INTL_SEND_TO_OWN_API Wysyłaj dane do własnego API
+INTL_SEND_TO_OWN_API własne API
 INTL_SERVER Adres serwera
 INTL_PATH Ścieżka
 INTL_PORT Port
 INTL_USER Nazwa użytkownika
 INTL_PASSWORD Hasło
-INTL_SEND_TO Wysyłaj dane do {v}
+INTL_SEND_TO Wysyłaj dane do: {v}
 INTL_READ_FROM Czytaj z {v}
 INTL_SENSOR_IS_REBOOTING Ponowne uruchamianie czujnika.
 INTL_SENSOR_IS_REBOOTING_NOW Trwa restart urządzenia... Za kilkanaście sekund kliknij przycisk poniżej.
@@ -63,7 +74,6 @@ INTL_RESTART_SENSOR Uruchom ponownie czujnik
 INTL_HOME Strona startowa
 INTL_BACK_TO_HOME Powrót do strony startowej
 INTL_CURRENT_DATA Obecne wskazania
-INTL_ACTIVE_SENSORS_MAP Mapa aktywnych czujników (link zewnętrzny)
 INTL_CONFIGURATION_DELETE Usunięcie konfiguracji
 INTL_CONFIGURATION_REALLY_DELETE Czy na pewno chcesz usunąć konfigurację?
 INTL_DELETE Usuń

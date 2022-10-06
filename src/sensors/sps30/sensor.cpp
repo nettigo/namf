@@ -31,7 +31,7 @@ namespace SPS30 {
     //taken to average
     String getConfigHTML(void) {
         String ret = F("");
-        ret += form_input(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
+        ret += formInputGrid(F("refresh"), FPSTR(INTL_SPS30_REFRESH), String(refresh), 4);
         return ret;
     }
 
@@ -61,7 +61,7 @@ namespace SPS30 {
 
     //Start SPS30 sensor
     unsigned long init() {
-        debug_out("************** SPS30 initBMPx80", DEBUG_MIN_INFO, true);
+        debug_out(F("************** SPS30 initBMPx80"), DEBUG_MIN_INFO, true);
         zeroMeasurementStruct(sum);
         sensirion_i2c_init();
         byte cnt = 0;

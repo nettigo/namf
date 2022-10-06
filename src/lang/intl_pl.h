@@ -28,9 +28,9 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_pl_H
 #define LANG_DEF_pl_H
 
-/* ./src/lang/intl_pl.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Ustawienia zaawansowane";
-/* ./src/lang/intl_pl.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Mapa aktywnych czujników (link zewnętrzny)";
 /* ./src/lang/intl_pl.lang */ const char INTL_ALTITUDE[] PROGMEM = "Wysokość";
+/* ./src/lang/intl_pl.lang */ const char INTL_AQI_ECO_API[] PROGMEM = "API aqi.eco";
+/* ./src/lang/intl_pl.lang */ const char INTL_AQI_TOKEN[] PROGMEM = "Token sensora z aqi.eco";
 /* ./src/lang/intl_pl.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Aktualizuj firmware automatycznie";
 /* ./src/lang/intl_pl.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Powrót do strony startowej";
 /* ./src/lang/intl_pl.lang */ const char INTL_BASICAUTH[] PROGMEM = "Autoryzacja";
@@ -46,8 +46,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_CAN_NOT_BE_DELETED[] PROGMEM = "Konfiguracja nie może zostać usunięta";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_DELETED[] PROGMEM = "Usunięto konfigurację";
 /* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_NOT_FOUND[] PROGMEM = "Nie znaleziono konfiguracji";
+/* ./src/lang/intl_pl.lang */ const char INTL_CONFIG_SAVED[] PROGMEM = "Konfiguracja zapisana.";
 /* ./src/lang/intl_pl.lang */ const char INTL_CURRENT_DATA[] PROGMEM = "Obecne wskazania";
 /* ./src/lang/intl_pl.lang */ const char INTL_DATE[] PROGMEM = "Data";
+/* ./src/lang/intl_pl.lang */ const char INTL_DEBUG[] PROGMEM = "Ustawienia logowania";
 /* ./src/lang/intl_pl.lang */ const char INTL_DEBUG_LEVEL[] PROGMEM = "Poziom&nbsp;debugowania";
 /* ./src/lang/intl_pl.lang */ const char INTL_DEBUG_SETTING_TO[] PROGMEM = "Ustawiono poziom debugowania na";
 /* ./src/lang/intl_pl.lang */ const char INTL_DELETE[] PROGMEM = "Usuń";
@@ -63,6 +65,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA włączone na 60 sekund.";
 /* ./src/lang/intl_pl.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Włącz autoryzację w panelu konfiguracyjnym, by móc włączyć zdalne ładowanie kodu";
 /* ./src/lang/intl_pl.lang */ const char INTL_ERROR[] PROGMEM = "tylko błędy";
+/* ./src/lang/intl_pl.lang */ const char INTL_FALBACK_WIFI[] PROGMEM = "Alternatywna sieć WiFi";
 /* ./src/lang/intl_pl.lang */ const char INTL_FIRMWARE[] PROGMEM = "Wersja FW";
 /* ./src/lang/intl_pl.lang */ const char INTL_FS_WIFI[] PROGMEM = "Czujnik WiFi";
 /* ./src/lang/intl_pl.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "Parametry WiFi w trybie konfiguracji czujnika";
@@ -103,6 +106,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "To nie jest poprawny adres IP";
 /* ./src/sensors/network_watchdog/ntw_wtd_pl.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "IP adres, który pingować (IP)";
 /* ./src/lang/intl_pl.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Liczba pomiarów:";
+/* ./src/lang/intl_pl.lang */ const char INTL_OTHER_APIS[] PROGMEM = "Inne API";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARAMETER[] PROGMEM = "Parametr";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARTICLES_PER_LITER[] PROGMEM = "cząsteczek/litr";
 /* ./src/lang/intl_pl.lang */ const char INTL_PARTICULATE_MATTER[] PROGMEM = "pył zawieszony";
@@ -126,8 +130,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_LCD_HDR[] PROGMEM = "SDS011 wartosci:";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "Czas, w którym jest dokonywany pomiar (ms)";
 /* ./src/sensors/sds011/sds011_pl.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "Czas pracy przed rozpoczęciem pomiaru (ms)";
-/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO[] PROGMEM = "Wysyłaj dane do {v}";
-/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Wysyłaj dane do własnego API";
+/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO[] PROGMEM = "Wysyłaj dane do: {v}";
+/* ./src/lang/intl_pl.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "własne API";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR[] PROGMEM = "Czujnik";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSORS[] PROGMEM = "Sensory";
 /* ./src/lang/intl_pl.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Ponowne uruchamianie czujnika.";
@@ -150,6 +154,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - precyzyjny czujnik pyłów zawieszonych";
 /* ./src/sensors/sps30/sps30_pl.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_pl.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Status sensora";
+/* ./src/lang/intl_pl.lang */ const char INTL_TAB_ADVANCED[] PROGMEM = "Zaawansowane";
+/* ./src/lang/intl_pl.lang */ const char INTL_TAB_API[] PROGMEM = "API";
+/* ./src/lang/intl_pl.lang */ const char INTL_TAB_BASIC[] PROGMEM = "Podstawy";
+/* ./src/lang/intl_pl.lang */ const char INTL_TAB_SENSORS[] PROGMEM = "Sensory";
 /* ./src/lang/intl_pl.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperatura";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME[] PROGMEM = "Czas";
 /* ./src/lang/intl_pl.lang */ const char INTL_TIME_FROM_UPDATE[] PROGMEM = "Czas od próby aktualizacji";
@@ -159,6 +167,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_UPDATE_BETA[] PROGMEM = "beta (testowanie stabilności nowych rozwiązań)";
 /* ./src/lang/intl_pl.lang */ const char INTL_UPDATE_STABLE[] PROGMEM = "stable (najlepiej przetestowany kod)";
 /* ./src/lang/intl_pl.lang */ const char INTL_USER[] PROGMEM = "Nazwa użytkownika";
+/* ./src/lang/intl_pl.lang */ const char INTL_USE_HTTPS[] PROGMEM = "Używaj połączenia szyfrowanego (HTTPS)";
 /* ./src/lang/intl_pl.lang */ const char INTL_VALUE[] PROGMEM = "Wartość";
 /* ./src/lang/intl_pl.lang */ const char INTL_WARNING[] PROGMEM = "ostrzeżenia";
 /* ./src/lang/intl_pl.lang */ const char INTL_WIFI_NETWORKS[] PROGMEM = "Ładowanie sieci WiFi...";

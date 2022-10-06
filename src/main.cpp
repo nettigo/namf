@@ -84,7 +84,21 @@ void disable_unneeded_nmea() {
 	serialGPS.println(F("$PUBX,40,VTG,0,0,0,0*5E"));       // Track made good and ground speed
 }
 
+//This is meant to be run on first time. Not only sets default values for sensors, but also makes sure
+//that pointers are properly inited
 void setDefaultConfig(void) {
+    //init
+    debug_out(F("Set defaults"), DEBUG_MIN_INFO, 1);
+    stringToChar(&cfg::www_username, FPSTR(WWW_USERNAME));
+    stringToChar(&cfg::www_password, FPSTR(WWW_PASSWORD));
+    stringToChar(&cfg::wlanssid, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::wlanpwd, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::fbssid, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::fbpwd, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
+    stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
+    stringToChar(&cfg::pwd_influx, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::user_influx, FPSTR(EMPTY_STRING));
     SDS011::setDefaults();
     HECA::setDefaults();
 //    BMPx80::setDefaults();
@@ -98,27 +112,27 @@ void setDefaultConfig(void) {
  * read config from spiffs                                       *
  *****************************************************************/
 void readConfig() {
-	debug_out(F("mounting FS..."), DEBUG_MIN_INFO, 1);
+    setDefaultConfig();
+    debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
 
 	if (SPIFFS.begin()) {
-		debug_out(F("mounted file system..."), DEBUG_MIN_INFO, 1);
+		debug_out(F("OK"), DEBUG_MIN_INFO, 1);
 		if (SPIFFS.exists("/config.json")) {
 			//file exists, reading and loading
-			debug_out(F("reading config file..."), DEBUG_MIN_INFO, 1);
+			debug_out(F("reading config"), DEBUG_MED_INFO, 1);
 			File configFile = SPIFFS.open("/config.json", "r");
             if (!readAndParseConfigFile(configFile)){
                 //not failed opening & reading
-                debug_out(F("Config parsed and loaded"), DEBUG_MIN_INFO, true);
+                debug_out(F("Config parsed"), DEBUG_MIN_INFO, true);
             }else{
                 debug_out(F("FAILED config parsing and loading"), DEBUG_ERROR, true);
                 setDefaultConfig();
             };
 		} else {
 			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
-			setDefaultConfig();
 		}
 	} else {
-		debug_out(F("failed to mount FS"), DEBUG_ERROR, 1);
+		debug_out(F("\nFailed mount FS!"), DEBUG_ERROR, 1);
 	}
 }
 
@@ -202,8 +216,12 @@ void wifiConfig() {
 	WiFi.mode(WIFI_AP);
 	const IPAddress apIP(192, 168, 4, 1);
 	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-	WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
-	debug_out(String(WLANPWD), DEBUG_MIN_INFO, 1);
+    if (cfg::fs_pwd == nullptr || !strcmp(cfg::fs_pwd, "")) {
+        debug_out(F("Starting AP with default password"), DEBUG_MIN_INFO);
+        WiFi.softAP(cfg::fs_ssid, "nettigo.pl", selectChannelForAp(wifiInfo, count_wifiInfo));
+    } else {
+        WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
+    }
 
 	DNSServer dnsServer;
 	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
@@ -301,6 +319,10 @@ void    startAP(void) {
  * WiFi auto connecting script                                   *
  *****************************************************************/
 void connectWifi() {
+    display_debug(F("Connecting to"), String(cfg::wlanssid));
+    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
+    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
+    debug_out(F("'"), DEBUG_ERROR, 1);
 	debug_out(String(WiFi.status()), DEBUG_MIN_INFO, 1);
 	WiFi.disconnect();
 	WiFi.setOutputPower(cfg::outputPower);
@@ -315,13 +337,19 @@ void connectWifi() {
 	WiFi.hostname(cfg::fs_ssid); // Hostname for DHCP Server
 	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
 
-	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
-
 	waitForWifiToConnect(40);
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (WiFi.status() != WL_CONNECTED) {
-		startAP();
+        if (strlen(cfg::fbssid)) {
+            display_debug(F("Connecting to"), String(cfg::fbssid));
+            debug_out(F("Failed to connect to WiFi. Trying to connect to fallback WiFi"), DEBUG_ERROR);
+            debug_out(cfg::fbssid, DEBUG_ERROR);
+            WiFi.begin(cfg::fbssid, cfg::fbpwd); // Start WiFI
+            waitForWifiToConnect(40);
+
+        }
+        if (WiFi.status() != WL_CONNECTED)
+            startAP();
 	}
 	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
 	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
@@ -787,11 +815,21 @@ static bool acquireNetworkTime() {
 	return false;
 }
 
+void initNonTrivials(const char *id) {
+    strcpy(cfg::current_lang, CURRENT_LANG);
+    if (cfg::fs_ssid == nullptr || cfg::fs_ssid[0] == '\0') {
+        String ssid = F("NAM-");
+        ssid.concat(id);
+        stringToChar(&cfg::fs_ssid, ssid);
+
+    }
+}
+
 /*****************************************************************
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
-    Serial.begin(115200);                    // Output to Serial at 9600 baud
+    Debug.begin(115200);                    // Output to Serial at 9600 baud
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
     serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
 
@@ -806,27 +844,28 @@ void setup() {
     Wire.setClock(100000); // Force bus speed 100 Khz
 
 
-    cfg::initNonTrivials(esp_chipid().c_str());
+    initNonTrivials(esp_chipid().c_str());
 
-    Serial.print(F("\nNAMF ver: "));
-    Serial.print(SOFTWARE_VERSION);
-    Serial.print(F("/"));
-    Serial.println(INTL_LANG);
-    Serial.print(F("Chip ID: "));
-    Serial.println(esp_chipid());
+    debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
+    debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
+    debug_out(F("/"), DEBUG_ERROR, false);
+    debug_out(FPSTR(INTL_LANG), DEBUG_ERROR);
+    debug_out(F("Chip ID: "), DEBUG_ERROR, false);
+    debug_out(esp_chipid(), DEBUG_ERROR);
 
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);
-    Serial.print(F("SPIFFS size (kB): "));
-    Serial.println(fs_info.totalBytes/(1024));
+    debug_out(F("SPIFFS (kB): "), DEBUG_ERROR, false);
+    debug_out(String(fs_info.totalBytes/(1024)), DEBUG_ERROR);
 
-    Serial.print(F("Free sketch space (kB): "));
-    Serial.println(ESP.getFreeSketchSpace()/1024);
-    Serial.print(F("CPU freq (MHz): "));
-    Serial.println(ESP.getCpuFreqMHz());
+    debug_out(F("Free sketch space (kB): "), DEBUG_ERROR, false);
+    debug_out(String(ESP.getFreeSketchSpace()/1024), DEBUG_ERROR);
+    debug_out(F("CPU freq (MHz): "), DEBUG_ERROR, false);
+    debug_out(String(ESP.getCpuFreqMHz()), DEBUG_ERROR);
 
     readConfig();
+    debug_out(getConfigString(), DEBUG_MED_INFO);
     resetMemoryStats();
     Reporting::setupHomePhone();
 
@@ -850,10 +889,7 @@ void setup() {
 
 
     setup_webserver();
-    display_debug(F("Connecting to"), String(cfg::wlanssid));
-    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
-    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
-    debug_out(F("'"), DEBUG_ERROR, 1);
+
 
     if (strlen(cfg::wlanssid) > 0) {
         connectWifi();
@@ -864,6 +900,8 @@ void setup() {
             updateFW();
         }
         Reporting::reportBoot();
+        Serial.println(F(" After Report boot"));
+
     } else {
         startAP();
     }
@@ -922,7 +960,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
     if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
@@ -931,14 +971,18 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		sensemap_path.replace("BOXID", cfg::senseboxid);
 		sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
 	if (cfg::send2fsapp) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
 
     if (cfg::send2influx) {
         debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
@@ -947,6 +991,8 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 
         sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
 		sum_send_time += millis() - start_send;
+        server.handleClient();
+
     }
 
 	/*		if (send2lora) {
@@ -957,7 +1003,9 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2csv) {
 		debug_out(F("## Sending as csv: "), DEBUG_MIN_INFO, 1);
 		send_csv(data);
-	}
+        server.handleClient();
+
+    }
 
 	if (cfg::send2custom) {
 		String data_4_custom = data;
@@ -967,7 +1015,23 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		start_send = millis();
 		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
 		sum_send_time += millis() - start_send;
-	}
+        server.handleClient();
+
+    }
+
+	if (cfg::send2aqi) {
+		String data_4_custom = data;
+		data_4_custom.remove(0, 1);
+		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
+        String path = F("/update/");
+        path.concat(cfg::token_AQI);
+		start_send = millis();
+		sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
+		sum_send_time += millis() - start_send;
+        server.handleClient();
+
+    }
 
     return sum_send_time;
 }
@@ -1069,7 +1133,7 @@ void loop() {
 
 		server.handleClient();
 		yield();
-		server.stop();
+//		server.stop();
 		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
         if (cfg::pms_read) {
@@ -1081,6 +1145,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 		if (cfg::dht_read) {
 			data.concat(result_DHT);
 			if (cfg::send2dusti) {
@@ -1090,6 +1155,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 
 
 		if (cfg::ds18b20_read) {
@@ -1101,6 +1167,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 
 		if (cfg::gps_read) {
 			data.concat(result_GPS);
@@ -1111,6 +1178,7 @@ void loop() {
 				sum_send_time += millis() - start_send;
 			}
 		}
+        server.handleClient();
 
 
         //add results from new scheduler
@@ -1148,8 +1216,7 @@ void loop() {
 		//as for now we do not collect sending status, so we assume sending was successful
 		SimpleScheduler::afterSendData(true);
 
-		server.begin();
-		server.client().setNoDelay(true);
+//		server.client().setNoDelay(true);
 
 		checkForceRestart();
 
@@ -1160,13 +1227,12 @@ void loop() {
 		sending_time = (4 * sending_time + sum_send_time) / 5;
 		debug_out(F("Time for sending data (ms): "), DEBUG_MIN_INFO, 0);
 		debug_out(String(sending_time), DEBUG_MIN_INFO, 1);
+        server.handleClient();
 
 
 
-		// Resetting for next sampling
+        // Resetting for next sampling
 		last_data_string = data;
-		lowpulseoccupancyP1 = 0;
-		lowpulseoccupancyP2 = 0;
 		sample_count = 0;
 		last_micro = 0;
 		min_micro = 1000000000;

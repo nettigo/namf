@@ -28,9 +28,9 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_en_H
 #define LANG_DEF_en_H
 
-/* ./src/lang/intl_en.lang */ const char INTL_AB_HIER_NUR_ANDERN[] PROGMEM = "Advanced settings";
-/* ./src/lang/intl_en.lang */ const char INTL_ACTIVE_SENSORS_MAP[] PROGMEM = "Active sensors map(external link)";
 /* ./src/lang/intl_en.lang */ const char INTL_ALTITUDE[] PROGMEM = "Altitude";
+/* ./src/lang/intl_en.lang */ const char INTL_AQI_ECO_API[] PROGMEM = "API aqi.eco";
+/* ./src/lang/intl_en.lang */ const char INTL_AQI_TOKEN[] PROGMEM = "Sensor token from aqi.eco";
 /* ./src/lang/intl_en.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Auto update firmware, using channel";
 /* ./src/lang/intl_en.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Back to home page";
 /* ./src/lang/intl_en.lang */ const char INTL_BASICAUTH[] PROGMEM = "Authorization";
@@ -46,8 +46,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIG_CAN_NOT_BE_DELETED[] PROGMEM = "Configuration can not be deleted";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIG_DELETED[] PROGMEM = "Configuration is deleted";
 /* ./src/lang/intl_en.lang */ const char INTL_CONFIG_NOT_FOUND[] PROGMEM = "Configuration not found";
+/* ./src/lang/intl_en.lang */ const char INTL_CONFIG_SAVED[] PROGMEM = "Configuration saved.";
 /* ./src/lang/intl_en.lang */ const char INTL_CURRENT_DATA[] PROGMEM = "Current data";
 /* ./src/lang/intl_en.lang */ const char INTL_DATE[] PROGMEM = "Date";
+/* ./src/lang/intl_en.lang */ const char INTL_DEBUG[] PROGMEM = "Logging settings";
 /* ./src/lang/intl_en.lang */ const char INTL_DEBUG_LEVEL[] PROGMEM = "Debug&nbsp;Level";
 /* ./src/lang/intl_en.lang */ const char INTL_DEBUG_SETTING_TO[] PROGMEM = "Debug setting to";
 /* ./src/lang/intl_en.lang */ const char INTL_DELETE[] PROGMEM = "Delete";
@@ -63,6 +65,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA_INFO[] PROGMEM = "OTA enabled for 60 seconds.";
 /* ./src/lang/intl_en.lang */ const char INTL_ENABLE_OTA_REFUSE[] PROGMEM = "Enable authorization in config panel in order to allow code upload";
 /* ./src/lang/intl_en.lang */ const char INTL_ERROR[] PROGMEM = "only errors";
+/* ./src/lang/intl_en.lang */ const char INTL_FALBACK_WIFI[] PROGMEM = "Fallback WiFi";
 /* ./src/lang/intl_en.lang */ const char INTL_FIRMWARE[] PROGMEM = "Firmware version";
 /* ./src/lang/intl_en.lang */ const char INTL_FS_WIFI[] PROGMEM = "WiFi Sensor";
 /* ./src/lang/intl_en.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "WiFi Sensor in configuration mode";
@@ -103,6 +106,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_ERROR[] PROGMEM = "This is not proper IP";
 /* ./src/sensors/network_watchdog/ntw_wtd_en.lang */ const char INTL_NTW_WTD_HOST[] PROGMEM = "Address to ping (IP)";
 /* ./src/lang/intl_en.lang */ const char INTL_NUMBER_OF_MEASUREMENTS[] PROGMEM = "Number of measurements:";
+/* ./src/lang/intl_en.lang */ const char INTL_OTHER_APIS[] PROGMEM = "Other API";
 /* ./src/lang/intl_en.lang */ const char INTL_PARAMETER[] PROGMEM = "Parameter";
 /* ./src/lang/intl_en.lang */ const char INTL_PARTICLES_PER_LITER[] PROGMEM = "particles/liter";
 /* ./src/lang/intl_en.lang */ const char INTL_PARTICULATE_MATTER[] PROGMEM = "particulate matter";
@@ -127,7 +131,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sds011/sds011_en.lang */ const char INTL_SDS011_READTIME[] PROGMEM = "Measurement time (ms)";
 /* ./src/sensors/sds011/sds011_en.lang */ const char INTL_SDS011_WARMUP[] PROGMEM = "Warmup time before measurement (ms)";
 /* ./src/lang/intl_en.lang */ const char INTL_SEND_TO[] PROGMEM = "Send to {v}";
-/* ./src/lang/intl_en.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "Send data to own API";
+/* ./src/lang/intl_en.lang */ const char INTL_SEND_TO_OWN_API[] PROGMEM = "own API";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR[] PROGMEM = "Sensor";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSORS[] PROGMEM = "Sensors";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Sensor is rebooting.";
@@ -150,6 +154,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - high precision particle matter sensor";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_en.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Sensor status";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_ADVANCED[] PROGMEM = "Advanced";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_API[] PROGMEM = "API";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_BASIC[] PROGMEM = "Basic";
+/* ./src/lang/intl_en.lang */ const char INTL_TAB_SENSORS[] PROGMEM = "Sensors";
 /* ./src/lang/intl_en.lang */ const char INTL_TEMPERATURE[] PROGMEM = "temperature";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME[] PROGMEM = "Time";
 /* ./src/lang/intl_en.lang */ const char INTL_TIME_FROM_UPDATE[] PROGMEM = "Time from last update attempt";
@@ -159,6 +167,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_UPDATE_BETA[] PROGMEM = "beta (stability testing for new features)";
 /* ./src/lang/intl_en.lang */ const char INTL_UPDATE_STABLE[] PROGMEM = "stable (use if in doubt)";
 /* ./src/lang/intl_en.lang */ const char INTL_USER[] PROGMEM = "User";
+/* ./src/lang/intl_en.lang */ const char INTL_USE_HTTPS[] PROGMEM = "Use encrypted connection (HTTPS)";
 /* ./src/lang/intl_en.lang */ const char INTL_VALUE[] PROGMEM = "Value";
 /* ./src/lang/intl_en.lang */ const char INTL_WARNING[] PROGMEM = "warnings";
 /* ./src/lang/intl_en.lang */ const char INTL_WIFI_NETWORKS[] PROGMEM = "Loading wifi networks ...";

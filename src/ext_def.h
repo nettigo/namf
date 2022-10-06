@@ -4,19 +4,19 @@
 #define CURRENT_LANG INTL_LANG
 
 // Wifi config
-#define WLANSSID ""
-#define WLANPWD ""
+const char EMPTY_STRING[] PROGMEM = "";
 
 // BasicAuth config
-#define WWW_USERNAME "admin"
-#define WWW_PASSWORD "admin"
+const char WWW_USERNAME[] PROGMEM = "admin";
+const char WWW_PASSWORD[] PROGMEM = "admin";
 #define WWW_BASICAUTH_ENABLED 0
 
 // Sensor Wifi config (config mode)
-#define FS_SSID ""
-#define FS_PWD ""
+const char FS_SSID[] PROGMEM = "";
+const char FS_PWD[] PROGMEM =  "";
 
-// Wohin gehen die Daten?
+//Where send data
+#define SEND2AQI 0
 #define SEND2DUSTI 1
 #define SSL_DUSTI 0
 #define SEND2MADAVI 1
@@ -39,7 +39,8 @@ enum LoggerEntry
 	LoggerSensemap,
 	LoggerFSapp,
 	LoggerInflux,
-	LoggerCustom
+	LoggerCustom,
+	LoggerAQI
 };
 
 // IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
@@ -48,15 +49,14 @@ enum LoggerEntry
 const char HOST_CUSTOM[] PROGMEM = "192.168.234.1";
 const char URL_CUSTOM[] PROGMEM = "/data.php";
 #define PORT_CUSTOM 80
-#define USER_CUSTOM ""
-#define PWD_CUSTOM ""
+const char USER_CUSTOM[] PROGMEM = "";
+const char PWD_CUSTOM[] PROGMEM= "";
 
 // Definition eigene InfluxDB
 const char HOST_INFLUX[] PROGMEM = "influx.server";
 const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
-#define USER_INFLUX ""
-#define PWD_INFLUX ""
+
 
 // define pins for I2C
 #define I2C_PIN_SCL D4

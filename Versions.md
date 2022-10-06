@@ -1,3 +1,29 @@
+NAMF-2020-44rc5 ()
+- increase safe time between ending SDS011 measurement and sending to API 5 sec (was 2 sec)
+
+NAMF-2020-44rc4 (2022-09-08 rev ceabe601ee16457e752bf39c720f8697a1f116c7)
+- more descriptive message when saving config (sensors managed by new scheduler)
+- sensor order (config page) is updated - SDS, HECA & BME are first ones
+
+NAMF-2020-44rc3 (2022-07-24 rev 72832ed93b3e4898bef3b35c539f9280c66b3bec)
+- use 'nettigo.pl' as password for WiFi network in setup mode
+- make sure that when data was sent to APi SDS011 is put into sleep, not left running until next measurement
+
+NAMF-2020-44rc2 (2022-07-09 rev 292cf2049d3e6d2ee6dcb302556abe5f3fe1e333)
+- When change in old form was made display warning during saving config from new scheduler (they are in separate forms)
+- Fixed bug - BMP280 was sending data to APIs as BMP180
+- https://AQI.eco is now treated as separate API. Can be configured old way as third party API, or directly.
+- debug logs are stored in buffer - can be retrieved by WWW interface. Since there is a lot of messages during startup, there is no chance to get all of them stored before webserver is ready, so boot messages are always not complete. This feature is mostly for debug when sensor is up & running.
+- When saving config, even in verbose mode JSON string is displayed only on UART, not in web serial (passwords)
+
+NAMF-2020-44rc1 (2022-06-25 rev 375f766f48ec64f6901bebd11d77f11558dfea1f)
+- merged changes from alpha version 42a2:
+  - not allocating memory for unused variables
+  - fallback WiFi - secondary WiFi network to connect by NAM if no primary network. Useful when You have many sensors managed by single organization. You can provide secondary WiFi credentials to work with when NAM is in lab/service.
+- New config page layout, much more readable
+- **IMPORTANT** now sensor in config mode does not start with unencrypted network. Uses _nettigo123_ as password, SSID NAM-XXXXXX or other if set in config
+
+
 NAMF-2020-43 (2021-12-31 rev 5c2012c8d7d9f8358873ebb1478ff4dcd69c2c44)
 - based on 43rc1
 - sensors on stable software send diagnostic data each 12h not 24h

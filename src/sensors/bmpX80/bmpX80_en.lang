@@ -1,2 +1,2 @@
-INTL_BMPx80_DESC BMP180/280 humidity/temperature sensor
+INTL_BMPx80_DESC BMP180/280 pressure/temperature sensor
 INTL_BMPx80_INSIDE Sensor inside case (do not use temperature reading)

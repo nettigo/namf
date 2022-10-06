@@ -1,1 +1,2 @@
 INTL_BMPx80_DESC BMP180/280 hőmérséklet/nyomás érzékelő
+INTL_BMPx80_INSIDE Érzékelő a házon belül (ne használjon hőmérséklet-leolvasást)

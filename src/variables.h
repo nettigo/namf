@@ -8,9 +8,9 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-43"
+#define SOFTWARE_VERSION  "NAMF-2020-44rc5"
 // undefine SOFTWARE_BETA in production releases
-#define SOFTWARE_BETA  0
+#define SOFTWARE_BETA  1
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -38,18 +38,21 @@ extern SimpleScheduler::NAMFScheduler scheduler;
  * as they are part of the json format used to persist the data.  *
  ******************************************************************/
 namespace cfg {
-    extern char wlanssid[35];
-    extern char wlanpwd[65];
+    extern char *wlanssid;
+    extern char *wlanpwd;
+
+    //fallback SSID & pwd
+    extern char *fbssid;
+    extern char *fbpwd;
+
 
     extern char current_lang[3];
-    extern char www_username[65];
-    extern char www_password[65];
+    extern char *www_username;
+    extern char *www_password;
     extern bool www_basicauth_enabled;
 
-    extern char fs_ssid[33];
-    extern char fs_pwd[65];
-
-    extern char version_from_local_config[20];
+    extern char *fs_ssid;
+    extern char *fs_pwd;
 
     extern bool dht_read;
     extern bool sds_read;
@@ -64,6 +67,7 @@ namespace cfg {
     extern bool send2sensemap;
     extern bool send2fsapp;
     extern bool send2custom;
+    extern bool send2aqi;
     extern bool send2lora;
     extern bool send2influx;
     extern bool send2csv;
@@ -87,14 +91,17 @@ namespace cfg {
     extern char senseboxid[30];
 
     extern int port_influx;
-    extern char user_influx[65];
-    extern char pwd_influx[65];
+    extern char *user_influx;
+    extern char *pwd_influx;
 
     extern String host_custom;
     extern String url_custom;
     extern int port_custom;
-    extern char user_custom[65];
-    extern char pwd_custom[65];
+    extern char *user_custom;
+    extern char *pwd_custom;
+
+    extern String token_AQI;
+    extern String assign_token_AQI;
 
     extern String host_influx;
     extern String url_influx;
@@ -150,14 +157,6 @@ extern DallasTemperature ds18b20;
  *****************************************************************/
 extern TinyGPSPlus gps;
 
-extern boolean trigP1 ;
-extern boolean trigP2 ;
-extern unsigned long trigOnP1;
-extern unsigned long trigOnP2;
-
-extern unsigned long lowpulseoccupancyP1 ;
-extern unsigned long lowpulseoccupancyP2 ;
-
 extern bool send_now ;
 extern unsigned long starttime;
 extern unsigned long time_point_device_start_ms;
@@ -174,14 +173,6 @@ extern bool is_PMS_running ;
 
 extern unsigned long sending_time ;
 extern unsigned long last_update_attempt;
-
-extern int sds_pm10_sum ;
-extern int sds_pm25_sum ;
-extern int sds_val_count ;
-extern int sds_pm10_max ;
-extern int sds_pm10_min ;
-extern int sds_pm25_max ;
-extern int sds_pm25_min ;
 
 extern int pms_pm1_sum ;
 extern int pms_pm10_sum ;
@@ -249,4 +240,22 @@ extern const char data_first_part[] ;
 extern memory_stat_t memoryStatsMax;
 extern memory_stat_t memoryStatsMin;
 
+
+class LoggingSerial : public HardwareSerial {
+
+public:
+    LoggingSerial();
+    size_t write(uint8_t c) override;
+    size_t write(const uint8_t *buffer, size_t size) override;
+    String popLines();
+    void stopWebCopy(void);    //stop copying data to buffer available via network (passwords)
+    void resumeWebCopy(void);   // enable copying data
+
+private:
+    std::unique_ptr<circular_queue<uint8_t> > m_buffer;
+    bool skipBuffer;
+
+};
+
+extern class LoggingSerial Debug;
 #endif //AIRROHR_FIRMWARE_VARIABLES_H

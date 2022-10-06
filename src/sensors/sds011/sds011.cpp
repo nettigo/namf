@@ -385,7 +385,7 @@ namespace SDS011 {
 
 #define STARTUP_TIME  5000
 //how many ms before read time reading cycle should be fished
-#define SDS011_END_TIME 2000
+#define SDS011_END_TIME 5000
 
     //select proper state, depending on time left to
     unsigned long processState() {
@@ -513,6 +513,8 @@ namespace SDS011 {
     }
 
     void afterSend (bool status) {
+        //Make sure SDS011 sensor is OFF
+        SDS_cmd(PmSensorCmd::Stop);
         updateState(OFF);
     }
     void getStatusReport(String &res) {
@@ -589,13 +591,13 @@ namespace SDS011 {
         String ret = F("");
         String name;
         setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
-        ret.concat(form_input(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7));
+        ret.concat(formInputGrid(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7));
 
         setHTTPVarName(name, F("w"), SimpleScheduler::SDS011);
-        ret.concat(form_input(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7));
+        ret.concat(formInputGrid(name, FPSTR(INTL_SDS011_WARMUP), String(warmupTime), 7));
 
         setHTTPVarName(name, F("dbg"), SimpleScheduler::SDS011);
-        ret.concat(form_checkbox(name, FPSTR(INTL_SDS011_HWR), hardwareWatchdog, true));
+        ret.concat(formCheckboxGrid(name, FPSTR(INTL_SDS011_HWR), hardwareWatchdog));
 
         return ret;
     }
