@@ -1,3 +1,7 @@
+NAMF-2020-44 (2020-10-06 rev)
+- merged all changes from 44rc5
+- fixed subsystem names on /status page. After changing order of sensors on config page matching names was not sorted in /status page
+
 NAMF-2020-44rc5 ()
 - increase safe time between ending SDS011 measurement and sending to API 5 sec (was 2 sec)
 
