@@ -16,16 +16,21 @@ namespace HECA {
     unsigned long interval = 0;
     double rh_total, t_total;
     unsigned dataCount, dutyCycleCount, dutyCycleValT, dutyCycleValRH, dutyCycleTotal;
+    unsigned long humidityClear, humiditySet;
 
     //set defaults if no config file
     void setDefaults(void) {
         enabled = true;
         printOnLCD = true;
+        humidityClear = 60; //this is default humidity value when HECA turns off
+        humiditySet = 63; //this is default humidity value when HECA turns on
     }
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::HECA);
+        setVariableFromHTTP(String(F("s")), humiditySet, SimpleScheduler::HECA);
+        setVariableFromHTTP(String(F("c")), humidityClear, SimpleScheduler::HECA);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
@@ -37,12 +42,20 @@ namespace HECA {
         String ret = F("");
         ret.concat(Var2JsonInt(F("e"), enabled));
         if (printOnLCD) ret.concat(Var2JsonInt(F("d"), printOnLCD));
+        addJsonIfNotDefault(ret, F("s"), 63, humiditySet);
+        addJsonIfNotDefault(ret, F("c"), 60, humidityClear);
         return ret;
     };
 
     void readConfigJSON( JsonObject &json){
         enabled = json.get<bool>(F("e"));
         printOnLCD = json.get<bool>(F("d"));
+        if (json.containsKey(F("s"))) {
+            humiditySet = json.get<unsigned long>(F("s"));
+        }
+        if (json.containsKey(F("c"))) {
+            humidityClear = json.get<unsigned long>(F("c"));
+        }
         if (enabled && !scheduler.isRegistered(SimpleScheduler::HECA)) {
             scheduler.registerSensor(SimpleScheduler::HECA, HECA::process, FPSTR(HECA::KEY));
             scheduler.init(SimpleScheduler::HECA);
@@ -188,6 +201,20 @@ namespace HECA {
         }
     }
 
+    String getConfigHTML(void) {
+        String ret = F("");
+        String name;
+
+        setHTTPVarName(name, F("s"), SimpleScheduler::HECA);
+        ret.concat(formInputGrid(name, FPSTR(INTL_HECA_SET_RH), String(humiditySet), 3));
+
+        setHTTPVarName(name, F("c"), SimpleScheduler::HECA);
+        ret.concat(formInputGrid(name, FPSTR(INTL_HECA_CLEAR_RH), String(humidityClear), 3));
+
+        return ret;
+
+    }
+
     void resultsAsHTML(String &page_content) {
         if (!enabled) return;
         page_content.concat(FPSTR(EMPTY_ROW));
@@ -267,7 +294,7 @@ namespace HECA {
             return false;
         } else {
             // temperature set, temperature clear, humidity set, humidity clear
-            if (heca.writeAlertHigh(120, 119, 63, 60) != SHT3XD_NO_ERROR) {
+            if (heca.writeAlertHigh(120, 119, humiditySet, humidityClear) != SHT3XD_NO_ERROR) {
                 debug_out(F(" [HECA ERROR] Cannot set Alert HIGH"), DEBUG_ERROR, 1);
             }
             if (heca.writeAlertLow(5, -5, 0, 1) != SHT3XD_NO_ERROR) {

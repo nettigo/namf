@@ -28,6 +28,7 @@ namespace HECA {
     unsigned long process(SimpleScheduler::LoopEventType e);
     void afterSend(bool);
     void getResults(String &);
+    String getConfigHTML(void);
     void resultsAsHTML(String &);
     void getStatusReport(String &);
     bool getDisplaySetting();
