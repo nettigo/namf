@@ -47,7 +47,8 @@ void parseHTTP(const __FlashStringHelper * , byte &value );
 void setBoolVariableFromHTTP(String const name, bool &v, byte i);
 void setVariableFromHTTP(String const name, unsigned long &v, byte i);
 void setHTTPVarName(String &varName, String const name, byte id);
-
+void advancedSectionStart( String &html, SimpleScheduler::LoopEntryType sensor);
+void advancedSectionEnd( String &html, SimpleScheduler::LoopEntryType sensor);
 unsigned long time2Measure(void);
 String formSectionHeader(const String& name, byte bold = 0);
 String formSectionHeader(String &page_content, const String& name, byte bold = 0);

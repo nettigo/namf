@@ -584,6 +584,16 @@ void setHTTPVarName(String &varName, String const name, byte id) {
 
 }
 
+
+void advancedSectionStart( String &html, SimpleScheduler::LoopEntryType sensor){
+    html.concat(F("<input type='button' value='Adv' class='asb'/><div class='advSect' id='as-"));
+    html.concat(String(sensor));
+    html.concat(F("'>"));
+}
+
+void advancedSectionEnd( String &html, SimpleScheduler::LoopEntryType sensor){
+    html.concat(F("</div>"));
+}
 /* get read and set bool variables for new scheduler. Works with checkbox
  named var_name-SENSOR_ID (var name it is enable or display currently
  Getting enable val from client is code done by each sensor, to make it easier this
