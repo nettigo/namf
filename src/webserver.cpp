@@ -123,8 +123,8 @@ void webserver_images() {
  *
  * -Provide BasicAuth for all page contexts except /values and images
  *****************************************************************/
-bool webserver_request_auth() {
-    debug_out(F("validate request auth..."), DEBUG_MAX_INFO, 1);
+bool webserver_request_auth(bool dbg_msg) {
+    if (dbg_msg) debug_out(F("validate request auth..."), DEBUG_MAX_INFO, 1);
     if (cfg::www_basicauth_enabled && ! wificonfig_loop) {
         if (!server.authenticate(cfg::www_username, cfg::www_password)) {
             server.requestAuthentication();
@@ -1271,7 +1271,7 @@ void webserver_reset_time(){
 
 
 static void webserver_serial() {
-    if (!webserver_request_auth()) { return; }
+    if (!webserver_request_auth(false)) { return; }
 
     String payload(Debug.popLines());
 

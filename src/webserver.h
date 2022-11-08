@@ -37,7 +37,7 @@ void webserver_not_found();
  *
  * -Provide BasicAuth for all page contexts except /values and images
  *****************************************************************/
-bool webserver_request_auth();
+bool webserver_request_auth(bool dbg_msg = true);
 
 /*****************************************************************
  * Webserver root: show all options                              *
