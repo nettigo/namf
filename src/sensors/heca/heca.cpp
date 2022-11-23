@@ -204,13 +204,14 @@ namespace HECA {
     String getConfigHTML(void) {
         String ret = F("");
         String name;
+        advancedSectionStart(ret, SimpleScheduler::HECA);
 
         setHTTPVarName(name, F("s"), SimpleScheduler::HECA);
         ret.concat(formInputGrid(name, FPSTR(INTL_HECA_SET_RH), String(humiditySet), 3));
 
         setHTTPVarName(name, F("c"), SimpleScheduler::HECA);
         ret.concat(formInputGrid(name, FPSTR(INTL_HECA_CLEAR_RH), String(humidityClear), 3));
-
+        advancedSectionEnd(ret, SimpleScheduler::HECA);
         return ret;
 
     }

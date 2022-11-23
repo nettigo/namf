@@ -9,6 +9,8 @@ extern const char UNIT_PERCENT[] PROGMEM = "%";
 extern const char UNIT_CELCIUS[] PROGMEM = "°C";
 extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
 
+String classNameWrapper;
+
 
 LoggingSerial Debug;
 
@@ -586,12 +588,16 @@ void setHTTPVarName(String &varName, String const name, byte id) {
 
 
 void advancedSectionStart( String &html, SimpleScheduler::LoopEntryType sensor){
+    classNameWrapper = F(" class='adv adv-");
+    classNameWrapper.concat(String(sensor));
+    classNameWrapper.concat(F("'"));
     html.concat(F("<input type='button' value='Adv' class='asb'/><div class='advSect' id='as-"));
     html.concat(String(sensor));
     html.concat(F("'>"));
 }
 
 void advancedSectionEnd( String &html, SimpleScheduler::LoopEntryType sensor){
+    classNameWrapper.clear();
     html.concat(F("</div>"));
 }
 /* get read and set bool variables for new scheduler. Works with checkbox
