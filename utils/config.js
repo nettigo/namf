@@ -1,4 +1,3 @@
-
 function tab(evt, tabName) {
     var i, tabcontent, tablinks;
 
@@ -17,3 +16,11 @@ function tab(evt, tabName) {
     evt.currentTarget.className += " active";
 }
 document.getElementsByClassName('tablinks')[0].click()
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM loaded")
+    for (let el of document.querySelectorAll('.advSect')) el.classList.add('hidden');
+    for (let el of document.querySelectorAll('.asb')) el.addEventListener('click', function(e){
+        console.log("Click:"+'as-'+e.target.dataset.code)
+        document.getElementById('as-'+e.target.dataset.code).classList.toggle('hidden')
+    });
+})
