@@ -253,14 +253,24 @@ void webserver_config_json() {
 //Webserver - force update with custom URL
 void webserver_config_force_update() {
 
-    if (!webserver_request_auth())
-    { return; }
+    if (!webserver_request_auth()) { return; }
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
     if (server.method() == HTTP_POST) {
-        if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
-            cfg::auto_update = true;
-            updateFW(server.arg("host"), server.arg("port"), server.arg("path"));
+        if (server.hasArg("ver") && server.hasArg("lg") ) {
+            page_content.concat(make_footer());
             server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+            delay(200);
+            cfg::auto_update = false;
+            writeConfig();
+            cfg::auto_update = true;
+            String p = F("/NAMF/data/2020-");
+            p.concat(server.arg("ver"));
+            p.concat(F("/latest_"));
+            p.concat(server.arg("lg"));
+            p.concat(F(".bin"));
+            debug_out(F("Downgrade attempt to: "),DEBUG_ERROR, false);
+            debug_out(p, DEBUG_ERROR);
+            updateFW(F("fw.nettigo.pl"), F("80"), p);
             delay(5000);
             ESP.restart();
         }
@@ -270,20 +280,14 @@ void webserver_config_force_update() {
 
     }else {
 
-        page_content += F("<h2>Force update</h2>");
-        page_content += F("<form method='POST' action='/forceUpdate' style='width:100%;'>");
-        page_content += F("HOST:<input name=\"host\" value=");
-        page_content += UPDATE_HOST;
-        page_content += ("><br/>");
-        page_content += F("PORT:<input name=\"port\" value=");
-        page_content += UPDATE_PORT;
-        page_content += ("><br/>");
-        page_content += F("PATH:<input name=\"path\" value=");
-        page_content += UPDATE_URL;
-        page_content += ("><br/>");
-        page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
-        page_content += F("</form>");
-        page_content += make_footer();
+        page_content.concat(F("<h2>Force update</h2>"));
+        page_content.concat(F("<form method='POST' action='/forceUpdate' style='width:100%;'>"));
+        page_content.concat(F("Select version: <select name='ver'><option value='43'>2020-43</option><option value='42'>2020-42</option></select><br/>"));
+        page_content.concat(F("Select language: <select name='lg'><option value='en'>English</option><option value='pl'>Polish</option></select><br/>"));
+        page_content.concat(F("<br/>"));
+        page_content.concat(form_submit(FPSTR(INTL_SAVE_AND_RESTART)));
+        page_content.concat(F("</form>"));
+        page_content.concat(make_footer());
 
 
     }
