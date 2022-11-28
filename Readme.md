@@ -28,7 +28,7 @@ To build this project You need Platformio installed with python 3.
   * /removeConfig - remove configuration files
   * /config.json - current configure file in JSON format
   * /configSave.json - form for pasting configuration file
-  * /forceUpdate - form for changing update server or link to other binary file
+  * /rollback - rollback firmware to some older version
   * /wifi - list of wifi networks (active only in AP mode)
 * /stack_dump - show stack dump from last exception with timestamp, FW version, language and MD5 sum of image  
 * /reset - sensor reboot

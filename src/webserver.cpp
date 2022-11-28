@@ -281,7 +281,11 @@ void webserver_config_force_update() {
     }else {
 
         page_content.concat(F("<h2>Force update</h2>"));
-        page_content.concat(F("<form method='POST' action='/forceUpdate' style='width:100%;'>"));
+        page_content.concat(
+                F("<p>It will disable autoupdate, and try to reinstall older NAMF version. To return to newest version "
+                  "just re-eneable autoupdate in config.</p>"
+                  "<form method='POST' action='/rollback' style='width:100%;'>")
+                  );
         page_content.concat(F("Select version: <select name='ver'><option value='43'>2020-43</option><option value='42'>2020-42</option></select><br/>"));
         page_content.concat(F("Select language: <select name='lg'><option value='en'>English</option><option value='pl'>Polish</option></select><br/>"));
         page_content.concat(F("<br/>"));
@@ -1292,7 +1296,7 @@ void setup_webserver() {
     server.on(F("/simple_config"), webserver_simple_config);
     server.on(F("/config.json"), HTTP_GET, webserver_config_json);
     server.on(F("/configSave.json"), webserver_config_json_save);
-    server.on(F("/forceUpdate"), webserver_config_force_update);
+    server.on(F("/rollback"), webserver_config_force_update);
     server.on(F("/wifi"), webserver_wifi);
     server.on(F("/values"), webserver_values);
     server.on(F("/debug"), webserver_debug_level);
