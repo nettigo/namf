@@ -52,6 +52,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_pl.lang */ const char INTL_DEBUG[] PROGMEM = "Ustawienia logowania";
 /* ./src/lang/intl_pl.lang */ const char INTL_DEBUG_LEVEL[] PROGMEM = "Poziom&nbsp;debugowania";
 /* ./src/lang/intl_pl.lang */ const char INTL_DEBUG_SETTING_TO[] PROGMEM = "Ustawiono poziom debugowania na";
+/* ./src/lang/intl_pl.lang */ const char INTL_DEBUG_STATUS[] PROGMEM = "Obecny poziom logowania:";
 /* ./src/lang/intl_pl.lang */ const char INTL_DELETE[] PROGMEM = "Usuń";
 /* ./src/lang/intl_pl.lang */ const char INTL_DELETE_CONFIG[] PROGMEM = "Usuń zapisaną konfigurację";
 /* ./src/lang/intl_pl.lang */ const char INTL_DHT22[] PROGMEM = "DHT22 ({t}, {h})";

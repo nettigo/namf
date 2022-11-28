@@ -1,4 +1,5 @@
 INTL_CONFIG_SAVED Configuration saved.
+INTL_DEBUG_STATUS Current logging level:
 INTL_DEBUG Logging settings
 INTL_AQI_TOKEN Sensor token from aqi.eco
 INTL_AQI_ECO_API API aqi.eco

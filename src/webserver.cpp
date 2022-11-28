@@ -976,7 +976,10 @@ void webserver_values() {
 /*****************************************************************
  * Webserver set debug level                                     *
  *****************************************************************/
+const char *DEBUG_NAMES[] PROGMEM = {INTL_NONE, INTL_ERROR, INTL_WARNING, INTL_MIN_INFO, INTL_MED_INFO, INTL_MAX_INFO};
+
 void webserver_debug_level() {
+
     if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_DEBUG_LEVEL));
@@ -995,21 +998,23 @@ void webserver_debug_level() {
     page_content.replace(F("{med_info}"), FPSTR(INTL_MED_INFO));
     page_content.replace(F("{max_info}"), FPSTR(INTL_MAX_INFO));
 
+
     if (server.hasArg("lvl")) {
         const int lvl = server.arg("lvl").toInt();
         if (lvl >= 0 && lvl <= 5) {
             cfg::debug = lvl;
-            page_content += F("<h3>");
+            page_content.concat(F("<h3>"));
             page_content += FPSTR(INTL_DEBUG_SETTING_TO);
-            page_content += F(" ");
-
-            static constexpr std::array<const char *, 6> lvlText PROGMEM = {
-                    INTL_NONE, INTL_ERROR, INTL_WARNING, INTL_MIN_INFO, INTL_MED_INFO, INTL_MAX_INFO
-            };
-
-            page_content += FPSTR(lvlText[lvl]);
+            page_content.concat(F(" "));
+            page_content += FPSTR(DEBUG_NAMES[lvl]);
             page_content += F(".</h3>");
         }
+    } else {
+        page_content.concat(F("<h3>"));
+        page_content.concat(FPSTR(INTL_DEBUG_STATUS));
+        page_content.concat(F(" "));
+        page_content.concat(FPSTR(DEBUG_NAMES[cfg::debug]));
+        page_content.concat(F(".</h3>"));
     }
     page_content += make_footer();
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);

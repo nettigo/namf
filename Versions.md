@@ -2,6 +2,7 @@ NAMF-2020-45rc1 ()
 - some CSS/JS for advanced configuration options for sensors (to be hidden by default)
 - /rollback method allow to downgrade sensor
 - report HTTP code in log when sending data to API fails
+- display info what is current logging level
 
 NAMF-2020-44 (2020-10-06 rev b36d65f7acda9739dd43e5990c161eb55baa0d58)
 - merged all changes from 44rc5

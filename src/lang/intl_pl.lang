@@ -1,4 +1,5 @@
 INTL_CONFIG_SAVED Konfiguracja zapisana.
+INTL_DEBUG_STATUS Obecny poziom logowania:
 INTL_DEBUG Ustawienia logowania
 INTL_AQI_TOKEN Token sensora z aqi.eco
 INTL_AQI_ECO_API API aqi.eco
