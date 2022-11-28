@@ -1,4 +1,4 @@
-NAMF-2020-45rc1 ()
+NAMF-2020-45rc1 (2022-11-28 rev 4ec6023c1419f40825da12f8118685a8f33f8ab6)
 - some CSS/JS for advanced configuration options for sensors (to be hidden by default)
 - /rollback method allow to downgrade sensor
 - report HTTP code in log when sending data to API fails
