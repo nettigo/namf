@@ -422,78 +422,76 @@ void parse_config_request(String &page_content) {
     readFloatParam(outputPower);
     readIntParam(phyMode);
 
-    if (!wificonfig_loop) {
-        readCharParam(current_lang);
+    readCharParam(current_lang);
 
-        if (server.hasArg(F("www_username"))){
-            stringToChar(&www_username,server.arg(F("www_username")));
-        }
-        readPwdParam(&www_password,F("www_password"));
+    if (server.hasArg(F("www_username"))){
+        stringToChar(&www_username,server.arg(F("www_username")));
+    }
+    readPwdParam(&www_password,F("www_password"));
 
 //            readPasswdParam(www_password);
-        readBoolParam(www_basicauth_enabled);
-        if (server.hasArg(F("fs_ssid"))){
-            stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
-        }
-        if (server.hasArg(F("fs_pwd")) &&
-            ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
-            readPwdParam(&fs_pwd,F("fs_pwd"));
-        }
-        readBoolParam(send2dusti);
-        readBoolParam(ssl_dusti);
-        readBoolParam(send2madavi);
-        readBoolParam(ssl_madavi);
-        readBoolParam(dht_read);
-        readBoolParam(sds_read);
-        readBoolParam(pms_read);
-        readBoolParam(bmp280_read);
-        readBoolParam(bme280_read);
-        readBoolParam(heca_read);
-        readBoolParam(ds18b20_read);
-        readBoolParam(gps_read);
-
-        readIntParam(debug);
-        readTimeParam(sending_intervall_ms);
-        readTimeParam(time_for_wifi_config);
-
-        readBoolParam(send2csv);
-
-        readBoolParam(send2fsapp);
-
-        readBoolParam(send2sensemap);
-        readCharParam(senseboxid);
-
-        readBoolParam(send2custom);
-        parseHTTP(F("host_custom"), host_custom);
-        parseHTTP(F("url_custom"), url_custom);
-
-        readIntParam(port_custom);
-        readCharParam(user_custom);
-        readPasswdParam(pwd_custom);
-        if (server.hasArg(F("user_custom"))){
-            stringToChar(&user_custom,server.arg(F("user_custom")));
-        }
-        if (server.hasArg(F("pwd_custom"))) {
-            readPwdParam(&pwd_custom,F("pwd_custom"));
-        }
-        readBoolParam(send2aqi);
-        parseHTTP(F("token_AQI"), token_AQI);
-
-        readBoolParam(send2influx);
-
-        parseHTTP(F("host_influx"), host_influx);
-        parseHTTP(F("url_influx"), url_influx);
-
-        readIntParam(port_influx);
-
-        if (server.hasArg(F("user_influx"))){
-            stringToChar(&user_influx,server.arg(F("user_influx")));
-        }
-        if (server.hasArg(F("pwd_custom"))) {
-            readPwdParam(&pwd_custom,F("pwd_custom"));
-        }
-
+    readBoolParam(www_basicauth_enabled);
+    if (server.hasArg(F("fs_ssid"))){
+        stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
     }
+    if (server.hasArg(F("fs_pwd")) &&
+        ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
+        readPwdParam(&fs_pwd,F("fs_pwd"));
+    }
+    readBoolParam(send2dusti);
+    readBoolParam(ssl_dusti);
+    readBoolParam(send2madavi);
+    readBoolParam(ssl_madavi);
+    readBoolParam(dht_read);
+    readBoolParam(sds_read);
+    readBoolParam(pms_read);
+    readBoolParam(bmp280_read);
+    readBoolParam(bme280_read);
+    readBoolParam(heca_read);
+    readBoolParam(ds18b20_read);
+    readBoolParam(gps_read);
+
+    readIntParam(debug);
+    readTimeParam(sending_intervall_ms);
+    readTimeParam(time_for_wifi_config);
+
+    readBoolParam(send2csv);
+
+    readBoolParam(send2fsapp);
+
+    readBoolParam(send2sensemap);
+    readCharParam(senseboxid);
+
+    readBoolParam(send2custom);
+    parseHTTP(F("host_custom"), host_custom);
+    parseHTTP(F("url_custom"), url_custom);
+
+    readIntParam(port_custom);
+    readCharParam(user_custom);
+    readPasswdParam(pwd_custom);
+    if (server.hasArg(F("user_custom"))){
+        stringToChar(&user_custom,server.arg(F("user_custom")));
+    }
+    if (server.hasArg(F("pwd_custom"))) {
+        readPwdParam(&pwd_custom,F("pwd_custom"));
+    }
+    readBoolParam(send2aqi);
+    parseHTTP(F("token_AQI"), token_AQI);
+
+    readBoolParam(send2influx);
+
+    parseHTTP(F("host_influx"), host_influx);
+    parseHTTP(F("url_influx"), url_influx);
+
+    readIntParam(port_influx);
+
+    if (server.hasArg(F("user_influx"))){
+        stringToChar(&user_influx,server.arg(F("user_influx")));
+    }
+    if (server.hasArg(F("pwd_custom"))) {
+        readPwdParam(&pwd_custom,F("pwd_custom"));
+    }
+
 
     readBoolParam(auto_update);
     parseHTTP(F("channel"), update_channel);
