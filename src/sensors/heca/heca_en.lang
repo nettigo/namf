@@ -1,2 +1,4 @@
 INTL_HECA_DESC HECA (SHT30) (temperature, humidity), keeps RH under 70%
 INTL_HECA_DC Duty cycle
+INTL_HECA_SET_RH Heating enable RH level
+INTL_HECA_CLEAR_RH Heating stop RH level

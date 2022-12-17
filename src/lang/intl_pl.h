@@ -28,6 +28,8 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_pl_H
 #define LANG_DEF_pl_H
 
+/* ./src/lang/intl_pl.lang */ const char INTL_ADVANCED_BUTTON[] PROGMEM = "Pokaż/ukryj zaawansowane opcje";
+/* ./src/lang/intl_pl.lang */ const char INTL_ADVANCED_DISCL[] PROGMEM = "Zmiany w tej sekcji mogą spowodować, że dany sensor może nie działać poprawnie. Edytuj te ustawienia tylko gdy dobrze wiesz co robisz.";
 /* ./src/lang/intl_pl.lang */ const char INTL_ALTITUDE[] PROGMEM = "Wysokość";
 /* ./src/lang/intl_pl.lang */ const char INTL_AQI_ECO_API[] PROGMEM = "API aqi.eco";
 /* ./src/lang/intl_pl.lang */ const char INTL_AQI_TOKEN[] PROGMEM = "Token sensora z aqi.eco";

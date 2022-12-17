@@ -587,11 +587,15 @@ void setHTTPVarName(String &varName, String const name, byte id) {
 
 void advancedSectionStart( String &html, SimpleScheduler::LoopEntryType sensor){
 
-    html.concat(F("</div><div class='gc'><div class='row'><input type='button' value='Adv' data-code="));
+    html.concat(F("</div><div class='gc'><div class='row'><input type='button' value='"));
+    html.concat(FPSTR(INTL_ADVANCED_BUTTON));
+    html.concat("' data-code=");
     html.concat(String(sensor));
     html.concat(F(" class='asb'/></div></div><div class='advSect' id='as-"));
     html.concat(String(sensor));
-    html.concat(F("'><div class='gc'>"));
+    html.concat(F("'><div class='gc'><div class='row'><p>"));
+    html.concat(FPSTR(INTL_ADVANCED_DISCL));
+    html.concat(F("</p></div>\n"));
 }
 
 void advancedSectionEnd( String &html, SimpleScheduler::LoopEntryType sensor){

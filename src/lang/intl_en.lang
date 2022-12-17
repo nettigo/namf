@@ -1,3 +1,5 @@
+INTL_ADVANCED_BUTTON Advanced options show/hide
+INTL_ADVANCED_DISCL Changes in settings in this section can result in sensor not working properly. Make sure You know what You are changing here or leave defaults.
 INTL_CONFIG_SAVED Configuration saved.
 INTL_DEBUG_STATUS Current logging level:
 INTL_DEBUG Logging settings
