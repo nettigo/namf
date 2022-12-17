@@ -235,6 +235,7 @@ namespace MHZ14A {
         if (result) {
             *temp = data[2] - 40;
             *co2 = (data[0] << 8) + data[1];
+            debug_out(F("Response from CO2 sensor"), DEBUG_MED_INFO);
 #if 0
             char raw[32];
             sprintf(raw, "RAW: %02X %02X %02X %02X %02X %02X", data[0], data[1], data[2], data[3],
@@ -244,6 +245,8 @@ namespace MHZ14A {
             Serial.print(F(" "));
             Serial.println(*co2);
 #endif
+        } else {
+            debug_out(F("Timout waiting for CO2 sensor"),DEBUG_MED_INFO);
         }
         return result;
     }
