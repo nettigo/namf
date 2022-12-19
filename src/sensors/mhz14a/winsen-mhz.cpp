@@ -273,14 +273,15 @@ namespace MHZ14A {
 //        Serial.println(samplesCount);
 //        Serial.println(millis() - lastRead);
 //        Serial.println(interval);
-        if (samplesCount<WINSEN_AVG_SAMPLE && millis() - lastRead > interval)
+        if (samplesCount < WINSEN_AVG_SAMPLE && millis() - lastRead > interval) {
+            lastRead = millis();
             if (read_temp_co2(serial, &co2, &temp)) {
 //            debug_out(String("read Winsen"), DEBUG_MIN_INFO, true);
-                lastRead = millis();
                 samples[samplesCount++] = co2;
                 last_value_WINSEN_CO2 = co2;
 
             } //else debug_out(String("**** NO read Winsen"), DEBUG_MIN_INFO, true);
+        }
     }
 
     //reset counter after sending
@@ -299,8 +300,7 @@ namespace MHZ14A {
 
     String sensorMHZ() {
         String s;
-        if (!samples || samplesCount == 0)
-        return s;
+        if (samples == nullptr || samplesCount == 0) return s;
         if (currentReading() > 0) {
             s += Value2Json(F("conc_co2_ppm"), String(currentReading()));
         }
