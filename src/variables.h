@@ -79,6 +79,7 @@ namespace cfg {
     extern bool has_lcd2004_27;
     extern bool has_lcd2004_3f;
     extern bool show_wifi_info;
+    extern bool sh_dev_inf;
     extern bool has_ledbar_32;
     extern float outputPower;
     extern int phyMode; 

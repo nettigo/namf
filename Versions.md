@@ -2,6 +2,7 @@ NAMF-2020-45rc3 ()
 - removed -ggdb3 from build options
 - fixes for JS/CSS to show/hide advanced options
 - SDS011 uses advanced options CSS
+- Displaying device info on LCD can be disabled
 
 NAMF-2020-45rc1 (2022-11-28 rev 4ec6023c1419f40825da12f8118685a8f33f8ab6)
 - some CSS/JS for advanced configuration options for sensors (to be hidden by default)

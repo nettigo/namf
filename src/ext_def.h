@@ -150,6 +150,9 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 // show wifi info on LCD display
 #define SHOW_WIFI_INFO 1
 
+// show device info on LCD display
+#define SHOW_DEVICE_INFO 1
+
 //default TX trasnmit power
 #define TX_OUTPUT_POWER 20.5
 

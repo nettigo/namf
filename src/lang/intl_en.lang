@@ -57,6 +57,7 @@ INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
 INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
 INTL_LEDBAR_32 RGB LED BAR (I2C: 0x32)
 INTL_SHOW_WIFI_INFO Display WiFi connection info on LCD
+INTL_SHOW_DEVICE_INFO Display device info on LCD
 INTL_DEBUG_LEVEL Debug&nbsp;Level
 INTL_ENABLE_OTA Enable OTA
 INTL_ENABLE_OTA_REFUSE Enable authorization in config panel in order to allow code upload

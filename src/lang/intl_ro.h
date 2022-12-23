@@ -133,6 +133,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_ro.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Senzorul se restartează.";
 /* ./src/lang/intl_ro.lang */ const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Senzorul este în curs de repornire. Așteptați câteva secunde și faceți clic pe butonul de mai jos";
 /* ./src/lang/intl_ro.lang */ const char INTL_SERVER[] PROGMEM = "Server";
+/* ./src/lang/intl_ro.lang */ const char INTL_SHOW_DEVICE_INFO[] PROGMEM = "Afișează informațiile despre dispozitiv pe LCD";
 /* ./src/lang/intl_ro.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Afișarea informațiilor despre conexiunea WiFi pe ecranul LCD";
 /* ./src/sensors/sht3x/sht3x_ro.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - senzor de temperatură și umiditate";
 /* ./src/sensors/sht3x/sht3x_ro.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Umiditate și temperatură";

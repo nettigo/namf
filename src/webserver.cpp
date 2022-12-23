@@ -518,6 +518,7 @@ void parse_config_request(String &page_content) {
         }
     }
     readBoolParam(show_wifi_info);
+    readBoolParam(sh_dev_inf);
     readBoolParam(has_ledbar_32);
 
 #undef readCharParam
@@ -613,6 +614,7 @@ void webserver_config(){
         page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
         page_content.concat(F("</select></div>"));
         page_content.concat(formCheckboxGrid("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
+        page_content.concat(formCheckboxGrid("sh_dev_inf", FPSTR(INTL_SHOW_DEVICE_INFO), sh_dev_inf));
 
 
         webserverPartialSend(page_content);
