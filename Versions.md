@@ -1,3 +1,6 @@
+NAMF-2020-45 (2023-01-07 rev)
+- based on NAMF-2020-45rc3
+
 NAMF-2020-45rc3 (2022-12-23 rev d026921c25dd8f46299e4bfe023970679e988148)
 - removed -ggdb3 from build options
 - fixes for JS/CSS to show/hide advanced options
