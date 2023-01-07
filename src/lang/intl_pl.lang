@@ -1,4 +1,7 @@
+INTL_ADVANCED_BUTTON Pokaż/ukryj zaawansowane opcje
+INTL_ADVANCED_DISCL Zmiany w tej sekcji mogą spowodować, że dany sensor może nie działać poprawnie. Edytuj te ustawienia tylko gdy dobrze wiesz co robisz.
 INTL_CONFIG_SAVED Konfiguracja zapisana.
+INTL_DEBUG_STATUS Obecny poziom logowania:
 INTL_DEBUG Ustawienia logowania
 INTL_AQI_TOKEN Token sensora z aqi.eco
 INTL_AQI_ECO_API API aqi.eco
@@ -54,6 +57,7 @@ INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
 INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
 INTL_LEDBAR_32 Linijka diodowa RGB (I2C: 0x32)
 INTL_SHOW_WIFI_INFO Pokaż status WiFi na LCD
+INTL_SHOW_DEVICE_INFO Pokaż status urządzenia na LCD
 INTL_DEBUG_LEVEL Poziom&nbsp;debugowania
 INTL_MEASUREMENT_INTERVAL Czas między pomiarami (sek.)
 INTL_DURATION_ROUTER_MODE Czas trwania w trybie routera (sek.)

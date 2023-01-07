@@ -76,9 +76,10 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         result = http->POST(data);
 
         if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
-            debug_out(F("Succeeded - "), DEBUG_MIN_INFO, 1);
+            debug_out(F("Succeeded - "), DEBUG_MIN_INFO);
         } else {
-            debug_out(F("Not succeeded "), DEBUG_MIN_INFO, 1);
+            debug_out(F("Not succeeded. HTTP status code: "), DEBUG_MIN_INFO, false);
+            debug_out(String(result), DEBUG_MIN_INFO);
         }
         debug_out(F("Request result: "), DEBUG_MED_INFO, 0);
         debug_out(String(result), DEBUG_MED_INFO, 1);

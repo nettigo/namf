@@ -590,6 +590,7 @@ namespace SDS011 {
     String getConfigHTML(void) {
         String ret = F("");
         String name;
+        advancedSectionStart(ret, SimpleScheduler::SDS011);
         setHTTPVarName(name, F("r"), SimpleScheduler::SDS011);
         ret.concat(formInputGrid(name, FPSTR(INTL_SDS011_READTIME), String(readTime), 7));
 
@@ -598,7 +599,7 @@ namespace SDS011 {
 
         setHTTPVarName(name, F("dbg"), SimpleScheduler::SDS011);
         ret.concat(formCheckboxGrid(name, FPSTR(INTL_SDS011_HWR), hardwareWatchdog));
-
+        advancedSectionEnd(ret, SimpleScheduler::SDS011);
         return ret;
     }
 

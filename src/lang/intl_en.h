@@ -28,6 +28,8 @@ Files with .lang extension are searched in following directories and it's subdir
 #ifndef LANG_DEF_en_H
 #define LANG_DEF_en_H
 
+/* ./src/lang/intl_en.lang */ const char INTL_ADVANCED_BUTTON[] PROGMEM = "Advanced options show/hide";
+/* ./src/lang/intl_en.lang */ const char INTL_ADVANCED_DISCL[] PROGMEM = "Changes in settings in this section can result in sensor not working properly. Make sure You know what You are changing here or leave defaults.";
 /* ./src/lang/intl_en.lang */ const char INTL_ALTITUDE[] PROGMEM = "Altitude";
 /* ./src/lang/intl_en.lang */ const char INTL_AQI_ECO_API[] PROGMEM = "API aqi.eco";
 /* ./src/lang/intl_en.lang */ const char INTL_AQI_TOKEN[] PROGMEM = "Sensor token from aqi.eco";
@@ -52,6 +54,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_DEBUG[] PROGMEM = "Logging settings";
 /* ./src/lang/intl_en.lang */ const char INTL_DEBUG_LEVEL[] PROGMEM = "Debug&nbsp;Level";
 /* ./src/lang/intl_en.lang */ const char INTL_DEBUG_SETTING_TO[] PROGMEM = "Debug setting to";
+/* ./src/lang/intl_en.lang */ const char INTL_DEBUG_STATUS[] PROGMEM = "Current logging level:";
 /* ./src/lang/intl_en.lang */ const char INTL_DELETE[] PROGMEM = "Delete";
 /* ./src/lang/intl_en.lang */ const char INTL_DELETE_CONFIG[] PROGMEM = "delete saved configuration";
 /* ./src/lang/intl_en.lang */ const char INTL_DHT22[] PROGMEM = "DHT22 ({t}, {h})";
@@ -71,8 +74,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "WiFi Sensor in configuration mode";
 /* ./src/lang/intl_en.lang */ const char INTL_FS_WIFI_NAME[] PROGMEM = "Name";
 /* ./src/lang/intl_en.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
+/* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_CLEAR_RH[] PROGMEM = "Heating stop RH level";
 /* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_DC[] PROGMEM = "Duty cycle";
 /* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_DESC[] PROGMEM = "HECA (SHT30) (temperature, humidity), keeps RH under 70%";
+/* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_SET_RH[] PROGMEM = "Heating enable RH level";
 /* ./src/lang/intl_en.lang */ const char INTL_HOME[] PROGMEM = "Home";
 /* ./src/lang/intl_en.lang */ const char INTL_HUMIDITY[] PROGMEM = "humidity";
 /* ./src/lang/intl_en.lang */ const char INTL_I2C_BUS[] PROGMEM = "On I2C bus";
@@ -137,6 +142,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "Sensor is rebooting.";
 /* ./src/lang/intl_en.lang */ const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Sensor is being rebooted. Wait few seconds and click button below";
 /* ./src/lang/intl_en.lang */ const char INTL_SERVER[] PROGMEM = "Server";
+/* ./src/lang/intl_en.lang */ const char INTL_SHOW_DEVICE_INFO[] PROGMEM = "Display device info on LCD";
 /* ./src/lang/intl_en.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "Display WiFi connection info on LCD";
 /* ./src/sensors/sht3x/sht3x_en.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - temperature and humidity sensor";
 /* ./src/sensors/sht3x/sht3x_en.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Humidity and temperature";

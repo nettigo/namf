@@ -1,3 +1,15 @@
+NAMF-2020-45rc3 (2022-12-23 rev d026921c25dd8f46299e4bfe023970679e988148)
+- removed -ggdb3 from build options
+- fixes for JS/CSS to show/hide advanced options
+- SDS011 uses advanced options CSS
+- Displaying device info on LCD can be disabled
+
+NAMF-2020-45rc1 (2022-11-28 rev 4ec6023c1419f40825da12f8118685a8f33f8ab6)
+- some CSS/JS for advanced configuration options for sensors (to be hidden by default)
+- /rollback method allow to downgrade sensor
+- report HTTP code in log when sending data to API fails
+- display info what is current logging level
+
 NAMF-2020-44 (2020-10-06 rev b36d65f7acda9739dd43e5990c161eb55baa0d58)
 - merged all changes from 44rc5
 - fixed subsystem names on /status page. After changing order of sensors on config page matching names was not sorted in /status page

@@ -8,9 +8,9 @@
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-44"
+#define SOFTWARE_VERSION  "NAMF-2020-45rc3"
 // undefine SOFTWARE_BETA in production releases
-#define SOFTWARE_BETA  0
+#define SOFTWARE_BETA  1
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
@@ -79,6 +79,7 @@ namespace cfg {
     extern bool has_lcd2004_27;
     extern bool has_lcd2004_3f;
     extern bool show_wifi_info;
+    extern bool sh_dev_inf;
     extern bool has_ledbar_32;
     extern float outputPower;
     extern int phyMode; 

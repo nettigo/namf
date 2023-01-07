@@ -100,6 +100,8 @@ namespace SimpleScheduler {
                 return SHT3x::getConfigHTML();
             case SimpleScheduler::BMPx80:
                 return BMPx80::getConfigHTML();
+            case SimpleScheduler::HECA:
+                return HECA::getConfigHTML();
             default:
                 return s;
         }

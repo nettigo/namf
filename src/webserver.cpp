@@ -123,8 +123,8 @@ void webserver_images() {
  *
  * -Provide BasicAuth for all page contexts except /values and images
  *****************************************************************/
-bool webserver_request_auth() {
-    debug_out(F("validate request auth..."), DEBUG_MAX_INFO, 1);
+bool webserver_request_auth(bool dbg_msg) {
+    if (dbg_msg) debug_out(F("validate request auth..."), DEBUG_MAX_INFO, 1);
     if (cfg::www_basicauth_enabled && ! wificonfig_loop) {
         if (!server.authenticate(cfg::www_username, cfg::www_password)) {
             server.requestAuthentication();
@@ -253,14 +253,24 @@ void webserver_config_json() {
 //Webserver - force update with custom URL
 void webserver_config_force_update() {
 
-    if (!webserver_request_auth())
-    { return; }
+    if (!webserver_request_auth()) { return; }
     String page_content = make_header(FPSTR(INTL_CONFIGURATION));
     if (server.method() == HTTP_POST) {
-        if (server.hasArg("host") && server.hasArg("path") && server.hasArg("port")) {
-            cfg::auto_update = true;
-            updateFW(server.arg("host"), server.arg("port"), server.arg("path"));
+        if (server.hasArg("ver") && server.hasArg("lg") ) {
+            page_content.concat(make_footer());
             server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+            delay(200);
+            cfg::auto_update = false;
+            writeConfig();
+            cfg::auto_update = true;
+            String p = F("/NAMF/data/2020-");
+            p.concat(server.arg("ver"));
+            p.concat(F("/latest_"));
+            p.concat(server.arg("lg"));
+            p.concat(F(".bin"));
+            debug_out(F("Downgrade attempt to: "),DEBUG_ERROR, false);
+            debug_out(p, DEBUG_ERROR);
+            updateFW(F("fw.nettigo.pl"), F("80"), p);
             delay(5000);
             ESP.restart();
         }
@@ -270,20 +280,18 @@ void webserver_config_force_update() {
 
     }else {
 
-        page_content += F("<h2>Force update</h2>");
-        page_content += F("<form method='POST' action='/forceUpdate' style='width:100%;'>");
-        page_content += F("HOST:<input name=\"host\" value=");
-        page_content += UPDATE_HOST;
-        page_content += ("><br/>");
-        page_content += F("PORT:<input name=\"port\" value=");
-        page_content += UPDATE_PORT;
-        page_content += ("><br/>");
-        page_content += F("PATH:<input name=\"path\" value=");
-        page_content += UPDATE_URL;
-        page_content += ("><br/>");
-        page_content += form_submit(FPSTR(INTL_SAVE_AND_RESTART));
-        page_content += F("</form>");
-        page_content += make_footer();
+        page_content.concat(F("<h2>Force update</h2>"));
+        page_content.concat(
+                F("<p>It will disable autoupdate, and try to reinstall older NAMF version. To return to newest version "
+                  "just re-eneable autoupdate in config.</p>"
+                  "<form method='POST' action='/rollback' style='width:100%;'>")
+                  );
+        page_content.concat(F("Select version: <select name='ver'><option value='43'>2020-43</option><option value='42'>2020-42</option></select><br/>"));
+        page_content.concat(F("Select language: <select name='lg'><option value='en'>English</option><option value='pl'>Polish</option></select><br/>"));
+        page_content.concat(F("<br/>"));
+        page_content.concat(form_submit(FPSTR(INTL_SAVE_AND_RESTART)));
+        page_content.concat(F("</form>"));
+        page_content.concat(make_footer());
 
 
     }
@@ -414,78 +422,76 @@ void parse_config_request(String &page_content) {
     readFloatParam(outputPower);
     readIntParam(phyMode);
 
-    if (!wificonfig_loop) {
-        readCharParam(current_lang);
+    readCharParam(current_lang);
 
-        if (server.hasArg(F("www_username"))){
-            stringToChar(&www_username,server.arg(F("www_username")));
-        }
-        readPwdParam(&www_password,F("www_password"));
+    if (server.hasArg(F("www_username"))){
+        stringToChar(&www_username,server.arg(F("www_username")));
+    }
+    readPwdParam(&www_password,F("www_password"));
 
 //            readPasswdParam(www_password);
-        readBoolParam(www_basicauth_enabled);
-        if (server.hasArg(F("fs_ssid"))){
-            stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
-        }
-        if (server.hasArg(F("fs_pwd")) &&
-            ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
-            readPwdParam(&fs_pwd,F("fs_pwd"));
-        }
-        readBoolParam(send2dusti);
-        readBoolParam(ssl_dusti);
-        readBoolParam(send2madavi);
-        readBoolParam(ssl_madavi);
-        readBoolParam(dht_read);
-        readBoolParam(sds_read);
-        readBoolParam(pms_read);
-        readBoolParam(bmp280_read);
-        readBoolParam(bme280_read);
-        readBoolParam(heca_read);
-        readBoolParam(ds18b20_read);
-        readBoolParam(gps_read);
-
-        readIntParam(debug);
-        readTimeParam(sending_intervall_ms);
-        readTimeParam(time_for_wifi_config);
-
-        readBoolParam(send2csv);
-
-        readBoolParam(send2fsapp);
-
-        readBoolParam(send2sensemap);
-        readCharParam(senseboxid);
-
-        readBoolParam(send2custom);
-        parseHTTP(F("host_custom"), host_custom);
-        parseHTTP(F("url_custom"), url_custom);
-
-        readIntParam(port_custom);
-        readCharParam(user_custom);
-        readPasswdParam(pwd_custom);
-        if (server.hasArg(F("user_custom"))){
-            stringToChar(&user_custom,server.arg(F("user_custom")));
-        }
-        if (server.hasArg(F("pwd_custom"))) {
-            readPwdParam(&pwd_custom,F("pwd_custom"));
-        }
-        readBoolParam(send2aqi);
-        parseHTTP(F("token_AQI"), token_AQI);
-
-        readBoolParam(send2influx);
-
-        parseHTTP(F("host_influx"), host_influx);
-        parseHTTP(F("url_influx"), url_influx);
-
-        readIntParam(port_influx);
-
-        if (server.hasArg(F("user_influx"))){
-            stringToChar(&user_influx,server.arg(F("user_influx")));
-        }
-        if (server.hasArg(F("pwd_custom"))) {
-            readPwdParam(&pwd_custom,F("pwd_custom"));
-        }
-
+    readBoolParam(www_basicauth_enabled);
+    if (server.hasArg(F("fs_ssid"))){
+        stringToChar(&fs_ssid,server.arg(F("fs_ssid")));
     }
+    if (server.hasArg(F("fs_pwd")) &&
+        ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
+        readPwdParam(&fs_pwd,F("fs_pwd"));
+    }
+    readBoolParam(send2dusti);
+    readBoolParam(ssl_dusti);
+    readBoolParam(send2madavi);
+    readBoolParam(ssl_madavi);
+    readBoolParam(dht_read);
+    readBoolParam(sds_read);
+    readBoolParam(pms_read);
+    readBoolParam(bmp280_read);
+    readBoolParam(bme280_read);
+    readBoolParam(heca_read);
+    readBoolParam(ds18b20_read);
+    readBoolParam(gps_read);
+
+    readIntParam(debug);
+    readTimeParam(sending_intervall_ms);
+    readTimeParam(time_for_wifi_config);
+
+    readBoolParam(send2csv);
+
+    readBoolParam(send2fsapp);
+
+    readBoolParam(send2sensemap);
+    readCharParam(senseboxid);
+
+    readBoolParam(send2custom);
+    parseHTTP(F("host_custom"), host_custom);
+    parseHTTP(F("url_custom"), url_custom);
+
+    readIntParam(port_custom);
+    readCharParam(user_custom);
+    readPasswdParam(pwd_custom);
+    if (server.hasArg(F("user_custom"))){
+        stringToChar(&user_custom,server.arg(F("user_custom")));
+    }
+    if (server.hasArg(F("pwd_custom"))) {
+        readPwdParam(&pwd_custom,F("pwd_custom"));
+    }
+    readBoolParam(send2aqi);
+    parseHTTP(F("token_AQI"), token_AQI);
+
+    readBoolParam(send2influx);
+
+    parseHTTP(F("host_influx"), host_influx);
+    parseHTTP(F("url_influx"), url_influx);
+
+    readIntParam(port_influx);
+
+    if (server.hasArg(F("user_influx"))){
+        stringToChar(&user_influx,server.arg(F("user_influx")));
+    }
+    if (server.hasArg(F("pwd_custom"))) {
+        readPwdParam(&pwd_custom,F("pwd_custom"));
+    }
+
 
     readBoolParam(auto_update);
     parseHTTP(F("channel"), update_channel);
@@ -512,6 +518,7 @@ void parse_config_request(String &page_content) {
         }
     }
     readBoolParam(show_wifi_info);
+    readBoolParam(sh_dev_inf);
     readBoolParam(has_ledbar_32);
 
 #undef readCharParam
@@ -607,6 +614,7 @@ void webserver_config(){
         page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
         page_content.concat(F("</select></div>"));
         page_content.concat(formCheckboxGrid("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
+        page_content.concat(formCheckboxGrid("sh_dev_inf", FPSTR(INTL_SHOW_DEVICE_INFO), sh_dev_inf));
 
 
         webserverPartialSend(page_content);
@@ -968,7 +976,10 @@ void webserver_values() {
 /*****************************************************************
  * Webserver set debug level                                     *
  *****************************************************************/
+const char *DEBUG_NAMES[] PROGMEM = {INTL_NONE, INTL_ERROR, INTL_WARNING, INTL_MIN_INFO, INTL_MED_INFO, INTL_MAX_INFO};
+
 void webserver_debug_level() {
+
     if (!webserver_request_auth()) { return; }
 
     String page_content = make_header(FPSTR(INTL_DEBUG_LEVEL));
@@ -987,21 +998,23 @@ void webserver_debug_level() {
     page_content.replace(F("{med_info}"), FPSTR(INTL_MED_INFO));
     page_content.replace(F("{max_info}"), FPSTR(INTL_MAX_INFO));
 
+
     if (server.hasArg("lvl")) {
         const int lvl = server.arg("lvl").toInt();
         if (lvl >= 0 && lvl <= 5) {
             cfg::debug = lvl;
-            page_content += F("<h3>");
+            page_content.concat(F("<h3>"));
             page_content += FPSTR(INTL_DEBUG_SETTING_TO);
-            page_content += F(" ");
-
-            static constexpr std::array<const char *, 6> lvlText PROGMEM = {
-                    INTL_NONE, INTL_ERROR, INTL_WARNING, INTL_MIN_INFO, INTL_MED_INFO, INTL_MAX_INFO
-            };
-
-            page_content += FPSTR(lvlText[lvl]);
+            page_content.concat(F(" "));
+            page_content += FPSTR(DEBUG_NAMES[lvl]);
             page_content += F(".</h3>");
         }
+    } else {
+        page_content.concat(F("<h3>"));
+        page_content.concat(FPSTR(INTL_DEBUG_STATUS));
+        page_content.concat(F(" "));
+        page_content.concat(FPSTR(DEBUG_NAMES[cfg::debug]));
+        page_content.concat(F(".</h3>"));
     }
     page_content += make_footer();
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
@@ -1271,7 +1284,7 @@ void webserver_reset_time(){
 
 
 static void webserver_serial() {
-    if (!webserver_request_auth()) { return; }
+    if (!webserver_request_auth(false)) { return; }
 
     String payload(Debug.popLines());
 
@@ -1288,7 +1301,7 @@ void setup_webserver() {
     server.on(F("/simple_config"), webserver_simple_config);
     server.on(F("/config.json"), HTTP_GET, webserver_config_json);
     server.on(F("/configSave.json"), webserver_config_json_save);
-    server.on(F("/forceUpdate"), webserver_config_force_update);
+    server.on(F("/rollback"), webserver_config_force_update);
     server.on(F("/wifi"), webserver_wifi);
     server.on(F("/values"), webserver_values);
     server.on(F("/debug"), webserver_debug_level);

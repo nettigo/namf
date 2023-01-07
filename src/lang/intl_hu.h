@@ -121,6 +121,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_SENSORS[] PROGMEM = "Szenzorok";
 /* ./src/lang/intl_hu.lang */ const char INTL_SENSOR_IS_REBOOTING[] PROGMEM = "A Szenzor újraindul...";
 /* ./src/lang/intl_hu.lang */ const char INTL_SERVER[] PROGMEM = "Szerver";
+/* ./src/lang/intl_hu.lang */ const char INTL_SHOW_DEVICE_INFO[] PROGMEM = "Az eszköz adatainak megjelenítése az LCD-n";
 /* ./src/lang/intl_hu.lang */ const char INTL_SHOW_WIFI_INFO[] PROGMEM = "A Wi-Fi kapcsolat adatainak megjelenítése az LCD-n";
 /* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3X_DESC[] PROGMEM = "SHT3x - temperature and humidity sensor";
 /* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3X_RESULTS[] PROGMEM = "Humidity and temperature";
@@ -145,6 +146,8 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTW_WTD_HOST[] PROGMEM = "Translate HU: INTL_NTW_WTD_HOST 🐱;";
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate HU: INTL_NTW_WTD_ERROR 🐱;";
  const char INTL_HECA_DC[] PROGMEM = "Translate HU: INTL_HECA_DC 🐱;";
+ const char INTL_HECA_SET_RH[] PROGMEM = "Translate HU: INTL_HECA_SET_RH 🐱;";
+ const char INTL_HECA_CLEAR_RH[] PROGMEM = "Translate HU: INTL_HECA_CLEAR_RH 🐱;";
  const char INTL_SPS30_FW_FAIL[] PROGMEM = "Translate HU: INTL_SPS30_FW_FAIL 🐱;";
  const char INTL_SPS30_CONCENTRATION[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATION 🐱;";
  const char INTL_SPS30_SIZE[] PROGMEM = "Translate HU: INTL_SPS30_SIZE 🐱;";
@@ -154,6 +157,9 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
+ const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate HU: INTL_ADVANCED_BUTTON 🐱;";
+ const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate HU: INTL_ADVANCED_DISCL 🐱;";
+ const char INTL_DEBUG_STATUS[] PROGMEM = "Translate HU: INTL_DEBUG_STATUS 🐱;";
  const char INTL_DEBUG[] PROGMEM = "Translate HU: INTL_DEBUG 🐱;";
  const char INTL_AQI_TOKEN[] PROGMEM = "Translate HU: INTL_AQI_TOKEN 🐱;";
  const char INTL_AQI_ECO_API[] PROGMEM = "Translate HU: INTL_AQI_ECO_API 🐱;";

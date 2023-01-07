@@ -114,7 +114,9 @@ void display_values() {
     if (cfg::show_wifi_info) {
         screens[static_screen_count++] = DisplayPages::PageWIFI;    // Wifi info
     }
-    screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
+    if (cfg::sh_dev_inf) {
+        screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
+    }
     bool skipOldDisplay = false;
     if (next_display_count+1 > static_screen_count) {
         byte diff = next_display_count - static_screen_count;

@@ -292,6 +292,7 @@ String getConfigString(boolean maskPwd) {
     copyToJSON_Bool(has_lcd2004_27);
     copyToJSON_Bool(has_lcd2004_3f);
     copyToJSON_Bool(show_wifi_info);
+    copyToJSON_Bool(sh_dev_inf);
     copyToJSON_Bool(has_ledbar_32);
     json_string += Var2Json(F("debug"), debug);
     json_string += Var2Json(F("send_diag"), send_diag);
@@ -423,6 +424,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(has_lcd2004_27);
             setFromJSON(has_lcd2004_3f);
             setFromJSON(show_wifi_info);
+            setFromJSON(sh_dev_inf);
             setFromJSON(has_ledbar_32);
             setFromJSON(debug);
             setFromJSON(send_diag);
@@ -584,6 +586,23 @@ void setHTTPVarName(String &varName, String const name, byte id) {
 
 }
 
+
+void advancedSectionStart( String &html, SimpleScheduler::LoopEntryType sensor){
+
+    html.concat(F("</div><div class='gc'><div class='row'><input type='button' value='"));
+    html.concat(FPSTR(INTL_ADVANCED_BUTTON));
+    html.concat("' data-code=");
+    html.concat(String(sensor));
+    html.concat(F(" class='asb'/></div></div><div class='advSect' id='as-"));
+    html.concat(String(sensor));
+    html.concat(F("'><div class='gc'><div class='row'><p>"));
+    html.concat(FPSTR(INTL_ADVANCED_DISCL));
+    html.concat(F("</p></div>\n"));
+}
+
+void advancedSectionEnd( String &html, SimpleScheduler::LoopEntryType sensor){
+     html.concat(F("</div>"));
+}
 /* get read and set bool variables for new scheduler. Works with checkbox
  named var_name-SENSOR_ID (var name it is enable or display currently
  Getting enable val from client is code done by each sensor, to make it easier this

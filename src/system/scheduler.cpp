@@ -92,7 +92,7 @@ namespace SimpleScheduler {
         i++;
         for (; i < NAMF_LOOP_SIZE; i++) {
             String templ = F(
-                    "<form method='POST' class='gc' action='/simple_config?sensor={sensor}' style='width:100%;'>\n"
+                    "<form method='POST' action='/simple_config?sensor={sensor}' style='width:100%;'><div class='gc'>\n"
             );
             templ.concat(F("<div class='row'><hr/><h2>"));
             templ.concat(findSlotDescription(i));
@@ -107,9 +107,9 @@ namespace SimpleScheduler {
             //HTML to enable/disable given sensor
 
             s = SimpleScheduler::selectConfigForm(i);
-            templ.concat(F("{body}<div class='row'><input type='submit' value='"));
+            templ.concat(F("{body}</div><div class='gc'><div class='row'><input type='submit' value='"));
             templ.concat(FPSTR(INTL_SAVE));
-            templ.concat(F("'/></div></form>\n"));
+            templ.concat(F("'/></div></div></form>\n"));
             templ.replace(F("{sensor}"), String(i));
             templ.replace(F("{body}"), s);
             page.concat(templ);
