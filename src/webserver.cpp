@@ -286,6 +286,8 @@ void webserver_config_force_update() {
                   "just re-eneable autoupdate in config.</p>"
                   "<form method='POST' action='/rollback' style='width:100%;'>")
                   );
+        page_content.concat(F("Select version: <select name='ver'><option value='45'>2020-45</option>"));
+        page_content.concat(F("Select version: <select name='ver'><option value='44'>2020-44</option>"));
         page_content.concat(F("Select version: <select name='ver'><option value='43'>2020-43</option><option value='42'>2020-42</option></select><br/>"));
         page_content.concat(F("Select language: <select name='lg'><option value='en'>English</option><option value='pl'>Polish</option></select><br/>"));
         page_content.concat(F("<br/>"));
