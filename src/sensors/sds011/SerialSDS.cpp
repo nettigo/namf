@@ -39,6 +39,7 @@ void SerialSDS::process() {
                     }
                     storeReply();
                     _currState = SER_UNDEF;
+                    clearBuf();
                 }
                 break;
             case SER_DATA:
@@ -54,6 +55,7 @@ void SerialSDS::process() {
                     for (byte i = 0; i < 5; i++) _replies[SDS_DATA].data[i] = _buff[2 + i];
                     if (cfg::debug > DEBUG_MIN_INFO) logReply(SDS_DATA);
                     _currState = SER_UNDEF;
+                    clearBuf();
                 }
                 break;
             default:
@@ -94,13 +96,14 @@ bool SerialSDS::checksumValid(void) {
     if (!chk) {
         debug_out(F("SDS011 reply checksum failed "), DEBUG_ERROR);
         checksumFailed++;
-//        Serial.println(checksum_is,16);
-//        for (byte i=0; i<10; i++) {
-//            Serial.print(_buff[i],16);
-//            Serial.print(" ");
-//        }
-//        Serial.println();
     }
+    debug_out(String(checksum_is,16),DEBUG_MAX_INFO);
+    for (byte i=0; i<10; i++) {
+        debug_out(String(_buff[i],16),DEBUG_MAX_INFO,false);
+        debug_out(F(" "),DEBUG_MAX_INFO,false);
+
+    }
+    debug_out(F(""),DEBUG_MAX_INFO);
     return (chk);
 }
 
