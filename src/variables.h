@@ -9,6 +9,7 @@
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #else
 #define SOFTWARE_VERSION  "NAMF-2020-46rc1"
+#define SOFTWARE_VERSION_SHORT "46rc1"
 // undefine SOFTWARE_BETA in production releases
 #define SOFTWARE_BETA  1
 #endif

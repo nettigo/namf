@@ -1313,7 +1313,7 @@ void setup_webserver() {
     server.on(F("/reset"), webserver_reset);
     server.on(F("/data.json"), webserver_data_json);
     server.on(F("/metrics"), webserver_prometheus_endpoint);
-    server.on(F("/images"), webserver_images);
+    server.on(F("/images-" SOFTWARE_VERSION_SHORT), webserver_images);
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
 #ifdef DBG_NAMF_TIMES

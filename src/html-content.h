@@ -22,10 +22,10 @@ const char WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
 <title>{t}</title>\
 <meta name='viewport' content='width=device-width'>\
-<link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c1\" />\
+<link rel=\"stylesheet\" media=\"all\" href=\"/images-"SOFTWARE_VERSION_SHORT"?n=c1\" />\
 </head><body>\
 <div class='hdr'>\
-<a href='/'><img src='/images?n=l'/></a>\
+<a href='/'><img src='/images-"SOFTWARE_VERSION_SHORT"?n=l'/></a>\
 <h3>{tt}<br><a href='http://{sname}.local'>{sname}</a></h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4><a class='nn' href='/'>{h}</a> {n} {t}</h4>";
 
@@ -58,11 +58,11 @@ const char CONFIG_WEB_PAGE_HEADER[] PROGMEM = "<!DOCTYPE html><html>\
 <head>\
 <title>{t}</title>\
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\
-<link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c\" />\
-<link rel=\"stylesheet\" media=\"all\" href=\"/images?n=c1\" />\
+<link rel=\"stylesheet\" media=\"all\" href=\"/images-"SOFTWARE_VERSION_SHORT"?n=c\" />\
+<link rel=\"stylesheet\" media=\"all\" href=\"/images-"SOFTWARE_VERSION_SHORT"?n=c1\" />\
 </head><body>\
 <div class='hdr'>\
-<a href='/'><img src='/images?n=l'/></a>\
+<a href='/'><img src='/images-"SOFTWARE_VERSION_SHORT"?n=l'/></a>\
 <h3>{tt}<br><a href='http://{sname}.local'>{sname}</a></h3>\
 <small>ID: {id}<br/>MAC: {mac}<br/>{fwt}: {fw}</small></div><div class='content'><h4><a class='nn' href='/'>{h}</a> {n} {t}</h4>";
 
@@ -148,7 +148,7 @@ const char WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inl
 const char CONFIG_WEB_PAGE_FOOTER[] PROGMEM = "<br/><br/><a href='/' style='display:inline;'>{t}</a><br/><br/><br/>\
 <b><a href='https://air.nettigo.pl/' target='_blank' style='display:inline;background:none;color:black;'>&copy; Nettigo Air Monitor (Koduj dla Polski)</a></b><br/><br/>\
 <small>Firmware based on Sensor.Community project by<br/><a href='https://codefor.de/stuttgart/' target='_blank' style='display:inline;background:none;color:black;padding:0'>Open Knowledge Lab Stuttgart a.o. (Code for Germany)</a></small>\
-</div><script src=\"/images?n=j\"></script></body></html>\r\n";
+</div><script src=\"/images-"SOFTWARE_VERSION_SHORT"?n=j\"></script></body></html>\r\n";
 
 const char WEB_ROOT_PAGE_CONTENT[] PROGMEM = "<a href='/values'>&#128200; {t}</a><br/>\
 <a href='/config'>&#128295; {conf}</a><br/>\
