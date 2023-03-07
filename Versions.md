@@ -1,4 +1,4 @@
-NAMF-2020-46rc1
+NAMF-2020-46rc1 (2023-03-07 rev b6414d61f89b433deee09ae5bbe7a582eb1b0ea7)
 - Arduino core updated to 3.1.1
 - Interface to SDS011 updated to changed ESP Software Serial
 
