@@ -7,6 +7,7 @@
 
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
+#define SOFTWARE_VERSION_SHORT "boot"
 #else
 #define SOFTWARE_VERSION  "NAMF-2020-46rc1"
 #define SOFTWARE_VERSION_SHORT "46rc1"
