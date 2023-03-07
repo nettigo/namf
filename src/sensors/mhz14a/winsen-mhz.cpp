@@ -246,7 +246,7 @@ namespace MHZ14A {
             Serial.println(*co2);
 #endif
         } else {
-            debug_out(F("Timout waiting for CO2 sensor"),DEBUG_MED_INFO);
+            debug_out(F("Timeout waiting for CO2 sensor"),DEBUG_MED_INFO);
         }
         return result;
     }
