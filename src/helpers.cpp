@@ -639,7 +639,7 @@ unsigned long time2Measure(void){
 // 1 - use <h1>
 // 2 - use <h2>
 // 3 - do not use any tags
-String formSectionHeader(String &page_content, const String& name, byte bold) {
+void formSectionHeader(String &page_content, const String& name, byte bold) {
     page_content.concat(formSectionHeader(name, bold));
 }
 

@@ -557,15 +557,25 @@ namespace SDS011 {
 //        }
 //    }
 
-    void byteReceived(int cnt) {
-        if (cnt>=SDS_SERIAL_BUFF_SIZE) {
-            debug_out(F("SDS buffer full! Size : "), DEBUG_ERROR,0);
-            debug_out(String(cnt),DEBUG_ERROR);
-        }
-        channelSDS.process();
+    std::atomic<bool> rxPending(false);
+
+
+    void IRAM_ATTR byteReceived() {
+//        if (cnt>=SDS_SERIAL_BUFF_SIZE) {
+//            debug_out(F("SDS buffer full! Size : "), DEBUG_ERROR,0);
+//            debug_out(String(cnt),DEBUG_ERROR);
+//        }
+//        channelSDS.process();
+        rxPending.store(true);
+        esp_schedule();
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
+        bool isRxPending = rxPending.load();
+        if (isRxPending) {
+            rxPending.store(false);
+        }
+        channelSDS.process();
         switch (e) {
             case SimpleScheduler::STOP:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);

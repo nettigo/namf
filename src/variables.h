@@ -145,8 +145,8 @@ extern LiquidCrystal_I2C * char_lcd;
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-extern SoftwareSerial serialSDS;
-extern SoftwareSerial serialGPS;
+extern EspSoftwareSerial::UART serialSDS;
+extern EspSoftwareSerial::UART serialGPS;
 
 /*****************************************************************
  * DS18B20 declaration                                            *
