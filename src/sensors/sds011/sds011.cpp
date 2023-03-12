@@ -557,7 +557,6 @@ namespace SDS011 {
 //        }
 //    }
 
-    std::atomic<bool> rxPending(false);
 
 
     void IRAM_ATTR byteReceived() {
@@ -566,15 +565,10 @@ namespace SDS011 {
 //            debug_out(String(cnt),DEBUG_ERROR);
 //        }
 //        channelSDS.process();
-        rxPending.store(true);
         esp_schedule();
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
-        bool isRxPending = rxPending.load();
-        if (isRxPending) {
-            rxPending.store(false);
-        }
         channelSDS.process();
         switch (e) {
             case SimpleScheduler::STOP:
