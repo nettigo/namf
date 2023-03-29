@@ -133,7 +133,6 @@ void setDefaultConfig(void) {
 void readConfig() {
     setDefaultConfig();
     debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
-
 	if (SPIFFS.begin()) {
 		debug_out(F("OK"), DEBUG_MIN_INFO, 1);
 		if (SPIFFS.exists("/config.json")) {
@@ -152,6 +151,12 @@ void readConfig() {
 		}
 	} else {
 		debug_out(F("\nFailed mount FS!"), DEBUG_ERROR, 1);
+#ifdef ARDUINO_ARCH_ESP32
+        SPIFFS.format();
+        debug_out(F("\nFilesystem formatted, restart!"), DEBUG_ERROR);
+        ESP.restart();
+
+#endif
 	}
 }
 
