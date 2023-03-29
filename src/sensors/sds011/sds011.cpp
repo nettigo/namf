@@ -565,7 +565,9 @@ namespace SDS011 {
 //            debug_out(String(cnt),DEBUG_ERROR);
 //        }
 //        channelSDS.process();
+#ifdef ARDUINO_ARCH_ESP8266
         esp_schedule();
+#endif
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {

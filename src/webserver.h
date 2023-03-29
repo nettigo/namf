@@ -22,8 +22,14 @@ extern void updateFW();
 
 //latest stack dump
 void webserver_dump_stack();
+#if defined(ARDUINO_ARCH_ESP8266)
+#define WEB_SERVER_TYPE ESP8266WebServer
+#else
+#define WEB_SERVER_TYPE WebServer
 
-void sendHttpRedirect(ESP8266WebServer &httpServer);
+#endif
+
+void sendHttpRedirect(WEB_SERVER_TYPE &httpServer);
 /*****************************************************************
  * Webserver Images                                              *
  *****************************************************************/

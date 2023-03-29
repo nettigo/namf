@@ -32,7 +32,7 @@ static int constexpr constexprstrlen(const char* str) {
 }
 
 
-void sendHttpRedirect(ESP8266WebServer &httpServer) {
+void sendHttpRedirect(WEB_SERVER_TYPE &httpServer) {
     httpServer.sendHeader(F("Location"), F("http://192.168.4.1/config"));
     httpServer.send(302, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), "");
 }
@@ -904,7 +904,11 @@ void webserver_wifi() {
                 continue;
             }
             // Print SSID and RSSI for each network found
+#ifdef ARDUINO_ARCH_ESP8266
             page_content += wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == ENC_TYPE_NONE) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
+#else
+            page_content += wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == WIFI_AUTH_OPEN) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
+#endif
         }
         page_content += FPSTR(TABLE_TAG_CLOSE_BR);
         page_content += FPSTR(BR_TAG);
@@ -1034,7 +1038,11 @@ void webserver_debug_level() {
         last_page_load = millis();
         enable_ota_time = millis() + 60 * 1000;
         ArduinoOTA.setPassword(cfg::www_password);
+#ifdef ARDUINO_ARCH_ESP8266
         ArduinoOTA.begin(true);
+#else
+        ArduinoOTA.begin();
+#endif
         page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
         page_content += make_footer();
@@ -1170,7 +1178,9 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("NAMF"),F("Last loop time"), String(scheduler.lastRunTime()) ,F("µs")));
 #endif
     page_content.concat(FPSTR(EMPTY_ROW));
+#ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),""));
+#endif
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
     page_content.concat(table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B"));
     tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
@@ -1179,12 +1189,16 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B"));
     tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
     page_content.concat(table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B"));
+#ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),""));
     page_content.concat(table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),""));
+#endif
     page_content.concat(table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz"));
     page_content.concat(table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),""));
     page_content.concat(FPSTR(EMPTY_ROW));
+#ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),""));
+#endif
     page_content.concat(table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),""));
     page_content.concat(FPSTR(EMPTY_ROW));
     String dbg = F("");
@@ -1250,7 +1264,11 @@ void webserver_data_json() {
 void webserver_prometheus_endpoint() {
     debug_out(F("output prometheus endpoint..."), DEBUG_MIN_INFO, 1);
     String data_4_prometheus = F("software_version{version=\"{ver}\",{id}} 1\nuptime_ms{{id}} {up}\nsending_intervall_ms{{id}} {si}\nnumber_of_measurements{{id}} {cs}\n");
+#if defined(ARDUINO_ARCH_ESP8266)
     String id = F("node=\"esp8266-");
+#else
+    String id = F("node=\"esp32-");
+#endif
     id += esp_chipid() + "\"";
     debug_out(F("Parse JSON for Prometheus"), DEBUG_MIN_INFO, 1);
     debug_out(last_data_string, DEBUG_MED_INFO, 1);

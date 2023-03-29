@@ -17,7 +17,11 @@
 #include "defines.h"
 #include "system/scheduler.h"
 #include <SoftwareSerial.h>
+#if defined(ESP8266)
 #include <ESP8266WebServer.h>
+#else
+#include <WebServer.h>
+#endif
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
@@ -133,8 +137,11 @@ extern char *basic_auth_custom ;
 extern long int sample_count ;
 extern bool bme280_init_failed ;
 extern bool heca_init_failed ;
-
+#if defined(ARDUINO_ARCH_ESP8266)
 extern ESP8266WebServer server;
+#else
+extern WebServer server;
+#endif
 extern int TimeZone ;
 
 /*****************************************************************

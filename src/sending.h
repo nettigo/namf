@@ -6,7 +6,11 @@
 #define NAMF_SENDING_H
 
 #include <Arduino.h>
+#if defined(ESP8266)
 #include <ESP8266HTTPClient.h>
+#else
+#include <HTTPClient.h>
+#endif
 
 #include "ext_def.h"
 #include "helpers.h"
@@ -15,11 +19,13 @@
 #include "variables.h"
 #include "sensors/sds011/sds011.h"  //debugging SDS and sending data to InfluxDB
 
-#include <ESP8266WiFi.h>
 #if defined(ESP8266)
-#include "ca-root.h"
+#include <ESP8266WiFi.h>
 extern void configureCACertTrustAnchor(WiFiClientSecure* client);
+#else
+#include <WiFi.h>
 #endif
+#include "ca-root.h"
 
 /*****************************************************************
  * send data to rest api                                         *

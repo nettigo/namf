@@ -10,16 +10,17 @@
 #include "helpers.h"
 #include "sensors/sds011/sds011.h"
 
-#ifdef ESP32
+#ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h> /// FOR ESP32
 #include <HTTPClient.h> /// FOR ESP32 HTTP FOTA UPDATE ///
 #include <HTTPUpdate.h> /// FOR ESP32 HTTP FOTA UPDATE ///
 #include <WiFiClient.h> /// FOR ESP32 HTTP FOTA UPDATE ///
 WiFiClient client;  /// FOR ESP32 HTTP FOTA UPDATE ///
 
-t_httpUpdate_return tryUpdate(char * const ver) {
-    t_httpUpdate_return ret = httpUpdate.update(client, UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
-    return ret;
+t_httpUpdate_return tryUpdate(const String host, const String port, const String path, const String ver) {
+//    t_httpUpdate_return ret = httpUpdate.update(client, UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
+//no OTA for now
+    return HTTPUpdateResult::HTTP_UPDATE_NO_UPDATES;
 }
 #else
 

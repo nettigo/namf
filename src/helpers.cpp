@@ -12,12 +12,22 @@ extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
 
 LoggingSerial Debug;
 
+#if defined(ARDUINO_ARCH_ESP8266)
 LoggingSerial::LoggingSerial()
         : HardwareSerial(UART0)
         , m_buffer(new circular_queue<uint8_t>(1024))
 {
     skipBuffer = false;
 }
+#else
+LoggingSerial::LoggingSerial()
+        : HardwareSerial(0)
+        , m_buffer(new circular_queue<uint8_t>(1024))
+{
+    skipBuffer = false;
+}
+#endif
+
 
 void LoggingSerial::stopWebCopy(void) {
     skipBuffer = true;
@@ -860,7 +870,14 @@ void resetMemoryStats() {
 }
 void collectMemStats() {
     memory_stat_t memoryStats;
+#if defined(ARDUINO_ARCH_ESP8266)
     ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
+#else
+    memoryStats.freeHeap =  ESP.getFreeHeap();
+    memoryStats.maxFreeBlock = 0;
+    memoryStats.frag = 0;
+#endif
+
 
     if (memoryStats.freeHeap > memoryStatsMax.freeHeap)             memoryStatsMax.freeHeap  = memoryStats.freeHeap;
     if (memoryStats.maxFreeBlock > memoryStatsMax.maxFreeBlock)     memoryStatsMax.maxFreeBlock  = memoryStats.maxFreeBlock;
@@ -870,13 +887,20 @@ void collectMemStats() {
     if (memoryStats.maxFreeBlock < memoryStatsMin.maxFreeBlock)     memoryStatsMin.maxFreeBlock  = memoryStats.maxFreeBlock;
     if (memoryStats.frag < memoryStatsMin.frag)                     memoryStatsMin.frag  = memoryStats.frag;
 
+#if defined(ARDUINO_ARCH_ESP8266)
     uint32_t cont = ESP.getFreeContStack();
+#else
+    uint32_t cont = 0;
+#endif
+
     if (cont > memoryStatsMax.freeContStack)                     memoryStatsMax.freeContStack  = cont;
     if (cont < memoryStatsMin.freeContStack)                     memoryStatsMin.freeContStack  = cont;
 
 
 }
 void dumpCurrentMemStats() {
+#if defined(ARDUINO_ARCH_ESP8266)
+
     memory_stat_t memoryStats;
     ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
     debug_out(F("Memory stats: "),DEBUG_MIN_INFO,true);
@@ -888,9 +912,7 @@ void dumpCurrentMemStats() {
     debug_out(String(memoryStats.frag),DEBUG_MIN_INFO,true);
     debug_out(F("Free cont stack: \t"),DEBUG_MIN_INFO,false);
     debug_out(String(ESP.getFreeContStack()),DEBUG_MIN_INFO,true);
-
-
-
+#endif
 }
 
 /*****************************************************************

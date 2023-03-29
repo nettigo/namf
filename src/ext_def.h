@@ -62,29 +62,17 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define I2C_PIN_SCL D4
 #define I2C_PIN_SDA D3
 
-// define pin for one wire sensors
-#if defined(ESP8266)
 #define ONEWIRE_PIN D7
-#endif
-#if defined(ARDUINO_SAMD_ZERO)
-#define ONEWIRE_PIN D7
-#endif
 
 // define serial interface pins for particle sensors
 // Serial confusion: These definitions are based on SoftSerial
 // TX (transmitting) pin on one side goes to RX (receiving) pin on other side
 // SoftSerial RX PIN is D1 and goes to SDS TX
 // SoftSerial TX PIN is D2 and goes to SDS RX
-#if defined(ESP8266)
 #define PM_SERIAL_RX D1
 #define PM_SERIAL_TX D2
-#endif
-
-// define serial interface pins for GPS modules
-#if defined(ESP8266)
 #define GPS_SERIAL_RX D5
 #define GPS_SERIAL_TX D6
-#endif
 
 // DHT22, temperature, humidity
 #define DHT_READ 0
@@ -156,9 +144,13 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 //default TX trasnmit power
 #define TX_OUTPUT_POWER 20.5
 
+#if defined(ARDUINO_ARCH_ESP8266)
 //default WiFi PHY MODE
 #define PHY_MODE WIFI_PHY_MODE_11N;
-
+#else
+//for now just placeholder for int variable
+#define PHY_MODE 0;
+#endif
 // Wieviele Informationen sollen über die serielle Schnittstelle ausgegeben werden?
 #define DEBUG 3
 

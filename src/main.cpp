@@ -5,21 +5,40 @@
  *****************************************************************/
 #include "defines.h"
 #include "variables.h"
-#include <Schedule.h>
+//#include <Schedule.h>
+#ifdef ARDUINO_ARCH_ESP32
+#include <esp_task_wdt.h>
+#endif
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
 #include "system/scheduler.h"
 #include "system/components.h"
+#if defined(ESP8266)
 #include <ESP8266WiFi.h>
-#include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#else
+#include <WiFi.h>
+#include <WebServer.h>
+#include <ESPmDNS.h>
+#include <SPIFFS.h>
+   struct FSInfo {
+        size_t totalBytes;
+        size_t usedBytes;
+        size_t blockSize;
+        size_t pageSize;
+        size_t maxOpenFiles;
+        size_t maxPathLength;
+    };
+#endif
+
+#include <DNSServer.h>
 #include <ArduinoOTA.h>
 #include <base64.h>
 #include <ArduinoJson.h>
 #include <time.h>
-#include <coredecls.h>
+//#include <coredecls.h>
 #include <assert.h>
 #include "system/reporting.h"
 
@@ -209,7 +228,15 @@ void wifiConfig() {
 	for (int i = 0; i < count_wifiInfo; i++) {
 		uint8_t* BSSID;
 		String SSID;
-		WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
+#if defined(ARDUINO_ARCH_ESP8266)
+        WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
+#else
+        SSID = WiFi.SSID(i);
+        strncpy(wifiInfo[i].ssid,WiFi.SSID(i).c_str(),35);
+        wifiInfo[i].RSSI = WiFi.RSSI(i);
+        wifiInfo[i].encryptionType = WiFi.encryptionType(i);
+#endif
+
 		SSID.toCharArray(wifiInfo[i].ssid, 35);
 	}
 
@@ -232,7 +259,11 @@ void wifiConfig() {
 	while (((millis() - last_page_load) < cfg::time_for_wifi_config)) {
 		dnsServer.processNextRequest();
 		server.handleClient();
-		wdt_reset(); // nodemcu is alive
+#ifdef ARDUINO_ARCH_ESP32
+        esp_task_wdt_reset();
+#else
+        wdt_reset(); // nodemcu is alive
+#endif
 		yield();
 	}
 
@@ -325,9 +356,11 @@ void connectWifi() {
     debug_out(F("'"), DEBUG_ERROR, 1);
 	debug_out(String(WiFi.status()), DEBUG_MIN_INFO, 1);
 	WiFi.disconnect();
-	WiFi.setOutputPower(cfg::outputPower);
-	WiFi.setPhyMode(WIFI_PHY_MODE_11N);
+#if defined(ARDUINO_ARCH_ESP8266)
+    WiFi.setOutputPower(cfg::outputPower);
+    WiFi.setPhyMode(WIFI_PHY_MODE_11N);
 	WiFi.setPhyMode((WiFiPhyMode_t)cfg::phyMode);
+#endif
 	WiFi.mode(WIFI_STA);
 	
 	//String hostname = F("NAM-");
@@ -787,8 +820,10 @@ static bool acquireNetworkTime() {
 	time_t now = time(nullptr);
 	debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
 	debug_out(NTP_SERVER,DEBUG_MIN_INFO,1);
+#ifdef ARDUINO_ARCH_ESP8266
 	settimeofday_cb(time_is_set);
 	configTime("GMT", NTP_SERVER);
+#endif
 	while (retryCount++ < 20) {
 		// later than 2000/01/01:00:00:00
 		if (sntp_time_is_set) {
@@ -830,9 +865,13 @@ void initNonTrivials(const char *id) {
  *****************************************************************/
 void setup() {
     Debug.begin(115200);                    // Output to Serial at 9600 baud
-    serialSDS.begin(9600, EspSoftwareSerial::SERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
-    serialGPS.begin(9600, EspSoftwareSerial::SERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
-
+#ifdef ARDUINO_ARCH_ESP8266
+    serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
+    serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
+#else
+    serialSDS.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
+    serialGPS.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
+#endif
 //    schedule_recurrent_function_us([]() {
 //        serialSDS.perform_work();
 //        serialGPS.perform_work();
@@ -855,7 +894,16 @@ void setup() {
 
 
     FSInfo fs_info;
+#ifdef ARDUINO_ARCH_ESP8266
     SPIFFS.info(fs_info);
+#else
+    fs_info.totalBytes = SPIFFS.totalBytes();
+    fs_info.usedBytes = SPIFFS.usedBytes();
+    fs_info.blockSize = 0;
+    fs_info.pageSize = 0;
+    fs_info.maxOpenFiles = 0;
+    fs_info.maxPathLength = 0;
+#endif
     debug_out(F("SPIFFS (kB): "), DEBUG_ERROR, false);
     debug_out(String(fs_info.totalBytes/(1024)), DEBUG_ERROR);
 
@@ -920,21 +968,23 @@ void setup() {
     //if (MDNS.begin(server_name.c_str())) {
 		
 	if (MDNS.begin(cfg::fs_ssid)) {
-        MDNSResponder::hMDNSService hService = MDNS.addService( cfg::fs_ssid, "http", "tcp", 80);
-//        MDNS.addService("http", "tcp", 80);
         char buff[20];
+#ifdef ARDUINO_ARCH_ESP8266
+        MDNSResponder::hMDNSService hService = MDNS.addService( cfg::fs_ssid, "http", "tcp", 80);
         sprintf(buff, "NAM-%u", ESP.getChipId());
         MDNS.addServiceTxt(hService, "id", buff);
         MDNS.addServiceTxt(hService, "manufacturer", "Nettigo");
+#else
+        MDNS.addService("http", "tcp", 80);
+        sprintf(buff, "NAM-%u", ESP.getEfuseMac());
+        MDNS.addServiceTxt((char *)"http", (char *)"tcp", (char *)"id", (char *)buff);
+        MDNS.addServiceTxt((char *)"http", (char *)"tcp", (char *)"manufacturer", (char *)"Nettigo");
+#endif
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
 
     delay(50);
-
-	// sometimes parallel sending data and web page will stop nodemcu, watchdogtimer set to 30 seconds
-	wdt_disable();
-	wdt_enable(30000);
 
 	serialSDS.flush();  //drop any packets sent on startup...
 
@@ -1010,7 +1060,11 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2custom) {
 		String data_4_custom = data;
 		data_4_custom.remove(0, 1);
-		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#if defined(ARDUINO_ARCH_ESP8266)
+        data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#else
+		data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#endif
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
 		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
@@ -1022,7 +1076,11 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2aqi) {
 		String data_4_custom = data;
 		data_4_custom.remove(0, 1);
-		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#if defined(ARDUINO_ARCH_ESP8266)
+        data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#else
+        data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#endif
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
         String path = F("/update/");
         path.concat(cfg::token_AQI);
@@ -1056,12 +1114,16 @@ void loop() {
 	act_milli = millis();
     send_now = msSince(starttime) > cfg::sending_intervall_ms;
     sample_count++;
-
+#ifdef ARDUINO_ARCH_ESP8266
     MDNS.update();
+#endif
     if (enable_ota_time > act_milli) {
         ArduinoOTA.handle();
     }
-	wdt_reset(); // nodemcu is alive
+
+#ifdef ARDUINO_ARCH_ESP8266
+    wdt_reset(); // nodemcu is alive
+#endif
 
 	scheduler.process();
 

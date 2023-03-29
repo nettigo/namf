@@ -100,7 +100,11 @@ long int sample_count = 0;
 bool bme280_init_failed = false;
 bool heca_init_failed = false;
 
+#if defined(ARDUINO_ARCH_ESP8266)
 ESP8266WebServer server(80);
+#else
+WebServer server(80);
+#endif
 int TimeZone = 1;
 
 /*****************************************************************
@@ -178,8 +182,12 @@ String last_value_GPS_date = "";
 String last_value_GPS_time = "";
 String last_data_string = "";
 
+#if defined(ARDUINO_ARCH_ESP8266)
 String esp_chipid() {return String(ESP.getChipId());};
+#else
+String esp_chipid() {return String(ESP.getEfuseMac());}
 
+#endif
 long last_page_load = millis();
 
 bool wificonfig_loop = false;

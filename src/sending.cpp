@@ -1,6 +1,6 @@
 #include "sending.h"
 
-#if defined(ESP8266)
+#if defined(ARDUINO_ARCH_ESP8266)
 BearSSL::X509List x509_dst_root_ca(dst_root_ca_x3);
 
 void configureCACertTrustAnchor(WiFiClientSecure* client) {
@@ -16,6 +16,20 @@ void configureCACertTrustAnchor(WiFiClientSecure* client) {
         client->setTrustAnchors(&x509_dst_root_ca);
     }
 }
+#else
+void configureCACertTrustAnchor(WiFiClientSecure* client) {
+    constexpr time_t fw_built_year = (__DATE__[ 7] - '0') * 1000 + \
+							  (__DATE__[ 8] - '0') *  100 + \
+							  (__DATE__[ 9] - '0') *   10 + \
+							  (__DATE__[10] - '0');
+    if (time(nullptr) < (fw_built_year - 1970) * 365 * 24 * 3600) {
+        debug_out(F("Time incorrect; Disabling CA verification."), DEBUG_MIN_INFO,1);
+        client->setInsecure();
+    }
+    else {
+        client->setCACert(dst_root_ca_x3);
+    }
+}
 #endif
 
 /*****************************************************************
@@ -29,7 +43,9 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         client = new WiFiClientSecure;
         ssl = true;
         configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
+#ifdef ARDUINO_ARCH_ESP8266
         static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+#endif
     } else {
         client = new WiFiClient;
     }
@@ -68,7 +84,11 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         }
 
         http->addHeader(F("Content-Type"), contentType);
+#if defined(ARDUINO_ARCH_ESP8266)
         http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
+#else
+        http->addHeader(F("X-Sensor"), String(F("esp32-")) + esp_chipid());
+#endif
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
@@ -97,8 +117,9 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     debug_out(host, DEBUG_MED_INFO);
     delete (http);
     delete (client);
-
+#ifdef ARDUINO_ARCH_ESP8266
     wdt_reset(); // nodemcu is alive
+#endif
     yield();
 }
 
@@ -143,7 +164,11 @@ String create_influxdb_string(const String& data) {
     JsonObject& json2data = jsonBuffer.parseObject(data);
     if (json2data.success()) {
         bool first_line = true;
+#if defined(ARDUINO_ARCH_ESP8266)
         data_4_influxdb.concat(F("feinstaub,node=esp8266-"));
+#else
+        data_4_influxdb.concat(F("feinstaub,node=esp32-"));
+#endif
         data_4_influxdb.concat(esp_chipid() + F(","));
         data_4_influxdb.concat(F("fw="));
         data_4_influxdb.concat(F(SOFTWARE_VERSION));

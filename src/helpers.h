@@ -7,7 +7,11 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 #include "variables.h"
-#include <FS.h>                     // must be first
+#include <FS.h>
+#if defined(ARDUINO_ARCH_ESP32)
+#include <SPIFFS.h>
+#endif
+
 
 extern const char UNIT_PERCENT[];
 extern const char UNIT_CELCIUS[];

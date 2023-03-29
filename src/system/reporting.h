@@ -8,7 +8,11 @@
 #define REPORTING_MAXRSSI_NO_VAL -128
 #include "helpers.h"
 #include "sensors/sds011.h"
+#if defined(ARDUINO_ARCH_ESP8266)
 #include <ESP8266WiFi.h>
+#else
+#include <WiFi.h>
+#endif
 
 namespace Reporting {
 #if SOFTWARE_BETA == 1
@@ -51,8 +55,13 @@ namespace Reporting {
 
     void collectMemStats() {
         memory_stat_t memoryStats;
+#if defined(ARDUINO_ARCH_ESP8266)
         ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
-
+#else
+        memoryStats.freeHeap =  ESP.getFreeHeap();
+    memoryStats.maxFreeBlock = 0;
+    memoryStats.frag = 0;
+#endif
         if (memoryStats.freeHeap > memoryStatsMax.freeHeap)             memoryStatsMax.freeHeap  = memoryStats.freeHeap;
         if (memoryStats.maxFreeBlock > memoryStatsMax.maxFreeBlock)     memoryStatsMax.maxFreeBlock  = memoryStats.maxFreeBlock;
         if (memoryStats.frag > memoryStatsMax.frag)                     memoryStatsMax.frag  = memoryStats.frag;
@@ -61,7 +70,11 @@ namespace Reporting {
         if (memoryStats.maxFreeBlock < memoryStatsMin.maxFreeBlock)     memoryStatsMin.maxFreeBlock  = memoryStats.maxFreeBlock;
         if (memoryStats.frag < memoryStatsMin.frag)                     memoryStatsMin.frag  = memoryStats.frag;
 
+#if defined(ARDUINO_ARCH_ESP8266)
         uint32_t cont = ESP.getFreeContStack();
+#else
+        uint32_t cont = 0;
+#endif
         if (cont > memoryStatsMax.freeContStack)                     memoryStatsMax.freeContStack  = cont;
         if (cont < memoryStatsMin.freeContStack)                     memoryStatsMin.freeContStack  = cont;
 
@@ -100,7 +113,13 @@ namespace Reporting {
         body.reserve(512);
         body.concat(Var2Json(F("VER"), SOFTWARE_VERSION));
         body.concat(Var2Json(F("MD5"), ESP.getSketchMD5()));
+#ifdef ARDUINO_ARCH_ESP8266
+        body.concat(Var2Json(F("platf"), String(F("esp2866"))));
         body.concat(Var2Json(F("resetReason"), ESP.getResetReason()));
+#else
+        body.concat(Var2Json(F("platf"), String(F("esp32"))));
+
+#endif
         body.concat(Var2Json(F("enabledSubsystems"), scheduler.registeredNames()));
         body.concat(Var2Json(F("updateChannel"), cfg::update_channel));
         body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));
