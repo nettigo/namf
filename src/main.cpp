@@ -254,8 +254,10 @@ void wifiConfig() {
     } else {
         WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
     }
+    //When in AP mode it will stay until configured via WWW - so restarted
+    setup_webserver();
 
-	DNSServer dnsServer;
+    DNSServer dnsServer;
 	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
 	dnsServer.start(53, "*", apIP);							// 53 is port for DNS server
 
@@ -941,7 +943,6 @@ void setup() {
     }
 
 
-    setup_webserver();
 
 
     if (strlen(cfg::wlanssid) > 0) {
@@ -958,6 +959,8 @@ void setup() {
     } else {
         startAP();
     }
+
+    setup_webserver();
 
     if (cfg::gps_read) {
         serialGPS.begin(9600);
