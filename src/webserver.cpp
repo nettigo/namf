@@ -1042,6 +1042,8 @@ void webserver_debug_level() {
         ArduinoOTA.begin(true);
 #else
         ArduinoOTA.begin();
+        ArduinoOTA.setMdnsEnabled(true);
+        ArduinoOTA.setHostname(cfg::fs_ssid);
 #endif
         page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
