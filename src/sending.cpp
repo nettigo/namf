@@ -84,11 +84,7 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         }
 
         http->addHeader(F("Content-Type"), contentType);
-#if defined(ARDUINO_ARCH_ESP8266)
-        http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
-#else
-        http->addHeader(F("X-Sensor"), String(F("esp32-")) + esp_chipid());
-#endif
+        http->addHeader(F("X-Sensor"), String(F(PROCESSOR_ARCH)) + esp_chipid());
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
@@ -164,11 +160,8 @@ String create_influxdb_string(const String& data) {
     JsonObject& json2data = jsonBuffer.parseObject(data);
     if (json2data.success()) {
         bool first_line = true;
-#if defined(ARDUINO_ARCH_ESP8266)
-        data_4_influxdb.concat(F("feinstaub,node=esp8266-"));
-#else
-        data_4_influxdb.concat(F("feinstaub,node=esp32-"));
-#endif
+        data_4_influxdb.concat(F("feinstaub,node="));
+        data_4_influxdb.concat(String(F(PROCESSOR_ARCH)) + String(F("-")));
         data_4_influxdb.concat(esp_chipid() + F(","));
         data_4_influxdb.concat(F("fw="));
         data_4_influxdb.concat(F(SOFTWARE_VERSION));

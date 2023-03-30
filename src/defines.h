@@ -35,6 +35,11 @@ extern String tmpl(const String& patt, const String& value);
 #define UPDATE_CHANNEL_BETA 1
 #define UPDATE_CHANNEL_STABLE 2
 
+#ifdef ARDUINO_ARCH_ESP8266
+#define PROCESSOR_ARCH  "esp8266"
+#else
+#define PROCESSOR_ARCH  "esp32"
+#endif
 
 #define HOST_MADAVI "api-rrd.madavi.de"
 #define URL_MADAVI "/data.php"

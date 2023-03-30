@@ -114,12 +114,9 @@ namespace Reporting {
         body.concat(Var2Json(F("VER"), SOFTWARE_VERSION));
         body.concat(Var2Json(F("MD5"), ESP.getSketchMD5()));
 #ifdef ARDUINO_ARCH_ESP8266
-        body.concat(Var2Json(F("platf"), String(F("esp2866"))));
         body.concat(Var2Json(F("resetReason"), ESP.getResetReason()));
-#else
-        body.concat(Var2Json(F("platf"), String(F("esp32"))));
-
 #endif
+        body.concat(Var2Json(F("platf"), String(F(PROCESSOR_ARCH))));
         body.concat(Var2Json(F("enabledSubsystems"), scheduler.registeredNames()));
         body.concat(Var2Json(F("updateChannel"), cfg::update_channel));
         body.concat(Var2Json(F("autoUpdate"), cfg::auto_update));

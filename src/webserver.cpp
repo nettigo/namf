@@ -936,7 +936,9 @@ void webserver_values() {
         getTimeHeadings(page_content);
 
         if (cfg::send2madavi) {
-            String link(F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID=esp8266-{id}\" target=\"_blank\">{n}</a>"));
+            String link(F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID="));
+            link.concat(String(F(PROCESSOR_ARCH)));
+            link.concat(String(F("-{id}\" target=\"_blank\">{n}</a>")));
             link.replace(F("{id}"), esp_chipid());
             link.replace(F("{n}"), FPSTR(INTL_MADAVI_LINK));
             page_content.concat(link);
@@ -1183,11 +1185,7 @@ void webserver_status_page(void) {
 #ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),""));
 #endif
-#ifdef ARDUINO_ARCH_ESP8266
-    page_content.concat(table_row_from_value(F("ESP"),F("Processor"), F("ESP8266"),""));
-#else
-    page_content.concat(table_row_from_value(F("ESP"),F("Processor"), F("ESP32"),""));
-#endif
+    page_content.concat(table_row_from_value(F("ESP"),F("Processor"), F(PROCESSOR_ARCH),""));
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
     page_content.concat(table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B"));
     tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
@@ -1271,11 +1269,9 @@ void webserver_data_json() {
 void webserver_prometheus_endpoint() {
     debug_out(F("output prometheus endpoint..."), DEBUG_MIN_INFO, 1);
     String data_4_prometheus = F("software_version{version=\"{ver}\",{id}} 1\nuptime_ms{{id}} {up}\nsending_intervall_ms{{id}} {si}\nnumber_of_measurements{{id}} {cs}\n");
-#if defined(ARDUINO_ARCH_ESP8266)
-    String id = F("node=\"esp8266-");
-#else
-    String id = F("node=\"esp32-");
-#endif
+    String id = F("node=\")");
+    id.concat(String(F(PROCESSOR_ARCH)));
+    id.concat(String(F("-")));
     id += esp_chipid() + "\"";
     debug_out(F("Parse JSON for Prometheus"), DEBUG_MIN_INFO, 1);
     debug_out(last_data_string, DEBUG_MED_INFO, 1);
