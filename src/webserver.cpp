@@ -1181,6 +1181,11 @@ void webserver_status_page(void) {
 #ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),""));
 #endif
+#ifdef ARDUINO_ARCH_ESP8266
+    page_content.concat(table_row_from_value(F("ESP"),F("Processor"), F("ESP8266"),""));
+#else
+    page_content.concat(table_row_from_value(F("ESP"),F("Processor"), F("ESP32"),""));
+#endif
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
     page_content.concat(table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B"));
     tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
