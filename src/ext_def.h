@@ -57,6 +57,17 @@ const char HOST_INFLUX[] PROGMEM = "influx.server";
 const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
 
+#ifdef ESP32
+#define D7 4
+#define D3 19
+#define D4 18
+#define D1 16
+#define D2 17
+
+#define D5 47
+#define D6 48
+
+#endif
 
 // define pins for I2C
 #define I2C_PIN_SCL D4

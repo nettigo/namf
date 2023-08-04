@@ -236,10 +236,8 @@ void wifiConfig() {
 #if defined(ARDUINO_ARCH_ESP8266)
         WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
 #else
-        SSID = WiFi.SSID(i);
-        strncpy(wifiInfo[i].ssid,WiFi.SSID(i).c_str(),35);
-        wifiInfo[i].RSSI = WiFi.RSSI(i);
-        wifiInfo[i].encryptionType = WiFi.encryptionType(i);
+        //esp32
+        WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel);
 #endif
 
 		SSID.toCharArray(wifiInfo[i].ssid, 35);
