@@ -827,7 +827,12 @@ static bool acquireNetworkTime() {
 	debug_out(NTP_SERVER,DEBUG_MIN_INFO,1);
 #ifdef ARDUINO_ARCH_ESP8266
 	settimeofday_cb(time_is_set);
-	configTime("GMT", NTP_SERVER);
+    configTime(0, 3600, NTP_SERVER);
+#elif defined(ARDUINO_ARCH_ESP32)
+    configTime(0, 3600, NTP_SERVER);
+    struct tm timeinfo;
+    if (getLocalTime(&timeinfo))
+        time_is_set();
 #endif
 	while (retryCount++ < 20) {
 		// later than 2000/01/01:00:00:00
