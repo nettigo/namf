@@ -18,9 +18,9 @@
 WiFiClient client;  /// FOR ESP32 HTTP FOTA UPDATE ///
 
 t_httpUpdate_return tryUpdate(const String host, const String port, const String path, const String ver) {
-//    t_httpUpdate_return ret = httpUpdate.update(client, UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
+    t_httpUpdate_return ret = httpUpdate.update(client, UPDATE_HOST, UPDATE_PORT, UPDATE_URL, ver);
 //no OTA for now
-    return HTTPUpdateResult::HTTP_UPDATE_NO_UPDATES;
+    return ret;
 }
 #else
 
