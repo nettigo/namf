@@ -84,7 +84,7 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         }
 
         http->addHeader(F("Content-Type"), contentType);
-        http->addHeader(F("X-Sensor"), String(F(PROCESSOR_ARCH)) + esp_chipid());
+        http->addHeader(F("X-Sensor"), String(F(PROCESSOR_ARCH)) + F("-") + esp_chipid());
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
