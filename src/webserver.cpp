@@ -1043,9 +1043,10 @@ void webserver_debug_level() {
 #ifdef ARDUINO_ARCH_ESP8266
         ArduinoOTA.begin(true);
 #else
-        ArduinoOTA.begin();
+
         ArduinoOTA.setMdnsEnabled(true);
         ArduinoOTA.setHostname(cfg::fs_ssid);
+        ArduinoOTA.begin();
 #endif
         page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
