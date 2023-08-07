@@ -874,7 +874,7 @@ void initNonTrivials(const char *id) {
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
-    Debug.begin(115200);                    // Output to Serial at 9600 baud
+    Debug.begin(115200);
 #ifdef ARDUINO_ARCH_ESP8266
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
     serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
