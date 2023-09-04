@@ -132,9 +132,6 @@ void setDefaultConfig(void) {
  *****************************************************************/
 void readConfig() {
     setDefaultConfig();
-    debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
-	if (SPIFFS.begin()) {
-		debug_out(F("OK"), DEBUG_MIN_INFO, 1);
 		if (SPIFFS.exists("/config.json")) {
 			//file exists, reading and loading
 			debug_out(F("reading config"), DEBUG_MED_INFO, 1);
@@ -149,15 +146,6 @@ void readConfig() {
 		} else {
 			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
 		}
-	} else {
-		debug_out(F("\nFailed mount FS!"), DEBUG_ERROR, 1);
-#ifdef ARDUINO_ARCH_ESP32
-        SPIFFS.format();
-        debug_out(F("\nFilesystem formatted, restart!"), DEBUG_ERROR);
-        ESP.restart();
-
-#endif
-	}
 }
 
 String tmpl(const String& patt, const String& value) {
@@ -869,12 +857,65 @@ void initNonTrivials(const char *id) {
 
     }
 }
+//clear Factory Reset markers
+void clearFactoryResetMarkers() {
+    debug_out(F("Clear factory reset markers"), DEBUG_ERROR);
+    if (SPIFFS.exists("/fr1")) SPIFFS.remove("/fr1");
+    if (SPIFFS.exists("/fr")) SPIFFS.remove("/fr");
+}
+
+//check if factory reset conditions are met
+void checkFactoryReset() {
+    uint32 r = ESP.getResetInfoPtr()->reason;
+    debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
+    if (!SPIFFS.begin()) {
+#ifdef ARDUINO_ARCH_ESP32
+        SPIFFS.format();
+        debug_out(F("\nFilesystem formatted, restart!"), DEBUG_ERROR);
+        ESP.restart();
+
+#endif
+        debug_out(F("\n\n***************** Error mounting FS! *****************\n\n"), DEBUG_ERROR);
+        return;
+    }
+    debug_out(F("OK"), DEBUG_MIN_INFO);
+    if (r !=  REASON_EXT_SYS_RST) {
+        //clean up, no RST, no factory reset
+        debug_out(F("No factory reset condition"), DEBUG_MED_INFO);
+        clearFactoryResetMarkers();
+        return;
+    }
+    debug_out(F("Checking factory reset condition"), DEBUG_MED_INFO);
+
+    if (SPIFFS.exists("/fr1")) {
+        //do factory reset
+        debug_out(F("\n\n*************** FACTORY RESET! ****************\n\n"), DEBUG_ERROR);
+        if (SPIFFS.exists("/config.json"))
+        SPIFFS.remove("/config.json");
+        clearFactoryResetMarkers();
+        delay(1000);
+        ESP.restart();
+    } else {
+        if(SPIFFS.exists(("/fr"))) {
+            debug_out(F("\nFACTORY RESET prepared, press reset once more for Factory Reset to defaults!"), DEBUG_ERROR);
+            File f=SPIFFS.open("/fr1","w");
+            f.close();
+            SPIFFS.remove("/fr");
+        } else {
+            debug_out(F("\nFACTORY RESET start - press reset two times"), DEBUG_ERROR);
+            File f=SPIFFS.open("/fr","w");
+            f.close();
+        }
+    }
+
+}
 
 /*****************************************************************
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
     Debug.begin(115200);
+    checkFactoryReset();
 #ifdef ARDUINO_ARCH_ESP8266
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
     serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
@@ -1125,6 +1166,10 @@ void loop() {
 	act_milli = millis();
     send_now = msSince(starttime) > cfg::sending_intervall_ms;
     sample_count++;
+    if (cfg::in_factory_reset_window && millis() > 5000) {
+        cfg::in_factory_reset_window = false;
+        clearFactoryResetMarkers();
+    }
 #ifdef ARDUINO_ARCH_ESP8266
     MDNS.update();
 #endif

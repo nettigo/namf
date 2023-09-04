@@ -20,6 +20,8 @@ namespace cfg {
     char *fbssid = nullptr;
     char *fbpwd = nullptr;
 
+    bool in_factory_reset_window = true;
+
     char current_lang[3] = "PL";
     char *www_username = nullptr;
     char *www_password = nullptr;

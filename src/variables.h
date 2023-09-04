@@ -51,6 +51,7 @@ namespace cfg {
     extern char *fbssid;
     extern char *fbpwd;
 
+    extern bool in_factory_reset_window;
 
     extern char current_lang[3];
     extern char *www_username;
