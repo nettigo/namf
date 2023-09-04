@@ -7,6 +7,22 @@
 #include "variables.h"
 //#include <Schedule.h>
 #ifdef ARDUINO_ARCH_ESP32
+#ifdef ESP_IDF_VERSION_MAJOR  // IDF 4+
+#if CONFIG_IDF_TARGET_ESP32   // ESP32/PICO-D4
+#include "esp32/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32S2
+#include "esp32s2/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32C3
+#include "esp32c3/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32S3
+#include "esp32s3/rom/rtc.h"
+#else
+#error Target CONFIG_IDF_TARGET is not supported
+#endif
+#else  // ESP32 Before IDF 4.0
+#include "rom/rtc.h"
+#endif
+
 #include <esp_task_wdt.h>
 #endif
 #include "variables_init.h"
@@ -866,7 +882,6 @@ void clearFactoryResetMarkers() {
 
 //check if factory reset conditions are met
 void checkFactoryReset() {
-    uint32 r = ESP.getResetInfoPtr()->reason;
     debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
     if (!SPIFFS.begin()) {
 #ifdef ARDUINO_ARCH_ESP32
@@ -879,7 +894,12 @@ void checkFactoryReset() {
         return;
     }
     debug_out(F("OK"), DEBUG_MIN_INFO);
+#ifdef ARDUINO_ARCH_ESP32
+    if ( 14 !=  rtc_get_reset_reason(1)) {
+#elif defined(ARDUINO_ARCH_ESP8266)
+    uint32 r = ESP.getResetInfoPtr()->reason;
     if (r !=  REASON_EXT_SYS_RST) {
+#endif
         //clean up, no RST, no factory reset
         debug_out(F("No factory reset condition"), DEBUG_MED_INFO);
         clearFactoryResetMarkers();
