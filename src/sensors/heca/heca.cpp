@@ -73,15 +73,16 @@ namespace HECA {
             lines[row].concat((FPSTR(SENSORS_HECA)));
         }
         row++;
-        lines[row].concat((F("RH: ")));
-        lines[row].concat((check_display_value(last_value_HECA_H, -1, 1, 0)));
-        lines[row].concat((F(" ")));
-        lines[row].concat((FPSTR(UNIT_PERCENT)));
-        row++;
         lines[row].concat((F("T: ")));
         lines[row].concat((check_display_value(last_value_HECA_T, -128, 1, 0)));
         lines[row].concat((F(" ")));
         lines[row].concat((FPSTR(UNIT_CELCIUS_LCD)));
+        row++;
+        lines[row].concat((F("RH: ")));
+        lines[row].concat((check_display_value(last_value_HECA_H, -1, 1, 0)));
+        lines[row].concat((F(" ")));
+        lines[row].concat((FPSTR(UNIT_PERCENT)));
+
 //        lines[row].concat((F(" µg/m³")));
         if (getLCDRows() == 4) {
             row++;
