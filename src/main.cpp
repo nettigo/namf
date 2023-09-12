@@ -6,25 +6,6 @@
 #include "defines.h"
 #include "variables.h"
 //#include <Schedule.h>
-#ifdef ARDUINO_ARCH_ESP32
-#ifdef ESP_IDF_VERSION_MAJOR  // IDF 4+
-#if CONFIG_IDF_TARGET_ESP32   // ESP32/PICO-D4
-#include "esp32/rom/rtc.h"
-#elif CONFIG_IDF_TARGET_ESP32S2
-#include "esp32s2/rom/rtc.h"
-#elif CONFIG_IDF_TARGET_ESP32C3
-#include "esp32c3/rom/rtc.h"
-#elif CONFIG_IDF_TARGET_ESP32S3
-#include "esp32s3/rom/rtc.h"
-#else
-#error Target CONFIG_IDF_TARGET is not supported
-#endif
-#else  // ESP32 Before IDF 4.0
-#include "rom/rtc.h"
-#endif
-
-#include <esp_task_wdt.h>
-#endif
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
@@ -268,9 +249,7 @@ void wifiConfig() {
 	while (((millis() - last_page_load) < cfg::time_for_wifi_config)) {
 		dnsServer.processNextRequest();
 		server.handleClient();
-#ifdef ARDUINO_ARCH_ESP32
-        esp_task_wdt_reset();
-#else
+#ifdef ARDUINO_ARCH_ESP8266
         wdt_reset(); // nodemcu is alive
 #endif
 		yield();
@@ -873,62 +852,9 @@ void initNonTrivials(const char *id) {
 
     }
 }
-//clear Factory Reset markers
-void clearFactoryResetMarkers() {
-    debug_out(F("Clear factory reset markers"), DEBUG_ERROR);
-    if (SPIFFS.exists("/fr1")) SPIFFS.remove("/fr1");
-    if (SPIFFS.exists("/fr")) SPIFFS.remove("/fr");
-}
 
+#include "arch_dependend/factory_reset.h"
 //check if factory reset conditions are met
-void checkFactoryReset() {
-    debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
-    if (!SPIFFS.begin()) {
-#ifdef ARDUINO_ARCH_ESP32
-        SPIFFS.format();
-        debug_out(F("\nFilesystem formatted, restart!"), DEBUG_ERROR);
-        ESP.restart();
-
-#endif
-        debug_out(F("\n\n***************** Error mounting FS! *****************\n\n"), DEBUG_ERROR);
-        return;
-    }
-    debug_out(F("OK"), DEBUG_MIN_INFO);
-#ifdef ARDUINO_ARCH_ESP32
-    if ( 14 !=  rtc_get_reset_reason(1)) {
-#elif defined(ARDUINO_ARCH_ESP8266)
-    uint32 r = ESP.getResetInfoPtr()->reason;
-    if (r !=  REASON_EXT_SYS_RST) {
-#endif
-        //clean up, no RST, no factory reset
-        debug_out(F("No factory reset condition"), DEBUG_MED_INFO);
-        clearFactoryResetMarkers();
-        return;
-    }
-    debug_out(F("Checking factory reset condition"), DEBUG_MED_INFO);
-
-    if (SPIFFS.exists("/fr1")) {
-        //do factory reset
-        debug_out(F("\n\n*************** FACTORY RESET! ****************\n\n"), DEBUG_ERROR);
-        if (SPIFFS.exists("/config.json"))
-        SPIFFS.remove("/config.json");
-        clearFactoryResetMarkers();
-        delay(1000);
-        ESP.restart();
-    } else {
-        if(SPIFFS.exists(("/fr"))) {
-            debug_out(F("\nFACTORY RESET prepared, press reset once more for Factory Reset to defaults!"), DEBUG_ERROR);
-            File f=SPIFFS.open("/fr1","w");
-            f.close();
-            SPIFFS.remove("/fr");
-        } else {
-            debug_out(F("\nFACTORY RESET start - press reset two times"), DEBUG_ERROR);
-            File f=SPIFFS.open("/fr","w");
-            f.close();
-        }
-    }
-
-}
 
 /*****************************************************************
  * The Setup                                                     *
