@@ -29,6 +29,14 @@ namespace cfg {
 
     char *fs_ssid = nullptr;
     char *fs_pwd = nullptr;
+#ifdef NAM_LORAWAN
+     String lw_d_eui = F("");
+     String lw_a_eui = F("");
+     String lw_app_key = F("");
+     String lw_nws_key = F("");
+     String lw_apps_key = F("");
+     String lw_dev_addr = F("");
+#endif
 
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;
