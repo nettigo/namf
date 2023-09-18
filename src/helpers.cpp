@@ -277,6 +277,16 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
     json_string += Var2Json(F("fbssid"), fbssid);
+
+#ifdef NAM_LORAWAN
+    json_string += Var2Json(F("lw_d_eui"), lw_d_eui);
+    json_string += Var2Json(F("lw_a_eui"), lw_a_eui);
+    json_string += Var2Json(F("lw_app_key"), lw_app_key);
+    json_string += Var2Json(F("lw_nws_key"), lw_nws_key);
+    json_string += Var2Json(F("lw_apps_key"), lw_apps_key);
+    json_string += Var2Json(F("lw_dev_addr"), lw_dev_addr);
+#endif
+
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
 //    copyToJSON_Bool(sds_read);
@@ -362,6 +372,11 @@ void setCharVar(const JsonObject &json, char **var, const __FlashStringHelper *k
     if (json.containsKey(key)) stringToChar(var, json[key]);
     if (def != nullptr) setDefault(var, def);
 }
+void setCharVar(const JsonObject &json, String &var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
+    if (json.containsKey(key)) var = json.get<String>(key);
+    if (def != nullptr) var = def;
+}
+
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
@@ -396,6 +411,15 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
             setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
             setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+
+#ifdef NAM_LORAWAN
+            setCharVar(json, lw_d_eui, F("lw_d_eui"));
+            setCharVar(json, lw_a_eui, F("lw_a_eui"));
+            setCharVar(json, lw_app_key, F("lw_app_key"));
+            setCharVar(json, lw_nws_key, F("lw_nws_key"));
+            setCharVar(json, lw_apps_key, F("lw_apps_key"));
+            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
+#endif
             setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
             setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
             setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));

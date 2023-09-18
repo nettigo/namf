@@ -440,6 +440,17 @@ void parse_config_request(String &page_content) {
         ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
         readPwdParam(&fs_pwd,F("fs_pwd"));
     }
+#ifdef NAM_LORAWAN
+
+    parseHTTP(F("lw_d_eui"),lw_d_eui);
+    parseHTTP(F("lw_a_eui"),lw_a_eui);
+    parseHTTP(F("lw_app_key"),lw_app_key);
+    parseHTTP(F("lw_nws_key"),lw_nws_key);
+    parseHTTP(F("lw_apps_key"),lw_apps_key);
+    parseHTTP(F("lw_dev_addr"),lw_dev_addr);
+
+#endif
+
     readBoolParam(send2dusti);
     readBoolParam(ssl_dusti);
     readBoolParam(send2madavi);
