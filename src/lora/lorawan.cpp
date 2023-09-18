@@ -3,6 +3,9 @@
 //
 #include "lorawan.h"
 #include "ttn_key.h"
+#include <ArduinoJson.h>
+#include "helpers.h"
+
 namespace LoRaWan {
     hw_config hwConfig;
     // ESP32 - SX126x pin configuration
@@ -166,9 +169,44 @@ namespace LoRaWan {
 
     CayenneLPP lpp(20);
 
-    void send_lora_frame(void)
+    void send_lora_frame(String data)
     {
         static float temp = 20;
+        float pm10 = 20;
+        float pm25 = 20;
+        float h = -0;
+        DynamicJsonBuffer jsonBuffer;
+
+        JsonObject &json = jsonBuffer.parseObject(data);
+        if (!json.success()) {
+            debug_out(F("Internal JSON (data) parsing failure!"), DEBUG_ERROR);
+            return;
+        }
+        if (json.containsKey("sensordatavalues")){
+
+            JsonArray& items = json["sensordatavalues"];
+            for (auto obj : items) {
+                String k = obj.as<JsonObject>()["value_type"];
+
+                debug_out("JSON KEY: ", DEBUG_ERROR, 0);
+                debug_out(k, DEBUG_ERROR);
+                debug_out("JSON VAL: ", DEBUG_ERROR, 0);
+                debug_out(obj.as<JsonObject>()["value"], DEBUG_ERROR);
+                if (k.equals(String("SDS_P1"))) {
+                    pm10 = obj.as<JsonObject>().get<float>("value");
+                }
+                if (k.equals(String("SDS_P2"))) {
+                    pm25 = obj.as<JsonObject>().get<float>("value");
+                }
+                if (k.equals(String("BME280_temperature"))) {
+                    temp = obj.as<JsonObject>().get<float>("value");
+                }
+                if (k.equals(String("BME280_humidity"))) {
+                    h = obj.as<JsonObject>().get<float>("value");
+                }
+            }
+
+        }
         if (lmh_join_status_get() != LMH_SET)
         {
             //Not joined, try again later
@@ -176,9 +214,11 @@ namespace LoRaWan {
             return;
         }
         lpp.reset();
-        lpp.addTemperature(1,temp);
-        temp += 0.1;
-        uint32_t i = 0;
+        lpp.addTemperature(1,pm10);
+        lpp.addTemperature(2,pm25);
+        lpp.addTemperature(3,temp);
+        lpp.addRelativeHumidity(1,h);
+
         m_lora_app_data.port = LORAWAN_APP_PORT;
         m_lora_app_data.buffer = lpp.getBuffer();
         m_lora_app_data.buffsize = lpp.getSize();

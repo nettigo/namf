@@ -31,7 +31,7 @@ namespace LoRaWan {
 
     extern void lorawan_join_failed_handler(void);
 
-    extern void send_lora_frame(void);
+    extern void send_lora_frame(String data);
 
     extern uint32_t timers_init(void);
 
