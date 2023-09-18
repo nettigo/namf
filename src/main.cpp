@@ -11,6 +11,9 @@
 #include "helpers.h"
 #include "system/scheduler.h"
 #include "system/components.h"
+#if defined(NAM_LORAWAN)
+#include "lora/lorawan.h"
+#endif
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -960,6 +963,9 @@ void setup() {
 
     logEnabledAPIs();
     logEnabledDisplays();
+#if defined(NAM_LORAWAN)
+    LoRaWan::setup();
+#endif
 
     //String server_name = F("NAM-");
     //server_name += esp_chipid();
@@ -1002,7 +1008,10 @@ static void checkForceRestart() {
 static unsigned long sendDataToOptionalApis(const String &data) {
 	unsigned long start_send = 0;
 	unsigned long sum_send_time = 0;
-
+#if defined(NAM_LORAWAN)
+    debug_out("\n\nLORAWAN leci!",DEBUG_ERROR);
+    LoRaWan::send_lora_frame();
+#endif
 	if (cfg::send2madavi) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
 		start_send = millis();
