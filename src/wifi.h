@@ -20,6 +20,9 @@ namespace NAMWiFi {
 
     void process();
 
+    //try to reconnect if client was configured
+    void tryToReconnect();
+
 }
 //configure network currently two modes - wifi client or wifi AP
 void configNetwork();

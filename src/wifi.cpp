@@ -236,7 +236,24 @@ namespace NAMWiFi {
         return false;
     }
 
+    void tryToReconnect() {
+        if (state == CLIENT && WiFi.status() != WL_CONNECTED) {
+            debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
+            WiFi.reconnect();
+            NAMWiFi::waitForWifiToConnect(20);
+            debug_out("", DEBUG_MIN_INFO, 1);
+            if (WiFi.status() != WL_CONNECTED) {    //still no connection
+                debug_out(F("Still no WiFi, turn off..."), DEBUG_MIN_INFO);
+                WiFi.mode(WIFI_OFF);
+                delay(2000);
+                debug_out(F("WiFi, reconnecting"), DEBUG_MIN_INFO);
+                WiFi.mode(WIFI_STA);
+                WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
+                NAMWiFi::waitForWifiToConnect(20);
+            }
+        }
 
+    }
 }
 
 //config network

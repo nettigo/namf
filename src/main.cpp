@@ -764,51 +764,80 @@ static unsigned long sendDataToOptionalApis(const String &data) {
         LoRaWan::send_lora_frame(data);
     }
 #endif
-	if (cfg::send2madavi) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
+    if (cfg::internet) {    //send data to API only if we have access to network
+        if (cfg::send2madavi) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+        }
 
+        if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            String sensemap_path = URL_SENSEMAP;
+            sensemap_path.replace("BOXID", cfg::senseboxid);
+            sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+        }
+        if (cfg::send2fsapp) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+
+        }
+
+        if (cfg::send2influx) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            const String data_4_influxdb = create_influxdb_string(data);
+
+            sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+
+        }
+
+        if (cfg::send2custom) {
+            String data_4_custom = data;
+            data_4_custom.remove(0, 1);
+#if defined(ARDUINO_ARCH_ESP8266)
+            data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#else
+            data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#endif
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+
+        }
+
+        if (cfg::send2aqi) {
+            String data_4_custom = data;
+            data_4_custom.remove(0, 1);
+#if defined(ARDUINO_ARCH_ESP8266)
+            data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#else
+            data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#endif
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
+            String path = F("/update/");
+            path.concat(cfg::token_AQI);
+            start_send = millis();
+            sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+
+        }
     }
 
-    if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		String sensemap_path = URL_SENSEMAP;
-		sensemap_path.replace("BOXID", cfg::senseboxid);
-		sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
 
-    }
-
-	if (cfg::send2fsapp) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
-
-    if (cfg::send2influx) {
-        debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
-        start_send = millis();
-        const String data_4_influxdb = create_influxdb_string(data);
-
-        sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
-
-	/*		if (send2lora) {
-				debug_out(F("## Sending to LoRa gateway: "), DEBUG_MIN_INFO, 1);
-				send_lora(data);
-			}
-	*/
 	if (cfg::send2csv) {
 		debug_out(F("## Sending as csv: "), DEBUG_MIN_INFO, 1);
 		send_csv(data);
@@ -816,39 +845,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 
     }
 
-	if (cfg::send2custom) {
-		String data_4_custom = data;
-		data_4_custom.remove(0, 1);
-#if defined(ARDUINO_ARCH_ESP8266)
-        data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
-#else
-		data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
-#endif
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
-
-	if (cfg::send2aqi) {
-		String data_4_custom = data;
-		data_4_custom.remove(0, 1);
-#if defined(ARDUINO_ARCH_ESP8266)
-        data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
-#else
-        data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
-#endif
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
-        String path = F("/update/");
-        path.concat(cfg::token_AQI);
-		start_send = millis();
-		sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
 
     return sum_send_time;
 }
@@ -1011,22 +1007,7 @@ void loop() {
         SimpleScheduler::getResults(data);
 
         // reconnect to WiFi if disconnected
-        if (WiFi.status() != WL_CONNECTED) {
-            debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
-            WiFi.reconnect();
-            NAMWiFi::waitForWifiToConnect(20);
-            debug_out("", DEBUG_MIN_INFO, 1);
-            if (WiFi.status() != WL_CONNECTED) {    //still no connection
-                debug_out(F("Still no WiFi, turn off..."),DEBUG_MIN_INFO);
-                WiFi.mode(WIFI_OFF);
-                delay(2000);
-                debug_out(F("WiFi, reconnecting"),DEBUG_MIN_INFO);
-                WiFi.mode(WIFI_STA);
-                WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
-                NAMWiFi::waitForWifiToConnect(20);
-            }
-        }
-
+        NAMWiFi::tryToReconnect();
 
         if (cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
