@@ -945,65 +945,77 @@ void webserver_wifi() {
  * Webserver root: show latest values                            *
  *****************************************************************/
 void webserver_values() {
-    if (WiFi.status() != WL_CONNECTED) {
-        sendHttpRedirect(server);
-    } else {
-        String page_content;
-        page_content.reserve(4000);
-        page_content = make_header(FPSTR(INTL_CURRENT_DATA));
-        const String unit_PM = "µg/m³";
-        const String unit_T = "°C";
-        const String unit_H = "%";
-        const String unit_P = "hPa";
-        last_page_load = millis();
 
-        debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
-        getTimeHeadings(page_content);
+    String page_content;
+    page_content.reserve(4000);
+    page_content = make_header(FPSTR(INTL_CURRENT_DATA));
+    const String unit_PM = "µg/m³";
+    const String unit_T = "°C";
+    const String unit_H = "%";
+    const String unit_P = "hPa";
+    last_page_load = millis();
 
-        if (cfg::send2madavi) {
-            String link(F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID="));
-            link.concat(String(F(PROCESSOR_ARCH)));
-            link.concat(String(F("-{id}\" target=\"_blank\">{n}</a>")));
-            link.replace(F("{id}"), esp_chipid());
-            link.replace(F("{n}"), FPSTR(INTL_MADAVI_LINK));
-            page_content.concat(link);
-        }
+    debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
+    getTimeHeadings(page_content);
 
-        page_content.concat(F("<table cellspacing='0' border='1' cellpadding='5'>"));
-        page_content.concat(tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE)));
-        if (cfg::pms_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0), unit_PM));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0), unit_PM));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_PMSx003), "PM10", check_display_value(last_value_PMS_P1, -1, 1, 0), unit_PM));
-        }
-        if (cfg::dht_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DHT_T, -128, 1, 0), unit_T));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_HUMIDITY), check_display_value(last_value_DHT_H, -1, 1, 0), unit_H));
-        }
-
-
-        if (cfg::ds18b20_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_DS18B20), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DS18B20_T, -128, 1, 0), unit_T));
-        }
-        if (cfg::gps_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LATITUDE), check_display_value(last_value_GPS_lat, -200.0, 6, 0), "°"));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LONGITUDE), check_display_value(last_value_GPS_lon, -200.0, 6, 0), "°"));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_ALTITUDE),  check_display_value(last_value_GPS_alt, -1000.0, 2, 0), "m"));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, ""));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, ""));
-        }
-        SimpleScheduler::getResultsAsHTML(page_content);
-
-        page_content.concat(FPSTR(EMPTY_ROW));
-        page_content.concat(table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),""));
-        page_content.concat(table_row_from_value(F("NAM"),F("Uptime"), millisToTime(millis()),""));
-
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    if (cfg::send2madavi) {
+        String link(
+                F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID="));
+        link.concat(String(F(PROCESSOR_ARCH)));
+        link.concat(String(F("-{id}\" target=\"_blank\">{n}</a>")));
+        link.replace(F("{id}"), esp_chipid());
+        link.replace(F("{n}"), FPSTR(INTL_MADAVI_LINK));
+        page_content.concat(link);
     }
+
+    page_content.concat(F("<table cellspacing='0' border='1' cellpadding='5'>"));
+    page_content.concat(
+            tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER),
+                 FPSTR(INTL_VALUE)));
+    if (cfg::pms_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(
+                table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0),
+                                     unit_PM));
+        page_content.concat(
+                table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0),
+                                     unit_PM));
+        page_content.concat(
+                table_row_from_value(FPSTR(SENSORS_PMSx003), "PM10", check_display_value(last_value_PMS_P1, -1, 1, 0),
+                                     unit_PM));
+    }
+    if (cfg::dht_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_TEMPERATURE),
+                                                 check_display_value(last_value_DHT_T, -128, 1, 0), unit_T));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_HUMIDITY),
+                                                 check_display_value(last_value_DHT_H, -1, 1, 0), unit_H));
+    }
+
+
+    if (cfg::ds18b20_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_DS18B20), FPSTR(INTL_TEMPERATURE),
+                                                 check_display_value(last_value_DS18B20_T, -128, 1, 0), unit_T));
+    }
+    if (cfg::gps_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LATITUDE),
+                                                 check_display_value(last_value_GPS_lat, -200.0, 6, 0), "°"));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LONGITUDE),
+                                                 check_display_value(last_value_GPS_lon, -200.0, 6, 0), "°"));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_ALTITUDE),
+                                                 check_display_value(last_value_GPS_alt, -1000.0, 2, 0), "m"));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, ""));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, ""));
+    }
+    SimpleScheduler::getResultsAsHTML(page_content);
+
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), ""));
+    page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
+
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
