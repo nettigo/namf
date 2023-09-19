@@ -34,9 +34,9 @@ namespace cfg {
      String lw_d_eui = F("");
      String lw_a_eui = F("");
      String lw_app_key = F("");
-     String lw_nws_key = F("");
-     String lw_apps_key = F("");
-     String lw_dev_addr = F("");
+//     String lw_nws_key = F("");
+//     String lw_apps_key = F("");
+//     String lw_dev_addr = F("");
 #endif
 
     bool dht_read = DHT_READ;

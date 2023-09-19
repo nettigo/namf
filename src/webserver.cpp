@@ -446,9 +446,9 @@ void parse_config_request(String &page_content) {
     parseHTTP(F("lw_d_eui"), lw_d_eui);
     parseHTTP(F("lw_a_eui"), lw_a_eui);
     parseHTTP(F("lw_app_key"), lw_app_key);
-    parseHTTP(F("lw_nws_key"), lw_nws_key);
-    parseHTTP(F("lw_apps_key"), lw_apps_key);
-    parseHTTP(F("lw_dev_addr"), lw_dev_addr);
+//    parseHTTP(F("lw_nws_key"), lw_nws_key);
+//    parseHTTP(F("lw_apps_key"), lw_apps_key);
+//    parseHTTP(F("lw_dev_addr"), lw_dev_addr);
 
 #endif
 
@@ -661,9 +661,9 @@ void webserver_config(){
         page_content.concat(formInputGrid(F("lw_d_eui"), "Device EUI", lw_d_eui, 60));
         page_content.concat(formInputGrid(F("lw_a_eui"), "App EUI", lw_a_eui, 60));
         page_content.concat(formInputGrid(F("lw_app_key"), "App key", lw_app_key, 60));
-        page_content.concat(formInputGrid(F("lw_nws_key"), "Nws key", lw_nws_key, 60));
-        page_content.concat(formInputGrid(F("lw_apps_key"), "Apps key", lw_apps_key, 60));
-        page_content.concat(formInputGrid(F("lw_dev_addr"), "Device address", lw_dev_addr, 60));
+//        page_content.concat(formInputGrid(F("lw_nws_key"), "Nws key", lw_nws_key, 60));
+//        page_content.concat(formInputGrid(F("lw_apps_key"), "Apps key", lw_apps_key, 60));
+//        page_content.concat(formInputGrid(F("lw_dev_addr"), "Device address", lw_dev_addr, 60));
 #endif
 
         formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), FPSTR(INTL_AQI_ECO_API)));

@@ -70,9 +70,9 @@ namespace LoRaWan {
         lmh_setDevEui(nodeDeviceEUI);
         lmh_setAppEui(nodeAppEUI);
         lmh_setAppKey(nodeAppKey);
-        lmh_setNwkSKey(nodeNwsKey);
-        lmh_setAppSKey(nodeAppsKey);
-        lmh_setDevAddr(nodeDevAddr);
+//        lmh_setNwkSKey(nodeNwsKey);
+//        lmh_setAppSKey(nodeAppsKey);
+//        lmh_setDevAddr(nodeDevAddr);
 
         // Initialize LoRaWan
         err_code = lmh_init(&lora_callbacks, lora_param_init, true, CLASS_A, LORAMAC_REGION_EU868);
@@ -107,6 +107,7 @@ namespace LoRaWan {
         Serial.println("OVER_THE_AIR_ACTIVATION != 0");
 
 #endif
+        debug_out("LORA WAN JOINED!", DEBUG_ERROR);
         lmh_class_request(CLASS_A);
 
         TimerSetValue(&appTimer, LORAWAN_APP_TX_DUTYCYCLE);

@@ -284,9 +284,9 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("lw_d_eui"), lw_d_eui);
     json_string += Var2Json(F("lw_a_eui"), lw_a_eui);
     json_string += Var2Json(F("lw_app_key"), lw_app_key);
-    json_string += Var2Json(F("lw_nws_key"), lw_nws_key);
-    json_string += Var2Json(F("lw_apps_key"), lw_apps_key);
-    json_string += Var2Json(F("lw_dev_addr"), lw_dev_addr);
+//    json_string += Var2Json(F("lw_nws_key"), lw_nws_key);
+//    json_string += Var2Json(F("lw_apps_key"), lw_apps_key);
+//    json_string += Var2Json(F("lw_dev_addr"), lw_dev_addr);
 #endif
 
     copyToJSON_Bool(www_basicauth_enabled);
@@ -421,9 +421,9 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, lw_d_eui, F("lw_d_eui"));
             setCharVar(json, lw_a_eui, F("lw_a_eui"));
             setCharVar(json, lw_app_key, F("lw_app_key"));
-            setCharVar(json, lw_nws_key, F("lw_nws_key"));
-            setCharVar(json, lw_apps_key, F("lw_apps_key"));
-            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
+//            setCharVar(json, lw_nws_key, F("lw_nws_key"));
+//            setCharVar(json, lw_apps_key, F("lw_apps_key"));
+//            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
 #endif
             setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
             setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));

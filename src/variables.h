@@ -66,9 +66,9 @@ namespace cfg {
     extern String lw_d_eui;
     extern String lw_a_eui;
     extern String lw_app_key;
-    extern String lw_nws_key;
-    extern String lw_apps_key;
-    extern String lw_dev_addr;
+//    extern String lw_nws_key;
+//    extern String lw_apps_key;
+//    extern String lw_dev_addr;
 #endif
 
     extern bool dht_read;
