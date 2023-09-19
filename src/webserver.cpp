@@ -156,11 +156,14 @@ void webserver_dump_stack(){
  * Webserver root: show all options                              *
  *****************************************************************/
 void webserver_root() {
-    if (WiFi.status() != WL_CONNECTED) {
+    static bool firstAccess = true;
+
+    if (WiFi.status() != WL_CONNECTED && firstAccess) {
+        debug_out(F("redirect to config..."), DEBUG_MIN_INFO, 1);
         sendHttpRedirect(server);
+        firstAccess = false;
     } else {
-        if (!webserver_request_auth())
-        { return; }
+        if (!webserver_request_auth()) { return; }
 
         String page_content = make_header(cfg::fs_ssid);
         last_page_load = millis();
