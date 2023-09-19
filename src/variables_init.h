@@ -30,6 +30,7 @@ namespace cfg {
     char *fs_ssid = nullptr;
     char *fs_pwd = nullptr;
 #ifdef NAM_LORAWAN
+     bool lw_en = false;
      String lw_d_eui = F("");
      String lw_a_eui = F("");
      String lw_app_key = F("");

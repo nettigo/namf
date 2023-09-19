@@ -279,6 +279,8 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("fbssid"), fbssid);
 
 #ifdef NAM_LORAWAN
+
+    json_string += Var2Json(F("lw_en"), lw_en);
     json_string += Var2Json(F("lw_d_eui"), lw_d_eui);
     json_string += Var2Json(F("lw_a_eui"), lw_a_eui);
     json_string += Var2Json(F("lw_app_key"), lw_app_key);
@@ -411,8 +413,11 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
             setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
             setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+#define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
+#define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
 
 #ifdef NAM_LORAWAN
+            setFromJSON(lw_en);
             setCharVar(json, lw_d_eui, F("lw_d_eui"));
             setCharVar(json, lw_a_eui, F("lw_a_eui"));
             setCharVar(json, lw_app_key, F("lw_app_key"));
@@ -425,8 +430,6 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
             setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
 
-#define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
-#define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
 

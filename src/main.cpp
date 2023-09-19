@@ -1009,8 +1009,10 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	unsigned long start_send = 0;
 	unsigned long sum_send_time = 0;
 #if defined(NAM_LORAWAN)
-    debug_out("\n\nLORAWAN leci!",DEBUG_ERROR);
-    LoRaWan::send_lora_frame(data);
+    if (cfg::lw_en) {
+        debug_out("\n\nLORAWAN leci!",DEBUG_ERROR);
+        LoRaWan::send_lora_frame(data);
+    }
 #endif
 	if (cfg::send2madavi) {
 		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);

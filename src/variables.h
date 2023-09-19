@@ -62,6 +62,7 @@ namespace cfg {
     extern char *fs_pwd;
 
 #ifdef NAM_LORAWAN
+    extern bool lw_en;
     extern String lw_d_eui;
     extern String lw_a_eui;
     extern String lw_app_key;
