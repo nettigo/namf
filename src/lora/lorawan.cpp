@@ -2,12 +2,11 @@
 // Created by viciu on 9/13/23.
 //
 #include "lorawan.h"
-#include "ttn_key.h"
 #include <ArduinoJson.h>
 #include "helpers.h"
-
 namespace LoRaWan {
     hw_config hwConfig;
+    ModuleState state = STATE_OK;
     // ESP32 - SX126x pin configuration
     int PIN_LORA_RESET = 12;     // LORA RESET
     int PIN_LORA_NSS = 8;     // LORA SPI CS
@@ -37,6 +36,32 @@ namespace LoRaWan {
                                      lorawan_rx_handler, lorawan_has_joined_handler,
                                      lorawan_confirm_class_handler, lorawan_join_failed_handler};
 
+    //parse string containing hex values (no whitespace, no separators, no 0x) like 'AB11EE'
+    //stores bytes in array. return true if everything was parsed
+    boolean parseStringToArray(const String src, byte dest[], const byte size) {
+        //maximum string size
+        const byte BUFF_SIZE = 60;
+        debug_out(src, DEBUG_ERROR);
+        if (src.length() > BUFF_SIZE) {
+            return false;
+        }
+
+        char *end = nullptr;
+        char *p = nullptr;
+        char buff[BUFF_SIZE + 1];
+        src.toCharArray(buff, BUFF_SIZE);
+        p = buff;
+        char n[3];
+        n[2] = 0; //null termination
+        byte idx = 0;
+        while (strlen(p) > 1) {
+            if (idx >= size) return false;  //dest array is too small
+            strncpy(n, p, 2);
+            dest[idx++] = (byte) strtoul(n, nullptr, 16);
+            p += 2;
+        }
+        return true;
+    }
 
     void setup() {
         hwConfig.CHIP_TYPE = SX1262_CHIP;          // Example uses an eByte E22 module with an SX1262
@@ -67,6 +92,21 @@ namespace LoRaWan {
         }
 
         // Setup the EUIs and Keys
+        if (!parseStringToArray(cfg::lw_d_eui, nodeDeviceEUI, 8)) {
+            debug_out(F("Failed to parse node Device EUI!"), DEBUG_ERROR, 1);
+            LoRaWan::state = ERR_DEV_EUI;
+            return;
+        };
+        if (!parseStringToArray(cfg::lw_a_eui, nodeAppEUI, 8)) {
+            debug_out(F("Failed to parse node App EUI!"), DEBUG_ERROR, 1);
+            LoRaWan::state = ERR_APP_EUI;
+            return;
+        };
+        if (!parseStringToArray(cfg::lw_app_key, nodeAppKey, 16)) {
+            debug_out(F("Failed to parse node App Key!"), DEBUG_ERROR, 1);
+            LoRaWan::state = ERR_APP_KEY;
+            return;
+        };
         lmh_setDevEui(nodeDeviceEUI);
         lmh_setAppEui(nodeAppEUI);
         lmh_setAppKey(nodeAppKey);
@@ -177,6 +217,8 @@ namespace LoRaWan {
         float pm25 = 20;
         float h = -0;
         DynamicJsonBuffer jsonBuffer;
+
+        if (state != STATE_OK) return;
 
         JsonObject &json = jsonBuffer.parseObject(data);
         if (!json.success()) {

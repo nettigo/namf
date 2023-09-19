@@ -11,7 +11,15 @@
 #include <CayenneLPP.h>
 
 namespace LoRaWan {
+    typedef enum {
+        STATE_OK,
+        ERR_DEV_EUI, //failed to parse dev EUI
+        ERR_APP_EUI, //failed to parse app EUI
+        ERR_APP_KEY, //failed to parse app key
 
+    } ModuleState;
+
+extern ModuleState state;
 
 #define LORAWAN_APP_DATA_BUFF_SIZE 64  /**< Size of the data to be transmitted. */
 #define LORAWAN_APP_TX_DUTYCYCLE 10000 /**< Defines the application data transmission duty cycle. 10s, value in [ms]. */
