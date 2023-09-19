@@ -7,12 +7,6 @@
 #include <DNSServer.h>
 
 namespace NAMWiFi {
-    typedef enum {
-        UNSET,
-        AP_RUNNING,
-        AP_CLOSING,
-        CLIENT,
-    } WiFiStatus;
 
     WiFiStatus state = UNSET;
 
@@ -186,6 +180,9 @@ namespace NAMWiFi {
                 cfg::internet = true;
                 state = CLIENT;
             }
+        } else {
+            cfg::internet = true;
+            state = CLIENT;
         }
         debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
         debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);

@@ -9,6 +9,13 @@
 #include "defines.h"
 #include "helpers.h"
 namespace NAMWiFi {
+        typedef enum {
+            UNSET,
+            AP_RUNNING,
+            AP_CLOSING,
+            CLIENT,
+        } WiFiStatus;
+    extern WiFiStatus state;
 
     void wifiConfig();
 
