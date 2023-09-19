@@ -956,51 +956,54 @@ void loop() {
 		server.handleClient();
 		yield();
 //		server.stop();
-		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
+        if (cfg::internet) {
+            const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
-        if (cfg::pms_read) {
-			data.concat(result_PMS);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_PMS, PMS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "PMS_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
-		if (cfg::dht_read) {
-			data.concat(result_DHT);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_DHT, DHT_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DHT_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
+            if (cfg::pms_read) {
+                data.concat(result_PMS);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_PMS, PMS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "PMS_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
+            if (cfg::dht_read) {
+                data.concat(result_DHT);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_DHT, DHT_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DHT_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
 
 
-		if (cfg::ds18b20_read) {
-			data.concat(result_DS18B20);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DS18B20): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_DS18B20, DS18B20_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DS18B20_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
+            if (cfg::ds18b20_read) {
+                data.concat(result_DS18B20);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DS18B20): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_DS18B20, DS18B20_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DS18B20_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
 
-		if (cfg::gps_read) {
-			data.concat(result_GPS);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(GPS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_GPS, GPS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "GPS_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
+            if (cfg::gps_read) {
+                data.concat(result_GPS);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(GPS): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_GPS, GPS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "GPS_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
+
+        }
 
 
         //add results from new scheduler
@@ -1009,7 +1012,7 @@ void loop() {
         // reconnect to WiFi if disconnected
         NAMWiFi::tryToReconnect();
 
-        if (cfg::send2dusti) {
+        if (cfg::internet && cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
 		}
 		data_sample_times.concat(Value2Json("signal", signal_strength));
