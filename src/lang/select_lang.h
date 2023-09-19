@@ -1,7 +1,7 @@
 
 #if defined(INTL_EN)
 #include "lang/intl_en.h"
-#define NTP_SERVER "0.europe.pool.ntp.org"
+#define NTP_SERVER "0.pool.ntp.org"
 #elif defined(INTL_PL)
 #include "lang/intl_pl.h"
 #define NTP_SERVER "0.pl.pool.ntp.org"
