@@ -29,6 +29,9 @@ namespace cfg {
 
     char *fs_ssid = nullptr;
     char *fs_pwd = nullptr;
+
+    bool internet = false;
+
 #ifdef NAM_LORAWAN
     bool lw_en = false;
     String lw_d_eui = F("");

@@ -606,50 +606,6 @@ static void logEnabledDisplays() {
 
 }
 
-void time_is_set (void) {
-	sntp_time_is_set = true;
-}
-
-static bool acquireNetworkTime() {
-	int retryCount = 0;
-	debug_out(F("Setting time using SNTP"), DEBUG_MIN_INFO, 1);
-	time_t now = time(nullptr);
-	debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-	debug_out(NTP_SERVER,DEBUG_MIN_INFO,1);
-#ifdef ARDUINO_ARCH_ESP8266
-	settimeofday_cb(time_is_set);
-    configTime(0, 3600, NTP_SERVER);
-#elif defined(ARDUINO_ARCH_ESP32)
-    configTime(0, 3600, NTP_SERVER);
-    struct tm timeinfo;
-    if (getLocalTime(&timeinfo))
-        time_is_set();
-#endif
-	while (retryCount++ < 20) {
-		// later than 2000/01/01:00:00:00
-		if (sntp_time_is_set) {
-			now = time(nullptr);
-			debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-			return true;
-		}
-		delay(500);
-		debug_out(".",DEBUG_MIN_INFO,0);
-	}
-	debug_out(F("\nrouter/gateway:"),DEBUG_MIN_INFO,1);
-	retryCount = 0;
-	configTime(0, 0, WiFi.gatewayIP().toString().c_str());
-	while (retryCount++ < 20) {
-		// later than 2000/01/01:00:00:00
-		if (sntp_time_is_set) {
-			now = time(nullptr);
-			debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-			return true;
-		}
-		delay(500);
-		debug_out(".",DEBUG_MIN_INFO,0);
-	}
-	return false;
-}
 
 void initNonTrivials(const char *id) {
     strcpy(cfg::current_lang, CURRENT_LANG);
@@ -741,23 +697,12 @@ void setup() {
     }
 
 
-
-
-    if (strlen(cfg::wlanssid) > 0) {
-        connectWifi();
-        got_ntp = acquireNetworkTime();
-        debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
-        debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
-        if(cfg::auto_update) {
-            updateFW();
-        }
+    configNetwork();
+    if (cfg::internet) {//we are connected to internet
         Reporting::reportBoot();
         Serial.println(F(" After Report boot"));
-
-    } else {
-        startAP();
     }
-
+    //in AP mode (no internet) we still want webserver
     setup_webserver();
 
     if (cfg::gps_read) {
@@ -932,6 +877,7 @@ void loop() {
         cfg::in_factory_reset_window = false;
         clearFactoryResetMarkers();
     }
+    NAMWiFi::process();
 #ifdef ARDUINO_ARCH_ESP8266
     MDNS.update();
 #endif
@@ -1068,7 +1014,7 @@ void loop() {
         if (WiFi.status() != WL_CONNECTED) {
             debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
             WiFi.reconnect();
-            waitForWifiToConnect(20);
+            NAMWiFi::waitForWifiToConnect(20);
             debug_out("", DEBUG_MIN_INFO, 1);
             if (WiFi.status() != WL_CONNECTED) {    //still no connection
                 debug_out(F("Still no WiFi, turn off..."),DEBUG_MIN_INFO);
@@ -1077,7 +1023,7 @@ void loop() {
                 debug_out(F("WiFi, reconnecting"),DEBUG_MIN_INFO);
                 WiFi.mode(WIFI_STA);
                 WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
-                waitForWifiToConnect(20);
+                NAMWiFi::waitForWifiToConnect(20);
             }
         }
 

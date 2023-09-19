@@ -61,6 +61,9 @@ namespace cfg {
     extern char *fs_ssid;
     extern char *fs_pwd;
 
+    //do we have connectivity over internet?
+    extern bool internet;
+
 #ifdef NAM_LORAWAN
     extern bool lw_en;
     extern String lw_d_eui;

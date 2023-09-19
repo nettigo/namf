@@ -8,9 +8,20 @@
 #include "variables.h"
 #include "defines.h"
 #include "helpers.h"
+namespace NAMWiFi {
 
-void wifiConfig();
-void waitForWifiToConnect(int maxRetries);
-void connectWifi();
-void startAP();
+    void wifiConfig();
+
+    void waitForWifiToConnect(int maxRetries);
+
+    void connectWifi();
+
+    void startAP();
+
+    void process();
+
+}
+//configure network currently two modes - wifi client or wifi AP
+void configNetwork();
+
 #endif //NAMF_WIFI_H
