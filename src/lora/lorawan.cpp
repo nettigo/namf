@@ -1,12 +1,19 @@
 //
 // Created by viciu on 9/13/23.
 //
+#ifdef NAM_LORAWAN
+
 #include "lorawan.h"
 #include <ArduinoJson.h>
 #include "helpers.h"
 namespace LoRaWan {
     hw_config hwConfig;
     ModuleState state = STATE_OK;
+
+    uint8_t nodeDeviceEUI[8];
+    uint8_t nodeAppEUI[8];
+    uint8_t nodeAppKey[16];
+
     unsigned long lastSend = 0;
     lmh_error_status lastSendStatus = LMH_SUCCESS;
     // ESP32 - SX126x pin configuration
@@ -290,3 +297,4 @@ namespace LoRaWan {
         return 0;
     }
 }
+#endif
