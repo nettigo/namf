@@ -13,6 +13,7 @@
 namespace LoRaWan {
     typedef enum {
         STATE_OK,
+        STATE_JOINED,
         ERR_DEV_EUI, //failed to parse dev EUI
         ERR_APP_EUI, //failed to parse app EUI
         ERR_APP_KEY, //failed to parse app key

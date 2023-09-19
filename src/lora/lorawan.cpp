@@ -7,6 +7,8 @@
 namespace LoRaWan {
     hw_config hwConfig;
     ModuleState state = STATE_OK;
+    unsigned long lastSend = 0;
+    lmh_error_status lastSendStatus = LMH_SUCCESS;
     // ESP32 - SX126x pin configuration
     int PIN_LORA_RESET = 12;     // LORA RESET
     int PIN_LORA_NSS = 8;     // LORA SPI CS
@@ -218,7 +220,7 @@ namespace LoRaWan {
         float h = -0;
         DynamicJsonBuffer jsonBuffer;
 
-        if (state != STATE_OK) return;
+        if (state != STATE_JOINED) return;
 
         JsonObject &json = jsonBuffer.parseObject(data);
         if (!json.success()) {
@@ -231,20 +233,17 @@ namespace LoRaWan {
             for (auto obj : items) {
                 String k = obj.as<JsonObject>()["value_type"];
 
-                debug_out("JSON KEY: ", DEBUG_ERROR, 0);
-                debug_out(k, DEBUG_ERROR);
-                debug_out("JSON VAL: ", DEBUG_ERROR, 0);
                 debug_out(obj.as<JsonObject>()["value"], DEBUG_ERROR);
-                if (k.equals(String("SDS_P1"))) {
+                if (k.equals(String(F("SDS_P1")))) {
                     pm10 = obj.as<JsonObject>().get<float>("value");
                 }
-                if (k.equals(String("SDS_P2"))) {
+                if (k.equals(String(F("SDS_P2")))) {
                     pm25 = obj.as<JsonObject>().get<float>("value");
                 }
-                if (k.equals(String("BME280_temperature"))) {
+                if (k.equals(String(F("BME280_temperature")))) {
                     temp = obj.as<JsonObject>().get<float>("value");
                 }
-                if (k.equals(String("BME280_humidity"))) {
+                if (k.equals(String(F("BME280_humidity")))) {
                     h = obj.as<JsonObject>().get<float>("value");
                 }
             }
@@ -266,8 +265,8 @@ namespace LoRaWan {
         m_lora_app_data.buffer = lpp.getBuffer();
         m_lora_app_data.buffsize = lpp.getSize();
 
-        lmh_error_status error = lmh_send(&m_lora_app_data, LMH_UNCONFIRMED_MSG);
-        Serial.printf("lmh_send result %d\n", error);
+        lastSendStatus = lmh_send(&m_lora_app_data, LMH_UNCONFIRMED_MSG);
+        Serial.printf("lmh_send result %d\n", lastSendStatus);
     }
 
 /**@brief Function for handling a LoRa tx timer timeout event.
