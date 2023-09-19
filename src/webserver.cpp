@@ -658,8 +658,8 @@ void webserver_config(){
 #ifdef NAM_LORAWAN
         formSectionHeader(page_content, "LoRaWAN setup");
         page_content.concat(formCheckboxGrid(F("lw_enable"), FPSTR(INTL_ENABLE), lw_en));
-        page_content.concat(formInputGrid(F("lw_d_eui"), "Device EUI", lw_d_eui, 60));
         page_content.concat(formInputGrid(F("lw_a_eui"), "App EUI", lw_a_eui, 60));
+        page_content.concat(formInputGrid(F("lw_d_eui"), "Device EUI", lw_d_eui, 60));
         page_content.concat(formInputGrid(F("lw_app_key"), "App key", lw_app_key, 60));
 //        page_content.concat(formInputGrid(F("lw_nws_key"), "Nws key", lw_nws_key, 60));
 //        page_content.concat(formInputGrid(F("lw_apps_key"), "Apps key", lw_apps_key, 60));
