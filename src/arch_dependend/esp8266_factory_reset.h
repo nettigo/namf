@@ -50,7 +50,7 @@ void checkFactoryReset() {
         ESP.restart();
     } else {
         if(SPIFFS.exists(("/fr"))) {
-            debug_out(F("\nFACTORY RESET prepared, press reset once more for Factory Reset to defaults!"), DEBUG_ERROR);
+            debug_out(F("\n\n********************* FACTORY RESET prepared, press reset once more for Factory Reset to defaults! *************\n\n"), DEBUG_ERROR);
             File f=SPIFFS.open("/fr1","w");
             f.close();
             SPIFFS.remove("/fr");
