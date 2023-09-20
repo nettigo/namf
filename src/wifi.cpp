@@ -31,6 +31,25 @@ namespace NAMWiFi {
         }
     }
 
+    struct struct_wifiInfo* collectWiFiInfo(byte &count) {
+        count = WiFi.scanNetworks(false, true);
+        struct struct_wifiInfo *wifiInfo = new struct_wifiInfo[count];
+        for (int i = 0; i < count; i++) {
+            uint8_t * BSSID;
+            String SSID;
+
+#if defined(ARDUINO_ARCH_ESP8266)
+        WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
+#else
+        //esp32
+            WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel);
+#endif
+            SSID.toCharArray(wifiInfo[i].ssid, 35);
+        }
+
+        return wifiInfo;
+
+    }
 
 /*****************************************************************
  * WifiConfig                                                    *
@@ -44,23 +63,12 @@ namespace NAMWiFi {
         debug_out(cfg::fs_pwd, DEBUG_MIN_INFO, 1);
 
         wificonfig_loop = true;
+        wificonfig_loop_update = millis();
 
         WiFi.disconnect(true);
         debug_out(F("scan for wifi networks..."), DEBUG_MIN_INFO, 1);
-        count_wifiInfo = WiFi.scanNetworks(false, true);
-        wifiInfo = new struct_wifiInfo[count_wifiInfo];
-        for (int i = 0; i < count_wifiInfo; i++) {
-            uint8_t * BSSID;
-            String SSID;
-#if defined(ARDUINO_ARCH_ESP8266)
-            WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
-#else
-            //esp32
-            WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel);
-#endif
 
-            SSID.toCharArray(wifiInfo[i].ssid, 35);
-        }
+        wifiInfo = collectWiFiInfo(count_wifiInfo);
 
         WiFi.mode(WIFI_AP);
         const IPAddress apIP(192, 168, 4, 1);
@@ -116,7 +124,8 @@ namespace NAMWiFi {
             WiFi.softAPdisconnect(true);
             state = UNSET;
 
-            delete[]wifiInfo;
+            delete []wifiInfo;
+            wificonfig_loop = 0;    //stop updating WiFi list in loop
 
             dnsServer->stop();
             delete dnsServer;

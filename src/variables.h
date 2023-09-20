@@ -237,6 +237,7 @@ extern String esp_chipid();
 extern long last_page_load ;
 
 extern bool wificonfig_loop ;
+extern unsigned long wificonfig_loop_update ;
 
 extern bool first_cycle ;
 

@@ -205,6 +205,7 @@ String esp_chipid() {return String(ESP.getEfuseMac());}
 long last_page_load = millis();
 
 bool wificonfig_loop = false;
+unsigned long wificonfig_loop_update = 0;
 
 bool first_cycle = true;
 
