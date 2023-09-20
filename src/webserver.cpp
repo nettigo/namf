@@ -598,7 +598,7 @@ void webserver_config(){
             page_content.concat(F("<div id='wifilist' class='row'>"));
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));
             page_content.concat(F("</div>"));
-            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);</script>"));
+            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);window.setInterval(load_wifi_list,15000);</script>"));
         }
 
         page_content.concat(formInputGrid(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
