@@ -595,10 +595,12 @@ void webserver_config(){
         page_content.concat( formSectionHeader(FPSTR(INTL_WIFI_SETTINGS)));
         debug_out(F("output config page 1"), DEBUG_MIN_INFO, 1);
         if (wificonfig_loop) {  // scan for wlan ssids
+            page_content.concat(F("<div class='row'><button onclick='load_wifi_list();return false'>Refresh</button>"));
+            page_content.concat(F("</div>"));
             page_content.concat(F("<div id='wifilist' class='row'>"));
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));
             page_content.concat(F("</div>"));
-            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);window.setInterval(load_wifi_list,15000);</script>"));
+            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000)</script>"));
         }
 
         page_content.concat(formInputGrid(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
@@ -759,12 +761,6 @@ void webserver_config(){
 
         webserverPartialSend(page_content);
 
-
-        if (wificonfig_loop) { //outputPower should be able to change in both modes
-            page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
-            page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
-        }
-
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
 
         page_content.concat(F("</div>")); //grid
@@ -884,6 +880,14 @@ String table_row_from_value(const String &sensor, const String &param, const Str
  * Webserver wifi: show available wifi networks                  *
  *****************************************************************/
 void webserver_wifi() {
+    if (wificonfig_loop_update - millis() > 5000) {
+        debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
+
+        delete []wifiInfo;
+        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
+        wificonfig_loop_update = millis();
+
+    }
     debug_out(F("wifi networks found: "), DEBUG_MIN_INFO, 0);
     debug_out(String(count_wifiInfo), DEBUG_MIN_INFO, 1);
     String page_content = "";
@@ -893,7 +897,6 @@ void webserver_wifi() {
         page_content += BR_TAG;
     } else {
         std::unique_ptr<int[]> indices(new int[count_wifiInfo]);
-        debug_out(F("output config page 2"), DEBUG_MIN_INFO, 1);
         for (int i = 0; i < count_wifiInfo; i++) {
             indices[i] = i;
         }
@@ -904,7 +907,6 @@ void webserver_wifi() {
                 }
             }
         }
-        debug_out(F("output config page 3"), DEBUG_MIN_INFO, 1);
         int duplicateSsids = 0;
         for (int i = 0; i < count_wifiInfo; i++) {
             if (indices[i] == -1) {

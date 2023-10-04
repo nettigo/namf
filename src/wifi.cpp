@@ -146,6 +146,7 @@ namespace NAMWiFi {
         state = AP_RUNNING;
 
     }
+//update WiFi SSIDs list
 
 /*****************************************************************
  * WiFi auto connecting script                                   *

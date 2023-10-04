@@ -886,13 +886,13 @@ void loop() {
     wdt_reset(); // nodemcu is alive
 #endif
 
-    if (wificonfig_loop && millis() - wificonfig_loop_update  > 15000) {
-        debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
-
-        delete []wifiInfo;
-        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
-        wificonfig_loop_update = millis();
-    }
+//    if (wificonfig_loop && millis() - wificonfig_loop_update  > 15000) {
+//        debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
+//
+//        delete []wifiInfo;
+//        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
+//        wificonfig_loop_update = millis();
+//    }
 	scheduler.process();
 
 	if (last_micro != 0) {
