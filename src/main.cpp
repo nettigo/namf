@@ -625,6 +625,13 @@ void initNonTrivials(const char *id) {
  *****************************************************************/
 void setup() {
     Debug.begin(115200);
+    debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
+    debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
+    debug_out(F("/"), DEBUG_ERROR, false);
+    debug_out(FPSTR(INTL_LANG), DEBUG_ERROR);
+    debug_out(F("Chip ID: "), DEBUG_ERROR, false);
+    debug_out(esp_chipid(), DEBUG_ERROR);
+
     checkFactoryReset();
 #ifdef ARDUINO_ARCH_ESP8266
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
@@ -646,12 +653,6 @@ void setup() {
 
     initNonTrivials(esp_chipid().c_str());
 
-    debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
-    debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
-    debug_out(F("/"), DEBUG_ERROR, false);
-    debug_out(FPSTR(INTL_LANG), DEBUG_ERROR);
-    debug_out(F("Chip ID: "), DEBUG_ERROR, false);
-    debug_out(esp_chipid(), DEBUG_ERROR);
 
 
     FSInfo fs_info;
