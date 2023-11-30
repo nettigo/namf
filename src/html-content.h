@@ -98,7 +98,8 @@ const char CONFIG_CSS[] PROGMEM = ".tab {\n"
                                   ".sect:not(:first-child){margin-top:10px;}\n"
                                   ".c2 {grid-column-start:2;grid-column-end: 4}\n"
                                   "input[type='submit'] {margin-top:20px;}\n"
-                                  ".row {grid-column-start:1;grid-column-end: 4}";
+                                  ".row {grid-column-start:1;grid-column-end: 4}\n"
+                                  "#inf{padding-left:10px}";
 const char CONFIG_JS[] PROGMEM =
         "function tab(evt, tabName) {\n"
         "    var i, tabcontent, tablinks;\n"
@@ -170,7 +171,7 @@ const char WEB_DEBUG_PAGE_CONTENT[] PROGMEM = "<table style='width:100%;'>\
 </table>\0";
 const char WEB_CONFIG_SCRIPT[] PROGMEM = "<script>\
 function setSSID(ssid){document.getElementById('wlanssid').value=ssid.innerText||ssid.textContent;document.getElementById('wlanpwd').focus();}\
-function load_wifi_list(r){console.log('WiFI');var x=new XMLHttpRequest();var u='/wifi';if (r==1) {u+='?r=1'}x.open('GET',u);x.onload = function(){if (x.status === 200) {document.getElementById('wifilist').innerHTML = x.responseText;}};x.send();}\
+function load_wifi_list(r){console.log('WiFI');var x=new XMLHttpRequest();document.getElementById('inf').innerHTML='Loading...';var u='/wifi';if (r==1) {u+='?r=1'}x.open('GET',u);x.onload = function(){if (x.status === 200) {document.getElementById('wifilist').innerHTML = x.responseText;}document.getElementById('inf').innerHTML='';};x.send();}\
 </script>";
 
 const char WEB_REMOVE_CONFIG_CONTENT[] PROGMEM = "<h3>{t}</h3>\
