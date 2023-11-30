@@ -600,7 +600,7 @@ void webserver_config(){
             page_content.concat(F("<div id='wifilist' class='row'>"));
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));
             page_content.concat(F("</div>"));
-            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000)</script>"));
+            page_content.concat(F("<script>load_wifi_list()</script>"));
         }
 
         page_content.concat(formInputGrid(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
@@ -878,16 +878,20 @@ String table_row_from_value(const String &sensor, const String &param, const Str
     return s;
 }
 
+void rescanWiFi() {
+    delete []wifiInfo;
+    wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
+    wificonfig_loop_update = millis();
+}
+
 /*****************************************************************
  * Webserver wifi: show available wifi networks                  *
  *****************************************************************/
 void webserver_wifi() {
-    if (wificonfig_loop_update - millis() > 6000) {
+    if (server.hasArg(String(F("r"))) || count_wifiInfo == -1) {
         debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
 
-        delete []wifiInfo;
-        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
-        wificonfig_loop_update = millis();
+        rescanWiFi();
 
     }
     debug_out(F("wifi networks found: "), DEBUG_MIN_INFO, 0);
