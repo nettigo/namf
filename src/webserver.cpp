@@ -595,7 +595,7 @@ void webserver_config(){
         page_content.concat( formSectionHeader(FPSTR(INTL_WIFI_SETTINGS)));
         debug_out(F("output config page 1"), DEBUG_MIN_INFO, 1);
         if (wificonfig_loop) {  // scan for wlan ssids
-            page_content.concat(F("<div class='row'><button onclick='load_wifi_list();return false'>Refresh</button>"));
+            page_content.concat(F("<div class='row'><button onclick='load_wifi_list(1);return false'>Refresh</button>"));
             page_content.concat(F("</div>"));
             page_content.concat(F("<div id='wifilist' class='row'>"));
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));

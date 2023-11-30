@@ -66,9 +66,9 @@ namespace NAMWiFi {
         wificonfig_loop_update = millis();
 
         WiFi.disconnect(true);
-        debug_out(F("scan for wifi networks..."), DEBUG_MIN_INFO, 1);
-
-        wifiInfo = collectWiFiInfo(count_wifiInfo);
+//        debug_out(F("scaning for wifi networks..."), DEBUG_MIN_INFO, 1);
+//
+//        wifiInfo = collectWiFiInfo(count_wifiInfo);
 
         WiFi.mode(WIFI_AP);
         const IPAddress apIP(192, 168, 4, 1);
@@ -79,6 +79,11 @@ namespace NAMWiFi {
         } else {
             WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
         }
+        debug_out(F("Scanning for available SSIDs...."),DEBUG_MIN_INFO, false);
+        rescanWiFi();
+        debug_out(F(" done. Number of found SSIDs: "),DEBUG_MIN_INFO, false);
+        debug_out(String(count_wifiInfo),DEBUG_MIN_INFO);
+
         if (dnsServer == nullptr)
             dnsServer = new(DNSServer);
         dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
