@@ -29,9 +29,6 @@ void webserver_dump_stack();
 
 #endif
 
-//sacn WiFi list
-void rescanWiFi();
-
 void sendHttpRedirect(WEB_SERVER_TYPE &httpServer);
 /*****************************************************************
  * Webserver Images                                              *

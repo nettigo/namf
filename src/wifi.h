@@ -17,6 +17,9 @@ namespace NAMWiFi {
         } WiFiStatus;
     extern WiFiStatus state;
 
+    //scan WiFi list
+    void rescanWiFi();
+
     void wifiConfig();
 
     void waitForWifiToConnect(int maxRetries);

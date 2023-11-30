@@ -878,11 +878,6 @@ String table_row_from_value(const String &sensor, const String &param, const Str
     return s;
 }
 
-void rescanWiFi() {
-    delete []wifiInfo;
-    wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
-    wificonfig_loop_update = millis();
-}
 
 /*****************************************************************
  * Webserver wifi: show available wifi networks                  *
@@ -891,7 +886,7 @@ void webserver_wifi() {
     if (server.hasArg(String(F("r"))) || count_wifiInfo == -1) {
         debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
 
-        rescanWiFi();
+        NAMWiFi::rescanWiFi();
 
     }
     debug_out(F("wifi networks found: "), DEBUG_MIN_INFO, 0);

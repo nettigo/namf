@@ -89,6 +89,13 @@ namespace NAMWiFi {
 
     }
 
+    void rescanWiFi() {
+        delete []wifiInfo;
+        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
+        wificonfig_loop_update = millis();
+    }
+
+
     void waitForWifiToConnect(int maxRetries) {
         int retryCount = 0;
         while ((WiFi.status() != WL_CONNECTED) && (retryCount < maxRetries)) {
