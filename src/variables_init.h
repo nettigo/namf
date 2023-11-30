@@ -218,7 +218,7 @@ unsigned long enable_ota_time = 0;
 unsigned long count_sends = 0;
 
 struct struct_wifiInfo *wifiInfo;
-uint8_t count_wifiInfo;
+int count_wifiInfo = -1;
 
 template<typename T, std::size_t N> constexpr std::size_t array_num_elements(const T(&)[N]) {
     return N;

@@ -257,7 +257,7 @@ struct struct_wifiInfo {
     bool isHidden;
 };
 extern struct struct_wifiInfo *wifiInfo;
-extern uint8_t count_wifiInfo;
+extern int count_wifiInfo;
 
 
 

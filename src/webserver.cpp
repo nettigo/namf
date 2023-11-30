@@ -791,7 +791,7 @@ void webserver_config(){
 //    page_content.concat(String(maxSizeTemp));
     page_content.concat(F("<script>const beforeUnloadListener = (event) => {\n"
                           "  event.preventDefault();\n"
-                          "  return event.returnValue = \"Are1 you sure you want to exit?\";"
+                          "  return event.returnValue = \"Are you sure you want to exit?\";"
                           "};"
                           "function warn(){addEventListener(\"beforeunload\", beforeUnloadListener, {capture: true});};\n"
                           "function submit(){removeEventListener(\"beforeunload\", beforeUnloadListener, {capture: true});};\n"
@@ -809,7 +809,9 @@ void webserver_config(){
         delay(500);
         ESP.restart();
     }
+    if (wificonfig_loop) {
 
+    }
 
 //send.
 }
@@ -880,7 +882,7 @@ String table_row_from_value(const String &sensor, const String &param, const Str
  * Webserver wifi: show available wifi networks                  *
  *****************************************************************/
 void webserver_wifi() {
-    if (wificonfig_loop_update - millis() > 5000) {
+    if (wificonfig_loop_update - millis() > 6000) {
         debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
 
         delete []wifiInfo;

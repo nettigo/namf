@@ -31,7 +31,7 @@ namespace NAMWiFi {
     void tryToReconnect();
 
     //collect info about visible networks
-    struct struct_wifiInfo* collectWiFiInfo(byte&);
+    struct struct_wifiInfo* collectWiFiInfo(int&);
 }
 //configure network currently two modes - wifi client or wifi AP
 void configNetwork();

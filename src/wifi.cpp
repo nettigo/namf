@@ -31,7 +31,7 @@ namespace NAMWiFi {
         }
     }
 
-    struct struct_wifiInfo* collectWiFiInfo(byte &count) {
+    struct struct_wifiInfo* collectWiFiInfo(int &count) {
         count = WiFi.scanNetworks(false, true);
         struct struct_wifiInfo *wifiInfo = new struct_wifiInfo[count];
         for (int i = 0; i < count; i++) {
