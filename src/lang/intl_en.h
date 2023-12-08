@@ -84,9 +84,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_en.lang */ const char INTL_LANG[] PROGMEM = "EN";
 /* ./src/lang/intl_en.lang */ const char INTL_LANGUAGE[] PROGMEM = "Language";
 /* ./src/lang/intl_en.lang */ const char INTL_LATITUDE[] PROGMEM = "Latitude";
-/* ./src/lang/intl_en.lang */ const char INTL_LCD[] PROGMEM = "Has character LCD";
+/* ./src/lang/intl_en.lang */ const char INTL_LCD[] PROGMEM = "Character LCD:";
 /* ./src/lang/intl_en.lang */ const char INTL_LCD1602[] PROGMEM = "LCD 1602 (I2C: 0x27 or 0x3F)";
 /* ./src/lang/intl_en.lang */ const char INTL_LCD2004[] PROGMEM = "LCD 2004 (I2C: 0x27 or 0x3F)";
+/* ./src/lang/intl_en.lang */ const char INTL_LCD_NONE[] PROGMEM = "No character LCD";
 /* ./src/lang/intl_en.lang */ const char INTL_LEDBAR_32[] PROGMEM = "RGB LED BAR (I2C: 0x32)";
 /* ./src/lang/intl_en.lang */ const char INTL_LONGITUDE[] PROGMEM = "Longitude";
 /* ./src/lang/intl_en.lang */ const char INTL_MADAVI_LINK[] PROGMEM = "Sensor graphs on Madavi";

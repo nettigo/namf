@@ -455,10 +455,21 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(update_channel);
             setFromJSON(has_display);
             setFromJSON(has_lcd1602);
+            setFromJSON(has_lcd2004);
             //need to migrate old config values to new ones - can not use JSON helpers
             if (json.containsKey(F("has_lcd1602_27"))) { has_lcd1602 = json[F("has_lcd1602_27")];}
-            if (json.containsKey(F("has_lcd2004_27"))) { has_lcd2004 = json[F("has_lcd2004_27")];}
-            if (json.containsKey(F("has_lcd2004_3f"))) { has_lcd2004 = json[F("has_lcd2004_3f")];}
+            if (json.containsKey(F("has_lcd2004_27"))) {
+                has_lcd2004 = json[F("has_lcd2004_27")];
+                debug_out("2004 z 27 ustawiony na ", DEBUG_MED_INFO,0);
+                debug_out(String(has_lcd2004), DEBUG_MED_INFO);
+
+            }
+            if (json.containsKey(F("has_lcd2004_3f"))) {
+                has_lcd2004 = json[F("has_lcd2004_3f")];
+                debug_out("2004 z 3F ustawiony na ", DEBUG_MED_INFO,0);
+                debug_out(String(has_lcd2004), DEBUG_MED_INFO);
+
+            }
             setFromJSON(show_wifi_info);
             setFromJSON(sh_dev_inf);
             setFromJSON(has_ledbar_32);

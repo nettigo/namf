@@ -516,15 +516,13 @@ void parse_config_request(String &page_content) {
     readBoolParam(has_display);
     has_lcd1602 = false;
     has_lcd2004 = false;
-    if (server.hasArg("has_lcd")) {
-        switch (server.arg("lcd_type").toInt()) {
-            case 1:
-                has_lcd1602 = true;
-                break;
-            case 2:
-                has_lcd2004 = true;
-                break;
-        }
+    switch (server.arg("lcd_type").toInt()) {
+        case 1:
+            has_lcd1602 = true;
+            break;
+        case 2:
+            has_lcd2004 = true;
+            break;
     }
     readBoolParam(show_wifi_info);
     readBoolParam(sh_dev_inf);
@@ -616,9 +614,10 @@ void webserver_config(){
 
         page_content.concat(formSectionHeader(FPSTR(INTL_MORE_SETTINGS)));
 
-        page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
-                                                 has_lcd1602  || has_lcd2004));
-        page_content.concat(F("<div class='c2'><select name=\"lcd_type\">"));
+        page_content.concat(F("<div>"));
+        page_content.concat(FPSTR(INTL_LCD));
+        page_content.concat(F("</div><div class='c2'><select name=\"lcd_type\">"));
+        page_content.concat(form_option("0", FPSTR(INTL_LCD_NONE), false));
         page_content.concat(form_option("1", FPSTR(INTL_LCD1602), has_lcd1602));
         page_content.concat(form_option("2", FPSTR(INTL_LCD2004), has_lcd2004));
         page_content.concat(F("</select></div>"));

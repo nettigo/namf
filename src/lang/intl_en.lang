@@ -50,7 +50,8 @@ INTL_MORE_SETTINGS More settings
 INTL_DIAGNOSTIC Send diagnostic data to Nettigo
 INTL_AUTO_UPDATE Auto update firmware, using channel
 INTL_DISPLAY OLED SSD1306
-INTL_LCD Has character LCD
+INTL_LCD Character LCD:
+INTL_LCD_NONE No character LCD
 INTL_LCD1602 LCD 1602 (I2C: 0x27 or 0x3F)
 INTL_LCD2004 LCD 2004 (I2C: 0x27 or 0x3F)
 INTL_LEDBAR_32 RGB LED BAR (I2C: 0x32)

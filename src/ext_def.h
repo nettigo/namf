@@ -138,7 +138,7 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define HAS_LCD1602_27 0
 
 // LCD Display LCD2004 (0x27) angeschlossen?
-#define HAS_LCD2004_27 1
+#define HAS_LCD2004_27 0
 
 // LCD Display LCD2004 (0x3F)
 #define HAS_LCD2004_3F 0
