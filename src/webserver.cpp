@@ -515,22 +515,14 @@ void parse_config_request(String &page_content) {
 
     readBoolParam(has_display);
     has_lcd1602 = false;
-    has_lcd1602_27 = false;
-    has_lcd2004_27 = false;
-    has_lcd2004_3f = false;
+    has_lcd2004 = false;
     if (server.hasArg("has_lcd")) {
         switch (server.arg("lcd_type").toInt()) {
             case 1:
-                has_lcd1602_27 = true;
-                break;
-            case 2:
                 has_lcd1602 = true;
                 break;
-            case 3:
-                has_lcd2004_27 = true;
-                break;
-            case 4:
-                has_lcd2004_3f = true;
+            case 2:
+                has_lcd2004 = true;
                 break;
         }
     }
@@ -625,12 +617,10 @@ void webserver_config(){
         page_content.concat(formSectionHeader(FPSTR(INTL_MORE_SETTINGS)));
 
         page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
-                                                 has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27));
+                                                 has_lcd1602  || has_lcd2004));
         page_content.concat(F("<div class='c2'><select name=\"lcd_type\">"));
-        page_content.concat(form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27));
-        page_content.concat(form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602));
-        page_content.concat(form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27));
-        page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
+        page_content.concat(form_option("1", FPSTR(INTL_LCD1602), has_lcd1602));
+        page_content.concat(form_option("2", FPSTR(INTL_LCD2004), has_lcd2004));
         page_content.concat(F("</select></div>"));
         page_content.concat(formCheckboxGrid("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
         page_content.concat(formCheckboxGrid("sh_dev_inf", FPSTR(INTL_SHOW_DEVICE_INFO), sh_dev_inf));

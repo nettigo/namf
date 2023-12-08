@@ -511,16 +511,13 @@ void init_display() {
  * Init LCD display                                              *
  *****************************************************************/
 void init_lcd() {
-	if (cfg::has_lcd1602_27) {
-		char_lcd = new LiquidCrystal_I2C(0x27, 16, 2);
-    } else if (cfg::has_lcd1602) {
-        char_lcd = new LiquidCrystal_I2C(0x3F, 16, 2);
-    } else if (cfg::has_lcd2004_27) {
-        char_lcd = new LiquidCrystal_I2C(0x27, 20, 4);
-    } else if (cfg::has_lcd2004_3f) {
-        char_lcd = new LiquidCrystal_I2C(0x3F, 20, 4);
-	}
-
+    byte addr = getLCDaddr();
+    if (addr == 0) return;
+    byte cols = getLCDCols();
+    byte lines = getLCDRows();
+	if (cfg::has_lcd1602 || cfg::has_lcd2004) {
+		char_lcd = new LiquidCrystal_I2C(addr, cols, lines);
+}
 	//LCD is set? Configure it!
     if (char_lcd) {
         char_lcd->init();
@@ -594,10 +591,10 @@ static void logEnabledDisplays() {
 	if (cfg::has_display) {
 		debug_out(F("Show on OLED..."), DEBUG_MIN_INFO, 1);
 	}
-	if (cfg::has_lcd1602 || cfg::has_lcd1602_27) {
+	if (cfg::has_lcd1602) {
 		debug_out(F("Show on LCD 1602 ..."), DEBUG_MIN_INFO, 1);
 	}
-	if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+	if (cfg::has_lcd2004) {
 		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
 	}
 	if (cfg::has_ledbar_32) {

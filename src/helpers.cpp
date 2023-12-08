@@ -310,9 +310,7 @@ String getConfigString(boolean maskPwd) {
     copyToJSON_Int(update_channel);
     copyToJSON_Bool(has_display);
     copyToJSON_Bool(has_lcd1602);
-    copyToJSON_Bool(has_lcd1602_27);
-    copyToJSON_Bool(has_lcd2004_27);
-    copyToJSON_Bool(has_lcd2004_3f);
+    copyToJSON_Bool(has_lcd2004);
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(sh_dev_inf);
     copyToJSON_Bool(has_ledbar_32);
@@ -457,9 +455,10 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(update_channel);
             setFromJSON(has_display);
             setFromJSON(has_lcd1602);
-            setFromJSON(has_lcd1602_27);
-            setFromJSON(has_lcd2004_27);
-            setFromJSON(has_lcd2004_3f);
+            //need to migrate old config values to new ones - can not use JSON helpers
+            if (json.containsKey(F("has_lcd1602_27"))) { has_lcd1602 = json[F("has_lcd1602_27")];}
+            if (json.containsKey(F("has_lcd2004_27"))) { has_lcd2004 = json[F("has_lcd2004_27")];}
+            if (json.containsKey(F("has_lcd2004_3f"))) { has_lcd2004 = json[F("has_lcd2004_3f")];}
             setFromJSON(show_wifi_info);
             setFromJSON(sh_dev_inf);
             setFromJSON(has_ledbar_32);

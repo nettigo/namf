@@ -158,7 +158,7 @@ void display_values() {
     }
     if (!skipOldDisplay) {
 
-        if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+        if (cfg::has_display || cfg::has_lcd2004) {
             switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
                     display_header = pm25_sensor;
@@ -230,7 +230,7 @@ void display_values() {
                 display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
                 display->display();
             }
-            if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+            if (cfg::has_lcd2004) {
                 display_header = getLCDHeader() + " " + display_header;
                 display_lines[0].replace(" µg/m³", "");
                 display_lines[0].replace("°", String(char(223)));
@@ -248,7 +248,7 @@ void display_values() {
         }
 
 
-        if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
+        if (cfg::has_lcd1602) {
             switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
                     display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
@@ -290,17 +290,28 @@ void display_values() {
 
 //get LCD screen sizes. returns 0 if no LCD or graphical one (SSD1306)
 byte getLCDCols(){
-    if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 16;
-    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) return 20;
+    if (cfg::has_lcd1602) return 16;
+    if (cfg::has_lcd2004) return 20;
     return 0;
 };
 
 byte getLCDRows(){
-    if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 2;
-    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || display) return 4;
+    if (cfg::has_lcd1602) return 2;
+    if (cfg::has_lcd2004 || display) return 4;
     return 0;
-
 };
+
+byte getLCDaddr() {
+    Wire.beginTransmission(0x27);
+    if (Wire.endTransmission() == 0) {
+        return 0x27;
+    }
+    Wire.beginTransmission(0x3F);
+    if (Wire.endTransmission() == 0) {
+        return 0x3F;
+    }
+    return 0;   //no I2C LCD?
+}
 
 String getLCDHeader(bool longDisp) {
     String ret = String(next_display_count + 1);
@@ -312,8 +323,7 @@ String getLCDHeader(bool longDisp) {
 };
 
 void cycleDisplay(void){
-    if ((cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
-         cfg::has_lcd1602_27) && (act_milli > next_display_millis)) {
+    if ((cfg::has_display || cfg::has_lcd2004 || cfg::has_lcd1602) && (act_milli > next_display_millis)) {
         display_values();
     }
 

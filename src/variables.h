@@ -95,9 +95,7 @@ namespace cfg {
     extern u8_t update_channel;
     extern bool has_display;
     extern bool has_lcd1602;
-    extern bool has_lcd1602_27;
-    extern bool has_lcd2004_27;
-    extern bool has_lcd2004_3f;
+    extern bool has_lcd2004;
     extern bool show_wifi_info;
     extern bool sh_dev_inf;
     extern bool has_ledbar_32;
