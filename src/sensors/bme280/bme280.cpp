@@ -51,6 +51,60 @@ namespace BME280 {
         printOnLCD = true;
     }
 
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
+
+    float currentPressure() {
+        if (sampleCount == 0)
+            return -1;
+        float sum = 0;
+        for (byte i = 0; i < sampleCount; i++)
+            sum += samplesP[i];
+        return sum / sampleCount;
+    }
+
+    float currentPressureHPa() {
+        float ret = currentPressure();
+        if (ret == -1) return -1;
+        return ret/100.0;
+    }
+
+    float currentHumidity() {
+        if (sampleCount == 0)
+            return -1;
+        float sum = 0;
+        for (byte i = 0; i < sampleCount; i++)
+            sum += samplesH[i];
+        return sum / sampleCount;
+    }
+
+    float currentTemp() {
+        if (sampleCount == 0)
+            return -128;
+        float sum = 0;
+        for (byte i = 0; i < sampleCount; i++)
+            sum += samplesT[i];
+        return sum / sampleCount;
+    }
+
+    void display(byte cols, byte minor, String lines[]) {
+        byte row = 0;
+        lines[row++].concat(FPSTR(SENSORS_BME280));
+
+        lines[row].concat(F("Temp: "));
+        lines[row].concat(String(currentTemp()));
+        lines[row++].concat(FPSTR(UNIT_CELCIUS_LCD));
+        lines[row].concat(F("Hum.: "));
+        lines[row].concat(String(currentHumidity()));
+        lines[row++].concat(F(" %"));
+        lines[row] = F("Press.:");
+        lines[row].concat(currentPressureHPa());
+        lines[row].concat(F(" hPa"));
+        return;
+    };
+
+
     bool initBME280() {
         if (initBME280(0x76) || initBME280(0x77)) {
             bme280_init_failed = false;
@@ -86,37 +140,7 @@ namespace BME280 {
         }
     }
 
-    float currentPressure() {
-        if (sampleCount == 0)
-            return -1;
-        float sum = 0;
-        for (byte i = 0; i < sampleCount; i++)
-            sum += samplesP[i];
-        return sum / sampleCount;
-    }
 
-    float currentPressureHPa() {
-        float ret = currentPressure();
-        if (ret == -1) return -1;
-        return ret/100.0;
-    }
-
-    float currentTemp() {
-        if (sampleCount == 0)
-            return -128;
-        float sum = 0;
-        for (byte i = 0; i < sampleCount; i++)
-            sum += samplesT[i];
-        return sum / sampleCount;
-    }
-   float currentHumidity() {
-        if (sampleCount == 0)
-            return -1;
-        float sum = 0;
-        for (byte i = 0; i < sampleCount; i++)
-            sum += samplesH[i];
-        return sum / sampleCount;
-    }
 
     /*****************************************************************
      * read BMP280 sensor values                                     *
@@ -230,6 +254,10 @@ namespace BME280 {
             scheduler.unregisterSensor(SimpleScheduler::BME280);
         }
         //register display - separate check to allow enable/disable display not only when turning BME280 on/off
-        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::BME280, 1);
+
+        if (enabled && printOnLCD) {
+            byte screens = getLCDRows() > 2 ? 1 : 2;
+            scheduler.registerDisplay(SimpleScheduler::BME280, screens);
+        }
     }
 }

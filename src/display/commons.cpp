@@ -105,7 +105,7 @@ void display_values() {
     if (cfg::pms_read) {
         screens[static_screen_count++] = DisplayPages::PagePM;
     }
-    if (cfg::dht_read || cfg::ds18b20_read || BME280::isEnabled()) {
+    if (cfg::dht_read || cfg::ds18b20_read) {
         screens[static_screen_count++] = DisplayPages::PageTemp;
     }
     if (cfg::gps_read) {
@@ -180,7 +180,7 @@ void display_values() {
                         display_header += " / " + p_sensor;
                     }
                     if (t_sensor != "") {
-                        display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
+                            display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
                     }
                     if (h_sensor != "") {
                         display_lines[line_count++] = "Hum.:  " + check_display_value(h_value, -1, 1, 6) + " %";

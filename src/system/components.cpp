@@ -8,6 +8,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SHT3x:
                 return SHT3x::getDisplaySetting();
+            case SimpleScheduler::BME280:
+                return BME280::getDisplaySetting();
             case SimpleScheduler::HECA:
                 return HECA::getDisplaySetting();
             case SimpleScheduler::SDS011:
@@ -276,6 +278,10 @@ namespace SimpleScheduler {
 //        Serial.println(LET_NAMES[sensor]);
 //        Serial.println(cols);
         switch (sensor) {
+            case BME280:
+                if (cols == 0) return true;
+                BME280::display(rows, minor, lines);
+                return true;
             case SHT3x:
                 if (cols == 0) return true;
                 SHT3x::display(rows, minor, lines);
