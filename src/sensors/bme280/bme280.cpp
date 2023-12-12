@@ -88,7 +88,8 @@ namespace BME280 {
         return sum / sampleCount;
     }
 
-    void display(byte cols, byte minor, String lines[]) {
+    //display on 4 row LCD, no need to split display
+    void lcd4rows(String lines[]) {
         byte row = 0;
         lines[row++].concat(FPSTR(SENSORS_BME280));
 
@@ -101,6 +102,35 @@ namespace BME280 {
         lines[row] = F("Press.:");
         lines[row].concat(currentPressureHPa());
         lines[row].concat(F(" hPa"));
+        return;
+    }
+
+    void lcd2rows(byte minor, String lines[]) {
+        byte row = 0;
+//        lines[row++].concat(FPSTR(SENSORS_BME280));
+        if (minor == 0) {
+            lines[row].concat(F("T: "));
+            lines[row].concat(String(currentTemp()));
+            lines[row++].concat(FPSTR(UNIT_CELCIUS_LCD));
+            lines[row].concat(F("H: "));
+            lines[row].concat(String(currentHumidity()));
+            lines[row].concat(F(" %"));
+
+        } else {
+            lines[row++] = F("Pressure:");
+            lines[row].concat(currentPressureHPa());
+            lines[row].concat(F(" hPa"));
+        }
+        return;
+
+    }
+
+        void display(byte cols, byte minor, String lines[]) {
+        if (getLCDRows() > 2) {
+            lcd4rows(lines);
+        } else {
+            lcd2rows(minor, lines);
+        }
         return;
     };
 
