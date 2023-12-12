@@ -76,11 +76,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_ro.lang */ const char INTL_LANG[] PROGMEM = "RO";
 /* ./src/lang/intl_ro.lang */ const char INTL_LANGUAGE[] PROGMEM = "Limbă";
 /* ./src/lang/intl_ro.lang */ const char INTL_LATITUDE[] PROGMEM = "Latitudine";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD[] PROGMEM = "Dispune de caracter LCD";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD1602_27[] PROGMEM = "LCD 1602 (I2C: 0x27)";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD1602_3F[] PROGMEM = "LCD 1602 (I2C: 0x3F)";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD2004_27[] PROGMEM = "LCD 2004 (I2C: 0x27)";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD2004_3F[] PROGMEM = "LCD 2004 (I2C: 0x3F)";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD[] PROGMEM = "Dispune de caracter LCD:";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD1602[] PROGMEM = "LCD 2x16";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD2004[] PROGMEM = "LCD 4x20";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD_NONE[] PROGMEM = "Lipsa";
 /* ./src/lang/intl_ro.lang */ const char INTL_LEDBAR_32[] PROGMEM = "RGB LED BAR (I2C: 0x32)";
 /* ./src/lang/intl_ro.lang */ const char INTL_LONGITUDE[] PROGMEM = "Longitudine";
 /* ./src/lang/intl_ro.lang */ const char INTL_MADAVI_LINK[] PROGMEM = "Graficele senzorilor pe Madavi";
@@ -182,9 +181,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_TAB_API[] PROGMEM = "Translate RO: INTL_TAB_API 🐱;";
  const char INTL_TAB_SENSORS[] PROGMEM = "Translate RO: INTL_TAB_SENSORS 🐱;";
  const char INTL_TAB_ADVANCED[] PROGMEM = "Translate RO: INTL_TAB_ADVANCED 🐱;";
- const char INTL_LCD_NONE[] PROGMEM = "Translate RO: INTL_LCD_NONE 🐱;";
- const char INTL_LCD1602[] PROGMEM = "Translate RO: INTL_LCD1602 🐱;";
- const char INTL_LCD2004[] PROGMEM = "Translate RO: INTL_LCD2004 🐱;";
 
 
 #endif

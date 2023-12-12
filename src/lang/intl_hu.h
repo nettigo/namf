@@ -72,11 +72,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_LANG[] PROGMEM = "HU";
 /* ./src/lang/intl_hu.lang */ const char INTL_LANGUAGE[] PROGMEM = "Nyelv";
 /* ./src/lang/intl_hu.lang */ const char INTL_LATITUDE[] PROGMEM = "Földrajzi szélesség";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD[] PROGMEM = "Has character LCD";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD1602_27[] PROGMEM = "LCD 1602 (I2C: 0x27)";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD1602_3F[] PROGMEM = "LCD 1602 (I2C: 0x3F)";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD2004_27[] PROGMEM = "LCD 2004 (I2C: 0x27)";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD2004_3F[] PROGMEM = "LCD 2004 (I2C: 0x3F)";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD[] PROGMEM = "Karakter megjelenítés:";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD1602[] PROGMEM = "LCD 2x16";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD2004[] PROGMEM = "LCD 4x20";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD_NONE[] PROGMEM = "Hiánya";
 /* ./src/lang/intl_hu.lang */ const char INTL_LEDBAR_32[] PROGMEM = "RGB LED BAR (I2C: 0x32)";
 /* ./src/lang/intl_hu.lang */ const char INTL_LONGITUDE[] PROGMEM = "Földrajzi hosszúság";
 /* ./src/lang/intl_hu.lang */ const char INTL_MAX_INFO[] PROGMEM = "max. info";
@@ -180,9 +179,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_UPDATE_BETA[] PROGMEM = "Translate HU: INTL_UPDATE_BETA 🐱;";
  const char INTL_UPDATE_STABLE[] PROGMEM = "Translate HU: INTL_UPDATE_STABLE 🐱;";
  const char INTL_NO_NETWORKS[] PROGMEM = "Translate HU: INTL_NO_NETWORKS 🐱;";
- const char INTL_LCD_NONE[] PROGMEM = "Translate HU: INTL_LCD_NONE 🐱;";
- const char INTL_LCD1602[] PROGMEM = "Translate HU: INTL_LCD1602 🐱;";
- const char INTL_LCD2004[] PROGMEM = "Translate HU: INTL_LCD2004 🐱;";
  const char INTL_SENSOR_IS_REBOOTING_NOW[] PROGMEM = "Translate HU: INTL_SENSOR_IS_REBOOTING_NOW 🐱;";
  const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
 
