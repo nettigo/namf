@@ -3,6 +3,7 @@
 //
 
 #include "commons.h"
+#include "../lib/testable/testable.h"
 //used internally no need to declare outside
 enum class DisplayPages {
     PagePM,
@@ -66,6 +67,17 @@ void display_values() {
     int line_count = 0;
     static_screen_count = 0;
 //	debug_out(F("output values to display..."), DEBUG_MAX_INFO, 1);
+    bool backlight = true;
+    if (sntp_time_is_set && backlight_start < 25 && backlight_stop < 25) {
+        time_t rawtime;
+        struct tm *timeinfo;
+        time (&rawtime);
+        timeinfo = localtime(&rawtime);
+
+
+        backlight = hourIsInRange(timeinfo->tm_hour, backlight_start, backlight_stop);
+
+    }
     if (cfg::pms_read) {
         pm10_value = last_value_PMS_P1;
         pm10_sensor = FPSTR(SENSORS_PMSx003);
@@ -143,6 +155,7 @@ void display_values() {
             }
             if (char_lcd) {
                 char_lcd->clear();
+                char_lcd->setBacklight(backlight);
                 for (byte i = 0; i < 4; i++) {
                     char_lcd->setCursor(0,i);
                     if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));

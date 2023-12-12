@@ -124,6 +124,9 @@ int TimeZone = 1;
  *****************************************************************/
 SSD1306 *display = nullptr;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
 LiquidCrystal_I2C *char_lcd = nullptr;//(0x27, 16, 2);
+//backlight enabled
+byte backlight_stop = 25;
+byte backlight_start = 25;
 
 /*****************************************************************
  * SDS011 declarations                                           *

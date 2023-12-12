@@ -311,6 +311,11 @@ String getConfigString(boolean maskPwd) {
     copyToJSON_Bool(has_display);
     copyToJSON_Bool(has_lcd1602);
     copyToJSON_Bool(has_lcd2004);
+    json_string.concat(F("\"bl\":["));
+    json_string.concat(String(backlight_start));
+    json_string.concat(F(","));
+    json_string.concat(String(backlight_stop));
+    json_string.concat(F("],"));
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(sh_dev_inf);
     copyToJSON_Bool(has_ledbar_32);
@@ -456,6 +461,10 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(has_display);
             setFromJSON(has_lcd1602);
             setFromJSON(has_lcd2004);
+            if(json.containsKey(F("bl"))) {
+                backlight_start = json[F("bl")][0];
+                backlight_stop = json[F("bl")][1];
+            }
             //need to migrate old config values to new ones - can not use JSON helpers
             if (json.containsKey(F("has_lcd1602_27"))) { has_lcd1602 = json[F("has_lcd1602_27")];}
             if (json.containsKey(F("has_lcd2004_27"))) {

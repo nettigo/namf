@@ -6,7 +6,7 @@ NAMF-2020-46rc3 ( rev)
 - simplified LCD selector in config
 - autodetect I2C address for LCD
 - BME280 display code moved to new scheduler
-
+- allow to disable LCD backlight during night hours (hours configurable)
 NAMF-2020-46rc2 (2023-09-04 rev 202f8c1ccad2626e2e0cd8bce108a2d5920e7b33)
 - Factory Reset procedure 3 x RST, each in first 5 seconds
 

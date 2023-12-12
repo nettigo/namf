@@ -471,6 +471,8 @@ void parse_config_request(String &page_content) {
     readIntParam(debug);
     readTimeParam(sending_intervall_ms);
     readTimeParam(time_for_wifi_config);
+    readIntParam(backlight_start);
+    readIntParam(backlight_stop);
 
     readBoolParam(send2csv);
 
@@ -722,6 +724,10 @@ void webserver_config(){
                                           String(time_for_wifi_config / 1000), 5));
         page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
         page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
+
+        page_content.concat(formSectionHeader("LCD backlight"));
+        page_content.concat(formInputGrid("backlight_stop", "Stop at (hour):", String(backlight_stop), 5));
+        page_content.concat(formInputGrid("backlight_start", "Start at (hour):", String(backlight_start), 5));
 
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));

@@ -161,7 +161,8 @@ extern int TimeZone ;
  *****************************************************************/
 extern SSD1306 * display;
 extern LiquidCrystal_I2C * char_lcd;
-
+extern byte backlight_stop;
+extern byte backlight_start;
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
