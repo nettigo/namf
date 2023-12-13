@@ -137,9 +137,6 @@ void displayProgressBar() {
         char_lcd->setCursor(19,3);
         byte x = 7 - (byte)((float)time2Measure()/cfg::sending_intervall_ms * 7) ;
         char_lcd->write(x);
-        debug_out(F("Progress bar: "),DEBUG_ERROR,0);
-        debug_out(String(x),DEBUG_ERROR);
-
     }
 }
 
