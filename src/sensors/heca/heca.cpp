@@ -166,9 +166,8 @@ namespace HECA {
 //            Serial.println(" EDCBA09876543210");
              */
         } else {
-            Serial.println("HECA error");
+            debug_out(String(FPSTR(SENSORS_HECA)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
         }
-
     }
 
     void afterSend(bool status) {
