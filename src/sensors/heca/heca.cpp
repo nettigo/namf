@@ -64,7 +64,12 @@ namespace HECA {
             scheduler.unregisterSensor(SimpleScheduler::HECA);
             debug_out(F("HECA stopped"), DEBUG_MED_INFO);
         }
-        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::HECA, 1);
+        if (enabled)
+            if (printOnLCD)
+                scheduler.registerDisplay(SimpleScheduler::HECA, 1);
+            else
+                scheduler.registerDisplay(SimpleScheduler::HECA, 0);
+
     };
 
     bool display(byte rows, byte minor, String lines[]) {
