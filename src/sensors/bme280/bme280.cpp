@@ -92,34 +92,64 @@ namespace BME280 {
     void lcd4rows(String lines[]) {
         byte row = 0;
         lines[row++].concat(FPSTR(SENSORS_BME280));
-
-        lines[row].concat(F("Temp: "));
-        lines[row].concat(String(currentTemp()));
-        lines[row++].concat(FPSTR(UNIT_CELCIUS_LCD));
-        lines[row].concat(F("Hum.: "));
-        lines[row].concat(String(currentHumidity()));
-        lines[row++].concat(F(" %"));
-        lines[row] = F("Press.:");
-        lines[row].concat(currentPressureHPa());
-        lines[row].concat(F(" hPa"));
+        float x = currentTemp();
+        lines[row].concat(F("Temp  :"));
+        if (x < -125) {
+            lines[row++].concat( F("--"));
+        } else {
+            lines[row].concat(String(x,1));
+            lines[row++].concat(FPSTR(UNIT_CELCIUS_LCD));
+        }
+        x = currentHumidity();
+        lines[row].concat(F("Hum   :"));
+        if (x < 0) {
+            lines[row++].concat( F("--"));
+        } else {
+            lines[row].concat(String(x,1));
+            lines[row++].concat(F(" %"));
+        }
+        x = currentPressureHPa();
+        lines[row] = F("Press :");
+        if (x < 0) {
+            lines[row++].concat( F("--"));
+        } else {
+            lines[row].concat(String(x,1));
+            lines[row].concat(F(" hPa"));
+        }
         return;
     }
 
     void lcd2rows(byte minor, String lines[]) {
         byte row = 0;
 //        lines[row++].concat(FPSTR(SENSORS_BME280));
+        float x = currentTemp();
         if (minor == 0) {
+
             lines[row].concat(F("T: "));
-            lines[row].concat(String(currentTemp()));
-            lines[row++].concat(FPSTR(UNIT_CELCIUS_LCD));
+            if (x < -125) {
+                lines[row++].concat( F("--"));
+            } else {
+                lines[row].concat(String(x,1));
+                lines[row++].concat(FPSTR(UNIT_CELCIUS_LCD));
+            }
             lines[row].concat(F("H: "));
-            lines[row].concat(String(currentHumidity()));
-            lines[row].concat(F(" %"));
+            x = currentHumidity();
+            if (x < 0) {
+                lines[row++].concat( F("--"));
+            } else {
+                lines[row].concat(String(x,1));
+                lines[row++].concat(F(" %"));
+            }
 
         } else {
+            x = currentPressureHPa();
             lines[row++] = F("Pressure:");
-            lines[row].concat(currentPressureHPa());
-            lines[row].concat(F(" hPa"));
+            if (x < 0) {
+                lines[row++].concat( F("--"));
+            } else {
+                lines[row].concat(String(x,1));
+                lines[row].concat(F(" hPa"));
+            }
         }
         return;
 
