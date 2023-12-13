@@ -888,9 +888,9 @@ void webserver_wifi() {
     debug_out(String(count_wifiInfo), DEBUG_MIN_INFO, 1);
     String page_content = "";
     if (count_wifiInfo == 0) {
-        page_content += BR_TAG;
-        page_content += FPSTR(INTL_NO_NETWORKS);
-        page_content += BR_TAG;
+        page_content.concat(BR_TAG);
+        page_content.concat(FPSTR(INTL_NO_NETWORKS));
+        page_content.concat(BR_TAG);
     } else {
         std::unique_ptr<int[]> indices(new int[count_wifiInfo]);
         for (int i = 0; i < count_wifiInfo; i++) {
@@ -916,11 +916,11 @@ void webserver_wifi() {
             }
         }
 
-        page_content += FPSTR(INTL_NETWORKS_FOUND);
-        page_content += String(count_wifiInfo - duplicateSsids);
-        page_content += FPSTR(BR_TAG);
-        page_content += FPSTR(BR_TAG);
-        page_content += FPSTR(TABLE_TAG_OPEN);
+        page_content.concat(FPSTR(INTL_NETWORKS_FOUND));
+        page_content.concat(String(count_wifiInfo - duplicateSsids));
+        page_content.concat(FPSTR(BR_TAG));
+        page_content.concat(FPSTR(BR_TAG));
+        page_content.concat(FPSTR(TABLE_TAG_OPEN));
         //if(n > 30) n=30;
         for (int i = 0; i < count_wifiInfo; ++i) {
             if (indices[i] == -1 || wifiInfo[indices[i]].isHidden) {
@@ -928,13 +928,13 @@ void webserver_wifi() {
             }
             // Print SSID and RSSI for each network found
 #ifdef ARDUINO_ARCH_ESP8266
-            page_content += wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == ENC_TYPE_NONE) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
+            page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == ENC_TYPE_NONE) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI));
 #else
-            page_content += wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == WIFI_AUTH_OPEN) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
+            page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == WIFI_AUTH_OPEN) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
 #endif
         }
-        page_content += FPSTR(TABLE_TAG_CLOSE_BR);
-        page_content += FPSTR(BR_TAG);
+        page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
+        page_content.concat(FPSTR(BR_TAG));
     }
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
