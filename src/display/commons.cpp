@@ -129,7 +129,7 @@ void display_values() {
     if (cfg::sh_dev_inf) {
         screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
     }
-    bool skipOldDisplay = false;
+    bool skipOldDisplay = (static_screen_count == 0);
     if (next_display_count+1 > static_screen_count) {
         byte diff = next_display_count - static_screen_count;
         byte minor;
