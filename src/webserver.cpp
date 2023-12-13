@@ -930,7 +930,7 @@ void webserver_wifi() {
 #ifdef ARDUINO_ARCH_ESP8266
             page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == ENC_TYPE_NONE) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI));
 #else
-            page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == WIFI_AUTH_OPEN) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
+            page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == WIFI_AUTH_OPEN) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI));
 #endif
         }
         page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
