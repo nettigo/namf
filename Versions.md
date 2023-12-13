@@ -1,4 +1,4 @@
-NAMF-2020-46rc3 ( rev)
+NAMF-2020-46rc3 (2023-12-13 rev 4c918cc89eedcedcb03579811293d1e5818150bd)
 - LoRaWAN support (with Heltec Wireless Stick Lite v3 board)
 - changes in WiFi mode, now it allow for running sensor in AP mode
 - for English language use 0.pool.ntp.org as NTP source
