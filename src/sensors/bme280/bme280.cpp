@@ -156,17 +156,19 @@ namespace BME280 {
             p = bme280.readPressure();
             t = bme280.readTemperature();
             h = bme280.readHumidity();
-        }
-        if (isnan(p) || isnan(t) || isnan(h)) {
-            t = -128.0;
-            p = -1.0;
-            h = -1;
-            debug_out(String(FPSTR(SENSORS_BME280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
+            if (isnan(p) || isnan(t) || isnan(h)) {
+                t = -128.0;
+                p = -1.0;
+                h = -1;
+                debug_out(String(FPSTR(SENSORS_BME280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
+            } else {
+                samplesP[sampleCount] = p;
+                samplesT[sampleCount] = t;
+                samplesH[sampleCount] = h;
+                sampleCount++;
+            }
         } else {
-            samplesP[sampleCount] = p;
-            samplesT[sampleCount] = t;
-            samplesH[sampleCount] = h;
-            sampleCount++;
+            debug_out(String(FPSTR(SENSORS_BME280)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
         }
     }
 
