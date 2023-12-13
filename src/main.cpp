@@ -522,6 +522,7 @@ void init_lcd() {
     if (char_lcd) {
         char_lcd->init();
         char_lcd->backlight();
+        initCustomChars();
     }
 }
 
@@ -945,6 +946,7 @@ void loop() {
 	}
 
 	if (send_now) {
+        displaySendSignal();
 		debug_out(F("Creating data string:"), DEBUG_MIN_INFO, 1);
 		String data = FPSTR(data_first_part);
 		data.replace("{v}", String(SOFTWARE_VERSION));

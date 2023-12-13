@@ -28,4 +28,8 @@ byte getLCDaddr();
 String getLCDHeader(bool longDisp = true);
 //should we display? Should we draw new screen?
 void cycleDisplay();
+//create "progress bar"
+void initCustomChars();
+void displaySendSignal();
+
 #endif //NAMF_DISPLAY_COMMONS_H

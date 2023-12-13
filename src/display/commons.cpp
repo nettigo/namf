@@ -39,7 +39,116 @@ String displayGenerateFooter(unsigned int screen_count) {
     return display_footer;
 }
 
+void initCustomChars() {
+    byte chr1[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111
+    };
+    byte chr2[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111
+    };
+    byte chr3[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr4[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr5[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr6[8] =  {
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr7[8] =  {
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr8[8] =  {
+            B00000,
+            B01110,
+            B10001,
+            B00100,
+            B01010,
+            B00000,
+            B00100,
+            B00000
+    };
+    if (char_lcd) {
+        char_lcd->createChar(1,chr1);
+        char_lcd->createChar(2,chr2);
+        char_lcd->createChar(3,chr3);
+        char_lcd->createChar(4,chr4);
+        char_lcd->createChar(5,chr5);
+        char_lcd->createChar(6,chr6);
+        char_lcd->createChar(7,chr7);
+        char_lcd->createChar(8,chr8);
+    }
+}
 
+void displayProgressBar() {
+    if (char_lcd && getLCDRows() > 2) {
+        char_lcd->setCursor(19,3);
+        byte x = 7 - (byte)((float)time2Measure()/cfg::sending_intervall_ms * 7) ;
+        char_lcd->write(x);
+        debug_out(F("Progress bar: "),DEBUG_ERROR,0);
+        debug_out(String(x),DEBUG_ERROR);
+
+    }
+}
+
+void displaySendSignal() {
+    if (char_lcd && getLCDRows() > 2) {
+        char_lcd->setCursor(19, 3);
+        char_lcd->write(8);
+    }
+}
 
 /*****************************************************************
  * display values                                                *
@@ -161,7 +270,7 @@ void display_values() {
                     if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));
                     char_lcd->print(lines[i]);
                 }
-
+                displayProgressBar();
             }
             next_display_count++;
             skipOldDisplay = true;
@@ -257,6 +366,7 @@ void display_values() {
                 char_lcd->print(display_lines[1]);
                 char_lcd->setCursor(0, 3);
                 char_lcd->print(display_lines[2]);
+                displayProgressBar();
             }
         }
 
