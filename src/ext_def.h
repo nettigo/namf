@@ -172,42 +172,5 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define DEBUG_MED_INFO 4
 #define DEBUG_MAX_INFO 5
 
-/*
-static const uint16_t suites[] PROGMEM = {
-	BR_TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-	BR_TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-	BR_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-	BR_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-	BR_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-	BR_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
-};
-*/
-
-// Definition GPIOs for Zero based Arduino Feather M0 LoRaWAN
-#if defined(ARDUINO_SAMD_ZERO) && defined(SERIAL_PORT_USBVIRTUAL)
-// Required for Serial on Zero based boards
-#define Serial SERIAL_PORT_USBVIRTUAL
-//GPIO Pins
-#define D0 0
-#define D1 1
-#define D2 2
-#define D3 3
-#define D4 4
-#define D5 5
-#define D6 6
-#define D7 7
-#define D8 8
-#define D9 9
-#define D10 10
-#define D11 11
-#define D12 12
-// LoRa module
-#define RFM69_CS 8
-#define RFM69_RST 4
-#define RFM69_INT 3
-#define RF69_FREQ 868.0
-#define CLIENT_ADDRESS 2
-#define SERVER_ADDRESS 100
-#endif
 
 #endif //NAMF_EXT_DEF_H
