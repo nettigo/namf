@@ -1,3 +1,6 @@
+NAMF-2020-45a (2024-03-14 rev)
+- new CA cert for Let's Encrypt
+
 NAMF-2020-45 (2023-01-07 rev)
 - based on NAMF-2020-45rc3
 
