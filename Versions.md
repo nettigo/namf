@@ -1,3 +1,7 @@
+NAMF-2020-46rc4 (2023-03-14 rev )
+- Platformio espressif8266 platform upgraded to 4.2.1
+- New Let's Encrypt root CA certificate
+
 NAMF-2020-46rc3 (2023-12-13 rev 4c918cc89eedcedcb03579811293d1e5818150bd)
 - LoRaWAN support (with Heltec Wireless Stick Lite v3 board)
 - changes in WiFi mode, now it allow for running sensor in AP mode
