@@ -1,4 +1,4 @@
-NAMF-2020-46rc4 (2023-03-14 rev )
+NAMF-2020-46rc4 (2023-03-14 rev 1d846210d6c6171cc96d4fc9bc48ce8eb8dc27e9)
 - Platformio espressif8266 platform upgraded to 4.2.1
 - New Let's Encrypt root CA certificate
 
