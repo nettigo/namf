@@ -238,6 +238,8 @@ namespace SimpleScheduler {
                 return FPSTR(BMPx80::KEY);
             case SimpleScheduler::BME280:
                 return FPSTR(BME280::KEY);
+            case SimpleScheduler::BH1750:
+                return FPSTR(BH1750::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
@@ -266,6 +268,8 @@ namespace SimpleScheduler {
                 return FPSTR(INTL_BMPx80_DESC);
             case SimpleScheduler::BME280:
                 return FPSTR(INTL_BME280_DESC);
+            case SimpleScheduler::BH1750:
+                return FPSTR(INTL_BH1750_DESC);
             default:
                 return F("");
         }
