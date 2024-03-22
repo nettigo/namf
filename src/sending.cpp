@@ -73,6 +73,12 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     debug_out(String(host), DEBUG_MAX_INFO, 1);
     debug_out(String(httpPort), DEBUG_MAX_INFO, 1);
     debug_out(String(url), DEBUG_MAX_INFO, 1);
+    if (logger == LoggerInflux && (
+            (cfg::user_influx != NULL && strlen(cfg::user_influx) > 0) ||
+            (cfg::pwd_influx != NULL && strlen(cfg::pwd_influx) > 0)
+            )) {
+        http->setAuthorization(cfg::user_influx, cfg::pwd_influx);
+    }
     if (http->begin(*client, host, httpPort, url, ssl)) {
         if (logger == LoggerCustom && (*cfg::user_custom || *cfg::pwd_custom))
         {
