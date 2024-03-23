@@ -73,6 +73,7 @@ namespace cfg {
 
     bool ssl_madavi = SSL_MADAVI;
     bool ssl_dusti = SSL_DUSTI;
+    bool ssl_influx = SSL_INFLUX;
     char senseboxid[30] = SENSEBOXID;
 
     int port_influx = PORT_INFLUX;

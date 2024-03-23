@@ -341,6 +341,7 @@ String getConfigString(boolean maskPwd) {
     copyToJSON_Bool(send2influx);
     json_string += Var2Json(F("host_influx"), host_influx);
     json_string += Var2Json(F("url_influx"), url_influx);
+    copyToJSON_Bool(ssl_influx);
 
     json_string.concat(Var2Json(F("UUID"), UUID));
 
@@ -504,6 +505,7 @@ int readAndParseConfigFile(File configFile) {
             if (json.containsKey(F("token_AQI"))) token_AQI =  json.get<String>(F("token_AQI"));
 
             setFromJSON(send2influx);
+            setFromJSON(ssl_influx);
 
             if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
             if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));

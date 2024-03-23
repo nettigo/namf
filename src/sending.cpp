@@ -39,7 +39,7 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     WiFiClient *client;
     const __FlashStringHelper *contentType;
     bool ssl = false;
-    if (httpPort == 443) {
+    if (httpPort == 443 || cfg::ssl_influx == 1) {
         client = new WiFiClientSecure;
         ssl = true;
         configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));

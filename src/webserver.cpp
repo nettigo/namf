@@ -459,6 +459,7 @@ void parse_config_request(String &page_content) {
     readBoolParam(ssl_dusti);
     readBoolParam(send2madavi);
     readBoolParam(ssl_madavi);
+    readBoolParam(ssl_influx);
     readBoolParam(dht_read);
     readBoolParam(sds_read);
     readBoolParam(pms_read);
@@ -685,6 +686,7 @@ void webserver_config(){
 
         formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), F("InfluxDB")));
         page_content.concat(formCheckboxGrid("send2influx", FPSTR(INTL_ENABLE), send2influx));
+        page_content.concat(formCheckboxGrid("ssl_influx", FPSTR(INTL_USE_HTTPS), ssl_influx));
         page_content.concat(formInputGrid(F("host_influx"), FPSTR(INTL_SERVER), host_influx, 60));
         page_content.concat(formInputGrid(F("url_influx"), FPSTR(INTL_PATH), url_influx, 60));
         page_content.concat(formInputGrid("port_influx", FPSTR(INTL_PORT), String(port_influx), max_port_digits));

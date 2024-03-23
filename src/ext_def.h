@@ -25,6 +25,7 @@ const char FS_PWD[] PROGMEM =  "";
 #define SEND2FSAPP 0
 #define SEND2MQTT 0
 #define SEND2INFLUX 0
+#define SSL_INFLUX 0
 #define SEND2LORA 0
 #define SEND2CSV 0
 #define SEND2CUSTOM 0

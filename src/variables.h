@@ -107,6 +107,7 @@ namespace cfg {
 
     extern bool ssl_madavi;
     extern bool ssl_dusti ;
+    extern bool ssl_influx ;
     extern char senseboxid[30];
 
     extern int port_influx;
