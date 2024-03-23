@@ -57,6 +57,8 @@ const char PWD_CUSTOM[] PROGMEM= "";
 const char HOST_INFLUX[] PROGMEM = "influx.server";
 const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
+const char USER_INFLUX[] PROGMEM = "";
+const char PWD_INFLUX[] PROGMEM= "";
 
 #ifdef ESP32
 #define D7 4

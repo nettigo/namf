@@ -499,17 +499,17 @@ void parse_config_request(String &page_content) {
     parseHTTP(F("token_AQI"), token_AQI);
 
     readBoolParam(send2influx);
-
     parseHTTP(F("host_influx"), host_influx);
     parseHTTP(F("url_influx"), url_influx);
 
     readIntParam(port_influx);
-
+    readCharParam(user_influx);
+    readPasswdParam(pwd_influx);
     if (server.hasArg(F("user_influx"))){
         stringToChar(&user_influx,server.arg(F("user_influx")));
     }
-    if (server.hasArg(F("pwd_custom"))) {
-        readPwdParam(&pwd_custom,F("pwd_custom"));
+    if (server.hasArg(F("pwd_influx"))) {
+        readPwdParam(&pwd_influx,F("pwd_influx"));
     }
 
 

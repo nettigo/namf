@@ -117,8 +117,8 @@ void setDefaultConfig(void) {
     stringToChar(&cfg::fbpwd, FPSTR(EMPTY_STRING));
     stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
     stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
-    stringToChar(&cfg::pwd_influx, FPSTR(EMPTY_STRING));
-    stringToChar(&cfg::user_influx, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::pwd_influx, FPSTR(PWD_INFLUX));
+    stringToChar(&cfg::user_influx, FPSTR(USER_INFLUX));
     SDS011::setDefaults();
     HECA::setDefaults();
 //    BMPx80::setDefaults();

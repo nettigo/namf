@@ -431,8 +431,8 @@ int readAndParseConfigFile(File configFile) {
 #endif
             setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
             setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
-            setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
-            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &user_influx, F("user_influx"), FPSTR(USER_INFLUX));
+            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(PWD_INFLUX));
 
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
