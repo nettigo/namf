@@ -170,6 +170,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sht3x/sht3x_ro.lang */ const char SENSOR_SHT3[] PROGMEM = "SHT3x";
  const char INTL_HECA_SET_RH[] PROGMEM = "Translate RO: INTL_HECA_SET_RH 🐱;";
  const char INTL_HECA_CLEAR_RH[] PROGMEM = "Translate RO: INTL_HECA_CLEAR_RH 🐱;";
+ const char INTL_AMBIENT_LIGHT[] PROGMEM = "Translate RO: INTL_AMBIENT_LIGHT 🐱;";
+ const char INTL_AMBIENT_LIGHT_UNIT[] PROGMEM = "Translate RO: INTL_AMBIENT_LIGHT_UNIT 🐱;";
  const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate RO: INTL_ADVANCED_BUTTON 🐱;";
  const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate RO: INTL_ADVANCED_DISCL 🐱;";
  const char INTL_DEBUG_STATUS[] PROGMEM = "Translate RO: INTL_DEBUG_STATUS 🐱;";

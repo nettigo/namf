@@ -8,6 +8,8 @@
 #include <Arduino.h>
 #include "system/scheduler.h"
 #include "helpers.h"
+#include "html-content.h"
+#include "webserver.h"
 #include "BH1750.h" //unfortunate sensor class name clash
 
 namespace BH17 {
@@ -20,6 +22,7 @@ namespace BH17 {
     unsigned long process(SimpleScheduler::LoopEventType e);
 
     String getConfigJSON();
+    void resultsAsHTML(String &page_content);
 
 }
 

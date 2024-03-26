@@ -76,6 +76,7 @@ namespace SimpleScheduler {
         MHZ14A::resultsAsHTML(res);
         BMPx80::resultsAsHTML(res);
         BME280::resultsAsHTML(res);
+        BH17::resultsAsHTML(res);
     }
 
     //collect sensors status
@@ -128,6 +129,8 @@ namespace SimpleScheduler {
                 return BMPx80::parseHTTPRequest();
             case SimpleScheduler::BME280:
                 return BME280::parseHTTPRequest();
+            case SimpleScheduler::BH1750:
+                return BH17::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
