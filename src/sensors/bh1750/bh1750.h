@@ -17,12 +17,13 @@ namespace BH17 {
 
     JsonObject &parseHTTPRequest();
 
-    void readConfigJSON(JsonObject &json);
+    void readConfigJSON(JsonObject &);
 
-    unsigned long process(SimpleScheduler::LoopEventType e);
+    unsigned long process(SimpleScheduler::LoopEventType);
 
     String getConfigJSON();
-    void resultsAsHTML(String &page_content);
+    void resultsAsHTML(String &);
+    void results(String &);
 
 }
 

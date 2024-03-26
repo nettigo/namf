@@ -33,6 +33,7 @@ namespace SimpleScheduler {
         HECA::getResults(res);
         BMPx80::results(res);
         BME280::results(res);
+        BH17::results(res);
     }
 
     //push results to Luftdaten/SensorCommunity
@@ -157,6 +158,8 @@ namespace SimpleScheduler {
                 return BMPx80::getConfigJSON();
             case SimpleScheduler::BME280:
                 return BME280::getConfigJSON();
+            case SimpleScheduler::BH1750:
+                return BH17::getConfigJSON();
             default:
                 return s;
         }

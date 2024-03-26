@@ -90,4 +90,19 @@ namespace BH17 {
 
     }
 
+    void results(String &s) {
+        if (!enabled) return;
+        if (!running) return;
+
+        s.concat(Value2Json(F("ambient_light"), String(ambientLight)));
+    }
+
+    String getConfigJSON() {
+        String ret = F("");
+        ret.concat(Var2JsonInt(F("e"), enabled));
+        if (printOnLCD) ret.concat(Var2JsonInt(F("d"), printOnLCD));
+        return ret;
+    };
+
+
 }
