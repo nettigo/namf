@@ -12,6 +12,14 @@
 namespace BH1750 {
     extern const char KEY[] PROGMEM;
 
+    JsonObject &parseHTTPRequest();
+
+    void readConfigJSON(JsonObject &json);
+
+    unsigned long process(SimpleScheduler::LoopEventType e);
+
+    String getConfigJSON();
+
 }
 
 

@@ -185,6 +185,9 @@ namespace SimpleScheduler {
             case SimpleScheduler::BME280:
                 BME280::readConfigJSON(json);
                 return;
+            case SimpleScheduler::BH1750:
+                BH1750::readConfigJSON(json);
+                return;
             default:
                 return;
         }
