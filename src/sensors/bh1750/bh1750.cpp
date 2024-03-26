@@ -3,7 +3,7 @@
 //
 #include "bh1750.h"
 
-namespace BH1750 {
+namespace BH17 {
     const char KEY[] PROGMEM = "BH1750";
     bool enabled = false;
     bool printOnLCD = false;
@@ -24,7 +24,7 @@ namespace BH1750 {
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::BH1750)) {
-            scheduler.registerSensor(SimpleScheduler::BH1750, BH1750::process, FPSTR(BH1750::KEY));
+            scheduler.registerSensor(SimpleScheduler::BH1750, BH17::process, FPSTR(BH17::KEY));
             scheduler.init(SimpleScheduler::BH1750);
             enabled = true;
             debug_out(F("BH1750: start"), DEBUG_MIN_INFO, 1);

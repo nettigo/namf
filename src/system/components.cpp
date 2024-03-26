@@ -186,7 +186,7 @@ namespace SimpleScheduler {
                 BME280::readConfigJSON(json);
                 return;
             case SimpleScheduler::BH1750:
-                BH1750::readConfigJSON(json);
+                BH17::readConfigJSON(json);
                 return;
             default:
                 return;
@@ -242,7 +242,7 @@ namespace SimpleScheduler {
             case SimpleScheduler::BME280:
                 return FPSTR(BME280::KEY);
             case SimpleScheduler::BH1750:
-                return FPSTR(BH1750::KEY);
+                return FPSTR(BH17::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);

@@ -8,8 +8,9 @@
 #include <Arduino.h>
 #include "system/scheduler.h"
 #include "helpers.h"
+#include "BH1750.h" //unfortunate sensor class name clash
 
-namespace BH1750 {
+namespace BH17 {
     extern const char KEY[] PROGMEM;
 
     JsonObject &parseHTTPRequest();
