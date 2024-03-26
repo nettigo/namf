@@ -86,7 +86,7 @@ namespace BH17 {
         if (!enabled || !running) return;
         page_content.concat(FPSTR(EMPTY_ROW));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_AMBIENT_LIGHT),
-                                                 String(ambientLight), FPSTR(INTL_AMBIENT_LIGHT_UNIT)));
+                                                 String(ambientLight), F("lx")));
 
     }
 

@@ -29,6 +29,7 @@ Files with .lang extension are searched in following directories and it's subdir
 #define LANG_DEF_hu_H
 
 /* ./src/lang/intl_hu.lang */ const char INTL_ALTITUDE[] PROGMEM = "Tengerszint feletti magasság";
+/* ./src/sensors/bh1750/bh1750_hu.lang */ const char INTL_AMBIENT_LIGHT[] PROGMEM = "Környezetifény-érzékelő";
 /* ./src/lang/intl_hu.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Firmware automatikus frissítése";
 /* ./src/lang/intl_hu.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Vissza a főoldalra";
 /* ./src/lang/intl_hu.lang */ const char INTL_BASICAUTH[] PROGMEM = "Azonosítás";
@@ -157,8 +158,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
- const char INTL_AMBIENT_LIGHT[] PROGMEM = "Translate HU: INTL_AMBIENT_LIGHT 🐱;";
- const char INTL_AMBIENT_LIGHT_UNIT[] PROGMEM = "Translate HU: INTL_AMBIENT_LIGHT_UNIT 🐱;";
  const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate HU: INTL_ADVANCED_BUTTON 🐱;";
  const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate HU: INTL_ADVANCED_DISCL 🐱;";
  const char INTL_DEBUG_STATUS[] PROGMEM = "Translate HU: INTL_DEBUG_STATUS 🐱;";
