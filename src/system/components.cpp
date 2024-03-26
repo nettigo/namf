@@ -252,7 +252,7 @@ namespace SimpleScheduler {
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
-                return F("");
+                return F("unknw");
         }
 
 
