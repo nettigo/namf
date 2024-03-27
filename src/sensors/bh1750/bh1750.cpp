@@ -9,7 +9,17 @@ namespace BH17 {
     bool enabled = false;
     bool printOnLCD = false;
     bool running = false;
-    float ambientLight = 0.0;
+    float ambientLightMax = 0.0;
+    float ambientLightMin = 70000;
+#define BH1750_SAMPLE_SIZE   10
+    float *samples = nullptr;
+    unsigned int samplesCount;
+
+    void resetStats() {
+        samplesCount = 0;
+        ambientLightMax = 0;
+        ambientLightMin = 70000;
+    }
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BH1750);
@@ -43,28 +53,76 @@ namespace BH17 {
     }
 
     bool initBH1750(void) {
+        running = false;
         if (sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire)) {
             running = true;
-            debug_out(F("BH1750 sensor found and started on 0x23!"), DEBUG_MED_INFO);
-            return true;
+            debug_out(F("BH1750 sensor found and started at 0x23!"), DEBUG_MED_INFO);
         }
 
-        if (sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x5C, &Wire)) {
-            debug_out(F("BH1750 sensor found and started on 0x5C!"), DEBUG_MED_INFO);
+        if (!running && sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x5C, &Wire)) {
+            debug_out(F("BH1750 sensor found and started at 0x5C!"), DEBUG_MED_INFO);
             running = true;
-            return true;
         }
-
-        running = false;
-        return false;
+        if (running){
+            samples = new (std::nothrow) float[BH1750_SAMPLE_SIZE];
+            if (samples == nullptr) {
+                debug_out(F("BH1750 - no array for data"), DEBUG_ERROR);
+                running = false;
+            }
+            samplesCount = 0;
+        }
+        return running;
     }
 
     //read and store sensor readings
     void readValues(){
-        if (sensor.measurementReady()) {
-            ambientLight = sensor.readLightLevel();
+        static unsigned long lastRead = millis();
+        static unsigned long interval = cfg::sending_intervall_ms / (BH1750_SAMPLE_SIZE + 2);
+        if (
+                sensor.measurementReady() &&
+                samplesCount < BH1750_SAMPLE_SIZE &&
+                millis() - lastRead > interval
+                ) {
+            samples[samplesCount] = sensor.readLightLevel();
+            debug_out(F("BH1750: readLightLevel "),DEBUG_MED_INFO,0);
+            debug_out(String(samples[samplesCount]),DEBUG_MED_INFO,1);
+            if (samples[samplesCount] > ambientLightMax)
+                ambientLightMax = samples[samplesCount];
+            if (samples[samplesCount] < ambientLightMin)
+                ambientLightMin = samples[samplesCount];
+
+            samplesCount++;
+            lastRead = millis();
         }
     }
+
+    float currentReading() {
+        float sum = 0;
+        if (samplesCount == 0) return 0;
+
+        for (byte i = 0; i < samplesCount; i++)
+            sum += samples[i];
+        return sum /(float)samplesCount;
+    }
+
+    float maxVal(){
+        if (samplesCount == 0) {
+            return 0;
+        }
+        return ambientLightMax;
+    }
+
+    float minVal(){
+        if (samplesCount == 0) {
+            return 0;
+        }
+        return ambientLightMin;
+    }
+
+    void afterSend(bool status) {
+        resetStats();
+    }
+
     unsigned long process(SimpleScheduler::LoopEventType e) {
         switch (e) {
             case SimpleScheduler::INIT:
@@ -86,7 +144,11 @@ namespace BH17 {
         if (!enabled || !running) return;
         page_content.concat(FPSTR(EMPTY_ROW));
         page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_AMBIENT_LIGHT),
-                                                 String(ambientLight), F("lx")));
+                                                 String(currentReading()), F("lx")));
+        page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_AMBIENT_LIGHT_MIN),
+                                                 String(minVal()), F("lx")));
+        page_content.concat(table_row_from_value(FPSTR(KEY), FPSTR(INTL_AMBIENT_LIGHT_MAX),
+                                                 String(maxVal()), F("lx")));
 
     }
 
@@ -94,7 +156,7 @@ namespace BH17 {
         if (!enabled) return;
         if (!running) return;
 
-        s.concat(Value2Json(F("ambient_light"), String(ambientLight)));
+        s.concat(Value2Json(F("ambient_light"), String(currentReading())));
     }
 
     String getConfigJSON() {

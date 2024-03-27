@@ -24,6 +24,7 @@ namespace BH17 {
     String getConfigJSON();
     void resultsAsHTML(String &);
     void results(String &);
+    void afterSend(bool);
 
 }
 

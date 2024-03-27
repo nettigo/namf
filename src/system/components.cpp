@@ -65,6 +65,7 @@ namespace SimpleScheduler {
         MHZ14A::afterSend(status);
         BMPx80::afterSend(status);
         BME280::afterSend(status);
+        BH17::afterSend(status);
 
     }
 
