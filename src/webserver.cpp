@@ -1210,10 +1210,9 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_TIME_FROM_UPDATE), millisToTime(msSince(last_update_attempt)), ""));
     page_content.concat(table_row_from_value(F("NAM"), F("Internet connection"),String(cfg::internet), ""));
     page_content.concat(FPSTR(EMPTY_ROW));
-    page_content.concat(table_row_from_value(F("APIs"), F("Status & performance"),"", ""));
-    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("APIs"), F("Status"),F("Time"), ""));
     for (byte i=0; i<cfg::apiCount;i++){
-        page_content.concat(table_row_from_value(LN_TABLE[cfg::apiStats[i].id], String(cfg::apiStats[i].status),String(cfg::apiStats[i].time/1000.0), "s"));
+        page_content.concat(table_row_from_value(LN_TABLE[cfg::apiStats[i].id], String(cfg::apiStats[i].status),String(cfg::apiStats[i].time/1000.0,3), "s"));
 
     }
     page_content.concat(FPSTR(EMPTY_ROW));

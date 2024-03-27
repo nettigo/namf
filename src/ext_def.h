@@ -40,7 +40,8 @@ enum LoggerEntry
 	LoggerFSapp,
 	LoggerInflux,
 	LoggerCustom,
-	LoggerAQI
+	LoggerAQI,
+    LoggerNoName    //placeholder for empty name, to initialize stats structures on startup
 };
 
 extern const char LN_0 [] PROGMEM;

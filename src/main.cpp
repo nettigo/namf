@@ -559,7 +559,6 @@ static void powerOnTestSensors() {
 static void logEnabledAPIs() {
 	debug_out(F("Send to :"), DEBUG_MIN_INFO, 1);
 	if (cfg::send2dusti) {
-        cfg::apiCount++;
 		debug_out(F("sensor.community"), DEBUG_MIN_INFO);
 	}
 
@@ -598,9 +597,14 @@ static void logEnabledAPIs() {
 
     if (cfg::send2influx) {
         cfg::apiCount++;
-		debug_out(F("custom influx DB"), DEBUG_MIN_INFO);
+		debug_out(F("Influxdb"), DEBUG_MIN_INFO);
 	}
     cfg::apiStats = new apiTimeStat[cfg::apiCount];
+    for (byte i=0; i<cfg::apiCount; i++){
+        cfg::apiStats[i].id = LoggerNoName;
+        cfg::apiStats[i].status = 0;
+        cfg::apiStats[i].time = 0;
+    }
 
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (cfg::auto_update) {

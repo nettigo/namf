@@ -13,9 +13,10 @@ const char LN_3 [] PROGMEM = "Feinstaub API";
 const char LN_4 [] PROGMEM = "InfluxDB";
 const char LN_5 [] PROGMEM = "Custom API";
 const char LN_6 [] PROGMEM = "AQI.eco API";
+const char LN_NO_NAME [] PROGMEM = "";
 
 const char *LN_TABLE [] PROGMEM = {
-        LN_0, LN_1, LN_2, LN_3, LN_4, LN_5, LN_6
+        LN_0, LN_1, LN_2, LN_3, LN_4, LN_5, LN_6, LN_NO_NAME
 };
 
 /******************************************************************
