@@ -1,3 +1,7 @@
+NAMF-2020-46rc5 ( rev )
+- support for BH1750 ambient lux sensor [(on Nettigo)](https://nettigo.eu/products/ambient-light-sensor-bh1750fvi-i2c)
+- track API performance (last HTTP response code and time to send data). For now does not track Sensor Community (many HTTP requests)
+ 
 NAMF-2020-46rc4 (2023-03-14 rev 1d846210d6c6171cc96d4fc9bc48ce8eb8dc27e9)
 - Platformio espressif8266 platform upgraded to 4.2.1
 - New Let's Encrypt root CA certificate
