@@ -30,12 +30,12 @@ extern void configureCACertTrustAnchor(WiFiClientSecure* client);
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
-extern void sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify);
+extern int sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify);
 
 /*****************************************************************
  * send single sensor data to luftdaten.info api                 *
  *****************************************************************/
-extern void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str);
+extern int sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str);
 
 /*****************************************************************
  * send data to LoRa gateway                                     *

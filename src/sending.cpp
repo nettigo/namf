@@ -35,7 +35,7 @@ void configureCACertTrustAnchor(WiFiClientSecure* client) {
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
-void sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify) {
+int sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify) {
     WiFiClient *client;
     const __FlashStringHelper *contentType;
     bool ssl = false;
@@ -123,12 +123,14 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     wdt_reset(); // nodemcu is alive
 #endif
     yield();
+    return result;
 }
 
 /*****************************************************************
  * send single sensor data to luftdaten.info api                 *
  *****************************************************************/
-void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
+int sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
+    int result = 0;
     String data_4_dusti = FPSTR(data_first_part);
     data_4_dusti.replace(String(F("{v}")), String(SOFTWARE_VERSION));
     data_4_dusti.concat(data);
@@ -136,12 +138,13 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     data_4_dusti.replace(replace_str, String(F("")));
     data_4_dusti.concat(String(F("]}")));
     if (data != "") {
-        sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
+        result = sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
     } else {
         debug_out(F("No data sent..."), DEBUG_MED_INFO, 1);
     }
 //    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
 //    debugData(data,F("sendLuftdaten data out:"));
+    return  result;
 }
 
 /*****************************************************************

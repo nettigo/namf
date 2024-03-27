@@ -1076,6 +1076,7 @@ void webserver_debug_level() {
         enable_ota_time = millis() + 60 * 1000;
         ArduinoOTA.setPassword(cfg::www_password);
 #ifdef ARDUINO_ARCH_ESP8266
+        ArduinoOTA.setHostname(cfg::fs_ssid);
         ArduinoOTA.begin(true);
 #else
 
@@ -1208,6 +1209,13 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_TIME_FROM_UPDATE), millisToTime(msSince(last_update_attempt)), ""));
     page_content.concat(table_row_from_value(F("NAM"), F("Internet connection"),String(cfg::internet), ""));
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("APIs"), F("Status & performance"),"", ""));
+    page_content.concat(FPSTR(EMPTY_ROW));
+    for (byte i=0; i<cfg::apiCount;i++){
+        page_content.concat(table_row_from_value(LN_TABLE[cfg::apiStats[i].id], String(cfg::apiStats[i].status),String(cfg::apiStats[i].time/1000.0), "s"));
+
+    }
     page_content.concat(FPSTR(EMPTY_ROW));
 //    page_content.concat(table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,""));
     page_content.concat(table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,""));

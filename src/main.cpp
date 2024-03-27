@@ -559,28 +559,49 @@ static void powerOnTestSensors() {
 static void logEnabledAPIs() {
 	debug_out(F("Send to :"), DEBUG_MIN_INFO, 1);
 	if (cfg::send2dusti) {
-		debug_out(F("luftdaten.info"), DEBUG_MIN_INFO, 1);
+        cfg::apiCount++;
+		debug_out(F("sensor.community"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2madavi) {
-		debug_out(F("Madavi.de"), DEBUG_MIN_INFO, 1);
+        cfg::apiCount++;
+		debug_out(F("Madavi.de"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2lora) {
-		debug_out(F("LoRa gateway"), DEBUG_MIN_INFO, 1);
+		debug_out(F("LoRa gateway"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2csv) {
-		debug_out(F("Serial as CSV"), DEBUG_MIN_INFO, 1);
+		debug_out(F("Serial as CSV"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2custom) {
-		debug_out(F("custom API"), DEBUG_MIN_INFO, 1);
+        cfg::apiCount++;
+		debug_out(F("custom API"), DEBUG_MIN_INFO);
 	}
 
-	if (cfg::send2influx) {
-		debug_out(F("custom influx DB"), DEBUG_MIN_INFO, 1);
+    if (cfg::send2aqi) {
+        cfg::apiCount++;
+        debug_out(F("AQI.eco"), DEBUG_MIN_INFO);
+    }
+
+    if (cfg::send2sensemap) {
+        cfg::apiCount++;
+        debug_out(F("Sensemap"), DEBUG_MIN_INFO);
+    }
+
+    if (cfg::send2fsapp) {
+        cfg::apiCount++;
+        debug_out(F("Feinstaub app"), DEBUG_MIN_INFO);
+    }
+
+    if (cfg::send2influx) {
+        cfg::apiCount++;
+		debug_out(F("custom influx DB"), DEBUG_MIN_INFO);
 	}
+    cfg::apiStats = new apiTimeStat[cfg::apiCount];
+
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (cfg::auto_update) {
 		debug_out(F("Auto-Update active..."), DEBUG_MIN_INFO, 1);
@@ -757,6 +778,8 @@ static void checkForceRestart() {
 static unsigned long sendDataToOptionalApis(const String &data) {
 	unsigned long start_send = 0;
 	unsigned long sum_send_time = 0;
+    byte current_api = 0;
+    int result = 0;
 #if defined(NAM_LORAWAN)
     if (cfg::lw_en) {
         debug_out("\n\nLORAWAN leci!",DEBUG_ERROR);
@@ -767,8 +790,12 @@ static unsigned long sendDataToOptionalApis(const String &data) {
         if (cfg::send2madavi) {
             debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
             start_send = millis();
-            sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
+            result = sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
             sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerMadavi;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
             server.handleClient();
         }
 
@@ -777,26 +804,38 @@ static unsigned long sendDataToOptionalApis(const String &data) {
             start_send = millis();
             String sensemap_path = URL_SENSEMAP;
             sensemap_path.replace("BOXID", cfg::senseboxid);
-            sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
+            result = sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
             sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerSensemap;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
             server.handleClient();
         }
         if (cfg::send2fsapp) {
             debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
             start_send = millis();
-            sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
+            result = sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
             sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerFSapp;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
             server.handleClient();
 
         }
 
         if (cfg::send2influx) {
             debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
-            start_send = millis();
             const String data_4_influxdb = create_influxdb_string(data);
-
-            sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
+            start_send = millis();
+            result = sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
             sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerInflux;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+
             server.handleClient();
 
         }
@@ -811,8 +850,12 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 #endif
             debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
             start_send = millis();
-            sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
+            result = sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
             sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerCustom;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
             server.handleClient();
 
         }
@@ -829,7 +872,11 @@ static unsigned long sendDataToOptionalApis(const String &data) {
             String path = F("/update/");
             path.concat(cfg::token_AQI);
             start_send = millis();
-            sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
+            result = sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerAQI;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
             sum_send_time += millis() - start_send;
             server.handleClient();
 

@@ -33,6 +33,11 @@
 #include "ext_def.h"
 #include "lang/select_lang.h"
 extern SimpleScheduler::NAMFScheduler scheduler;
+struct apiTimeStat{
+    uint8_t id;
+    int16_t status;
+    uint32_t time;
+};
 
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
@@ -91,6 +96,8 @@ namespace cfg {
     extern bool send2lora;
     extern bool send2influx;
     extern bool send2csv;
+    extern byte apiCount;
+    extern apiTimeStat *apiStats;
     extern bool auto_update;
     extern u8_t update_channel;
     extern bool has_display;

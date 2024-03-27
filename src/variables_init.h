@@ -4,6 +4,20 @@
 
 #ifndef NAMF_VARIABLES_INIT_H
 #define NAMF_VARIABLES_INIT_H
+
+#include "ext_def.h"
+const char LN_0 [] PROGMEM = "Sensor Community API";
+const char LN_1 [] PROGMEM = "Madavi API";
+const char LN_2 [] PROGMEM = "Sensemap API";
+const char LN_3 [] PROGMEM = "Feinstaub API";
+const char LN_4 [] PROGMEM = "InfluxDB";
+const char LN_5 [] PROGMEM = "Custom API";
+const char LN_6 [] PROGMEM = "AQI.eco API";
+
+const char *LN_TABLE [] PROGMEM = {
+        LN_0, LN_1, LN_2, LN_3, LN_4, LN_5, LN_6
+};
+
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
  * configuration values. They have defaults which can be          *
@@ -59,6 +73,8 @@ namespace cfg {
     bool send2lora = SEND2LORA;
     bool send2influx = SEND2INFLUX;
     bool send2csv = SEND2CSV;
+    byte apiCount = 0;
+    apiTimeStat *apiStats = nullptr;
     bool auto_update = AUTO_UPDATE;
     bool has_display = HAS_DISPLAY;
     bool has_lcd1602 = HAS_LCD1602;

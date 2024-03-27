@@ -43,6 +43,17 @@ enum LoggerEntry
 	LoggerAQI
 };
 
+extern const char LN_0 [] PROGMEM;
+extern const char LN_1 [] PROGMEM ;
+extern const char LN_2 [] PROGMEM;
+extern const char LN_3 [] PROGMEM;
+extern const char LN_4 [] PROGMEM;
+extern const char LN_5 [] PROGMEM;
+extern const char LN_6 [] PROGMEM;
+
+extern const char *LN_TABLE [] PROGMEM;
+
+
 // IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
 
 // Definition eigene API
