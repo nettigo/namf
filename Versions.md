@@ -1,3 +1,6 @@
+NAMF-2020-46rc6 (rev )
+- send both continuous commands to SDS011 on power on
+
 NAMF-2020-46rc5 (2024-03-27 rev c241c37af68aef29e3a06a76925e9070f2ae3fb7)
 - support for BH1750 ambient lux sensor [(product page on Nettigo)](https://nettigo.eu/products/ambient-light-sensor-bh1750fvi-i2c)
 - track API performance (last HTTP response code and time to send data). For now does not track Sensor Community (many HTTP requests)
