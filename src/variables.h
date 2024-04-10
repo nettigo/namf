@@ -9,8 +9,8 @@
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
 #define SOFTWARE_VERSION_SHORT "boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-46rc5"
-#define SOFTWARE_VERSION_SHORT "46rc5"
+#define SOFTWARE_VERSION  "NAMF-2020-46rc6"
+#define SOFTWARE_VERSION_SHORT "46rc6"
 // undefine SOFTWARE_BETA in production releases
 #define SOFTWARE_BETA  1
 #endif
@@ -146,6 +146,7 @@ typedef enum  {
     Start,
     Stop,
     ContinuousMode,
+    ContinuousMode2,
     VersionDate,
     None
 }PmSensorCmd;
