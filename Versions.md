@@ -1,4 +1,4 @@
-NAMF-2020-46rc6 (rev )
+NAMF-2020-46rc6 (2024-04-11 rev  576e930e78a681a322386ade3f6afa03a8e703bb)
 - send both continuous commands to SDS011 on power on
 
 NAMF-2020-46rc5 (2024-03-27 rev c241c37af68aef29e3a06a76925e9070f2ae3fb7)
