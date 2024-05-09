@@ -110,6 +110,11 @@ namespace NAMWiFi {
         }
     }
 
+    bool credentialPresent() {
+        if (cfg::wlanssid != nullptr && strlen(cfg::wlanssid) > 0) return true;
+        return false;
+    }
+
     void process() {
         if (state == AP_RUNNING) {
             if (cfg::time_for_wifi_config == 0 || (millis() - last_page_load) < cfg::time_for_wifi_config) {
@@ -143,7 +148,17 @@ namespace NAMWiFi {
             delete dnsServer;
             dnsServer = nullptr;
         }
+        //can we reconnect?
+        if (state == UNSET && credentialPresent()) {
+            static unsigned long lastCheck=millis();
+            if (millis() - lastCheck > 3600*1000) {
+                debug_out(F("WiFi state is UNSET and client SSID present. Trying to connect...."), DEBUG_MIN_INFO);
+                connectWifi();
+                lastCheck = millis();
 
+            }
+
+        }
 
     }
 
