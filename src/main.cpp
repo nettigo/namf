@@ -145,7 +145,8 @@ void readConfig() {
                 setDefaultConfig();
             };
 		} else {
-			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
+			debug_out(F("config file not found, resetting WiFi settings ..."), DEBUG_ERROR, 1);
+            ESP.eraseConfig();
 		}
 }
 
