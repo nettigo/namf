@@ -1,5 +1,6 @@
 NAMF-2020-46rc7 (rev)
-- update request string has info about PM sensor encoded (SDS/PMS/SPS) 
+- update request string has info about PM sensor encoded (SDS/PMS/SPS)
+- in case sensor can not connect to WiFi on boot and have WiFi configured then it will try to reconnect every hour after config AP has been shut down
 
 NAMF-2020-46rc6 (2024-04-11 rev  576e930e78a681a322386ade3f6afa03a8e703bb)
 - send both continuous commands to SDS011 on power on
