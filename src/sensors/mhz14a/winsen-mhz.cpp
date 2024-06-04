@@ -264,7 +264,7 @@ namespace MHZ14A {
         } else {
             debug_out(F("Timeout waiting for CO2 sensor"),DEBUG_MED_INFO);
         }
-        return false;
+        return result;
     }
 
 
