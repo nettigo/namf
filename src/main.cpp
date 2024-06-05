@@ -553,8 +553,6 @@ static void powerOnTestSensors() {
 		ds18b20.begin();                                    // Start DS18B20
 		debug_out(F("Read DS18B20..."), DEBUG_MIN_INFO, 1);
 	}
-
-    cfg::debug = DEBUG;
 }
 
 static void logEnabledAPIs() {
