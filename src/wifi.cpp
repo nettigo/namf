@@ -95,7 +95,7 @@ namespace NAMWiFi {
     }
 
     void rescanWiFi() {
-        delete []wifiInfo;
+        if (wifiInfo != nullptr) delete []wifiInfo;
         wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
         wificonfig_loop_update = millis();
     }
@@ -142,6 +142,7 @@ namespace NAMWiFi {
             state = UNSET;
 
             delete []wifiInfo;
+            wifiInfo = nullptr;
             wificonfig_loop = 0;    //stop updating WiFi list in loop
 
             dnsServer->stop();
@@ -151,7 +152,7 @@ namespace NAMWiFi {
         //can we reconnect?
         if (state == UNSET && credentialPresent()) {
             static unsigned long lastCheck=millis();
-            if (millis() - lastCheck > 3600*1000) {
+            if (millis() - lastCheck > 98*1000) {
                 debug_out(F("WiFi state is UNSET and client SSID present. Trying to connect...."), DEBUG_MIN_INFO);
                 connectWifi();
                 lastCheck = millis();
@@ -294,11 +295,13 @@ namespace NAMWiFi {
 void configNetwork() {
     if (strlen(cfg::wlanssid) > 0) {
         NAMWiFi::connectWifi();
-        got_ntp = NAMWiFi::acquireNetworkTime();
-        debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
-        debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
-        if (cfg::auto_update) {
-            updateFW();
+        if (NAMWiFi::state == NAMWiFi::CLIENT) {
+            got_ntp = NAMWiFi::acquireNetworkTime();
+            debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
+            debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
+            if (cfg::auto_update) {
+                updateFW();
+            }
         }
 
     } else {
