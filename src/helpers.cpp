@@ -713,11 +713,11 @@ String formSectionHeaderWithHelp(const String& name, const String& id, byte bold
             s = F("<div class='row sect'>{n}</div>\n");
             break;
         default:
-            s = F("<div class='row sect'><b>{n}</b><a href='https://nettigo.github.io/namf/");
+            s = F("<div class='row sect'><b>{n}</b> <a class='plain no-dec' href='https://nettigo.github.io/namf/");
             s.concat(FPSTR(INTL_LANG));
             s.concat(F("/{id}' title='"));
             s.concat(FPSTR(INTL_HELP));
-            s.concat(F("' target='NAMF-HELP'> &#10068;</a></div>\n"));
+            s.concat(F("' target='NAMF-HELP'>&#129517;</a></div>\n"));
     }
     s.replace("{n}", name);
     s.replace("{id}", id);
