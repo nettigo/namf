@@ -409,10 +409,12 @@ String sensorGPS() {
 	String gps_lat = "";
 	String gps_lon = "";
 
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
+//	debug_out(String(FPSTR(DBG_TXT_START_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
 
 	while (serialGPS.available() > 0) {
-		if (gps.encode(serialGPS.read())) {
+        byte r = serialGPS.read();
+//        debug_out(String(char(r)), DEBUG_MED_INFO, false);
+        if (gps.encode(r)) {
 			if (gps.location.isValid()) {
 				last_value_GPS_lat = gps.location.lat();
 				last_value_GPS_lon = gps.location.lng();
@@ -492,7 +494,7 @@ String sensorGPS() {
 		debug_out(F("No GPS data received: check wiring"), DEBUG_ERROR, 1);
 	}
 
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
+//	debug_out(String(FPSTR(DBG_TXT_END_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
 
 	return s;
 }
@@ -729,7 +731,7 @@ void setup() {
     setup_webserver();
 
     if (cfg::gps_read) {
-        serialGPS.begin(9600);
+//        serialGPS.begin(9600);
         debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
         disable_unneeded_nmea();
     }
