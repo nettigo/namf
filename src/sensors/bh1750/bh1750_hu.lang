@@ -1,2 +1,4 @@
 INTL_BH1750_DESC Fényintenzitás-érzékelő (BH1750FVI)
 INTL_AMBIENT_LIGHT Környezetifény-érzékelő
+INTL_AMBIENT_LIGHT_MAX Maximális fényintenzitás
+INTL_AMBIENT_LIGHT_MIN Minimális fényintenzitás

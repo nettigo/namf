@@ -1,2 +1,4 @@
 INTL_BH1750_DESC Czujnik natężenia światła (BH1750FVI)
 INTL_AMBIENT_LIGHT Światło otoczenia
+INTL_AMBIENT_LIGHT_MAX Maksymalne natężenie światła
+INTL_AMBIENT_LIGHT_MIN Minimalne natężenie światła
