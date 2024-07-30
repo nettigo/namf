@@ -1,8 +1,10 @@
-NAMF-2020-46rc7 (rev)
+NAMF-2020-46rc7 (2024-07-30 rev)
 - update request string has info about PM sensor encoded (SDS/PMS/SPS)
 - in case sensor can not connect to WiFi on boot and have WiFi configured then it will try to reconnect every hour after config AP has been shut down
 - CO2 sensor - don't report on LCD last value of CO2 if sensor stop sending data
 - debug level setting will be restored after reboot. Until now, it was always sent to DEBUG_MIN_INFO
+- GPS library updated
+- Provide some help in sensor config (as external site via GitHub pages)
 
 NAMF-2020-46rc6 (2024-04-11 rev  576e930e78a681a322386ade3f6afa03a8e703bb)
 - send both continuous commands to SDS011 on power on
