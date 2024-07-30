@@ -7,3 +7,5 @@ This feature can be useful if you manage many sensors and some of them are place
 networks you don't control. Configure fallback Wi-Fi for your lab and when sensor get to
 you for some maintenance then it will connect automatically - no need to reset Wi-Fi config.
 Then after it is placed in regular place - it will connect to main network.
+
+Just leave SSID empty to disable feature.
