@@ -1,4 +1,6 @@
-NAMF-2020-46rc7 (2024-07-30 rev)
+NAMF-2020-46rc8 (rev )
+
+NAMF-2020-46rc7 (2024-07-30 rev e8e81ddced0ac2849c8d6a761f326c5105c1f01f)
 - update request string has info about PM sensor encoded (SDS/PMS/SPS)
 - in case sensor can not connect to WiFi on boot and have WiFi configured then it will try to reconnect every hour after config AP has been shut down
 - CO2 sensor - don't report on LCD last value of CO2 if sensor stop sending data
