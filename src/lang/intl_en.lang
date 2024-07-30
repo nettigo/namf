@@ -1,4 +1,5 @@
 INTL_HELP More info about feature
+INTL_BACKLIGHT LCD backlight
 INTL_ADVANCED_BUTTON Advanced options show/hide
 INTL_ADVANCED_DISCL Changes in settings in this section can result in sensor not working properly. Make sure You know what You are changing here or leave defaults.
 INTL_CONFIG_SAVED Configuration saved.
