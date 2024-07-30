@@ -82,6 +82,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_DC[] PROGMEM = "Duty cycle";
 /* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_DESC[] PROGMEM = "HECA (SHT30) (temperature, humidity), keeps RH under 70%";
 /* ./src/sensors/heca/heca_en.lang */ const char INTL_HECA_SET_RH[] PROGMEM = "Heating enable RH level";
+/* ./src/lang/intl_en.lang */ const char INTL_HELP[] PROGMEM = "More info about feature";
 /* ./src/lang/intl_en.lang */ const char INTL_HOME[] PROGMEM = "Home";
 /* ./src/lang/intl_en.lang */ const char INTL_HUMIDITY[] PROGMEM = "humidity";
 /* ./src/lang/intl_en.lang */ const char INTL_I2C_BUS[] PROGMEM = "On I2C bus";

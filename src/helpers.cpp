@@ -699,6 +699,32 @@ void formSectionHeader(String &page_content, const String& name, byte bold) {
     page_content.concat(formSectionHeader(name, bold));
 }
 
+//section header with help link
+String formSectionHeaderWithHelp(const String& name, const String& id, byte bold) {
+    String s;
+    switch (bold){
+        case(1):
+            s = F("<div class='row sect'><h1>{n}</h1></div>\n");
+            break;
+        case(2):
+            s = F("<div class='row sect'><h2>{n}</h2></div>\n");
+            break;
+        case(3):
+            s = F("<div class='row sect'>{n}</div>\n");
+            break;
+        default:
+            s = F("<div class='row sect'><b>{n}</b><a href='https://nettigo.github.io/namf/");
+            s.concat(FPSTR(INTL_LANG));
+            s.concat(F("/{id}' title='"));
+            s.concat(FPSTR(INTL_HELP));
+            s.concat(F("' target='NAMF-HELP'> &#10068;</a></div>\n"));
+    }
+    s.replace("{n}", name);
+    s.replace("{id}", id);
+    return s;
+
+}
+
 String formSectionHeader(const String& name, byte bold) {
 
     String s;

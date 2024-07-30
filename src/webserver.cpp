@@ -713,7 +713,7 @@ void webserver_config(){
         page_content.concat(F("<div id='adv' class='tabcontent'>"));
         page_content.concat(F("<div class='gc'>"));
         formSectionHeader(page_content, FPSTR(INTL_MORE_SETTINGS));
-        page_content.concat(formSectionHeader(FPSTR(INTL_FALBACK_WIFI)));
+        page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_FALBACK_WIFI), F("fallback-wifi")));
 
         page_content.concat(formInputGrid(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
                                           35));

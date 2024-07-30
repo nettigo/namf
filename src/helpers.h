@@ -55,6 +55,7 @@ void advancedSectionStart( String &html, SimpleScheduler::LoopEntryType sensor);
 void advancedSectionEnd( String &html, SimpleScheduler::LoopEntryType sensor);
 unsigned long time2Measure(void);
 String formSectionHeader(const String& name, byte bold = 0);
+String formSectionHeaderWithHelp(const String& name, const String& id, byte bold = 0);
 void formSectionHeader(String &page_content, const String& name, byte bold = 0);
 String form_option(String const &name, const String & info, const bool checked = false);
 String form_input(const String& name, const String& info, const String& value, const int length);
