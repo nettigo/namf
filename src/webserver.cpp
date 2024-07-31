@@ -726,8 +726,8 @@ void webserver_config(){
         page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
 
         page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_BACKLIGHT), F("m/backlight")));
-        page_content.concat(formInputGrid("backlight_stop", "Stop at (hour):", String(backlight_stop), 5));
-        page_content.concat(formInputGrid("backlight_start", "Start at (hour):", String(backlight_start), 5));
+        page_content.concat(formInputGrid("backlight_stop", FPSTR(INTL_BACKLIGHT_STOP), String(backlight_stop), 5));
+        page_content.concat(formInputGrid("backlight_start", FPSTR(INTL_BACKLIGHT_START), String(backlight_start), 5));
 
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));

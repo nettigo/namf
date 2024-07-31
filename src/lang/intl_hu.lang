@@ -1,3 +1,6 @@
+INTL_BACKLIGHT LCD backlight
+INTL_BACKLIGHT_STOP Stop at (hour):
+INTL_BACKLIGHT_START Start at (hour):
 INTL_SHOW_DEVICE_INFO Az eszköz adatainak megjelenítése az LCD-n
 INTL_CONFIG_SAVED A konfiguráció mentve
 INTL_FALBACK_WIFI Alternatív WiFi hálózat
