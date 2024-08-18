@@ -74,6 +74,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI_NAME[] PROGMEM = "Név";
 /* ./src/lang/intl_hu.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
 /* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_DESC[] PROGMEM = "";
+/* ./src/lang/intl_hu.lang */ const char INTL_HELP[] PROGMEM = "Bővebben erről a témáról";
 /* ./src/lang/intl_hu.lang */ const char INTL_HOME[] PROGMEM = "Főoldal";
 /* ./src/lang/intl_hu.lang */ const char INTL_HUMIDITY[] PROGMEM = "relatív páratartalom";
 /* ./src/lang/intl_hu.lang */ const char INTL_LANG[] PROGMEM = "HU";
@@ -163,7 +164,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
- const char INTL_HELP[] PROGMEM = "Translate HU: INTL_HELP 🐱;";
  const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate HU: INTL_ADVANCED_BUTTON 🐱;";
  const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate HU: INTL_ADVANCED_DISCL 🐱;";
  const char INTL_DEBUG_STATUS[] PROGMEM = "Translate HU: INTL_DEBUG_STATUS 🐱;";
