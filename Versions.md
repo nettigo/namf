@@ -1,4 +1,5 @@
 NAMF-2020-46rc8 (rev )
+- fixed typo preventing using authentication data for Influx 1.x
 
 NAMF-2020-46rc7 (2024-07-30 rev e8e81ddced0ac2849c8d6a761f326c5105c1f01f)
 - update request string has info about PM sensor encoded (SDS/PMS/SPS)

@@ -507,10 +507,9 @@ void parse_config_request(String &page_content) {
     if (server.hasArg(F("user_influx"))){
         stringToChar(&user_influx,server.arg(F("user_influx")));
     }
-    if (server.hasArg(F("pwd_custom"))) {
-        readPwdParam(&pwd_custom,F("pwd_custom"));
+    if (server.hasArg(F("pwd_influx"))){
+        stringToChar(&pwd_influx,server.arg(F("pwd_influx")));
     }
-
 
     readBoolParam(auto_update);
     parseHTTP(F("channel"), update_channel);
