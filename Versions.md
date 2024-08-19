@@ -1,4 +1,4 @@
-NAMF-2020-46rc8 (rev )
+NAMF-2020-46rc8 (2024-08-19 rev 75e6b449a2e9ea9be574612a92255e6511dc4233)
 - fixed typo preventing using authentication data for Influx 1.x
 
 NAMF-2020-46rc7 (2024-07-30 rev e8e81ddced0ac2849c8d6a761f326c5105c1f01f)
