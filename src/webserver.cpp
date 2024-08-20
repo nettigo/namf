@@ -766,7 +766,7 @@ void webserver_config(){
         page_content.concat(formSectionHeader(FPSTR(INTL_SENSORS)));
         page_content.concat(formCheckboxGrid("pms_read", FPSTR(INTL_PMS), pms_read));
         page_content.concat(formCheckboxGrid("dht_read", FPSTR(INTL_DHT22), dht_read));
-        page_content.concat(formCheckboxGrid("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read));
+        page_content.concat(formCheckboxGridWithHelp("ds18b20_read", FPSTR(INTL_DS18B20), F("s/ds18b20"), ds18b20_read));
         page_content.concat(formCheckboxGrid("gps_read", FPSTR(INTL_NEO6M), gps_read));
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
         page_content.concat(F("</form>"));

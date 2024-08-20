@@ -1,3 +1,6 @@
+NAMF-47rc1 ()
+- added info (help) to DS18B20 about resistor needed for the sensor to work
+- 
 NAMF-2020-46rc8 (2024-08-19 rev 75e6b449a2e9ea9be574612a92255e6511dc4233)
 - fixed typo preventing using authentication data for Influx 1.x
 

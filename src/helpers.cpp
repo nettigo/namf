@@ -837,6 +837,27 @@ String formCheckboxGrid(const String& name, const String& info, const bool check
     return s;
 }
 
+String formCheckboxGridWithHelp(const String& name, const String& info, const String& id, const bool checked) {
+    String newInfo = add_sensor_type(info);
+    String s;
+    s = F("<div class='row'><input type='checkbox' name='{n}' value='1' id='{n}' {c}/><label for='{n}'>{i}</label> <a class='plain no-dec' href='https://nettigo.github.io/namf/");
+    s.concat(FPSTR(INTL_LANG));
+    s.concat(F("/{id}' title='"));
+    s.concat(FPSTR(INTL_HELP));
+    s.concat(F("' target='NAMF-HELP'>&#129517;</a></div>\n"));
+
+
+    if (checked) {
+        s.replace("{c}", F(" checked='checked'"));
+    } else {
+        s.replace("{c}", "");
+    };
+    s.replace("{i}", newInfo);
+    s.replace("{n}", name);
+    s.replace("{id}", id);
+    return s;
+}
+
 const char formCheckboxOpenGrid_templ[] PROGMEM = "<div><input type='checkbox' name='{n}' value='1' id='{n}' {c}/><label for='{n}'>{i}</label></div>";
 //Use only columns 1 & 2 from grid
 String formCheckboxOpenGrid(const String& name, const String& info, const bool checked) {

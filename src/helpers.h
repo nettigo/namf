@@ -64,6 +64,7 @@ String form_password(const String& name, const String& info, const String& value
 String formPasswordGrid(const String& name, const String& info, const String& value, const int length);
 String form_checkbox(const String& name, const String& info, const bool checked, const bool linebreak = true);
 String formCheckboxGrid(const String& name, const String& info, const bool checked);
+String formCheckboxGridWithHelp(const String& name, const String& info, const String& id, const bool checked);
 String formCheckboxOpenGrid(const String& name, const String& info, const bool checked);
 String form_checkbox_sensor(const String& name, const String& info, const bool checked);
 String form_submit(const String& value);
