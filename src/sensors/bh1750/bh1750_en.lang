@@ -1,0 +1,4 @@
+INTL_BH1750_DESC Ambient light sensor (BH1750FVI)
+INTL_AMBIENT_LIGHT Ambient light
+INTL_AMBIENT_LIGHT_MAX Max ambient light
+INTL_AMBIENT_LIGHT_MIN Min ambient light

@@ -30,6 +30,9 @@ namespace BME280 {
     bool isEnabled();
     void setDefaults();
 
+    bool getDisplaySetting();
+    void display(byte cols, byte minor, String lines[]);
+
 
 }
 

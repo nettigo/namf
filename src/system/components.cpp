@@ -8,6 +8,8 @@ namespace SimpleScheduler {
         switch (sensor) {
             case SimpleScheduler::SHT3x:
                 return SHT3x::getDisplaySetting();
+            case SimpleScheduler::BME280:
+                return BME280::getDisplaySetting();
             case SimpleScheduler::HECA:
                 return HECA::getDisplaySetting();
             case SimpleScheduler::SDS011:
@@ -31,6 +33,7 @@ namespace SimpleScheduler {
         HECA::getResults(res);
         BMPx80::results(res);
         BME280::results(res);
+        BH17::results(res);
     }
 
     //push results to Luftdaten/SensorCommunity
@@ -62,6 +65,7 @@ namespace SimpleScheduler {
         MHZ14A::afterSend(status);
         BMPx80::afterSend(status);
         BME280::afterSend(status);
+        BH17::afterSend(status);
 
     }
 
@@ -74,6 +78,7 @@ namespace SimpleScheduler {
         MHZ14A::resultsAsHTML(res);
         BMPx80::resultsAsHTML(res);
         BME280::resultsAsHTML(res);
+        BH17::resultsAsHTML(res);
     }
 
     //collect sensors status
@@ -126,6 +131,8 @@ namespace SimpleScheduler {
                 return BMPx80::parseHTTPRequest();
             case SimpleScheduler::BME280:
                 return BME280::parseHTTPRequest();
+            case SimpleScheduler::BH1750:
+                return BH17::parseHTTPRequest();
             default:
                 StaticJsonBuffer<16> jsonBuffer;    //empty response
                 JsonObject & ret = jsonBuffer.createObject();
@@ -152,6 +159,8 @@ namespace SimpleScheduler {
                 return BMPx80::getConfigJSON();
             case SimpleScheduler::BME280:
                 return BME280::getConfigJSON();
+            case SimpleScheduler::BH1750:
+                return BH17::getConfigJSON();
             default:
                 return s;
         }
@@ -182,6 +191,9 @@ namespace SimpleScheduler {
                 return;
             case SimpleScheduler::BME280:
                 BME280::readConfigJSON(json);
+                return;
+            case SimpleScheduler::BH1750:
+                BH17::readConfigJSON(json);
                 return;
             default:
                 return;
@@ -236,10 +248,12 @@ namespace SimpleScheduler {
                 return FPSTR(BMPx80::KEY);
             case SimpleScheduler::BME280:
                 return FPSTR(BME280::KEY);
+            case SimpleScheduler::BH1750:
+                return FPSTR(BH17::KEY);
             default:
                 debug_out(F("**** MISSING SENSOR SLOT KEY: "), DEBUG_MIN_INFO, false);
                 debug_out(String(sensor), DEBUG_MIN_INFO, true);
-                return F("");
+                return F("unknw");
         }
 
 
@@ -264,6 +278,8 @@ namespace SimpleScheduler {
                 return FPSTR(INTL_BMPx80_DESC);
             case SimpleScheduler::BME280:
                 return FPSTR(INTL_BME280_DESC);
+            case SimpleScheduler::BH1750:
+                return FPSTR(INTL_BH1750_DESC);
             default:
                 return F("");
         }
@@ -276,6 +292,10 @@ namespace SimpleScheduler {
 //        Serial.println(LET_NAMES[sensor]);
 //        Serial.println(cols);
         switch (sensor) {
+            case BME280:
+                if (cols == 0) return true;
+                BME280::display(rows, minor, lines);
+                return true;
             case SHT3x:
                 if (cols == 0) return true;
                 SHT3x::display(rows, minor, lines);

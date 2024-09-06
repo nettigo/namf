@@ -3,6 +3,7 @@
 //
 
 #include "commons.h"
+#include "../lib/testable/testable.h"
 //used internally no need to declare outside
 enum class DisplayPages {
     PagePM,
@@ -38,7 +39,113 @@ String displayGenerateFooter(unsigned int screen_count) {
     return display_footer;
 }
 
+void initCustomChars() {
+    byte chr1[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111
+    };
+    byte chr2[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111
+    };
+    byte chr3[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr4[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr5[8] =  {
+            B00000,
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr6[8] =  {
+            B00000,
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr7[8] =  {
+            B00000,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111,
+            B11111
+    };
+    byte chr8[8] =  {
+            B00000,
+            B01110,
+            B10001,
+            B00100,
+            B01010,
+            B00000,
+            B00100,
+            B00000
+    };
+    if (char_lcd) {
+        char_lcd->createChar(1,chr1);
+        char_lcd->createChar(2,chr2);
+        char_lcd->createChar(3,chr3);
+        char_lcd->createChar(4,chr4);
+        char_lcd->createChar(5,chr5);
+        char_lcd->createChar(6,chr6);
+        char_lcd->createChar(7,chr7);
+        char_lcd->createChar(8,chr8);
+    }
+}
 
+void displayProgressBar() {
+    if (char_lcd && getLCDRows() > 2) {
+        char_lcd->setCursor(19,3);
+        byte x = 7 - (byte)((float)time2Measure()/cfg::sending_intervall_ms * 7) ;
+        char_lcd->write(x);
+    }
+}
+
+void displaySendSignal() {
+    if (char_lcd && getLCDRows() > 2) {
+        char_lcd->setCursor(19, 3);
+        char_lcd->write(8);
+    }
+}
 
 /*****************************************************************
  * display values                                                *
@@ -66,6 +173,17 @@ void display_values() {
     int line_count = 0;
     static_screen_count = 0;
 //	debug_out(F("output values to display..."), DEBUG_MAX_INFO, 1);
+    bool backlight = true;
+    if (sntp_time_is_set && backlight_start < 25 && backlight_stop < 25) {
+        time_t rawtime;
+        struct tm *timeinfo;
+        time (&rawtime);
+        timeinfo = localtime(&rawtime);
+
+
+        backlight = hourIsInRange(timeinfo->tm_hour, backlight_start, backlight_stop);
+
+    }
     if (cfg::pms_read) {
         pm10_value = last_value_PMS_P1;
         pm10_sensor = FPSTR(SENSORS_PMSx003);
@@ -105,7 +223,7 @@ void display_values() {
     if (cfg::pms_read) {
         screens[static_screen_count++] = DisplayPages::PagePM;
     }
-    if (cfg::dht_read || cfg::ds18b20_read || BME280::isEnabled()) {
+    if (cfg::dht_read || cfg::ds18b20_read) {
         screens[static_screen_count++] = DisplayPages::PageTemp;
     }
     if (cfg::gps_read) {
@@ -117,7 +235,7 @@ void display_values() {
     if (cfg::sh_dev_inf) {
         screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
     }
-    bool skipOldDisplay = false;
+    bool skipOldDisplay = (static_screen_count == 0);
     if (next_display_count+1 > static_screen_count) {
         byte diff = next_display_count - static_screen_count;
         byte minor;
@@ -143,12 +261,13 @@ void display_values() {
             }
             if (char_lcd) {
                 char_lcd->clear();
+                char_lcd->setBacklight(backlight);
                 for (byte i = 0; i < 4; i++) {
                     char_lcd->setCursor(0,i);
                     if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));
                     char_lcd->print(lines[i]);
                 }
-
+                displayProgressBar();
             }
             next_display_count++;
             skipOldDisplay = true;
@@ -158,7 +277,7 @@ void display_values() {
     }
     if (!skipOldDisplay) {
 
-        if (cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+        if (cfg::has_display || cfg::has_lcd2004) {
             switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
                     display_header = pm25_sensor;
@@ -180,7 +299,7 @@ void display_values() {
                         display_header += " / " + p_sensor;
                     }
                     if (t_sensor != "") {
-                        display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
+                            display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
                     }
                     if (h_sensor != "") {
                         display_lines[line_count++] = "Hum.:  " + check_display_value(h_value, -1, 1, 6) + " %";
@@ -230,7 +349,7 @@ void display_values() {
                 display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
                 display->display();
             }
-            if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+            if (cfg::has_lcd2004) {
                 display_header = getLCDHeader() + " " + display_header;
                 display_lines[0].replace(" µg/m³", "");
                 display_lines[0].replace("°", String(char(223)));
@@ -244,11 +363,12 @@ void display_values() {
                 char_lcd->print(display_lines[1]);
                 char_lcd->setCursor(0, 3);
                 char_lcd->print(display_lines[2]);
+                displayProgressBar();
             }
         }
 
 
-        if (cfg::has_lcd1602_27 || cfg::has_lcd1602) {
+        if (cfg::has_lcd1602) {
             switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
                     display_lines[0] = "PM2.5: " + check_display_value(pm25_value, -1, 1, 6);
@@ -290,17 +410,28 @@ void display_values() {
 
 //get LCD screen sizes. returns 0 if no LCD or graphical one (SSD1306)
 byte getLCDCols(){
-    if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 16;
-    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) return 20;
+    if (cfg::has_lcd1602) return 16;
+    if (cfg::has_lcd2004) return 20;
     return 0;
 };
 
 byte getLCDRows(){
-    if (cfg::has_lcd1602 || cfg::has_lcd1602_27) return 2;
-    if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || display) return 4;
+    if (cfg::has_lcd1602) return 2;
+    if (cfg::has_lcd2004 || display) return 4;
     return 0;
-
 };
+
+byte getLCDaddr() {
+    Wire.beginTransmission(0x27);
+    if (Wire.endTransmission() == 0) {
+        return 0x27;
+    }
+    Wire.beginTransmission(0x3F);
+    if (Wire.endTransmission() == 0) {
+        return 0x3F;
+    }
+    return 0;   //no I2C LCD?
+}
 
 String getLCDHeader(bool longDisp) {
     String ret = String(next_display_count + 1);
@@ -312,8 +443,7 @@ String getLCDHeader(bool longDisp) {
 };
 
 void cycleDisplay(void){
-    if ((cfg::has_display || cfg::has_lcd2004_27 || cfg::has_lcd2004_3f || cfg::has_lcd1602 ||
-         cfg::has_lcd1602_27) && (act_milli > next_display_millis)) {
+    if ((cfg::has_display || cfg::has_lcd2004 || cfg::has_lcd1602) && (act_milli > next_display_millis)) {
         display_values();
     }
 

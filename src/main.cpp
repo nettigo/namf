@@ -5,21 +5,41 @@
  *****************************************************************/
 #include "defines.h"
 #include "variables.h"
-#include <Schedule.h>
+//#include <Schedule.h>
 #include "variables_init.h"
 #include "update.h"
 #include "helpers.h"
 #include "system/scheduler.h"
 #include "system/components.h"
+#include "wifi.h"
+
+#ifdef NAM_LORAWAN
+#include "lora/lorawan.h"
+#endif
+#if defined(ESP8266)
 #include <ESP8266WiFi.h>
-#include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#else
+#include <WiFi.h>
+#include <WebServer.h>
+#include <ESPmDNS.h>
+#include <SPIFFS.h>
+   struct FSInfo {
+        size_t totalBytes;
+        size_t usedBytes;
+        size_t blockSize;
+        size_t pageSize;
+        size_t maxOpenFiles;
+        size_t maxPathLength;
+    };
+#endif
+
 #include <ArduinoOTA.h>
 #include <base64.h>
 #include <ArduinoJson.h>
 #include <time.h>
-#include <coredecls.h>
+//#include <coredecls.h>
 #include <assert.h>
 #include "system/reporting.h"
 
@@ -113,10 +133,6 @@ void setDefaultConfig(void) {
  *****************************************************************/
 void readConfig() {
     setDefaultConfig();
-    debug_out(F("mounting FS: "), DEBUG_MIN_INFO, 0);
-
-	if (SPIFFS.begin()) {
-		debug_out(F("OK"), DEBUG_MIN_INFO, 1);
 		if (SPIFFS.exists("/config.json")) {
 			//file exists, reading and loading
 			debug_out(F("reading config"), DEBUG_MED_INFO, 1);
@@ -129,11 +145,9 @@ void readConfig() {
                 setDefaultConfig();
             };
 		} else {
-			debug_out(F("config file not found ..."), DEBUG_ERROR, 1);
+			debug_out(F("config file not found, resetting WiFi settings ..."), DEBUG_ERROR, 1);
+            ESP.eraseConfig();
 		}
-	} else {
-		debug_out(F("\nFailed mount FS!"), DEBUG_ERROR, 1);
-	}
 }
 
 String tmpl(const String& patt, const String& value) {
@@ -170,190 +184,6 @@ String add_sensor_type(const String& sensor_text) {
 
 
 
-
-static int selectChannelForAp(struct struct_wifiInfo *info, int count) {
-	std::array<int, 14> channels_rssi;
-	std::fill(channels_rssi.begin(), channels_rssi.end(), -100);
-
-	for (int i = 0; i < count; i++) {
-		if (info[i].RSSI > channels_rssi[info[i].channel]) {
-			channels_rssi[info[i].channel] = info[i].RSSI;
-		}
-	}
-
-	if ((channels_rssi[1] < channels_rssi[6]) && (channels_rssi[1] < channels_rssi[11])) {
-		return 1;
-	} else if ((channels_rssi[6] < channels_rssi[1]) && (channels_rssi[6] < channels_rssi[11])) {
-		return 6;
-	} else {
-		return 11;
-	}
-}
-
-/*****************************************************************
- * WifiConfig                                                    *
- *****************************************************************/
-void wifiConfig() {
-	debug_out(F("Starting WiFiManager"), DEBUG_MIN_INFO, 1);
-	debug_out(F("AP ID: "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::fs_ssid, DEBUG_MIN_INFO, 1);
-	debug_out(F("Password: "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::fs_pwd, DEBUG_MIN_INFO, 1);
-
-	wificonfig_loop = true;
-
-	WiFi.disconnect(true);
-	debug_out(F("scan for wifi networks..."), DEBUG_MIN_INFO, 1);
-	count_wifiInfo = WiFi.scanNetworks(false, true);
-	wifiInfo = new struct_wifiInfo[count_wifiInfo];
-	for (int i = 0; i < count_wifiInfo; i++) {
-		uint8_t* BSSID;
-		String SSID;
-		WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
-		SSID.toCharArray(wifiInfo[i].ssid, 35);
-	}
-
-	WiFi.mode(WIFI_AP);
-	const IPAddress apIP(192, 168, 4, 1);
-	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-    if (cfg::fs_pwd == nullptr || !strcmp(cfg::fs_pwd, "")) {
-        debug_out(F("Starting AP with default password"), DEBUG_MIN_INFO);
-        WiFi.softAP(cfg::fs_ssid, "nettigo.pl", selectChannelForAp(wifiInfo, count_wifiInfo));
-    } else {
-        WiFi.softAP(cfg::fs_ssid, cfg::fs_pwd, selectChannelForAp(wifiInfo, count_wifiInfo));
-    }
-
-	DNSServer dnsServer;
-	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-	dnsServer.start(53, "*", apIP);							// 53 is port for DNS server
-
-	// 10 minutes timeout for wifi config
-	last_page_load = millis();
-	while (((millis() - last_page_load) < cfg::time_for_wifi_config)) {
-		dnsServer.processNextRequest();
-		server.handleClient();
-		wdt_reset(); // nodemcu is alive
-		yield();
-	}
-
-	// half second to answer last requests
-	last_page_load = millis();
-	while ((millis() - last_page_load) < 500) {
-		dnsServer.processNextRequest();
-		server.handleClient();
-		yield();
-	}
-
-	WiFi.disconnect(true);
-	WiFi.softAPdisconnect(true);
-	WiFi.mode(WIFI_STA);
-
-	delete []wifiInfo;
-
-	dnsServer.stop();
-
-	delay(100);
-
-	debug_out(F("Connecting to "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
-
-	// we could set hostname also here
-	WiFi.begin(cfg::wlanssid, cfg::wlanpwd);
-
-	debug_out(F("---- Result Webconfig ----"), DEBUG_MIN_INFO, 1);
-	debug_out(F("WLANSSID: "), DEBUG_MIN_INFO, 0);
-	debug_out(cfg::wlanssid, DEBUG_MIN_INFO, 1);
-	debug_out(F("----\nReading ..."), DEBUG_MIN_INFO, 1);
-	debug_out(F("SDS: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::sds_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("PMS: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::pms_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("DHT: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::dht_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("DS18B20: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::ds18b20_read), DEBUG_MIN_INFO, 1);
-	debug_out(F("----\nSend to ..."), DEBUG_MIN_INFO, 1);
-	debug_out(F("Dusti: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::send2dusti), DEBUG_MIN_INFO, 1);
-	debug_out(F("Madavi: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::send2madavi), DEBUG_MIN_INFO, 1);
-	debug_out(F("CSV: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::send2csv), DEBUG_MIN_INFO, 1);
-	debug_out("----", DEBUG_MIN_INFO, 1);
-	debug_out(F("Autoupdate: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::auto_update), DEBUG_MIN_INFO, 1);
-	debug_out(F("Display: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::has_display), DEBUG_MIN_INFO, 1);
-	debug_out(F("LCD 1602: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::has_lcd1602), DEBUG_MIN_INFO, 1);
-	debug_out(F("Debug: "), DEBUG_MIN_INFO, 0);
-	debug_out(String(cfg::debug), DEBUG_MIN_INFO, 1);
-	wificonfig_loop = false;
-}
-
-static void waitForWifiToConnect(int maxRetries) {
-	int retryCount = 0;
-	while ((WiFi.status() != WL_CONNECTED) && (retryCount <  maxRetries)) {
-		delay(500);
-		debug_out(".", DEBUG_MIN_INFO, 0);
-		++retryCount;
-	}
-}
-
-/*****************************************************************
- * Start WiFi in AP mode (for configuration)
- *****************************************************************/
-
-void    startAP(void) {
-		String fss = String(cfg::fs_ssid);
-		display_debug(fss.substring(0, 16), fss.substring(16));
-		wifiConfig();
-		if (WiFi.status() != WL_CONNECTED) {
-			waitForWifiToConnect(20);
-			debug_out("", DEBUG_MIN_INFO, 1);
-		}
-
-}
-
-/*****************************************************************
- * WiFi auto connecting script                                   *
- *****************************************************************/
-void connectWifi() {
-    display_debug(F("Connecting to"), String(cfg::wlanssid));
-    debug_out(F("SSID: '"), DEBUG_ERROR, 0);
-    debug_out(cfg::wlanssid, DEBUG_ERROR, 0);
-    debug_out(F("'"), DEBUG_ERROR, 1);
-	debug_out(String(WiFi.status()), DEBUG_MIN_INFO, 1);
-	WiFi.disconnect();
-	WiFi.setOutputPower(cfg::outputPower);
-	WiFi.setPhyMode(WIFI_PHY_MODE_11N);
-	WiFi.setPhyMode((WiFiPhyMode_t)cfg::phyMode);
-	WiFi.mode(WIFI_STA);
-	
-	//String hostname = F("NAM-");
-    //hostname += esp_chipid();
-	//WiFi.hostname(hostname.c_str()); // Hostname for DHCP Server.
-
-	WiFi.hostname(cfg::fs_ssid); // Hostname for DHCP Server
-	WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
-
-	waitForWifiToConnect(40);
-	debug_out("", DEBUG_MIN_INFO, 1);
-	if (WiFi.status() != WL_CONNECTED) {
-        if (strlen(cfg::fbssid)) {
-            display_debug(F("Connecting to"), String(cfg::fbssid));
-            debug_out(F("Failed to connect to WiFi. Trying to connect to fallback WiFi"), DEBUG_ERROR);
-            debug_out(cfg::fbssid, DEBUG_ERROR);
-            WiFi.begin(cfg::fbssid, cfg::fbpwd); // Start WiFI
-            waitForWifiToConnect(40);
-
-        }
-        if (WiFi.status() != WL_CONNECTED)
-            startAP();
-	}
-	debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
-	debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
-}
 
 
 /*****************************************************************
@@ -579,10 +409,12 @@ String sensorGPS() {
 	String gps_lat = "";
 	String gps_lon = "";
 
-	debug_out(String(FPSTR(DBG_TXT_START_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
+//	debug_out(String(FPSTR(DBG_TXT_START_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
 
 	while (serialGPS.available() > 0) {
-		if (gps.encode(serialGPS.read())) {
+        byte r = serialGPS.read();
+//        debug_out(String(char(r)), DEBUG_MED_INFO, false);
+        if (gps.encode(r)) {
 			if (gps.location.isValid()) {
 				last_value_GPS_lat = gps.location.lat();
 				last_value_GPS_lon = gps.location.lng();
@@ -662,7 +494,7 @@ String sensorGPS() {
 		debug_out(F("No GPS data received: check wiring"), DEBUG_ERROR, 1);
 	}
 
-	debug_out(String(FPSTR(DBG_TXT_END_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
+//	debug_out(String(FPSTR(DBG_TXT_END_READING)) + F("GPS"), DEBUG_MED_INFO, 1);
 
 	return s;
 }
@@ -682,20 +514,18 @@ void init_display() {
  * Init LCD display                                              *
  *****************************************************************/
 void init_lcd() {
-	if (cfg::has_lcd1602_27) {
-		char_lcd = new LiquidCrystal_I2C(0x27, 16, 2);
-    } else if (cfg::has_lcd1602) {
-        char_lcd = new LiquidCrystal_I2C(0x3F, 16, 2);
-    } else if (cfg::has_lcd2004_27) {
-        char_lcd = new LiquidCrystal_I2C(0x27, 20, 4);
-    } else if (cfg::has_lcd2004_3f) {
-        char_lcd = new LiquidCrystal_I2C(0x3F, 20, 4);
-	}
-
+    byte addr = getLCDaddr();
+    if (addr == 0) return;
+    byte cols = getLCDCols();
+    byte lines = getLCDRows();
+	if (cfg::has_lcd1602 || cfg::has_lcd2004) {
+		char_lcd = new LiquidCrystal_I2C(addr, cols, lines);
+}
 	//LCD is set? Configure it!
     if (char_lcd) {
         char_lcd->init();
         char_lcd->backlight();
+        initCustomChars();
     }
 }
 
@@ -725,35 +555,58 @@ static void powerOnTestSensors() {
 		ds18b20.begin();                                    // Start DS18B20
 		debug_out(F("Read DS18B20..."), DEBUG_MIN_INFO, 1);
 	}
-
-    cfg::debug = DEBUG;
 }
 
 static void logEnabledAPIs() {
 	debug_out(F("Send to :"), DEBUG_MIN_INFO, 1);
 	if (cfg::send2dusti) {
-		debug_out(F("luftdaten.info"), DEBUG_MIN_INFO, 1);
+		debug_out(F("sensor.community"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2madavi) {
-		debug_out(F("Madavi.de"), DEBUG_MIN_INFO, 1);
+        cfg::apiCount++;
+		debug_out(F("Madavi.de"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2lora) {
-		debug_out(F("LoRa gateway"), DEBUG_MIN_INFO, 1);
+		debug_out(F("LoRa gateway"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2csv) {
-		debug_out(F("Serial as CSV"), DEBUG_MIN_INFO, 1);
+		debug_out(F("Serial as CSV"), DEBUG_MIN_INFO);
 	}
 
 	if (cfg::send2custom) {
-		debug_out(F("custom API"), DEBUG_MIN_INFO, 1);
+        cfg::apiCount++;
+		debug_out(F("custom API"), DEBUG_MIN_INFO);
 	}
 
-	if (cfg::send2influx) {
-		debug_out(F("custom influx DB"), DEBUG_MIN_INFO, 1);
+    if (cfg::send2aqi) {
+        cfg::apiCount++;
+        debug_out(F("AQI.eco"), DEBUG_MIN_INFO);
+    }
+
+    if (cfg::send2sensemap) {
+        cfg::apiCount++;
+        debug_out(F("Sensemap"), DEBUG_MIN_INFO);
+    }
+
+    if (cfg::send2fsapp) {
+        cfg::apiCount++;
+        debug_out(F("Feinstaub app"), DEBUG_MIN_INFO);
+    }
+
+    if (cfg::send2influx) {
+        cfg::apiCount++;
+		debug_out(F("Influxdb"), DEBUG_MIN_INFO);
 	}
+    cfg::apiStats = new apiTimeStat[cfg::apiCount];
+    for (byte i=0; i<cfg::apiCount; i++){
+        cfg::apiStats[i].id = LoggerNoName;
+        cfg::apiStats[i].status = 0;
+        cfg::apiStats[i].time = 0;
+    }
+
 	debug_out("", DEBUG_MIN_INFO, 1);
 	if (cfg::auto_update) {
 		debug_out(F("Auto-Update active..."), DEBUG_MIN_INFO, 1);
@@ -765,10 +618,10 @@ static void logEnabledDisplays() {
 	if (cfg::has_display) {
 		debug_out(F("Show on OLED..."), DEBUG_MIN_INFO, 1);
 	}
-	if (cfg::has_lcd1602 || cfg::has_lcd1602_27) {
+	if (cfg::has_lcd1602) {
 		debug_out(F("Show on LCD 1602 ..."), DEBUG_MIN_INFO, 1);
 	}
-	if (cfg::has_lcd2004_27 || cfg::has_lcd2004_3f) {
+	if (cfg::has_lcd2004) {
 		debug_out(F("Show on LCD 2004 ..."), DEBUG_MIN_INFO, 1);
 	}
 	if (cfg::has_ledbar_32) {
@@ -777,43 +630,6 @@ static void logEnabledDisplays() {
 
 }
 
-void time_is_set (void) {
-	sntp_time_is_set = true;
-}
-
-static bool acquireNetworkTime() {
-	int retryCount = 0;
-	debug_out(F("Setting time using SNTP"), DEBUG_MIN_INFO, 1);
-	time_t now = time(nullptr);
-	debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-	debug_out(NTP_SERVER,DEBUG_MIN_INFO,1);
-	settimeofday_cb(time_is_set);
-	configTime("GMT", NTP_SERVER);
-	while (retryCount++ < 20) {
-		// later than 2000/01/01:00:00:00
-		if (sntp_time_is_set) {
-			now = time(nullptr);
-			debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-			return true;
-		}
-		delay(500);
-		debug_out(".",DEBUG_MIN_INFO,0);
-	}
-	debug_out(F("\nrouter/gateway:"),DEBUG_MIN_INFO,1);
-	retryCount = 0;
-	configTime(0, 0, WiFi.gatewayIP().toString().c_str());
-	while (retryCount++ < 20) {
-		// later than 2000/01/01:00:00:00
-		if (sntp_time_is_set) {
-			now = time(nullptr);
-			debug_out(ctime(&now), DEBUG_MIN_INFO, 1);
-			return true;
-		}
-		delay(500);
-		debug_out(".",DEBUG_MIN_INFO,0);
-	}
-	return false;
-}
 
 void initNonTrivials(const char *id) {
     strcpy(cfg::current_lang, CURRENT_LANG);
@@ -825,19 +641,34 @@ void initNonTrivials(const char *id) {
     }
 }
 
+#include "arch_dependend/factory_reset.h"
+//check if factory reset conditions are met
+
 /*****************************************************************
  * The Setup                                                     *
  *****************************************************************/
 void setup() {
-    Debug.begin(115200);                    // Output to Serial at 9600 baud
+    Debug.begin(115200);
+    debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
+    debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
+    debug_out(F("/"), DEBUG_ERROR, false);
+    debug_out(FPSTR(INTL_LANG), DEBUG_ERROR);
+    debug_out(F("Chip ID: "), DEBUG_ERROR, false);
+    debug_out(esp_chipid(), DEBUG_ERROR);
+
+    checkFactoryReset();
+#ifdef ARDUINO_ARCH_ESP8266
     serialSDS.begin(9600, SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
     serialGPS.begin(9600, SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
-
-    schedule_recurrent_function_us([]() {
-        serialSDS.perform_work();
-        serialGPS.perform_work();
-        return true;
-    }, 500);
+#else
+    serialSDS.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, PM_SERIAL_RX, PM_SERIAL_TX, false, SDS_SERIAL_BUFF_SIZE);
+    serialGPS.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, GPS_SERIAL_RX, GPS_SERIAL_TX, false, 64);
+#endif
+//    schedule_recurrent_function_us([]() {
+//        serialSDS.perform_work();
+//        serialGPS.perform_work();
+//        return true;
+//    }, 50);
     serialSDS.enableIntTx(false);
 
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
@@ -846,16 +677,19 @@ void setup() {
 
     initNonTrivials(esp_chipid().c_str());
 
-    debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
-    debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
-    debug_out(F("/"), DEBUG_ERROR, false);
-    debug_out(FPSTR(INTL_LANG), DEBUG_ERROR);
-    debug_out(F("Chip ID: "), DEBUG_ERROR, false);
-    debug_out(esp_chipid(), DEBUG_ERROR);
 
 
     FSInfo fs_info;
+#ifdef ARDUINO_ARCH_ESP8266
     SPIFFS.info(fs_info);
+#else
+    fs_info.totalBytes = SPIFFS.totalBytes();
+    fs_info.usedBytes = SPIFFS.usedBytes();
+    fs_info.blockSize = 0;
+    fs_info.pageSize = 0;
+    fs_info.maxOpenFiles = 0;
+    fs_info.maxPathLength = 0;
+#endif
     debug_out(F("SPIFFS (kB): "), DEBUG_ERROR, false);
     debug_out(String(fs_info.totalBytes/(1024)), DEBUG_ERROR);
 
@@ -888,53 +722,48 @@ void setup() {
     }
 
 
-    setup_webserver();
-
-
-    if (strlen(cfg::wlanssid) > 0) {
-        connectWifi();
-        got_ntp = acquireNetworkTime();
-        debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
-        debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
-        if(cfg::auto_update) {
-            updateFW();
-        }
+    configNetwork();
+    if (cfg::internet) {//we are connected to internet
         Reporting::reportBoot();
         Serial.println(F(" After Report boot"));
-
-    } else {
-        startAP();
     }
+    //in AP mode (no internet) we still want webserver
+    setup_webserver();
 
     if (cfg::gps_read) {
-        serialGPS.begin(9600);
+//        serialGPS.begin(9600);
         debug_out(F("Read GPS..."), DEBUG_MIN_INFO, 1);
         disable_unneeded_nmea();
     }
 
     logEnabledAPIs();
     logEnabledDisplays();
+#if defined(NAM_LORAWAN)
+    LoRaWan::setup();
+#endif
 
     //String server_name = F("NAM-");
     //server_name += esp_chipid();
     //if (MDNS.begin(server_name.c_str())) {
 		
 	if (MDNS.begin(cfg::fs_ssid)) {
-        MDNSResponder::hMDNSService hService = MDNS.addService( cfg::fs_ssid, "http", "tcp", 80);
-//        MDNS.addService("http", "tcp", 80);
         char buff[20];
+#ifdef ARDUINO_ARCH_ESP8266
+        MDNSResponder::hMDNSService hService = MDNS.addService( cfg::fs_ssid, "http", "tcp", 80);
         sprintf(buff, "NAM-%u", ESP.getChipId());
         MDNS.addServiceTxt(hService, "id", buff);
         MDNS.addServiceTxt(hService, "manufacturer", "Nettigo");
+#else
+        MDNS.addService("http", "tcp", 80);
+        sprintf(buff, "NAM-%u", ESP.getEfuseMac());
+        MDNS.addServiceTxt((char *)"http", (char *)"tcp", (char *)"id", (char *)buff);
+        MDNS.addServiceTxt((char *)"http", (char *)"tcp", (char *)"manufacturer", (char *)"Nettigo");
+#endif
     } else {
         debug_out(F("\nmDNS failure!"), DEBUG_ERROR, 1);
     }
 
     delay(50);
-
-	// sometimes parallel sending data and web page will stop nodemcu, watchdogtimer set to 30 seconds
-	wdt_disable();
-	wdt_enable(30000);
 
 	serialSDS.flush();  //drop any packets sent on startup...
 
@@ -954,52 +783,112 @@ static void checkForceRestart() {
 static unsigned long sendDataToOptionalApis(const String &data) {
 	unsigned long start_send = 0;
 	unsigned long sum_send_time = 0;
+    byte current_api = 0;
+    int result = 0;
+#if defined(NAM_LORAWAN)
+    if (cfg::lw_en) {
+        debug_out("\n\nLORAWAN leci!",DEBUG_ERROR);
+        LoRaWan::send_lora_frame(data);
+    }
+#endif
+    if (cfg::internet) {    //send data to API only if we have access to network
+        if (cfg::send2madavi) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            result = sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
+            sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerMadavi;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+            server.handleClient();
+        }
 
-	if (cfg::send2madavi) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		sendData(LoggerMadavi, data, 0, HOST_MADAVI, (cfg::ssl_madavi ? 443 : 80), URL_MADAVI, true);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
+        if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            String sensemap_path = URL_SENSEMAP;
+            sensemap_path.replace("BOXID", cfg::senseboxid);
+            result = sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
+            sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerSensemap;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+            server.handleClient();
+        }
+        if (cfg::send2fsapp) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            result = sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
+            sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerFSapp;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+            server.handleClient();
 
+        }
+
+        if (cfg::send2influx) {
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
+            const String data_4_influxdb = create_influxdb_string(data);
+            start_send = millis();
+            result = sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
+            sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerInflux;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+
+            server.handleClient();
+
+        }
+
+        if (cfg::send2custom) {
+            String data_4_custom = data;
+            data_4_custom.remove(0, 1);
+#if defined(ARDUINO_ARCH_ESP8266)
+            data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#else
+            data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#endif
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
+            start_send = millis();
+            result = sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
+            sum_send_time += millis() - start_send;
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerCustom;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+            server.handleClient();
+
+        }
+
+        if (cfg::send2aqi) {
+            String data_4_custom = data;
+            data_4_custom.remove(0, 1);
+#if defined(ARDUINO_ARCH_ESP8266)
+            data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#else
+            data_4_custom = "{\"esp32id\": \"" + esp_chipid() + "\", " + data_4_custom;
+#endif
+            debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
+            String path = F("/update/");
+            path.concat(cfg::token_AQI);
+            start_send = millis();
+            result = sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
+            cfg::apiStats[current_api].time = millis() - start_send;
+            cfg::apiStats[current_api].id = LoggerAQI;
+            cfg::apiStats[current_api].status = result;
+            current_api++;
+            sum_send_time += millis() - start_send;
+            server.handleClient();
+
+        }
     }
 
-    if (cfg::send2sensemap && (cfg::senseboxid[0] != '\0')) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("opensensemap: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		String sensemap_path = URL_SENSEMAP;
-		sensemap_path.replace("BOXID", cfg::senseboxid);
-		sendData(LoggerSensemap, data, 0, HOST_SENSEMAP, PORT_SENSEMAP, sensemap_path.c_str(), false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
 
-    }
-
-	if (cfg::send2fsapp) {
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("Server FS App: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		sendData(LoggerFSapp, data, 0, HOST_FSAPP, PORT_FSAPP, URL_FSAPP, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
-
-    if (cfg::send2influx) {
-        debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom influx db: "), DEBUG_MIN_INFO, 1);
-        start_send = millis();
-        const String data_4_influxdb = create_influxdb_string(data);
-
-        sendData(LoggerInflux, data_4_influxdb, 0, cfg::host_influx, cfg::port_influx, cfg::url_influx, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
-
-	/*		if (send2lora) {
-				debug_out(F("## Sending to LoRa gateway: "), DEBUG_MIN_INFO, 1);
-				send_lora(data);
-			}
-	*/
 	if (cfg::send2csv) {
 		debug_out(F("## Sending as csv: "), DEBUG_MIN_INFO, 1);
 		send_csv(data);
@@ -1007,31 +896,6 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 
     }
 
-	if (cfg::send2custom) {
-		String data_4_custom = data;
-		data_4_custom.remove(0, 1);
-		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("custom api: "), DEBUG_MIN_INFO, 1);
-		start_send = millis();
-		sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::port_custom, cfg::url_custom, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
-
-	if (cfg::send2aqi) {
-		String data_4_custom = data;
-		data_4_custom.remove(0, 1);
-		data_4_custom = "{\"esp8266id\": \"" + esp_chipid() + "\", " + data_4_custom;
-		debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("AQI.eco api: "), DEBUG_MIN_INFO, 1);
-        String path = F("/update/");
-        path.concat(cfg::token_AQI);
-		start_send = millis();
-		sendData(LoggerAQI, data_4_custom, 0, F("api.aqi.eco"), 443, path, false);
-		sum_send_time += millis() - start_send;
-        server.handleClient();
-
-    }
 
     return sum_send_time;
 }
@@ -1056,13 +920,29 @@ void loop() {
 	act_milli = millis();
     send_now = msSince(starttime) > cfg::sending_intervall_ms;
     sample_count++;
-
+    if (cfg::in_factory_reset_window && millis() > 5000) {
+        cfg::in_factory_reset_window = false;
+        clearFactoryResetMarkers();
+    }
+    NAMWiFi::process();
+#ifdef ARDUINO_ARCH_ESP8266
     MDNS.update();
+#endif
     if (enable_ota_time > act_milli) {
         ArduinoOTA.handle();
     }
-	wdt_reset(); // nodemcu is alive
 
+#ifdef ARDUINO_ARCH_ESP8266
+    wdt_reset(); // nodemcu is alive
+#endif
+
+//    if (wificonfig_loop && millis() - wificonfig_loop_update  > 15000) {
+//        debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
+//
+//        delete []wifiInfo;
+//        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
+//        wificonfig_loop_update = millis();
+//    }
 	scheduler.process();
 
 	if (last_micro != 0) {
@@ -1118,6 +998,7 @@ void loop() {
 	}
 
 	if (send_now) {
+        displaySendSignal();
 		debug_out(F("Creating data string:"), DEBUG_MIN_INFO, 1);
 		String data = FPSTR(data_first_part);
 		data.replace("{v}", String(SOFTWARE_VERSION));
@@ -1134,75 +1015,63 @@ void loop() {
 		server.handleClient();
 		yield();
 //		server.stop();
-		const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
+        if (cfg::internet) {
+            const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
-        if (cfg::pms_read) {
-			data.concat(result_PMS);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_PMS, PMS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "PMS_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
-		if (cfg::dht_read) {
-			data.concat(result_DHT);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_DHT, DHT_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DHT_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
+            if (cfg::pms_read) {
+                data.concat(result_PMS);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(PMS): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_PMS, PMS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "PMS_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
+            if (cfg::dht_read) {
+                data.concat(result_DHT);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DHT): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_DHT, DHT_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DHT_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
 
 
-		if (cfg::ds18b20_read) {
-			data.concat(result_DS18B20);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DS18B20): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_DS18B20, DS18B20_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DS18B20_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
+            if (cfg::ds18b20_read) {
+                data.concat(result_DS18B20);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(DS18B20): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_DS18B20, DS18B20_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "DS18B20_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
 
-		if (cfg::gps_read) {
-			data.concat(result_GPS);
-			if (cfg::send2dusti) {
-				debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(GPS): "), DEBUG_MIN_INFO, 1);
-				start_send = millis();
-				sendLuftdaten(result_GPS, GPS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "GPS_");
-				sum_send_time += millis() - start_send;
-			}
-		}
-        server.handleClient();
+            if (cfg::gps_read) {
+                data.concat(result_GPS);
+                if (cfg::send2dusti) {
+                    debug_out(String(FPSTR(DBG_TXT_SENDING_TO_LUFTDATEN)) + F("(GPS): "), DEBUG_MIN_INFO, 1);
+                    start_send = millis();
+                    sendLuftdaten(result_GPS, GPS_API_PIN, HOST_DUSTI, HTTP_PORT_DUSTI, URL_DUSTI, true, "GPS_");
+                    sum_send_time += millis() - start_send;
+                }
+            }
+            server.handleClient();
+
+        }
 
 
         //add results from new scheduler
         SimpleScheduler::getResults(data);
 
         // reconnect to WiFi if disconnected
-        if (WiFi.status() != WL_CONNECTED) {
-            debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
-            WiFi.reconnect();
-            waitForWifiToConnect(20);
-            debug_out("", DEBUG_MIN_INFO, 1);
-            if (WiFi.status() != WL_CONNECTED) {    //still no connection
-                debug_out(F("Still no WiFi, turn off..."),DEBUG_MIN_INFO);
-                WiFi.mode(WIFI_OFF);
-                delay(2000);
-                debug_out(F("WiFi, reconnecting"),DEBUG_MIN_INFO);
-                WiFi.mode(WIFI_STA);
-                WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
-                waitForWifiToConnect(20);
-            }
-        }
+        NAMWiFi::tryToReconnect();
 
-
-        if (cfg::send2dusti) {
+        if (cfg::internet && cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
 		}
 		data_sample_times.concat(Value2Json("signal", signal_strength));

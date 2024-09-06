@@ -240,6 +240,9 @@ namespace SDS011 {
 //                Serial.println(F("SDS cmd: continuous"));
                 memcpy_P(buf, continuous_mode_cmd, cmd_len);
                 break;
+            case PmSensorCmd::ContinuousMode2:
+                memcpy_P(buf, continuous_mode_cmd2, cmd_len);
+                break;
             case PmSensorCmd::VersionDate:
 //                Serial.println(F("SDS cmd: version"));
                 memcpy_P(buf, version_cmd, cmd_len);
@@ -394,6 +397,9 @@ namespace SDS011 {
 //        if (t>1000) t -= 200;
         switch (sensorState) {
             case POWERON:
+                SDS_cmd(PmSensorCmd::ContinuousMode);
+                delay(100);
+                SDS_cmd(PmSensorCmd::ContinuousMode2);
                 updateState(STARTUP);
                 return 10;
             case STARTUP:
@@ -557,15 +563,21 @@ namespace SDS011 {
 //        }
 //    }
 
-    void byteReceived(int cnt) {
-        if (cnt>=SDS_SERIAL_BUFF_SIZE) {
-            debug_out(F("SDS buffer full! Size : "), DEBUG_ERROR,0);
-            debug_out(String(cnt),DEBUG_ERROR);
-        }
-        channelSDS.process();
+
+
+    void IRAM_ATTR byteReceived() {
+//        if (cnt>=SDS_SERIAL_BUFF_SIZE) {
+//            debug_out(F("SDS buffer full! Size : "), DEBUG_ERROR,0);
+//            debug_out(String(cnt),DEBUG_ERROR);
+//        }
+//        channelSDS.process();
+#ifdef ARDUINO_ARCH_ESP8266
+        esp_schedule();
+#endif
     }
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
+        channelSDS.process();
         switch (e) {
             case SimpleScheduler::STOP:
                 is_SDS_running = SDS_cmd(PmSensorCmd::Stop);

@@ -12,8 +12,14 @@
 #include "../../html-content.h"
 #include "../../webserver.h"
 
+#if defined(ESP8266)
 #include <ESP8266WiFi.h>
 #include "AsyncPing.h"
+
+#else
+#include <WiFi.h>
+#endif
+
 
 
 namespace NetworkWatchdog {

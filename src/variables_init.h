@@ -4,6 +4,21 @@
 
 #ifndef NAMF_VARIABLES_INIT_H
 #define NAMF_VARIABLES_INIT_H
+
+#include "ext_def.h"
+const char LN_0 [] PROGMEM = "Sensor Community API";
+const char LN_1 [] PROGMEM = "Madavi API";
+const char LN_2 [] PROGMEM = "Sensemap API";
+const char LN_3 [] PROGMEM = "Feinstaub API";
+const char LN_4 [] PROGMEM = "InfluxDB";
+const char LN_5 [] PROGMEM = "Custom API";
+const char LN_6 [] PROGMEM = "AQI.eco API";
+const char LN_NO_NAME [] PROGMEM = "";
+
+const char *LN_TABLE [] PROGMEM = {
+        LN_0, LN_1, LN_2, LN_3, LN_4, LN_5, LN_6, LN_NO_NAME
+};
+
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
  * configuration values. They have defaults which can be          *
@@ -20,6 +35,8 @@ namespace cfg {
     char *fbssid = nullptr;
     char *fbpwd = nullptr;
 
+    bool in_factory_reset_window = true;
+
     char current_lang[3] = "PL";
     char *www_username = nullptr;
     char *www_password = nullptr;
@@ -27,6 +44,18 @@ namespace cfg {
 
     char *fs_ssid = nullptr;
     char *fs_pwd = nullptr;
+
+    bool internet = false;
+
+#ifdef NAM_LORAWAN
+    bool lw_en = false;
+    String lw_d_eui = F("");
+    String lw_a_eui = F("");
+    String lw_app_key = F("");
+//     String lw_nws_key = F("");
+//     String lw_apps_key = F("");
+//     String lw_dev_addr = F("");
+#endif
 
     bool dht_read = DHT_READ;
     bool sds_read = SDS_READ;
@@ -45,12 +74,12 @@ namespace cfg {
     bool send2lora = SEND2LORA;
     bool send2influx = SEND2INFLUX;
     bool send2csv = SEND2CSV;
+    byte apiCount = 0;
+    apiTimeStat *apiStats = nullptr;
     bool auto_update = AUTO_UPDATE;
     bool has_display = HAS_DISPLAY;
     bool has_lcd1602 = HAS_LCD1602;
-    bool has_lcd1602_27 = HAS_LCD1602_27;
-    bool has_lcd2004_27 = HAS_LCD2004_27;
-    bool has_lcd2004_3f = HAS_LCD2004_3F;
+    bool has_lcd2004 = HAS_LCD2004_27;
     bool show_wifi_info = SHOW_WIFI_INFO;
     bool sh_dev_inf = SHOW_DEVICE_INFO;
     bool has_ledbar_32 = HAS_LEDBAR_32;
@@ -100,7 +129,11 @@ long int sample_count = 0;
 bool bme280_init_failed = false;
 bool heca_init_failed = false;
 
+#if defined(ARDUINO_ARCH_ESP8266)
 ESP8266WebServer server(80);
+#else
+WebServer server(80);
+#endif
 int TimeZone = 1;
 
 /*****************************************************************
@@ -108,12 +141,15 @@ int TimeZone = 1;
  *****************************************************************/
 SSD1306 *display = nullptr;//(0x3c, I2C_PIN_SDA, I2C_PIN_SCL);
 LiquidCrystal_I2C *char_lcd = nullptr;//(0x27, 16, 2);
+//backlight enabled
+byte backlight_stop = 25;
+byte backlight_start = 25;
 
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-SoftwareSerial serialSDS;//(PM_SERIAL_RX, PM_SERIAL_TX, false);
-SoftwareSerial serialGPS;//(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
+EspSoftwareSerial::UART serialSDS;//(PM_SERIAL_RX, PM_SERIAL_TX, false);
+EspSoftwareSerial::UART serialGPS;//(GPS_SERIAL_RX, GPS_SERIAL_TX, false);
 
 /*****************************************************************
  * DS18B20 declaration                                            *
@@ -169,7 +205,6 @@ double last_value_BME280_H = -1.0;
 double last_value_BME280_P = -1.0;
 double last_value_HECA_T = -128.0;
 double last_value_HECA_H = -1.0;
-unsigned int last_value_WINSEN_CO2 = 0;
 double last_value_DS18B20_T = -1.0;
 double last_value_GPS_lat = -200.0;
 double last_value_GPS_lon = -200.0;
@@ -178,11 +213,16 @@ String last_value_GPS_date = "";
 String last_value_GPS_time = "";
 String last_data_string = "";
 
+#if defined(ARDUINO_ARCH_ESP8266)
 String esp_chipid() {return String(ESP.getChipId());};
+#else
+String esp_chipid() {return String(ESP.getEfuseMac());}
 
+#endif
 long last_page_load = millis();
 
 bool wificonfig_loop = false;
+unsigned long wificonfig_loop_update = 0;
 
 bool first_cycle = true;
 
@@ -195,7 +235,7 @@ unsigned long enable_ota_time = 0;
 unsigned long count_sends = 0;
 
 struct struct_wifiInfo *wifiInfo;
-uint8_t count_wifiInfo;
+int count_wifiInfo = -1;
 
 template<typename T, std::size_t N> constexpr std::size_t array_num_elements(const T(&)[N]) {
     return N;

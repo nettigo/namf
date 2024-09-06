@@ -29,9 +29,13 @@ Files with .lang extension are searched in following directories and it's subdir
 #define LANG_DEF_ro_H
 
 /* ./src/lang/intl_ro.lang */ const char INTL_ALTITUDE[] PROGMEM = "Altitudine";
+/* ./src/sensors/bh1750/bh1750_ro.lang */ const char INTL_AMBIENT_LIGHT[] PROGMEM = "Lumină ambientală";
+/* ./src/sensors/bh1750/bh1750_ro.lang */ const char INTL_AMBIENT_LIGHT_MAX[] PROGMEM = "Intensitate maximă a luminii";
+/* ./src/sensors/bh1750/bh1750_ro.lang */ const char INTL_AMBIENT_LIGHT_MIN[] PROGMEM = "Intensitate luminoasă minimă";
 /* ./src/lang/intl_ro.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Actualizarea automată a firmware-ului, utilizând canalul";
 /* ./src/lang/intl_ro.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Înapoi la pagina principală";
 /* ./src/lang/intl_ro.lang */ const char INTL_BASICAUTH[] PROGMEM = "Autorizare";
+/* ./src/sensors/bh1750/bh1750_ro.lang */ const char INTL_BH1750_DESC[] PROGMEM = "Senzor de intensitate a luminii (BH1750FVI)";
 /* ./src/lang/intl_ro.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/sensors/bme280/bme280_ro.lang */ const char INTL_BME280_DESC[] PROGMEM = "Senzor de umiditate/temperatură/presiune BME280";
 /* ./src/lang/intl_ro.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
@@ -76,11 +80,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_ro.lang */ const char INTL_LANG[] PROGMEM = "RO";
 /* ./src/lang/intl_ro.lang */ const char INTL_LANGUAGE[] PROGMEM = "Limbă";
 /* ./src/lang/intl_ro.lang */ const char INTL_LATITUDE[] PROGMEM = "Latitudine";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD[] PROGMEM = "Dispune de caracter LCD";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD1602_27[] PROGMEM = "LCD 1602 (I2C: 0x27)";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD1602_3F[] PROGMEM = "LCD 1602 (I2C: 0x3F)";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD2004_27[] PROGMEM = "LCD 2004 (I2C: 0x27)";
-/* ./src/lang/intl_ro.lang */ const char INTL_LCD2004_3F[] PROGMEM = "LCD 2004 (I2C: 0x3F)";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD[] PROGMEM = "Dispune de caracter LCD:";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD1602[] PROGMEM = "LCD 2x16";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD2004[] PROGMEM = "LCD 4x20";
+/* ./src/lang/intl_ro.lang */ const char INTL_LCD_NONE[] PROGMEM = "Lipsa";
 /* ./src/lang/intl_ro.lang */ const char INTL_LEDBAR_32[] PROGMEM = "RGB LED BAR (I2C: 0x32)";
 /* ./src/lang/intl_ro.lang */ const char INTL_LONGITUDE[] PROGMEM = "Longitudine";
 /* ./src/lang/intl_ro.lang */ const char INTL_MADAVI_LINK[] PROGMEM = "Graficele senzorilor pe Madavi";
@@ -170,6 +173,8 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sht3x/sht3x_ro.lang */ const char SENSOR_SHT3[] PROGMEM = "SHT3x";
  const char INTL_HECA_SET_RH[] PROGMEM = "Translate RO: INTL_HECA_SET_RH 🐱;";
  const char INTL_HECA_CLEAR_RH[] PROGMEM = "Translate RO: INTL_HECA_CLEAR_RH 🐱;";
+ const char INTL_HELP[] PROGMEM = "Translate RO: INTL_HELP 🐱;";
+ const char INTL_BACKLIGHT[] PROGMEM = "Translate RO: INTL_BACKLIGHT 🐱;";
  const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate RO: INTL_ADVANCED_BUTTON 🐱;";
  const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate RO: INTL_ADVANCED_DISCL 🐱;";
  const char INTL_DEBUG_STATUS[] PROGMEM = "Translate RO: INTL_DEBUG_STATUS 🐱;";

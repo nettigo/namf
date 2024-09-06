@@ -29,9 +29,13 @@ Files with .lang extension are searched in following directories and it's subdir
 #define LANG_DEF_hu_H
 
 /* ./src/lang/intl_hu.lang */ const char INTL_ALTITUDE[] PROGMEM = "Tengerszint feletti magasság";
+/* ./src/sensors/bh1750/bh1750_hu.lang */ const char INTL_AMBIENT_LIGHT[] PROGMEM = "Környezetifény-érzékelő";
+/* ./src/sensors/bh1750/bh1750_hu.lang */ const char INTL_AMBIENT_LIGHT_MAX[] PROGMEM = "Maximális fényintenzitás";
+/* ./src/sensors/bh1750/bh1750_hu.lang */ const char INTL_AMBIENT_LIGHT_MIN[] PROGMEM = "Minimális fényintenzitás";
 /* ./src/lang/intl_hu.lang */ const char INTL_AUTO_UPDATE[] PROGMEM = "Firmware automatikus frissítése";
 /* ./src/lang/intl_hu.lang */ const char INTL_BACK_TO_HOME[] PROGMEM = "Vissza a főoldalra";
 /* ./src/lang/intl_hu.lang */ const char INTL_BASICAUTH[] PROGMEM = "Azonosítás";
+/* ./src/sensors/bh1750/bh1750_hu.lang */ const char INTL_BH1750_DESC[] PROGMEM = "Fényintenzitás-érzékelő (BH1750FVI)";
 /* ./src/lang/intl_hu.lang */ const char INTL_BME280[] PROGMEM = "BME280 ({t}, {h}, {p})";
 /* ./src/sensors/bme280/bme280_hu.lang */ const char INTL_BME280_DESC[] PROGMEM = "BME280 páratartalom/hőmérséklet/nyomás érzékelő";
 /* ./src/lang/intl_hu.lang */ const char INTL_BMP280[] PROGMEM = "BMP280/BMP180 ({t}, {p})";
@@ -72,11 +76,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_LANG[] PROGMEM = "HU";
 /* ./src/lang/intl_hu.lang */ const char INTL_LANGUAGE[] PROGMEM = "Nyelv";
 /* ./src/lang/intl_hu.lang */ const char INTL_LATITUDE[] PROGMEM = "Földrajzi szélesség";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD[] PROGMEM = "Has character LCD";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD1602_27[] PROGMEM = "LCD 1602 (I2C: 0x27)";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD1602_3F[] PROGMEM = "LCD 1602 (I2C: 0x3F)";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD2004_27[] PROGMEM = "LCD 2004 (I2C: 0x27)";
-/* ./src/lang/intl_hu.lang */ const char INTL_LCD2004_3F[] PROGMEM = "LCD 2004 (I2C: 0x3F)";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD[] PROGMEM = "Karakter megjelenítés:";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD1602[] PROGMEM = "LCD 2x16";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD2004[] PROGMEM = "LCD 4x20";
+/* ./src/lang/intl_hu.lang */ const char INTL_LCD_NONE[] PROGMEM = "Hiánya";
 /* ./src/lang/intl_hu.lang */ const char INTL_LEDBAR_32[] PROGMEM = "RGB LED BAR (I2C: 0x32)";
 /* ./src/lang/intl_hu.lang */ const char INTL_LONGITUDE[] PROGMEM = "Földrajzi hosszúság";
 /* ./src/lang/intl_hu.lang */ const char INTL_MAX_INFO[] PROGMEM = "max. info";
@@ -157,6 +160,8 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Translate HU: INTL_SPS30_SENSOR_DESC 🐱;";
  const char INTL_SPS30_REFRESH[] PROGMEM = "Translate HU: INTL_SPS30_REFRESH 🐱;";
  const char INTL_SPS30_NOT_STARTED[] PROGMEM = "Translate HU: INTL_SPS30_NOT_STARTED 🐱;";
+ const char INTL_HELP[] PROGMEM = "Translate HU: INTL_HELP 🐱;";
+ const char INTL_BACKLIGHT[] PROGMEM = "Translate HU: INTL_BACKLIGHT 🐱;";
  const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate HU: INTL_ADVANCED_BUTTON 🐱;";
  const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate HU: INTL_ADVANCED_DISCL 🐱;";
  const char INTL_DEBUG_STATUS[] PROGMEM = "Translate HU: INTL_DEBUG_STATUS 🐱;";

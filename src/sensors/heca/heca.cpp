@@ -64,24 +64,30 @@ namespace HECA {
             scheduler.unregisterSensor(SimpleScheduler::HECA);
             debug_out(F("HECA stopped"), DEBUG_MED_INFO);
         }
-        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::HECA, 1);
+        if (enabled)
+            if (printOnLCD)
+                scheduler.registerDisplay(SimpleScheduler::HECA, 1);
+            else
+                scheduler.registerDisplay(SimpleScheduler::HECA, 0);
+
     };
 
     bool display(byte rows, byte minor, String lines[]) {
         byte row = 0;
         if (getLCDRows() == 4) {
             lines[row].concat((FPSTR(SENSORS_HECA)));
+            row++;
         }
+        lines[row].concat((F("T: ")));
+        lines[row].concat((check_display_value(last_value_HECA_T, -128, 1, 0)));
+        lines[row].concat((F(" ")));
+        lines[row].concat((FPSTR(UNIT_CELCIUS_LCD)));
         row++;
         lines[row].concat((F("RH: ")));
         lines[row].concat((check_display_value(last_value_HECA_H, -1, 1, 0)));
         lines[row].concat((F(" ")));
         lines[row].concat((FPSTR(UNIT_PERCENT)));
-        row++;
-        lines[row].concat((F("T: ")));
-        lines[row].concat((check_display_value(last_value_HECA_T, -128, 1, 0)));
-        lines[row].concat((F(" ")));
-        lines[row].concat((FPSTR(UNIT_CELCIUS_LCD)));
+
 //        lines[row].concat((F(" µg/m³")));
         if (getLCDRows() == 4) {
             row++;
@@ -165,9 +171,8 @@ namespace HECA {
 //            Serial.println(" EDCBA09876543210");
              */
         } else {
-            Serial.println("HECA error");
+            debug_out(String(FPSTR(SENSORS_HECA)) + FPSTR(DBG_TXT_COULDNT_BE_READ), DEBUG_ERROR, 1);
         }
-
     }
 
     void afterSend(bool status) {

@@ -40,8 +40,20 @@ enum LoggerEntry
 	LoggerFSapp,
 	LoggerInflux,
 	LoggerCustom,
-	LoggerAQI
+	LoggerAQI,
+    LoggerNoName    //placeholder for empty name, to initialize stats structures on startup
 };
+
+extern const char LN_0 [] PROGMEM;
+extern const char LN_1 [] PROGMEM ;
+extern const char LN_2 [] PROGMEM;
+extern const char LN_3 [] PROGMEM;
+extern const char LN_4 [] PROGMEM;
+extern const char LN_5 [] PROGMEM;
+extern const char LN_6 [] PROGMEM;
+
+extern const char *LN_TABLE [] PROGMEM;
+
 
 // IMPORTANT: NO MORE CHANGES TO VARIABLE NAMES NEEDED FOR EXTERNAL APIS
 
@@ -57,34 +69,33 @@ const char HOST_INFLUX[] PROGMEM = "influx.server";
 const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define PORT_INFLUX 8086
 
+#ifdef ESP32
+#define D7 4
+#define D3 19
+#define D4 18
+#define D1 16
+#define D2 17
+
+#define D5 47
+#define D6 48
+
+#endif
 
 // define pins for I2C
 #define I2C_PIN_SCL D4
 #define I2C_PIN_SDA D3
 
-// define pin for one wire sensors
-#if defined(ESP8266)
 #define ONEWIRE_PIN D7
-#endif
-#if defined(ARDUINO_SAMD_ZERO)
-#define ONEWIRE_PIN D7
-#endif
 
 // define serial interface pins for particle sensors
 // Serial confusion: These definitions are based on SoftSerial
 // TX (transmitting) pin on one side goes to RX (receiving) pin on other side
 // SoftSerial RX PIN is D1 and goes to SDS TX
 // SoftSerial TX PIN is D2 and goes to SDS RX
-#if defined(ESP8266)
 #define PM_SERIAL_RX D1
 #define PM_SERIAL_TX D2
-#endif
-
-// define serial interface pins for GPS modules
-#if defined(ESP8266)
 #define GPS_SERIAL_RX D5
 #define GPS_SERIAL_TX D6
-#endif
 
 // DHT22, temperature, humidity
 #define DHT_READ 0
@@ -139,7 +150,7 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define HAS_LCD1602_27 0
 
 // LCD Display LCD2004 (0x27) angeschlossen?
-#define HAS_LCD2004_27 1
+#define HAS_LCD2004_27 0
 
 // LCD Display LCD2004 (0x3F)
 #define HAS_LCD2004_3F 0
@@ -156,9 +167,13 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 //default TX trasnmit power
 #define TX_OUTPUT_POWER 20.5
 
+#if defined(ARDUINO_ARCH_ESP8266)
 //default WiFi PHY MODE
 #define PHY_MODE WIFI_PHY_MODE_11N;
-
+#else
+//for now just placeholder for int variable
+#define PHY_MODE 0;
+#endif
 // Wieviele Informationen sollen über die serielle Schnittstelle ausgegeben werden?
 #define DEBUG 3
 
@@ -169,42 +184,5 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define DEBUG_MED_INFO 4
 #define DEBUG_MAX_INFO 5
 
-/*
-static const uint16_t suites[] PROGMEM = {
-	BR_TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-	BR_TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-	BR_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-	BR_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-	BR_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-	BR_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
-};
-*/
-
-// Definition GPIOs for Zero based Arduino Feather M0 LoRaWAN
-#if defined(ARDUINO_SAMD_ZERO) && defined(SERIAL_PORT_USBVIRTUAL)
-// Required for Serial on Zero based boards
-#define Serial SERIAL_PORT_USBVIRTUAL
-//GPIO Pins
-#define D0 0
-#define D1 1
-#define D2 2
-#define D3 3
-#define D4 4
-#define D5 5
-#define D6 6
-#define D7 7
-#define D8 8
-#define D9 9
-#define D10 10
-#define D11 11
-#define D12 12
-// LoRa module
-#define RFM69_CS 8
-#define RFM69_RST 4
-#define RFM69_INT 3
-#define RF69_FREQ 868.0
-#define CLIENT_ADDRESS 2
-#define SERVER_ADDRESS 100
-#endif
 
 #endif //NAMF_EXT_DEF_H

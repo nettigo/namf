@@ -73,6 +73,8 @@ private:
 
     void logReply(ResponseType type);
 
+    void clearBuf(void){for (byte i=0; i<10; i++) {_buff[i]=0;}};
+
     void storeReply();
 
     ResponseType selectResponse(byte x);

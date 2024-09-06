@@ -1,3 +1,5 @@
+INTL_HELP More info about feature
+INTL_BACKLIGHT LCD backlight
 INTL_ADVANCED_BUTTON Advanced options show/hide
 INTL_ADVANCED_DISCL Changes in settings in this section can result in sensor not working properly. Make sure You know what You are changing here or leave defaults.
 INTL_CONFIG_SAVED Configuration saved.
@@ -50,11 +52,10 @@ INTL_MORE_SETTINGS More settings
 INTL_DIAGNOSTIC Send diagnostic data to Nettigo
 INTL_AUTO_UPDATE Auto update firmware, using channel
 INTL_DISPLAY OLED SSD1306
-INTL_LCD Has character LCD
-INTL_LCD1602_27 LCD 1602 (I2C: 0x27)
-INTL_LCD1602_3F LCD 1602 (I2C: 0x3F)
-INTL_LCD2004_27 LCD 2004 (I2C: 0x27)
-INTL_LCD2004_3F LCD 2004 (I2C: 0x3F)
+INTL_LCD Character LCD:
+INTL_LCD_NONE None
+INTL_LCD1602 LCD 2x16
+INTL_LCD2004 LCD 4x20
 INTL_LEDBAR_32 RGB LED BAR (I2C: 0x32)
 INTL_SHOW_WIFI_INFO Display WiFi connection info on LCD
 INTL_SHOW_DEVICE_INFO Display device info on LCD

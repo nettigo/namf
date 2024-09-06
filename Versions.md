@@ -1,7 +1,45 @@
+NAMF-2020-46rc7 (2024-07-30 rev)
+- update request string has info about PM sensor encoded (SDS/PMS/SPS)
+- in case sensor can not connect to WiFi on boot and have WiFi configured then it will try to reconnect every hour after config AP has been shut down
+- CO2 sensor - don't report on LCD last value of CO2 if sensor stop sending data
+- debug level setting will be restored after reboot. Until now, it was always sent to DEBUG_MIN_INFO
+- GPS library updated
+- Provide some help in sensor config (as external site via GitHub pages)
+
+NAMF-2020-46rc6 (2024-04-11 rev  576e930e78a681a322386ade3f6afa03a8e703bb)
+- send both continuous commands to SDS011 on power on
+
+NAMF-2020-46rc5 (2024-03-27 rev c241c37af68aef29e3a06a76925e9070f2ae3fb7)
+- support for BH1750 ambient lux sensor [(product page on Nettigo)](https://nettigo.eu/products/ambient-light-sensor-bh1750fvi-i2c)
+- track API performance (last HTTP response code and time to send data). For now does not track Sensor Community (many HTTP requests)
+ 
+NAMF-2020-46rc4 (2023-03-14 rev 1d846210d6c6171cc96d4fc9bc48ce8eb8dc27e9)
+- Platformio espressif8266 platform upgraded to 4.2.1
+- New Let's Encrypt root CA certificate
+
+NAMF-2020-46rc3 (2023-12-13 rev 4c918cc89eedcedcb03579811293d1e5818150bd)
+- LoRaWAN support (with Heltec Wireless Stick Lite v3 board)
+- changes in WiFi mode, now it allow for running sensor in AP mode
+- for English language use 0.pool.ntp.org as NTP source
+- in config mode, WiFi list is updated periodically
+- simplified LCD selector in config
+- autodetect I2C address for LCD
+- BME280 display code moved to new scheduler
+- allow to disable LCD backlight during night hours (hours configurable)
+- fix for issue #68 - BME will not send data to API when failure with communication results in no readings
+- "progress bar" on 4x20 LCD showing time to send data
+
+NAMF-2020-46rc2 (2023-09-04 rev 202f8c1ccad2626e2e0cd8bce108a2d5920e7b33)
+- Factory Reset procedure 3 x RST, each in first 5 seconds
+
+NAMF-2020-46rc1 (2023-03-07 rev b6414d61f89b433deee09ae5bbe7a582eb1b0ea7)
+- Arduino core updated to 3.1.1
+- Interface to SDS011 updated to changed ESP Software Serial
+
 NAMF-2020-45a (2024-03-14 rev 0e16a834cb5b97f58cdcfde978ef034605c1a681)
 - new CA cert for Let's Encrypt
 
-NAMF-2020-45 (2023-01-07 rev)
+NAMF-2020-45 (2023-01-07 rev 1e7d1aac0cdf06b48bcd51614b02cb9b6efae678)
 - based on NAMF-2020-45rc3
 
 NAMF-2020-45rc3 (2022-12-23 rev d026921c25dd8f46299e4bfe023970679e988148)

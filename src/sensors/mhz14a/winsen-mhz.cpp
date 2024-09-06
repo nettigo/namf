@@ -9,8 +9,14 @@
 
 namespace MHZ14A {
     const char KEY[] PROGMEM = "MHZ14A";
+    const unsigned int VAL_FAILURE = 65535;
     bool enabled = false;
     bool printOnLCD = false;
+    unsigned int last_value_WINSEN_CO2 = VAL_FAILURE;
+
+#define WINSEN_AVG_SAMPLE   10
+    unsigned int *samples = nullptr;
+    unsigned int samplesCount;
 
 #define CMD_SIZE 9
 
@@ -27,6 +33,11 @@ namespace MHZ14A {
             scheduler.registerDisplay(SimpleScheduler::MHZ14A, 1);  // one screen
         else
             scheduler.registerDisplay(SimpleScheduler::MHZ14A, 0);  // disable
+    }
+
+    //do we have result which is valid
+    bool validResult() {
+        return !(samples == nullptr || samplesCount == 0 || last_value_WINSEN_CO2 == VAL_FAILURE);
     }
 
     JsonObject &parseHTTPRequest() {
@@ -77,8 +88,13 @@ namespace MHZ14A {
     void display(byte cols, byte minor, String lines[]) {
 
         lines[0] = (F("CO2 (MHZ14A)"));
-        lines[1] = String(last_value_WINSEN_CO2);
-        lines[1] += (F(" ppm"));
+        if (last_value_WINSEN_CO2 != VAL_FAILURE) {
+            lines[1] = String(last_value_WINSEN_CO2);
+            lines[1].concat (F(" ppm"));
+        } else {
+            lines[1] = String(F("--"));
+        }
+
 
         return;
     };
@@ -252,9 +268,6 @@ namespace MHZ14A {
     }
 
 
-#define WINSEN_AVG_SAMPLE   10
-    unsigned int *samples = nullptr;
-    unsigned int samplesCount;
 
     void setupWinsenMHZ(SoftwareSerial &serial) {
         serial.begin(9600);
@@ -280,7 +293,7 @@ namespace MHZ14A {
                 samples[samplesCount++] = co2;
                 last_value_WINSEN_CO2 = co2;
 
-            } //else debug_out(String("**** NO read Winsen"), DEBUG_MIN_INFO, true);
+            } else last_value_WINSEN_CO2 = VAL_FAILURE;
         }
     }
 
@@ -300,7 +313,7 @@ namespace MHZ14A {
 
     String sensorMHZ() {
         String s;
-        if (samples == nullptr || samplesCount == 0) return s;
+        if (!validResult()) return s;
         if (currentReading() > 0) {
             s += Value2Json(F("conc_co2_ppm"), String(currentReading()));
         }

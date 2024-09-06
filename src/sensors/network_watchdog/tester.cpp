@@ -12,11 +12,14 @@ namespace NetworkWatchdog {
     bool configured = false;
     bool finishedTest = false;
     unsigned long lastCheck = 0;
+#if defined(ARDUINO_ARCH_ESP8266)
     AsyncPingResponse lastCheckResult;
-    byte responseCount;
-    byte timeoutCount;
     IPAddress addr;
     AsyncPing pinger;
+#endif
+
+    byte responseCount;
+    byte timeoutCount;
 
     typedef enum {
         IDLE,
@@ -37,6 +40,7 @@ namespace NetworkWatchdog {
         parseHTTP(sensorID, enabled);
         DynamicJsonBuffer jsonBuffer;
         JsonObject &ret = jsonBuffer.createObject();
+#if defined(ARDUINO_ARCH_ESP8266)
         if (addr.isValid(host)) {
             addr.fromString(host);
             ret[F("ip")] = host;
@@ -44,17 +48,21 @@ namespace NetworkWatchdog {
             ret[F("err")] = FPSTR(INTL_NTW_WTD_ERROR);
         }
         ret[F("e")] = enabled;
+#endif
         return ret;
     }
 
     String getConfigJSON(void) {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
+#ifdef ARDUINO_ARCH_ESP8266
         ret += Var2Json(F("ip"), (addr.toString()));
+#endif
         return ret;
     }
 
     void readConfigJSON(JsonObject &json) {
+#if defined(ARDUINO_ARCH_ESP8266)
         String ip;
         enabled = json.get<bool>(F("e"));
         ip = json.get<String>(F("ip"));
@@ -65,6 +73,7 @@ namespace NetworkWatchdog {
             configured = false;
         }
         scheduler.enableSubsystem(SimpleScheduler::NTW_WTD, enabled, NetworkWatchdog::process, FPSTR(KEY));
+#endif
     }
 
     void resultsAsHTML(String &page_content) {
@@ -83,10 +92,12 @@ namespace NetworkWatchdog {
         page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Status code", String(currentState), ""));
         page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Last check", String((millis() - lastCheck) / 1000),
                                              "sec"));
+#ifdef ARDUINO_ARCH_ESP8266
         page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Pings", String(lastCheckResult.total_sent), ""));
         page_content.concat(table_row_from_value(FPSTR("NTW WTD"), "Responses", String(lastCheckResult.total_recv), ""));
-
+#endif
     }
+#ifdef ARDUINO_ARCH_ESP8266
 
     bool success(AsyncPingResponse r = lastCheckResult) {
         if (r.total_recv > NTW_WTD_COUNT / 2) {
@@ -94,6 +105,11 @@ namespace NetworkWatchdog {
         }
         return false;
     }
+#else
+    bool success() {
+        return false;
+    }
+#endif
 
     //which state
     WatchdogState nextPingState() {
@@ -143,6 +159,7 @@ namespace NetworkWatchdog {
 //            return false;   //carry on
 //        });
         //on end
+#ifdef ARDUINO_ARCH_ESP8266
         pinger.on(false, [](const AsyncPingResponse &response) {
             //IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
             lastCheckResult = response;
@@ -157,6 +174,9 @@ namespace NetworkWatchdog {
         } else {
             currentState = IDLE;
         }
+#else
+        currentState = IDLE;
+#endif
     }
 
     unsigned long nextCallTime() {
@@ -220,7 +240,9 @@ namespace NetworkWatchdog {
 
     String getConfigHTML(void) {
         String ret = F("");
+#ifdef ARDUINO_ARCH_ESP8266
         ret += formInputGrid(F("host"), FPSTR(INTL_NTW_WTD_HOST), addr.toString(), 16);
+#endif
         return ret;
     }
 }

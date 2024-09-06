@@ -12,12 +12,22 @@ extern const unsigned char UNIT_CELCIUS_LCD[] PROGMEM = {0xDF, 0x43, 0x0};
 
 LoggingSerial Debug;
 
+#if defined(ARDUINO_ARCH_ESP8266)
 LoggingSerial::LoggingSerial()
         : HardwareSerial(UART0)
         , m_buffer(new circular_queue<uint8_t>(1024))
 {
     skipBuffer = false;
 }
+#else
+LoggingSerial::LoggingSerial()
+        : HardwareSerial(0)
+        , m_buffer(new circular_queue<uint8_t>(1024))
+{
+    skipBuffer = false;
+}
+#endif
+
 
 void LoggingSerial::stopWebCopy(void) {
     skipBuffer = true;
@@ -267,6 +277,18 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
     json_string += Var2Json(F("fbssid"), fbssid);
+
+#ifdef NAM_LORAWAN
+
+    json_string += Var2Json(F("lw_en"), lw_en);
+    json_string += Var2Json(F("lw_d_eui"), lw_d_eui);
+    json_string += Var2Json(F("lw_a_eui"), lw_a_eui);
+    json_string += Var2Json(F("lw_app_key"), lw_app_key);
+//    json_string += Var2Json(F("lw_nws_key"), lw_nws_key);
+//    json_string += Var2Json(F("lw_apps_key"), lw_apps_key);
+//    json_string += Var2Json(F("lw_dev_addr"), lw_dev_addr);
+#endif
+
     copyToJSON_Bool(www_basicauth_enabled);
     copyToJSON_Bool(dht_read);
 //    copyToJSON_Bool(sds_read);
@@ -288,9 +310,12 @@ String getConfigString(boolean maskPwd) {
     copyToJSON_Int(update_channel);
     copyToJSON_Bool(has_display);
     copyToJSON_Bool(has_lcd1602);
-    copyToJSON_Bool(has_lcd1602_27);
-    copyToJSON_Bool(has_lcd2004_27);
-    copyToJSON_Bool(has_lcd2004_3f);
+    copyToJSON_Bool(has_lcd2004);
+    json_string.concat(F("\"bl\":["));
+    json_string.concat(String(backlight_start));
+    json_string.concat(F(","));
+    json_string.concat(String(backlight_stop));
+    json_string.concat(F("],"));
     copyToJSON_Bool(show_wifi_info);
     copyToJSON_Bool(sh_dev_inf);
     copyToJSON_Bool(has_ledbar_32);
@@ -352,6 +377,11 @@ void setCharVar(const JsonObject &json, char **var, const __FlashStringHelper *k
     if (json.containsKey(key)) stringToChar(var, json[key]);
     if (def != nullptr) setDefault(var, def);
 }
+void setCharVar(const JsonObject &json, String &var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
+    if (json.containsKey(key)) var = json.get<String>(key);
+    if (def != nullptr) var = def;
+}
+
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
     String json_string = "";
@@ -386,13 +416,23 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
             setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
             setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+#define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
+#define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
+
+#ifdef NAM_LORAWAN
+            setFromJSON(lw_en);
+            setCharVar(json, lw_d_eui, F("lw_d_eui"));
+            setCharVar(json, lw_a_eui, F("lw_a_eui"));
+            setCharVar(json, lw_app_key, F("lw_app_key"));
+//            setCharVar(json, lw_nws_key, F("lw_nws_key"));
+//            setCharVar(json, lw_apps_key, F("lw_apps_key"));
+//            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
+#endif
             setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
             setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
             setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
             setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
 
-#define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
-#define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
             strcpyFromJSON(current_lang);
             verifyLang(current_lang);
 
@@ -420,9 +460,25 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(update_channel);
             setFromJSON(has_display);
             setFromJSON(has_lcd1602);
-            setFromJSON(has_lcd1602_27);
-            setFromJSON(has_lcd2004_27);
-            setFromJSON(has_lcd2004_3f);
+            setFromJSON(has_lcd2004);
+            if(json.containsKey(F("bl"))) {
+                backlight_start = json[F("bl")][0];
+                backlight_stop = json[F("bl")][1];
+            }
+            //need to migrate old config values to new ones - can not use JSON helpers
+            if (json.containsKey(F("has_lcd1602_27"))) { has_lcd1602 = json[F("has_lcd1602_27")];}
+            if (json.containsKey(F("has_lcd2004_27"))) {
+                has_lcd2004 = json[F("has_lcd2004_27")];
+                debug_out("2004 z 27 ustawiony na ", DEBUG_MED_INFO,0);
+                debug_out(String(has_lcd2004), DEBUG_MED_INFO);
+
+            }
+            if (json.containsKey(F("has_lcd2004_3f"))) {
+                has_lcd2004 = json[F("has_lcd2004_3f")];
+                debug_out("2004 z 3F ustawiony na ", DEBUG_MED_INFO,0);
+                debug_out(String(has_lcd2004), DEBUG_MED_INFO);
+
+            }
             setFromJSON(show_wifi_info);
             setFromJSON(sh_dev_inf);
             setFromJSON(has_ledbar_32);
@@ -639,8 +695,34 @@ unsigned long time2Measure(void){
 // 1 - use <h1>
 // 2 - use <h2>
 // 3 - do not use any tags
-String formSectionHeader(String &page_content, const String& name, byte bold) {
+void formSectionHeader(String &page_content, const String& name, byte bold) {
     page_content.concat(formSectionHeader(name, bold));
+}
+
+//section header with help link
+String formSectionHeaderWithHelp(const String& name, const String& id, byte bold) {
+    String s;
+    switch (bold){
+        case(1):
+            s = F("<div class='row sect'><h1>{n}</h1></div>\n");
+            break;
+        case(2):
+            s = F("<div class='row sect'><h2>{n}</h2></div>\n");
+            break;
+        case(3):
+            s = F("<div class='row sect'>{n}</div>\n");
+            break;
+        default:
+            s = F("<div class='row sect'><b>{n}</b> <a class='plain no-dec' href='https://nettigo.github.io/namf/");
+            s.concat(FPSTR(INTL_LANG));
+            s.concat(F("/{id}' title='"));
+            s.concat(FPSTR(INTL_HELP));
+            s.concat(F("' target='NAMF-HELP'>&#129517;</a></div>\n"));
+    }
+    s.replace("{n}", name);
+    s.replace("{id}", id);
+    return s;
+
 }
 
 String formSectionHeader(const String& name, byte bold) {
@@ -860,7 +942,14 @@ void resetMemoryStats() {
 }
 void collectMemStats() {
     memory_stat_t memoryStats;
+#if defined(ARDUINO_ARCH_ESP8266)
     ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
+#else
+    memoryStats.freeHeap =  ESP.getFreeHeap();
+    memoryStats.maxFreeBlock = 0;
+    memoryStats.frag = 0;
+#endif
+
 
     if (memoryStats.freeHeap > memoryStatsMax.freeHeap)             memoryStatsMax.freeHeap  = memoryStats.freeHeap;
     if (memoryStats.maxFreeBlock > memoryStatsMax.maxFreeBlock)     memoryStatsMax.maxFreeBlock  = memoryStats.maxFreeBlock;
@@ -870,13 +959,20 @@ void collectMemStats() {
     if (memoryStats.maxFreeBlock < memoryStatsMin.maxFreeBlock)     memoryStatsMin.maxFreeBlock  = memoryStats.maxFreeBlock;
     if (memoryStats.frag < memoryStatsMin.frag)                     memoryStatsMin.frag  = memoryStats.frag;
 
+#if defined(ARDUINO_ARCH_ESP8266)
     uint32_t cont = ESP.getFreeContStack();
+#else
+    uint32_t cont = 0;
+#endif
+
     if (cont > memoryStatsMax.freeContStack)                     memoryStatsMax.freeContStack  = cont;
     if (cont < memoryStatsMin.freeContStack)                     memoryStatsMin.freeContStack  = cont;
 
 
 }
 void dumpCurrentMemStats() {
+#if defined(ARDUINO_ARCH_ESP8266)
+
     memory_stat_t memoryStats;
     ESP.getHeapStats(&memoryStats.freeHeap, &memoryStats.maxFreeBlock, &memoryStats.frag);
     debug_out(F("Memory stats: "),DEBUG_MIN_INFO,true);
@@ -888,9 +984,7 @@ void dumpCurrentMemStats() {
     debug_out(String(memoryStats.frag),DEBUG_MIN_INFO,true);
     debug_out(F("Free cont stack: \t"),DEBUG_MIN_INFO,false);
     debug_out(String(ESP.getFreeContStack()),DEBUG_MIN_INFO,true);
-
-
-
+#endif
 }
 
 /*****************************************************************

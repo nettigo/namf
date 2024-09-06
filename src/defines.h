@@ -35,6 +35,11 @@ extern String tmpl(const String& patt, const String& value);
 #define UPDATE_CHANNEL_BETA 1
 #define UPDATE_CHANNEL_STABLE 2
 
+#ifdef ARDUINO_ARCH_ESP8266
+#define PROCESSOR_ARCH  "esp8266"
+#else
+#define PROCESSOR_ARCH  "esp32"
+#endif
 
 #define HOST_MADAVI "api-rrd.madavi.de"
 #define URL_MADAVI "/data.php"
@@ -53,11 +58,17 @@ extern String tmpl(const String& patt, const String& value);
 #define PORT_FSAPP 80
 
 #define UPDATE_HOST F("fw.nettigo.pl")
+#ifdef ARDUINO_ARCH_ESP8266
 #define UPDATE_URL F("/NAMF/index.php")
-#define UPDATE_HOST_ALFA F("alfa.fw.nettigo.pl")
 #define UPDATE_URL_ALFA F("/NAMF/index.php")
-#define UPDATE_HOST_BETA F("beta.fw.nettigo.pl")
 #define UPDATE_URL_BETA F("/NAMF/index.php")
+#elif defined(ARDUINO_ARCH_ESP32)
+#define UPDATE_URL F("/NAMF32/index.php")
+#define UPDATE_URL_ALFA F("/NAMF32/index.php")
+#define UPDATE_URL_BETA F("/NAMF32/index.php")
+#endif
+#define UPDATE_HOST_ALFA F("alfa.fw.nettigo.pl")
+#define UPDATE_HOST_BETA F("beta.fw.nettigo.pl")
 #define UPDATE_PORT 80
 
 #define JSON_BUFFER_SIZE 2600

@@ -7,15 +7,21 @@
 
 #if defined(BOOT_FW)
 #define SOFTWARE_VERSION  "NAMF-2020-boot"
+#define SOFTWARE_VERSION_SHORT "boot"
 #else
-#define SOFTWARE_VERSION  "NAMF-2020-45a"
+#define SOFTWARE_VERSION  "NAMF-2020-46rc7"
+#define SOFTWARE_VERSION_SHORT "46rc7"
 // undefine SOFTWARE_BETA in production releases
 //#define SOFTWARE_BETA  1
 #endif
 #include "defines.h"
 #include "system/scheduler.h"
 #include <SoftwareSerial.h>
+#if defined(ESP8266)
 #include <ESP8266WebServer.h>
+#else
+#include <WebServer.h>
+#endif
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
 #include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
@@ -27,6 +33,11 @@
 #include "ext_def.h"
 #include "lang/select_lang.h"
 extern SimpleScheduler::NAMFScheduler scheduler;
+struct apiTimeStat{
+    uint8_t id;
+    int16_t status;
+    uint32_t time;
+};
 
 /******************************************************************
  * The variables inside the cfg namespace are persistent          *
@@ -45,6 +56,7 @@ namespace cfg {
     extern char *fbssid;
     extern char *fbpwd;
 
+    extern bool in_factory_reset_window;
 
     extern char current_lang[3];
     extern char *www_username;
@@ -53,6 +65,19 @@ namespace cfg {
 
     extern char *fs_ssid;
     extern char *fs_pwd;
+
+    //do we have connectivity over internet?
+    extern bool internet;
+
+#ifdef NAM_LORAWAN
+    extern bool lw_en;
+    extern String lw_d_eui;
+    extern String lw_a_eui;
+    extern String lw_app_key;
+//    extern String lw_nws_key;
+//    extern String lw_apps_key;
+//    extern String lw_dev_addr;
+#endif
 
     extern bool dht_read;
     extern bool sds_read;
@@ -71,13 +96,13 @@ namespace cfg {
     extern bool send2lora;
     extern bool send2influx;
     extern bool send2csv;
+    extern byte apiCount;
+    extern apiTimeStat *apiStats;
     extern bool auto_update;
     extern u8_t update_channel;
     extern bool has_display;
     extern bool has_lcd1602;
-    extern bool has_lcd1602_27;
-    extern bool has_lcd2004_27;
-    extern bool has_lcd2004_3f;
+    extern bool has_lcd2004;
     extern bool show_wifi_info;
     extern bool sh_dev_inf;
     extern bool has_ledbar_32;
@@ -121,6 +146,7 @@ typedef enum  {
     Start,
     Stop,
     ContinuousMode,
+    ContinuousMode2,
     VersionDate,
     None
 }PmSensorCmd;
@@ -131,8 +157,11 @@ extern char *basic_auth_custom ;
 extern long int sample_count ;
 extern bool bme280_init_failed ;
 extern bool heca_init_failed ;
-
+#if defined(ARDUINO_ARCH_ESP8266)
 extern ESP8266WebServer server;
+#else
+extern WebServer server;
+#endif
 extern int TimeZone ;
 
 /*****************************************************************
@@ -140,12 +169,13 @@ extern int TimeZone ;
  *****************************************************************/
 extern SSD1306 * display;
 extern LiquidCrystal_I2C * char_lcd;
-
+extern byte backlight_stop;
+extern byte backlight_start;
 /*****************************************************************
  * SDS011 declarations                                           *
  *****************************************************************/
-extern SoftwareSerial serialSDS;
-extern SoftwareSerial serialGPS;
+extern EspSoftwareSerial::UART serialSDS;
+extern EspSoftwareSerial::UART serialGPS;
 
 /*****************************************************************
  * DS18B20 declaration                                            *
@@ -214,6 +244,7 @@ extern String esp_chipid();
 extern long last_page_load ;
 
 extern bool wificonfig_loop ;
+extern unsigned long wificonfig_loop_update ;
 
 extern bool first_cycle ;
 
@@ -233,7 +264,7 @@ struct struct_wifiInfo {
     bool isHidden;
 };
 extern struct struct_wifiInfo *wifiInfo;
-extern uint8_t count_wifiInfo;
+extern int count_wifiInfo;
 
 
 

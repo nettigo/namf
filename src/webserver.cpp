@@ -3,7 +3,7 @@
 //
 
 #include "webserver.h"
-
+#include "wifi.h"
 unsigned maxSizeTemp = 0;
 void webserverPartialSend(String &s) {
     if (s.length() == 0) return;    //do not end by accident, when no data to send
@@ -32,7 +32,7 @@ static int constexpr constexprstrlen(const char* str) {
 }
 
 
-void sendHttpRedirect(ESP8266WebServer &httpServer) {
+void sendHttpRedirect(WEB_SERVER_TYPE &httpServer) {
     httpServer.sendHeader(F("Location"), F("http://192.168.4.1/config"));
     httpServer.send(302, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), "");
 }
@@ -156,11 +156,14 @@ void webserver_dump_stack(){
  * Webserver root: show all options                              *
  *****************************************************************/
 void webserver_root() {
-    if (WiFi.status() != WL_CONNECTED) {
+    static bool firstAccess = true;
+
+    if (WiFi.status() != WL_CONNECTED && firstAccess) {
+        debug_out(F("redirect to config..."), DEBUG_MIN_INFO, 1);
         sendHttpRedirect(server);
+        firstAccess = false;
     } else {
-        if (!webserver_request_auth())
-        { return; }
+        if (!webserver_request_auth()) { return; }
 
         String page_content = make_header(cfg::fs_ssid);
         last_page_load = millis();
@@ -286,6 +289,8 @@ void webserver_config_force_update() {
                   "just re-eneable autoupdate in config.</p>"
                   "<form method='POST' action='/rollback' style='width:100%;'>")
                   );
+        page_content.concat(F("Select version: <select name='ver'><option value='45'>2020-45</option>"));
+        page_content.concat(F("Select version: <select name='ver'><option value='44'>2020-44</option>"));
         page_content.concat(F("Select version: <select name='ver'><option value='43'>2020-43</option><option value='42'>2020-42</option></select><br/>"));
         page_content.concat(F("Select language: <select name='lg'><option value='en'>English</option><option value='pl'>Polish</option></select><br/>"));
         page_content.concat(F("<br/>"));
@@ -438,6 +443,18 @@ void parse_config_request(String &page_content) {
         ((server.arg(F("fs_pwd")).length() > 7) || (server.arg(F("fs_pwd")).length() == 0))) {
         readPwdParam(&fs_pwd,F("fs_pwd"));
     }
+#ifdef NAM_LORAWAN
+
+    parseHTTP(F("lw_enable"), lw_en);
+    parseHTTP(F("lw_d_eui"), lw_d_eui);
+    parseHTTP(F("lw_a_eui"), lw_a_eui);
+    parseHTTP(F("lw_app_key"), lw_app_key);
+//    parseHTTP(F("lw_nws_key"), lw_nws_key);
+//    parseHTTP(F("lw_apps_key"), lw_apps_key);
+//    parseHTTP(F("lw_dev_addr"), lw_dev_addr);
+
+#endif
+
     readBoolParam(send2dusti);
     readBoolParam(ssl_dusti);
     readBoolParam(send2madavi);
@@ -454,6 +471,8 @@ void parse_config_request(String &page_content) {
     readIntParam(debug);
     readTimeParam(sending_intervall_ms);
     readTimeParam(time_for_wifi_config);
+    readIntParam(backlight_start);
+    readIntParam(backlight_stop);
 
     readBoolParam(send2csv);
 
@@ -498,24 +517,14 @@ void parse_config_request(String &page_content) {
 
     readBoolParam(has_display);
     has_lcd1602 = false;
-    has_lcd1602_27 = false;
-    has_lcd2004_27 = false;
-    has_lcd2004_3f = false;
-    if (server.hasArg("has_lcd")) {
-        switch (server.arg("lcd_type").toInt()) {
-            case 1:
-                has_lcd1602_27 = true;
-                break;
-            case 2:
-                has_lcd1602 = true;
-                break;
-            case 3:
-                has_lcd2004_27 = true;
-                break;
-            case 4:
-                has_lcd2004_3f = true;
-                break;
-        }
+    has_lcd2004 = false;
+    switch (server.arg("lcd_type").toInt()) {
+        case 1:
+            has_lcd1602 = true;
+            break;
+        case 2:
+            has_lcd2004 = true;
+            break;
     }
     readBoolParam(show_wifi_info);
     readBoolParam(sh_dev_inf);
@@ -578,10 +587,12 @@ void webserver_config(){
         page_content.concat( formSectionHeader(FPSTR(INTL_WIFI_SETTINGS)));
         debug_out(F("output config page 1"), DEBUG_MIN_INFO, 1);
         if (wificonfig_loop) {  // scan for wlan ssids
+            page_content.concat(F("<div class='row'><button onclick='load_wifi_list(1);return false'>Refresh</button><span id='inf'></span>"));
+            page_content.concat(F("</div>"));
             page_content.concat(F("<div id='wifilist' class='row'>"));
             page_content.concat(FPSTR(INTL_WIFI_NETWORKS));
             page_content.concat(F("</div>"));
-            page_content.concat(F("<script>window.setTimeout(load_wifi_list,1000);</script>"));
+            page_content.concat(F("<script>load_wifi_list()</script>"));
         }
 
         page_content.concat(formInputGrid(F("wlanssid"), FPSTR(INTL_FS_WIFI_NAME), wlanssid,
@@ -605,13 +616,12 @@ void webserver_config(){
 
         page_content.concat(formSectionHeader(FPSTR(INTL_MORE_SETTINGS)));
 
-        page_content.concat(formCheckboxOpenGrid("has_lcd", FPSTR(INTL_LCD),
-                                                 has_lcd1602 || has_lcd1602_27 || has_lcd2004_3f || has_lcd2004_27));
-        page_content.concat(F("<div class='c2'><select name=\"lcd_type\">"));
-        page_content.concat(form_option("1", FPSTR(INTL_LCD1602_27), has_lcd1602_27));
-        page_content.concat(form_option("2", FPSTR(INTL_LCD1602_3F), has_lcd1602));
-        page_content.concat(form_option("3", FPSTR(INTL_LCD2004_27), has_lcd2004_27));
-        page_content.concat(form_option("4", FPSTR(INTL_LCD2004_3F), has_lcd2004_3f));
+        page_content.concat(F("<div>"));
+        page_content.concat(FPSTR(INTL_LCD));
+        page_content.concat(F("</div><div class='c2'><select name=\"lcd_type\">"));
+        page_content.concat(form_option("0", FPSTR(INTL_LCD_NONE), false));
+        page_content.concat(form_option("1", FPSTR(INTL_LCD1602), has_lcd1602));
+        page_content.concat(form_option("2", FPSTR(INTL_LCD2004), has_lcd2004));
         page_content.concat(F("</select></div>"));
         page_content.concat(formCheckboxGrid("show_wifi_info", FPSTR(INTL_SHOW_WIFI_INFO), show_wifi_info));
         page_content.concat(formCheckboxGrid("sh_dev_inf", FPSTR(INTL_SHOW_DEVICE_INFO), sh_dev_inf));
@@ -641,6 +651,16 @@ void webserver_config(){
 
         webserverPartialSend(page_content);
 
+#ifdef NAM_LORAWAN
+        formSectionHeader(page_content, "LoRaWAN setup");
+        page_content.concat(formCheckboxGrid(F("lw_enable"), FPSTR(INTL_ENABLE), lw_en));
+        page_content.concat(formInputGrid(F("lw_a_eui"), "App EUI", lw_a_eui, 60));
+        page_content.concat(formInputGrid(F("lw_d_eui"), "Device EUI", lw_d_eui, 60));
+        page_content.concat(formInputGrid(F("lw_app_key"), "App key", lw_app_key, 60));
+//        page_content.concat(formInputGrid(F("lw_nws_key"), "Nws key", lw_nws_key, 60));
+//        page_content.concat(formInputGrid(F("lw_apps_key"), "Apps key", lw_apps_key, 60));
+//        page_content.concat(formInputGrid(F("lw_dev_addr"), "Device address", lw_dev_addr, 60));
+#endif
 
         formSectionHeader(page_content, tmpl(FPSTR(INTL_SEND_TO), FPSTR(INTL_AQI_ECO_API)));
         page_content.concat(formCheckboxGrid("send2aqi", FPSTR(INTL_ENABLE), send2aqi));
@@ -693,7 +713,7 @@ void webserver_config(){
         page_content.concat(F("<div id='adv' class='tabcontent'>"));
         page_content.concat(F("<div class='gc'>"));
         formSectionHeader(page_content, FPSTR(INTL_MORE_SETTINGS));
-        page_content.concat(formSectionHeader(FPSTR(INTL_FALBACK_WIFI)));
+        page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_FALBACK_WIFI), F("m/fallback-wifi")));
 
         page_content.concat(formInputGrid(F("fbssid"), FPSTR(INTL_FS_WIFI_NAME), fbssid,
                                           35));
@@ -704,6 +724,10 @@ void webserver_config(){
                                           String(time_for_wifi_config / 1000), 5));
         page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
         page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
+
+        page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_BACKLIGHT), F("m/backlight")));
+        page_content.concat(formInputGrid("backlight_stop", "Stop at (hour):", String(backlight_stop), 5));
+        page_content.concat(formInputGrid("backlight_start", "Start at (hour):", String(backlight_start), 5));
 
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));
@@ -731,12 +755,6 @@ void webserver_config(){
         page_content.concat(formCheckboxGrid("send_diag", FPSTR(INTL_DIAGNOSTIC), send_diag));
 
         webserverPartialSend(page_content);
-
-
-        if (wificonfig_loop) { //outputPower should be able to change in both modes
-            page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
-            page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
-        }
 
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
 
@@ -768,7 +786,7 @@ void webserver_config(){
 //    page_content.concat(String(maxSizeTemp));
     page_content.concat(F("<script>const beforeUnloadListener = (event) => {\n"
                           "  event.preventDefault();\n"
-                          "  return event.returnValue = \"Are1 you sure you want to exit?\";"
+                          "  return event.returnValue = \"Are you sure you want to exit?\";"
                           "};"
                           "function warn(){addEventListener(\"beforeunload\", beforeUnloadListener, {capture: true});};\n"
                           "function submit(){removeEventListener(\"beforeunload\", beforeUnloadListener, {capture: true});};\n"
@@ -786,7 +804,9 @@ void webserver_config(){
         delay(500);
         ESP.restart();
     }
+    if (wificonfig_loop) {
 
+    }
 
 //send.
 }
@@ -853,20 +873,26 @@ String table_row_from_value(const String &sensor, const String &param, const Str
     return s;
 }
 
+
 /*****************************************************************
  * Webserver wifi: show available wifi networks                  *
  *****************************************************************/
 void webserver_wifi() {
+    if (server.hasArg(String(F("r"))) || count_wifiInfo == -1) {
+        debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
+
+        NAMWiFi::rescanWiFi();
+
+    }
     debug_out(F("wifi networks found: "), DEBUG_MIN_INFO, 0);
     debug_out(String(count_wifiInfo), DEBUG_MIN_INFO, 1);
     String page_content = "";
     if (count_wifiInfo == 0) {
-        page_content += BR_TAG;
-        page_content += FPSTR(INTL_NO_NETWORKS);
-        page_content += BR_TAG;
+        page_content.concat(BR_TAG);
+        page_content.concat(FPSTR(INTL_NO_NETWORKS));
+        page_content.concat(BR_TAG);
     } else {
         std::unique_ptr<int[]> indices(new int[count_wifiInfo]);
-        debug_out(F("output config page 2"), DEBUG_MIN_INFO, 1);
         for (int i = 0; i < count_wifiInfo; i++) {
             indices[i] = i;
         }
@@ -877,7 +903,6 @@ void webserver_wifi() {
                 }
             }
         }
-        debug_out(F("output config page 3"), DEBUG_MIN_INFO, 1);
         int duplicateSsids = 0;
         for (int i = 0; i < count_wifiInfo; i++) {
             if (indices[i] == -1) {
@@ -891,21 +916,25 @@ void webserver_wifi() {
             }
         }
 
-        page_content += FPSTR(INTL_NETWORKS_FOUND);
-        page_content += String(count_wifiInfo - duplicateSsids);
-        page_content += FPSTR(BR_TAG);
-        page_content += FPSTR(BR_TAG);
-        page_content += FPSTR(TABLE_TAG_OPEN);
+        page_content.concat(FPSTR(INTL_NETWORKS_FOUND));
+        page_content.concat(String(count_wifiInfo - duplicateSsids));
+        page_content.concat(FPSTR(BR_TAG));
+        page_content.concat(FPSTR(BR_TAG));
+        page_content.concat(FPSTR(TABLE_TAG_OPEN));
         //if(n > 30) n=30;
         for (int i = 0; i < count_wifiInfo; ++i) {
             if (indices[i] == -1 || wifiInfo[indices[i]].isHidden) {
                 continue;
             }
             // Print SSID and RSSI for each network found
-            page_content += wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == ENC_TYPE_NONE) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI);
+#ifdef ARDUINO_ARCH_ESP8266
+            page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == ENC_TYPE_NONE) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI));
+#else
+            page_content.concat(wlan_ssid_to_table_row(wifiInfo[indices[i]].ssid, ((wifiInfo[indices[i]].encryptionType == WIFI_AUTH_OPEN) ? " " : u8"🔒"), wifiInfo[indices[i]].RSSI));
+#endif
         }
-        page_content += FPSTR(TABLE_TAG_CLOSE_BR);
-        page_content += FPSTR(BR_TAG);
+        page_content.concat(FPSTR(TABLE_TAG_CLOSE_BR));
+        page_content.concat(FPSTR(BR_TAG));
     }
     server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
@@ -914,63 +943,77 @@ void webserver_wifi() {
  * Webserver root: show latest values                            *
  *****************************************************************/
 void webserver_values() {
-    if (WiFi.status() != WL_CONNECTED) {
-        sendHttpRedirect(server);
-    } else {
-        String page_content;
-        page_content.reserve(4000);
-        page_content = make_header(FPSTR(INTL_CURRENT_DATA));
-        const String unit_PM = "µg/m³";
-        const String unit_T = "°C";
-        const String unit_H = "%";
-        const String unit_P = "hPa";
-        last_page_load = millis();
 
-        debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
-        getTimeHeadings(page_content);
+    String page_content;
+    page_content.reserve(4000);
+    page_content = make_header(FPSTR(INTL_CURRENT_DATA));
+    const String unit_PM = "µg/m³";
+    const String unit_T = "°C";
+    const String unit_H = "%";
+    const String unit_P = "hPa";
+    last_page_load = millis();
 
-        if (cfg::send2madavi) {
-            String link(F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID=esp8266-{id}\" target=\"_blank\">{n}</a>"));
-            link.replace(F("{id}"), esp_chipid());
-            link.replace(F("{n}"), FPSTR(INTL_MADAVI_LINK));
-            page_content.concat(link);
-        }
+    debug_out(F("output values to web page..."), DEBUG_MIN_INFO, 1);
+    getTimeHeadings(page_content);
 
-        page_content.concat(F("<table cellspacing='0' border='1' cellpadding='5'>"));
-        page_content.concat(tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER), FPSTR(INTL_VALUE)));
-        if (cfg::pms_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0), unit_PM));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0), unit_PM));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_PMSx003), "PM10", check_display_value(last_value_PMS_P1, -1, 1, 0), unit_PM));
-        }
-        if (cfg::dht_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DHT_T, -128, 1, 0), unit_T));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_HUMIDITY), check_display_value(last_value_DHT_H, -1, 1, 0), unit_H));
-        }
-
-
-        if (cfg::ds18b20_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(FPSTR(SENSORS_DS18B20), FPSTR(INTL_TEMPERATURE), check_display_value(last_value_DS18B20_T, -128, 1, 0), unit_T));
-        }
-        if (cfg::gps_read) {
-            page_content.concat(FPSTR(EMPTY_ROW));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LATITUDE), check_display_value(last_value_GPS_lat, -200.0, 6, 0), "°"));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LONGITUDE), check_display_value(last_value_GPS_lon, -200.0, 6, 0), "°"));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_ALTITUDE),  check_display_value(last_value_GPS_alt, -1000.0, 2, 0), "m"));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, ""));
-            page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, ""));
-        }
-        SimpleScheduler::getResultsAsHTML(page_content);
-
-        page_content.concat(FPSTR(EMPTY_ROW));
-        page_content.concat(table_row_from_value(F("NAM"),FPSTR(INTL_NUMBER_OF_MEASUREMENTS),String(count_sends),""));
-        page_content.concat(table_row_from_value(F("NAM"),F("Uptime"), millisToTime(millis()),""));
-
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
+    if (cfg::send2madavi) {
+        String link(
+                F("<a class=\"plain\" href=\"https://api-rrd.madavi.de/grafana/d/GUaL5aZMz/pm-sensors?orgId=1&var-chipID="));
+        link.concat(String(F(PROCESSOR_ARCH)));
+        link.concat(String(F("-{id}\" target=\"_blank\">{n}</a>")));
+        link.replace(F("{id}"), esp_chipid());
+        link.replace(F("{n}"), FPSTR(INTL_MADAVI_LINK));
+        page_content.concat(link);
     }
+
+    page_content.concat(F("<table cellspacing='0' border='1' cellpadding='5'>"));
+    page_content.concat(
+            tmpl(F("<tr><th>{v1}</th><th>{v2}</th><th>{v3}</th>"), FPSTR(INTL_SENSOR), FPSTR(INTL_PARAMETER),
+                 FPSTR(INTL_VALUE)));
+    if (cfg::pms_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(
+                table_row_from_value(FPSTR(SENSORS_PMSx003), "PM1", check_display_value(last_value_PMS_P0, -1, 1, 0),
+                                     unit_PM));
+        page_content.concat(
+                table_row_from_value(FPSTR(SENSORS_PMSx003), "PM2.5", check_display_value(last_value_PMS_P2, -1, 1, 0),
+                                     unit_PM));
+        page_content.concat(
+                table_row_from_value(FPSTR(SENSORS_PMSx003), "PM10", check_display_value(last_value_PMS_P1, -1, 1, 0),
+                                     unit_PM));
+    }
+    if (cfg::dht_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_TEMPERATURE),
+                                                 check_display_value(last_value_DHT_T, -128, 1, 0), unit_T));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_DHT22), FPSTR(INTL_HUMIDITY),
+                                                 check_display_value(last_value_DHT_H, -1, 1, 0), unit_H));
+    }
+
+
+    if (cfg::ds18b20_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(FPSTR(SENSORS_DS18B20), FPSTR(INTL_TEMPERATURE),
+                                                 check_display_value(last_value_DS18B20_T, -128, 1, 0), unit_T));
+    }
+    if (cfg::gps_read) {
+        page_content.concat(FPSTR(EMPTY_ROW));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LATITUDE),
+                                                 check_display_value(last_value_GPS_lat, -200.0, 6, 0), "°"));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_LONGITUDE),
+                                                 check_display_value(last_value_GPS_lon, -200.0, 6, 0), "°"));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_ALTITUDE),
+                                                 check_display_value(last_value_GPS_alt, -1000.0, 2, 0), "m"));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_DATE), last_value_GPS_date, ""));
+        page_content.concat(table_row_from_value(F("GPS"), FPSTR(INTL_TIME), last_value_GPS_time, ""));
+    }
+    SimpleScheduler::getResultsAsHTML(page_content);
+
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), ""));
+    page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
+
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
@@ -1032,7 +1075,15 @@ void webserver_debug_level() {
         last_page_load = millis();
         enable_ota_time = millis() + 60 * 1000;
         ArduinoOTA.setPassword(cfg::www_password);
+#ifdef ARDUINO_ARCH_ESP8266
+        ArduinoOTA.setHostname(cfg::fs_ssid);
         ArduinoOTA.begin(true);
+#else
+
+        ArduinoOTA.setMdnsEnabled(true);
+        ArduinoOTA.setHostname(cfg::fs_ssid);
+        ArduinoOTA.begin();
+#endif
         page_content += FPSTR(INTL_ENABLE_OTA_INFO);
 
         page_content += make_footer();
@@ -1152,10 +1203,18 @@ void webserver_status_page(void) {
     }
     page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH), String(WiFi.RSSI()), "dBm"));
     page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%"));
+    page_content.concat(table_row_from_value(F("WiFi"), F("Status"), String(NAMWiFi::state), ""));
     page_content.concat(FPSTR(EMPTY_ROW));
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), ""));
     page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_TIME_FROM_UPDATE), millisToTime(msSince(last_update_attempt)), ""));
+    page_content.concat(table_row_from_value(F("NAM"), F("Internet connection"),String(cfg::internet), ""));
+    page_content.concat(FPSTR(EMPTY_ROW));
+    page_content.concat(table_row_from_value(F("APIs"), F("Status"),F("Time"), ""));
+    for (byte i=0; i<cfg::apiCount;i++){
+        page_content.concat(table_row_from_value(LN_TABLE[cfg::apiStats[i].id], String(cfg::apiStats[i].status),String(cfg::apiStats[i].time/1000.0,3), "s"));
+
+    }
     page_content.concat(FPSTR(EMPTY_ROW));
 //    page_content.concat(table_row_from_value(F("NAMF"),F("LoopEntries"), String(SimpleScheduler::NAMF_LOOP_SIZE) ,""));
     page_content.concat(table_row_from_value(F("NAMF"),F("Sensor slots"), String(scheduler.sensorSlots()) ,""));
@@ -1168,7 +1227,10 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("NAMF"),F("Last loop time"), String(scheduler.lastRunTime()) ,F("µs")));
 #endif
     page_content.concat(FPSTR(EMPTY_ROW));
+#ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ESP"),F("Reset Reason"), String(ESP.getResetReason()),""));
+#endif
+    page_content.concat(table_row_from_value(F("ESP"),F("Processor"), F(PROCESSOR_ARCH),""));
     String tmp = String(memoryStatsMin.maxFreeBlock) + String("/") + String(memoryStatsMax.maxFreeBlock);
     page_content.concat(table_row_from_value(F("ESP"),F("Max Free Block Size"), tmp,"B"));
     tmp = String(memoryStatsMin.frag) + String("/") + String(memoryStatsMax.frag);
@@ -1177,12 +1239,16 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("ESP"),F("Free Cont Stack"), tmp,"B"));
     tmp = String(memoryStatsMin.freeHeap) + String("/") + String(memoryStatsMax.freeHeap);
     page_content.concat(table_row_from_value(F("ESP"),F("Free Memory"), tmp,"B"));
+#ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ESP"),F("Flash ID"), String(ESP.getFlashChipId()),""));
     page_content.concat(table_row_from_value(F("ESP"),F("Flash Vendor ID"), String(ESP.getFlashChipVendorId()),""));
+#endif
     page_content.concat(table_row_from_value(F("ESP"),F("Flash Speed"), String(ESP.getFlashChipSpeed()/1000000.0),"MHz"));
     page_content.concat(table_row_from_value(F("ESP"),F("Flash Mode"), String(ESP.getFlashChipMode()),""));
     page_content.concat(FPSTR(EMPTY_ROW));
+#ifdef ARDUINO_ARCH_ESP8266
     page_content.concat(table_row_from_value(F("ENV"),F("Core version"), String(ESP.getCoreVersion()),""));
+#endif
     page_content.concat(table_row_from_value(F("ENV"),F("SDK version"), String(ESP.getSdkVersion()),""));
     page_content.concat(FPSTR(EMPTY_ROW));
     String dbg = F("");
@@ -1248,7 +1314,9 @@ void webserver_data_json() {
 void webserver_prometheus_endpoint() {
     debug_out(F("output prometheus endpoint..."), DEBUG_MIN_INFO, 1);
     String data_4_prometheus = F("software_version{version=\"{ver}\",{id}} 1\nuptime_ms{{id}} {up}\nsending_intervall_ms{{id}} {si}\nnumber_of_measurements{{id}} {cs}\n");
-    String id = F("node=\"esp8266-");
+    String id = F("node=\")");
+    id.concat(String(F(PROCESSOR_ARCH)));
+    id.concat(String(F("-")));
     id += esp_chipid() + "\"";
     debug_out(F("Parse JSON for Prometheus"), DEBUG_MIN_INFO, 1);
     debug_out(last_data_string, DEBUG_MED_INFO, 1);
@@ -1311,7 +1379,7 @@ void setup_webserver() {
     server.on(F("/reset"), webserver_reset);
     server.on(F("/data.json"), webserver_data_json);
     server.on(F("/metrics"), webserver_prometheus_endpoint);
-    server.on(F("/images"), webserver_images);
+    server.on(F("/images-" SOFTWARE_VERSION_SHORT), webserver_images);
     server.on(F("/stack_dump"), webserver_dump_stack);
     server.on(F("/status"), webserver_status_page);
 #ifdef DBG_NAMF_TIMES

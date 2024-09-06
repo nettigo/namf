@@ -1,6 +1,6 @@
 #include "sending.h"
 
-#if defined(ESP8266)
+#if defined(ARDUINO_ARCH_ESP8266)
 BearSSL::X509List x509_dst_root_ca(dst_root_ca_x1);
 
 void configureCACertTrustAnchor(WiFiClientSecure* client) {
@@ -16,12 +16,26 @@ void configureCACertTrustAnchor(WiFiClientSecure* client) {
         client->setTrustAnchors(&x509_dst_root_ca);
     }
 }
+#else
+void configureCACertTrustAnchor(WiFiClientSecure* client) {
+    constexpr time_t fw_built_year = (__DATE__[ 7] - '0') * 1000 + \
+							  (__DATE__[ 8] - '0') *  100 + \
+							  (__DATE__[ 9] - '0') *   10 + \
+							  (__DATE__[10] - '0');
+    if (time(nullptr) < (fw_built_year - 1970) * 365 * 24 * 3600) {
+        debug_out(F("Time incorrect; Disabling CA verification."), DEBUG_MIN_INFO,1);
+        client->setInsecure();
+    }
+    else {
+        client->setCACert(dst_root_ca_x3);
+    }
+}
 #endif
 
 /*****************************************************************
  * send data to rest api                                         *
  *****************************************************************/
-void sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify) {
+int sendData(const LoggerEntry logger, const String &data, const int pin, const String &host, const int httpPort, const String &url, const bool verify) {
     WiFiClient *client;
     const __FlashStringHelper *contentType;
     bool ssl = false;
@@ -29,7 +43,9 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         client = new WiFiClientSecure;
         ssl = true;
         configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
+#ifdef ARDUINO_ARCH_ESP8266
         static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+#endif
     } else {
         client = new WiFiClient;
     }
@@ -57,6 +73,12 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     debug_out(String(host), DEBUG_MAX_INFO, 1);
     debug_out(String(httpPort), DEBUG_MAX_INFO, 1);
     debug_out(String(url), DEBUG_MAX_INFO, 1);
+    if (logger == LoggerInflux && (
+            (cfg::user_influx != NULL && strlen(cfg::user_influx) > 0) ||
+            (cfg::pwd_influx != NULL && strlen(cfg::pwd_influx) > 0)
+            )) {
+        http->setAuthorization(cfg::user_influx, cfg::pwd_influx);
+    }
     if (http->begin(*client, host, httpPort, url, ssl)) {
         if (logger == LoggerCustom && (*cfg::user_custom || *cfg::pwd_custom))
         {
@@ -68,7 +90,7 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
         }
 
         http->addHeader(F("Content-Type"), contentType);
-        http->addHeader(F("X-Sensor"), String(F("esp8266-")) + esp_chipid());
+        http->addHeader(F("X-Sensor"), String(F(PROCESSOR_ARCH)) + F("-") + esp_chipid());
         if (pin) {
             http->addHeader(F("X-PIN"), String(pin));
         }
@@ -97,15 +119,18 @@ void sendData(const LoggerEntry logger, const String &data, const int pin, const
     debug_out(host, DEBUG_MED_INFO);
     delete (http);
     delete (client);
-
+#ifdef ARDUINO_ARCH_ESP8266
     wdt_reset(); // nodemcu is alive
+#endif
     yield();
+    return result;
 }
 
 /*****************************************************************
  * send single sensor data to luftdaten.info api                 *
  *****************************************************************/
-void sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
+int sendLuftdaten(const String& data, const int pin, const char* host, const int httpPort, const char* url, const bool verify, const char* replace_str) {
+    int result = 0;
     String data_4_dusti = FPSTR(data_first_part);
     data_4_dusti.replace(String(F("{v}")), String(SOFTWARE_VERSION));
     data_4_dusti.concat(data);
@@ -113,12 +138,13 @@ void sendLuftdaten(const String& data, const int pin, const char* host, const in
     data_4_dusti.replace(replace_str, String(F("")));
     data_4_dusti.concat(String(F("]}")));
     if (data != "") {
-        sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
+        result = sendData(LoggerDusti, data_4_dusti, pin, host, httpPort, url, verify);
     } else {
         debug_out(F("No data sent..."), DEBUG_MED_INFO, 1);
     }
 //    debugData(data_4_dusti,F("sendLuftdaten data4dusti:"));
 //    debugData(data,F("sendLuftdaten data out:"));
+    return  result;
 }
 
 /*****************************************************************
@@ -143,7 +169,8 @@ String create_influxdb_string(const String& data) {
     JsonObject& json2data = jsonBuffer.parseObject(data);
     if (json2data.success()) {
         bool first_line = true;
-        data_4_influxdb.concat(F("feinstaub,node=esp8266-"));
+        data_4_influxdb.concat(F("feinstaub,node="));
+        data_4_influxdb.concat(String(F(PROCESSOR_ARCH)) + String(F("-")));
         data_4_influxdb.concat(esp_chipid() + F(","));
         data_4_influxdb.concat(F("fw="));
         data_4_influxdb.concat(F(SOFTWARE_VERSION));
