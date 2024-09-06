@@ -54,6 +54,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_CONFIG_SAVED[] PROGMEM = "A konfiguráció mentve";
 /* ./src/lang/intl_hu.lang */ const char INTL_CURRENT_DATA[] PROGMEM = "Aktuális adatok";
 /* ./src/lang/intl_hu.lang */ const char INTL_DATE[] PROGMEM = "Dátum";
+/* ./src/lang/intl_hu.lang */ const char INTL_DEBUG[] PROGMEM = "Naplózási beállítások";
 /* ./src/lang/intl_hu.lang */ const char INTL_DEBUG_LEVEL[] PROGMEM = "Debug&nbsp;Level";
 /* ./src/lang/intl_hu.lang */ const char INTL_DEBUG_SETTING_TO[] PROGMEM = "Debug beállítás";
 /* ./src/lang/intl_hu.lang */ const char INTL_DELETE[] PROGMEM = "Törlés";
@@ -73,7 +74,10 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "WiFi Szenzor konfigurációs módban";
 /* ./src/lang/intl_hu.lang */ const char INTL_FS_WIFI_NAME[] PROGMEM = "Név";
 /* ./src/lang/intl_hu.lang */ const char INTL_HECA[] PROGMEM = "HECA (SHT30) ({t}, {h})";
-/* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_DESC[] PROGMEM = "";
+/* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_CLEAR_RH[] PROGMEM = "Fűtés leállítása RH szint";
+/* ./src/lang/intl_hu.lang */ const char INTL_HECA_DC[] PROGMEM = "";
+/* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_DESC[] PROGMEM = "HECA (SHT30) (hőmérséklet, páratartalom), 70% alatt tartja a páratartalmat.";
+/* ./src/sensors/heca/heca_hu.lang */ const char INTL_HECA_SET_RH[] PROGMEM = "Fűtés engedélyezése RH szint";
 /* ./src/lang/intl_hu.lang */ const char INTL_HELP[] PROGMEM = "Bővebben erről a témáról";
 /* ./src/lang/intl_hu.lang */ const char INTL_HOME[] PROGMEM = "Főoldal";
 /* ./src/lang/intl_hu.lang */ const char INTL_HUMIDITY[] PROGMEM = "relatív páratartalom";
@@ -136,6 +140,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sht3x/sht3x_hu.lang */ const char INTL_SHT3x_TEMP[] PROGMEM = "Temperature";
 /* ./src/lang/intl_hu.lang */ const char INTL_SIGNAL_QUALITY[] PROGMEM = "Jelminőség";
 /* ./src/lang/intl_hu.lang */ const char INTL_SIGNAL_STRENGTH[] PROGMEM = "Jelerősség";
+/* ./src/lang/intl_hu.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Érzékelő állapota";
 /* ./src/lang/intl_hu.lang */ const char INTL_TEMPERATURE[] PROGMEM = "hőmérséklet";
 /* ./src/lang/intl_hu.lang */ const char INTL_TIME[] PROGMEM = "Idő";
 /* ./src/lang/intl_hu.lang */ const char INTL_TIME_SINCE_LAST_MEASUREMENT[] PROGMEM = " másodperc telt el az utolsó mérés óta.";
@@ -152,9 +157,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTW_WTD_DESC[] PROGMEM = "Translate HU: INTL_NTW_WTD_DESC 🐱;";
  const char INTL_NTW_WTD_HOST[] PROGMEM = "Translate HU: INTL_NTW_WTD_HOST 🐱;";
  const char INTL_NTW_WTD_ERROR[] PROGMEM = "Translate HU: INTL_NTW_WTD_ERROR 🐱;";
- const char INTL_HECA_DC[] PROGMEM = "Translate HU: INTL_HECA_DC 🐱;";
- const char INTL_HECA_SET_RH[] PROGMEM = "Translate HU: INTL_HECA_SET_RH 🐱;";
- const char INTL_HECA_CLEAR_RH[] PROGMEM = "Translate HU: INTL_HECA_CLEAR_RH 🐱;";
  const char INTL_SPS30_FW_FAIL[] PROGMEM = "Translate HU: INTL_SPS30_FW_FAIL 🐱;";
  const char INTL_SPS30_CONCENTRATION[] PROGMEM = "Translate HU: INTL_SPS30_CONCENTRATION 🐱;";
  const char INTL_SPS30_SIZE[] PROGMEM = "Translate HU: INTL_SPS30_SIZE 🐱;";
@@ -167,7 +169,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_ADVANCED_BUTTON[] PROGMEM = "Translate HU: INTL_ADVANCED_BUTTON 🐱;";
  const char INTL_ADVANCED_DISCL[] PROGMEM = "Translate HU: INTL_ADVANCED_DISCL 🐱;";
  const char INTL_DEBUG_STATUS[] PROGMEM = "Translate HU: INTL_DEBUG_STATUS 🐱;";
- const char INTL_DEBUG[] PROGMEM = "Translate HU: INTL_DEBUG 🐱;";
  const char INTL_AQI_TOKEN[] PROGMEM = "Translate HU: INTL_AQI_TOKEN 🐱;";
  const char INTL_AQI_ECO_API[] PROGMEM = "Translate HU: INTL_AQI_ECO_API 🐱;";
  const char INTL_USE_HTTPS[] PROGMEM = "Translate HU: INTL_USE_HTTPS 🐱;";
@@ -182,7 +183,6 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_NTP_TIME[] PROGMEM = "Translate HU: INTL_NTP_TIME 🐱;";
  const char INTL_NTP_TIME_NOT_ACC[] PROGMEM = "Translate HU: INTL_NTP_TIME_NOT_ACC 🐱;";
  const char INTL_I2C_BUS[] PROGMEM = "Translate HU: INTL_I2C_BUS 🐱;";
- const char INTL_STATUS_PAGE[] PROGMEM = "Translate HU: INTL_STATUS_PAGE 🐱;";
  const char INTL_UPDATE_ALFA[] PROGMEM = "Translate HU: INTL_UPDATE_ALFA 🐱;";
  const char INTL_UPDATE_BETA[] PROGMEM = "Translate HU: INTL_UPDATE_BETA 🐱;";
  const char INTL_UPDATE_STABLE[] PROGMEM = "Translate HU: INTL_UPDATE_STABLE 🐱;";
