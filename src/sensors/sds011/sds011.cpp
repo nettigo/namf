@@ -397,8 +397,8 @@ namespace SDS011 {
 //        if (t>1000) t -= 200;
         switch (sensorState) {
             case POWERON:
-                SDS_cmd(PmSensorCmd::ContinuousMode);
-                delay(100);
+//                SDS_cmd(PmSensorCmd::ContinuousMode);
+//                delay(100);
                 SDS_cmd(PmSensorCmd::ContinuousMode2);
                 updateState(STARTUP);
                 return 10;

@@ -1,6 +1,8 @@
-NAMF-47rc1 ()
+NAMF-2020-46rc9 ()
 - added info (help) to DS18B20 about resistor needed for the sensor to work
-- 
+- test only one continuous mode command on SDS011 poweron (it looks like change in 46rc6 made checksum error rate vary high)
+- fixed missing one translation in PL fw
+
 NAMF-2020-46rc8 (2024-08-19 rev 75e6b449a2e9ea9be574612a92255e6511dc4233)
 - fixed typo preventing using authentication data for Influx 1.x
 
