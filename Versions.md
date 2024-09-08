@@ -1,3 +1,6 @@
+NAMF-2020-46rc10 ()
+- testing other power on command on SDS011
+
 NAMF-2020-46rc9 (2024-09-08 rev 55d4573558174662fce128cc98a42e0eaf7ef994)
 - added info (help) to DS18B20 about resistor needed for the sensor to work
 - test only one continuous mode command on SDS011 poweron (it looks like change in 46rc6 made checksum error rate vary high)
