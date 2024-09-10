@@ -1,7 +1,10 @@
-NAMF-2020-46rc11 ()
-- testing other power on command on SDS011
+NAMF-2020-46rc12 (2024-09-10 rev)
+- longer reading time (more packets processed) should help in case higher checksum error ratio will be present in stable release 
 
-NAMF-2020-46rc10 ()
+NAMF-2020-46rc11 (rev 297359cf46db17449de4b3f313c8098d5774b418)
+- completely disabled power on SDS settings from 46rc6
+
+NAMF-2020-46rc10 (rev 74a5c5716e1b62b9d9306d504f51c4b4b0abfd66)
 - testing other power on command on SDS011
 
 NAMF-2020-46rc9 (2024-09-08 rev 55d4573558174662fce128cc98a42e0eaf7ef994)
