@@ -12,7 +12,7 @@
  ******************************************************************/
 const unsigned long SAMPLETIME_SDS_MS = 1000;
 const unsigned long WARMUPTIME_SDS_MS = 15000;
-const unsigned long READINGTIME_SDS_MS = 5000;
+const unsigned long READINGTIME_SDS_MS = 10000;
 const unsigned long SAMPLETIME_GPS_MS = 50;
 const unsigned long DISPLAY_UPDATE_INTERVAL_MS = 5000;
 const unsigned long ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
