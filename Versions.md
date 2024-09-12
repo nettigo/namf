@@ -1,3 +1,6 @@
+NAMF-2020-46rc13 (2024-09-12 rev)
+- returning with setting continous mode for SDS
+
 NAMF-2020-46rc12 (2024-09-10 rev)
 - longer reading time (more packets processed) should help in case higher checksum error ratio will be present in stable release 
 
