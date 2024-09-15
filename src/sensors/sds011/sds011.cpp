@@ -399,7 +399,7 @@ namespace SDS011 {
             case POWERON:
                 SDS_cmd(PmSensorCmd::ContinuousMode);
                 delay(100);
-                SDS_cmd(PmSensorCmd::ContinuousMode2);
+//                SDS_cmd(PmSensorCmd::ContinuousMode2);
                 updateState(STARTUP);
                 return 10;
             case STARTUP:

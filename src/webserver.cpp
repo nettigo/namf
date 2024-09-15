@@ -507,10 +507,9 @@ void parse_config_request(String &page_content) {
     if (server.hasArg(F("user_influx"))){
         stringToChar(&user_influx,server.arg(F("user_influx")));
     }
-    if (server.hasArg(F("pwd_custom"))) {
-        readPwdParam(&pwd_custom,F("pwd_custom"));
+    if (server.hasArg(F("pwd_influx"))){
+        stringToChar(&pwd_influx,server.arg(F("pwd_influx")));
     }
-
 
     readBoolParam(auto_update);
     parseHTTP(F("channel"), update_channel);
@@ -726,8 +725,8 @@ void webserver_config(){
         page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
 
         page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_BACKLIGHT), F("m/backlight")));
-        page_content.concat(formInputGrid("backlight_stop", "Stop at (hour):", String(backlight_stop), 5));
-        page_content.concat(formInputGrid("backlight_start", "Start at (hour):", String(backlight_start), 5));
+        page_content.concat(formInputGrid("backlight_stop", FPSTR(INTL_BACKLIGHT_STOP), String(backlight_stop), 5));
+        page_content.concat(formInputGrid("backlight_start", FPSTR(INTL_BACKLIGHT_START), String(backlight_start), 5));
 
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));
@@ -767,7 +766,7 @@ void webserver_config(){
         page_content.concat(formSectionHeader(FPSTR(INTL_SENSORS)));
         page_content.concat(formCheckboxGrid("pms_read", FPSTR(INTL_PMS), pms_read));
         page_content.concat(formCheckboxGrid("dht_read", FPSTR(INTL_DHT22), dht_read));
-        page_content.concat(formCheckboxGrid("ds18b20_read", FPSTR(INTL_DS18B20), ds18b20_read));
+        page_content.concat(formCheckboxGridWithHelp("ds18b20_read", FPSTR(INTL_DS18B20), F("s/ds18b20"), ds18b20_read));
         page_content.concat(formCheckboxGrid("gps_read", FPSTR(INTL_NEO6M), gps_read));
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
         page_content.concat(F("</form>"));

@@ -1,1 +1,4 @@
-INTL_HECA_DESC
+INTL_HECA_DC Munkaciklus
+INTL_HECA_DESC HECA (SHT30) (hőmérséklet, páratartalom), 70% alatt tartja a páratartalmat.
+INTL_HECA_SET_RH Fűtés engedélyezése RH szint
+INTL_HECA_CLEAR_RH Fűtés leállítása RH szint

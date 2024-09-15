@@ -1,4 +1,24 @@
-NAMF-2020-46rc7 (2024-07-30 rev)
+NAMF-2020-46rc13 (2024-09-12 rev e79b03f2a5e7cdd64b98cd100914383860f39b44)
+- returning with setting continous mode for SDS
+
+NAMF-2020-46rc12 (2024-09-10 rev b028bb217b91f130c220685189ece4c52989a5bb)
+- longer reading time (more packets processed) should help in case higher checksum error ratio will be present in stable release 
+
+NAMF-2020-46rc11 (rev 297359cf46db17449de4b3f313c8098d5774b418)
+- completely disabled power on SDS settings from 46rc6
+
+NAMF-2020-46rc10 (rev 74a5c5716e1b62b9d9306d504f51c4b4b0abfd66)
+- testing other power on command on SDS011
+
+NAMF-2020-46rc9 (2024-09-08 rev 55d4573558174662fce128cc98a42e0eaf7ef994)
+- added info (help) to DS18B20 about resistor needed for the sensor to work
+- test only one continuous mode command on SDS011 poweron (it looks like change in 46rc6 made checksum error rate vary high)
+- fixed missing one translation in PL fw
+
+NAMF-2020-46rc8 (2024-08-19 rev 75e6b449a2e9ea9be574612a92255e6511dc4233)
+- fixed typo preventing using authentication data for Influx 1.x
+
+NAMF-2020-46rc7 (2024-07-30 rev e8e81ddced0ac2849c8d6a761f326c5105c1f01f)
 - update request string has info about PM sensor encoded (SDS/PMS/SPS)
 - in case sensor can not connect to WiFi on boot and have WiFi configured then it will try to reconnect every hour after config AP has been shut down
 - CO2 sensor - don't report on LCD last value of CO2 if sensor stop sending data
