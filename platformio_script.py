@@ -32,8 +32,9 @@ def after_build(source, target, env):
     if not os.path.exists("./builds"):
         os.mkdir("./builds")
 
-    configName = env.Dump('PIOENV').replace("'", "")
+    configName = env['PIOENV']  #something (SCons?) have changed in Platformio 6.1.16?
     sectionName = 'env:' + configName
+    # breakpoint()
     lang = config.get(sectionName, "lang").lower()
     dest = 'builds/latest_{0}.bin'.format(lang)
     print("Uploading {0} to {1}".format(firmware_name, dest))
