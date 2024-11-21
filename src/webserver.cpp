@@ -1313,7 +1313,7 @@ void webserver_data_json() {
 void webserver_prometheus_endpoint() {
     debug_out(F("output prometheus endpoint..."), DEBUG_MIN_INFO, 1);
     String data_4_prometheus = F("software_version{version=\"{ver}\",{id}} 1\nuptime_ms{{id}} {up}\nsending_intervall_ms{{id}} {si}\nnumber_of_measurements{{id}} {cs}\n");
-    String id = F("node=\")");
+    String id = F("node=\"");
     id.concat(String(F(PROCESSOR_ARCH)));
     id.concat(String(F("-")));
     id += esp_chipid() + "\"";
