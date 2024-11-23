@@ -1,3 +1,9 @@
+NAMF-2020-46a (2024-11-23 rev)
+- fix for #79 - wrong format of Prometheus endpoint
+
+NAMF-2020-46 (2024-09-15 rev 5c01c648519c6368c2db3763fa5dc6472b343ee1)
+- release based on 46rc13
+
 NAMF-2020-46rc13 (2024-09-12 rev e79b03f2a5e7cdd64b98cd100914383860f39b44)
 - returning with setting continous mode for SDS
 
