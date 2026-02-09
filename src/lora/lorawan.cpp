@@ -54,6 +54,14 @@ namespace LoRaWan {
     uint8_t m_lora_app_data_buffer[LORAWAN_APP_DATA_BUFF_SIZE];              ///< Lora user application data buffer.
     lmh_app_data_t m_lora_app_data = {m_lora_app_data_buffer, 0, 0, 0,
                                       0}; ///< Lora user application data structure.
+
+    static bool load_lorawan_session(lmh_session_t *out);
+    static bool save_lorawan_session(const lmh_session_t *in);
+    static void persist_lorawan_session(void);
+    static Preferences lmhPrefs;
+    static const char kPrefNs[] = "lorawan";
+    static const char kPrefKey[] = "session";
+
     static bool getStoredKeys(void){
         if (!appConfig.isKey("ntwsk") || !appConfig.isKey("appsk") || !appConfig.isKey("devaddr"))
             return false;
@@ -64,6 +72,111 @@ namespace LoRaWan {
         nodeDevAddr = appConfig.getUInt("devaddr");
         return true;
     }
+
+    void dump_lmh_session(const lmh_session_t &s)
+{
+	debugOutLn("LoRaWAN session:", DEBUG_MED_INFO);
+
+	String line;
+	line.reserve(128);
+
+	line = "magic=0x";
+	line += String(s.magic, HEX);
+	line += " version=";
+	line += String(s.version);
+	line += " region=";
+	line += String(s.region);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	line = "class=";
+	line += String(s.device_class);
+	line += " public=";
+	line += String(s.public_network);
+	line += " adr=";
+	line += String(s.adr_enabled);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	line = "net_id=0x";
+	line += String(s.net_id, HEX);
+	line += " dev_addr=0x";
+	line += String(s.dev_addr, HEX);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	debugOut("nwk_skey=", DEBUG_MED_INFO);
+	for (int i = 0; i < 16; i++)
+	{
+		if (i) debugOut("-", DEBUG_MED_INFO);
+		uint8_t b = s.nwk_skey[i];
+		if (b < 0x10) debugOut("0", DEBUG_MED_INFO);
+		debugOut(String(b, HEX), DEBUG_MED_INFO);
+	}
+	debugOutLn("", DEBUG_MED_INFO);
+
+	debugOut("app_skey=", DEBUG_MED_INFO);
+	for (int i = 0; i < 16; i++)
+	{
+		if (i) debugOut("-", DEBUG_MED_INFO);
+		uint8_t b = s.app_skey[i];
+		if (b < 0x10) debugOut("0", DEBUG_MED_INFO);
+		debugOut(String(b, HEX), DEBUG_MED_INFO);
+	}
+	debugOutLn("", DEBUG_MED_INFO);
+
+	line = "fcnt_up=";
+	line += String(s.fcnt_up);
+	line += " fcnt_down=";
+	line += String(s.fcnt_down);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	line = "tx_power=";
+	line += String(s.tx_power);
+	line += " data_rate=";
+	line += String(s.data_rate);
+	line += " nb_rep=";
+	line += String(s.nb_rep);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	debugOut("channels_mask=", DEBUG_MED_INFO);
+	for (int i = 0; i < 6; i++)
+	{
+		if (i) debugOut(" ", DEBUG_MED_INFO);
+		uint16_t v = s.channels_mask[i];
+		if (v < 0x1000) debugOut("0", DEBUG_MED_INFO);
+		if (v < 0x100) debugOut("0", DEBUG_MED_INFO);
+		if (v < 0x10) debugOut("0", DEBUG_MED_INFO);
+		debugOut(String(v, HEX), DEBUG_MED_INFO);
+	}
+	debugOutLn("", DEBUG_MED_INFO);
+
+	debugOut("channels_default_mask=", DEBUG_MED_INFO);
+	for (int i = 0; i < 6; i++)
+	{
+		if (i) debugOut(" ", DEBUG_MED_INFO);
+		uint16_t v = s.channels_default_mask[i];
+		if (v < 0x1000) debugOut("0", DEBUG_MED_INFO);
+		if (v < 0x100) debugOut("0", DEBUG_MED_INFO);
+		if (v < 0x10) debugOut("0", DEBUG_MED_INFO);
+		debugOut(String(v, HEX), DEBUG_MED_INFO);
+	}
+	debugOutLn("", DEBUG_MED_INFO);
+
+	line = "rx2: freq=";
+	line += String(s.rx2.Frequency);
+	line += " dr=";
+	line += String(s.rx2.Datarate);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	line = "rx2_default: freq=";
+	line += String(s.rx2_default.Frequency);
+	line += " dr=";
+	line += String(s.rx2_default.Datarate);
+	debugOutLn(line, DEBUG_MED_INFO);
+
+	line = "crc32=0x";
+	line += String(s.crc32, HEX);
+	debugOutLn(line, DEBUG_MED_INFO);
+}
+
 
     void getNetworkSessionKey(String &out){
         out.reserve(49);
@@ -256,9 +369,83 @@ namespace LoRaWan {
             debug_out(F("lmh_setSubBandChannels failed. Wrong sub band requested?"), DEBUG_ERROR);
         }
 
+        // Restore session (if available), otherwise start join
+        lmh_session_t session;
+        bool restored = false;
+
+        if (load_lorawan_session(&session) && lmh_session_is_valid(&session))
+        {
+            if (lmh_session_apply(&session) == LMH_SUCCESS)
+            {
+                debugOutLn("LoRaWAN session restored from flash", DEBUG_MIN_INFO);
+                dump_lmh_session(session);
+                restored = true;
+                lmh_class_request(CLASS_A);
+                state = STATE_JOINED;
+            }
+        }
+        if (!restored)
+        {
+            // Join procedure will be at first sending data
+        }
+
+
         // we will join before sending data
 //        lmh_join();
 
+    }
+
+
+
+    static bool load_lorawan_session(lmh_session_t *out)
+    {
+        if (out == NULL)
+        {
+            return false;
+        }
+
+        if (!lmhPrefs.begin(kPrefNs, true))
+        {
+            return false;
+        }
+
+        size_t len = lmhPrefs.getBytesLength(kPrefKey);
+        if (len != sizeof(lmh_session_t))
+        {
+            lmhPrefs.end();
+            return false;
+        }
+
+        size_t read = lmhPrefs.getBytes(kPrefKey, out, sizeof(lmh_session_t));
+        lmhPrefs.end();
+        return (read == sizeof(lmh_session_t));
+    }
+
+    static bool save_lorawan_session(const lmh_session_t *in)
+    {
+        if (in == NULL)
+        {
+            return false;
+        }
+
+        if (!lmhPrefs.begin(kPrefNs, false))
+        {
+            return false;
+        }
+
+        size_t written = lmhPrefs.putBytes(kPrefKey, in, sizeof(lmh_session_t));
+        lmhPrefs.end();
+        return (written == sizeof(lmh_session_t));
+    }
+
+    static void persist_lorawan_session(void)
+    {
+        lmh_session_t session;
+        if (lmh_session_get(&session) != LMH_SUCCESS)
+        {
+            return;
+        }
+        save_lorawan_session(&session);
     }
 
     void lorawan_join_failed_handler(void)
@@ -494,6 +681,7 @@ namespace LoRaWan {
                 };
                 */
         }
+    persist_lorawan_session();
     }
 
 /**@brief Function for handling a LoRa tx timer timeout event.

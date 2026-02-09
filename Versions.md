@@ -1,3 +1,6 @@
+NAMF-48rc2 ()
+- LoRaWAN session persistence - new join request after reboot is not needed.
+
 NAMF-48rc1 (2025-10-17 rev)
 - Disable factory reset procedure. It seems that it clears config when problem with power source occurs
 
