@@ -927,7 +927,7 @@ void loop() {
         cfg::in_factory_reset_window = false;
         clearFactoryResetMarkers();
     }
-    NAMWiFi::process();
+    NAMNetwork::process();
 #ifdef ARDUINO_ARCH_ESP8266
     MDNS.update();
 #endif
@@ -1072,7 +1072,7 @@ void loop() {
         SimpleScheduler::getResults(data);
 
         // reconnect to WiFi if disconnected
-        NAMWiFi::tryToReconnect();
+        NAMNetwork::tryToReconnect();
 
         if (cfg::internet() && cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();

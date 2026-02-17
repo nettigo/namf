@@ -8,7 +8,7 @@
 #include "variables.h"
 #include "defines.h"
 #include "helpers.h"
-namespace NAMWiFi {
+namespace NAMNetwork {
         typedef enum {
             UNSET,
             AP_RUNNING,

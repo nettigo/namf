@@ -6,7 +6,7 @@
 #include "webserver.h"
 #include <DNSServer.h>
 
-namespace NAMWiFi {
+namespace NAMNetwork {
 
     struct WiFiSettingsT {
         uint16_t magic;
@@ -108,7 +108,7 @@ namespace NAMWiFi {
 
     void rescanWiFi() {
         if (wifiInfo != nullptr) delete []wifiInfo;
-        wifiInfo = NAMWiFi::collectWiFiInfo(count_wifiInfo);
+        wifiInfo = NAMNetwork::collectWiFiInfo(count_wifiInfo);
         wificonfig_loop_update = millis();
     }
 
@@ -329,7 +329,7 @@ namespace NAMWiFi {
         if (state == CLIENT && !WiFi.isConnected()) {
             debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
             WiFi.reconnect();
-            NAMWiFi::waitForWifiToConnect(20);
+            NAMNetwork::waitForWifiToConnect(20);
             debug_out("", DEBUG_MIN_INFO, 1);
             if (WiFi.status() != WL_CONNECTED) {    //still no connection
                 debug_out(F("Still no WiFi, turn off..."), DEBUG_MIN_INFO);
@@ -338,7 +338,7 @@ namespace NAMWiFi {
                 debug_out(F("WiFi, reconnecting"), DEBUG_MIN_INFO);
                 WiFi.mode(WIFI_STA);
                 WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
-                NAMWiFi::waitForWifiToConnect(20);
+                NAMNetwork::waitForWifiToConnect(20);
             }
         }
 
@@ -348,9 +348,9 @@ namespace NAMWiFi {
 //config network
 void configNetwork() {
     if (strlen(cfg::wlanssid) > 0) {
-        NAMWiFi::connectWifi();
-        if (NAMWiFi::state == NAMWiFi::CLIENT) {
-            got_ntp = NAMWiFi::acquireNetworkTime();
+        NAMNetwork::connectWifi();
+        if (NAMNetwork::state == NAMNetwork::CLIENT) {
+            got_ntp = NAMNetwork::acquireNetworkTime();
             debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
             debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
             if (cfg::auto_update) {
@@ -360,7 +360,7 @@ void configNetwork() {
 
     } else {
         cfg::wifi_connected = false;
-        NAMWiFi::startAP();
+        NAMNetwork::startAP();
     }
 #ifdef ETHERNET
 

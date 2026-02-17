@@ -836,7 +836,7 @@ void webserver_wifi() {
     if (server.hasArg(String(F("r"))) || count_wifiInfo == -1) {
         debug_out(F("Updating WiFi SSID list...."),DEBUG_ERROR);
 
-        NAMWiFi::rescanWiFi();
+        NAMNetwork::rescanWiFi();
 
     }
     debug_out(F("wifi networks found: "), DEBUG_MIN_INFO, 0);
@@ -1190,7 +1190,7 @@ void webserver_status_page(void) {
     }
     page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_STRENGTH), String(WiFi.RSSI()), "dBm"));
     page_content.concat(table_row_from_value(F("WiFi"), FPSTR(INTL_SIGNAL_QUALITY), String(signal_quality), "%"));
-    page_content.concat(table_row_from_value(F("WiFi"), F("Status"), String(NAMWiFi::state), ""));
+    page_content.concat(table_row_from_value(F("WiFi"), F("Status"), String(NAMNetwork::state), ""));
     page_content.concat(FPSTR(EMPTY_ROW));
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), ""));
     page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
