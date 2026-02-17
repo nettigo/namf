@@ -11,7 +11,7 @@
 #include "helpers.h"
 #include "system/scheduler.h"
 #include "system/components.h"
-#include "wifi.h"
+#include "network.h"
 
 #ifdef NAM_LORAWAN
 #include "lora/lorawan.h"

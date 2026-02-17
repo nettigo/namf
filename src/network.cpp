@@ -2,7 +2,7 @@
 // Created by viciu on 9/19/23.
 //
 
-#include "wifi.h"
+#include "network.h"
 #include "webserver.h"
 #include <DNSServer.h>
 
