@@ -178,7 +178,7 @@ namespace NAMWiFi {
 
 //        if (settingsSaved) {
 //            debug_out(F("Trying fast WiFi reconnect"), DEBUG_MED_INFO);
-//            cfg::internet = true;
+//            cfg::wifi_connected = true;
 //            WiFi.persistent(true);
 //            WiFi.mode(WIFI_STA);
 //            WiFi.config(settings.ip_address, settings.ip_gateway, settings.ip_mask);
@@ -252,13 +252,13 @@ namespace NAMWiFi {
             }
             if (WiFi.status() != WL_CONNECTED) {
                 startAP();
-                cfg::internet = false;
+                cfg::wifi_connected = false;
             } else {
-                cfg::internet = true;
+                cfg::wifi_connected = true;
                 state = CLIENT;
             }
         } else {
-            cfg::internet = true;
+            cfg::wifi_connected = true;
             state = CLIENT;
         }
         debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
@@ -323,7 +323,7 @@ namespace NAMWiFi {
         } else  settingsSaved = false;
 
         WiFi.mode(WIFI_OFF);
-        cfg::internet = false;
+        cfg::wifi_connected = false;
     }
     void tryToReconnect() {
         if (state == CLIENT && !WiFi.isConnected()) {
@@ -359,8 +359,11 @@ void configNetwork() {
         }
 
     } else {
-        cfg::internet = false;
+        cfg::wifi_connected = false;
         NAMWiFi::startAP();
     }
+#ifdef ETHERNET
+
+#endif
 
 }

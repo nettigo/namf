@@ -67,7 +67,8 @@ namespace cfg {
     extern char *fs_pwd;
 
     //do we have connectivity over internet?
-    extern bool internet;
+    extern bool wifi_connected; //can we access internet via WiFi
+    extern bool eth_connected; //can we access internet via Ethernet.
 
 #ifdef NAM_LORAWAN
     extern bool lw_en;
@@ -78,6 +79,7 @@ namespace cfg {
 //    extern String lw_apps_key;
 //    extern String lw_dev_addr;
 #endif
+    inline bool internet() { return (eth_connected || wifi_connected); }
 
     extern bool dht_read;
     extern bool sds_read;
