@@ -20,7 +20,7 @@ namespace NAMNetwork {
     } settings;
     bool settingsSaved = false;
 
-    WiFiStatus state = UNSET;
+    WiFiStatus wifi_state = UNSET;
 
     DNSServer *dnsServer = nullptr;
 
@@ -128,7 +128,7 @@ namespace NAMNetwork {
     }
 
     void process() {
-        if (state == AP_RUNNING) {
+        if (wifi_state == AP_RUNNING) {
             if (cfg::time_for_wifi_config == 0 || (millis() - last_page_load) < cfg::time_for_wifi_config) {
                 dnsServer->processNextRequest();
                 server.handleClient();
@@ -137,13 +137,13 @@ namespace NAMNetwork {
 #endif
                 yield();
             } else { //AP timeout
-                state = AP_CLOSING;
+                wifi_state = AP_CLOSING;
                 last_page_load = millis();
             }
 
 
         }
-        if (state == AP_CLOSING) {
+        if (wifi_state == AP_CLOSING) {
             if ((millis() - last_page_load) < 500) {
                 dnsServer->processNextRequest();
                 server.handleClient();
@@ -151,7 +151,7 @@ namespace NAMNetwork {
             }
             WiFi.disconnect(true);
             WiFi.softAPdisconnect(true);
-            state = UNSET;
+            wifi_state = UNSET;
 
             delete []wifiInfo;
             wifiInfo = nullptr;
@@ -162,7 +162,7 @@ namespace NAMNetwork {
             dnsServer = nullptr;
         }
         //can we reconnect?
-        if (state == UNSET && credentialPresent()) {
+        if (wifi_state == UNSET && credentialPresent()) {
             static unsigned long lastCheck=millis();
             if (millis() - lastCheck > 98*1000) {
                 debug_out(F("WiFi state is UNSET and client SSID present. Trying to connect...."), DEBUG_MIN_INFO);
@@ -210,7 +210,7 @@ namespace NAMNetwork {
         String fss = String(cfg::fs_ssid);
         display_debug(fss.substring(0, 16), fss.substring(16));
         wifiConfig();
-        state = AP_RUNNING;
+        wifi_state = AP_RUNNING;
 
     }
 //update WiFi SSIDs list
@@ -255,11 +255,11 @@ namespace NAMNetwork {
                 cfg::wifi_connected = false;
             } else {
                 cfg::wifi_connected = true;
-                state = CLIENT;
+                wifi_state = CLIENT;
             }
         } else {
             cfg::wifi_connected = true;
-            state = CLIENT;
+            wifi_state = CLIENT;
         }
         debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
         debug_out(WiFi.localIP().toString(), DEBUG_MIN_INFO, 1);
@@ -326,7 +326,7 @@ namespace NAMNetwork {
         cfg::wifi_connected = false;
     }
     void tryToReconnect() {
-        if (state == CLIENT && !WiFi.isConnected()) {
+        if (wifi_state == CLIENT && !WiFi.isConnected()) {
             debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
             WiFi.reconnect();
             NAMNetwork::waitForWifiToConnect(20);
@@ -349,7 +349,7 @@ namespace NAMNetwork {
 void configNetwork() {
     if (strlen(cfg::wlanssid) > 0) {
         NAMNetwork::connectWifi();
-        if (NAMNetwork::state == NAMNetwork::CLIENT) {
+        if (NAMNetwork::wifi_state == NAMNetwork::CLIENT) {
             got_ntp = NAMNetwork::acquireNetworkTime();
             debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
             debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);

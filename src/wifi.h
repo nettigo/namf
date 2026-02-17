@@ -15,7 +15,7 @@ namespace NAMNetwork {
             AP_CLOSING,
             CLIENT,
         } WiFiStatus;
-    extern WiFiStatus state;
+    extern WiFiStatus wifi_state;
 
     //scan WiFi list
     void rescanWiFi();
