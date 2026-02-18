@@ -62,17 +62,19 @@ namespace NAMNetwork {
 
             case ARDUINO_EVENT_ETH_DISCONNECTED:
                 // This will happen when the Ethernet cable is unplugged
-                Serial.println("ETH Disconnected");
+                debugOutLn("ETH Disconnected", DEBUG_MIN_INFO);
                 eth_status = DISCONNECTED;
                 break;
 
             case ARDUINO_EVENT_ETH_STOP:
                 // This will happen when the ETH interface is stopped but this never happens
-                Serial.println("ETH Stopped");
+                debugOutLn("ETH Stopped", DEBUG_MIN_INFO);
                 eth_status = DISCONNECTED;
                 break;
 
             default:
+                debugOut("Network event: ", DEBUG_MIN_INFO);
+                debugOutLn(String(event), DEBUG_MIN_INFO);
                 break;
         }
 #endif
