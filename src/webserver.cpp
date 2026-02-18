@@ -159,29 +159,21 @@ void webserver_dump_stack(){
  * Webserver root: show all options                              *
  *****************************************************************/
 void webserver_root() {
-    static bool firstAccess = true;
+    if (!webserver_request_auth()) { return; }
 
-    if (WiFi.status() != WL_CONNECTED && firstAccess) {
-        debug_out(F("redirect to config..."), DEBUG_MIN_INFO, 1);
-        sendHttpRedirect(server);
-        firstAccess = false;
-    } else {
-        if (!webserver_request_auth()) { return; }
-
-        String page_content = make_header(cfg::fs_ssid);
-        last_page_load = millis();
-        debug_out(F("output root page..."), DEBUG_MIN_INFO, 1);
-        page_content += FPSTR(WEB_ROOT_PAGE_CONTENT);
-        page_content.replace("{t}", FPSTR(INTL_CURRENT_DATA));
-        //page_content.replace(F("{map}"), FPSTR(INTL_ACTIVE_SENSORS_MAP));
-        page_content.replace(F("{conf}"), FPSTR(INTL_CONFIGURATION));
-        page_content.replace(F("{status}"), FPSTR(INTL_STATUS_PAGE));
-        page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
-        page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
-        page_content.replace(F("{debug}"), FPSTR(INTL_DEBUG));
-        page_content += make_footer();
-        server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
-    }
+    String page_content = make_header(cfg::fs_ssid);
+    last_page_load = millis();
+    debug_out(F("output root page..."), DEBUG_MIN_INFO, 1);
+    page_content += FPSTR(WEB_ROOT_PAGE_CONTENT);
+    page_content.replace("{t}", FPSTR(INTL_CURRENT_DATA));
+    //page_content.replace(F("{map}"), FPSTR(INTL_ACTIVE_SENSORS_MAP));
+    page_content.replace(F("{conf}"), FPSTR(INTL_CONFIGURATION));
+    page_content.replace(F("{status}"), FPSTR(INTL_STATUS_PAGE));
+    page_content.replace(F("{conf_delete}"), FPSTR(INTL_CONFIGURATION_DELETE));
+    page_content.replace(F("{restart}"), FPSTR(INTL_RESTART_SENSOR));
+    page_content.replace(F("{debug}"), FPSTR(INTL_DEBUG));
+    page_content += make_footer();
+    server.send(200, FPSTR(TXT_CONTENT_TYPE_TEXT_HTML), page_content);
 }
 
 /*****************************************************************
