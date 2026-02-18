@@ -24,6 +24,7 @@ namespace NAMNetwork {
     EthStatus eth_state = DISCONNECTED;
 
     DNSServer *dnsServer = nullptr;
+    static bool acquireNetworkTime();
 
     void networkEvent(WiFiEvent_t event) {
 #ifdef ETHERNET
@@ -53,6 +54,7 @@ namespace NAMNetwork {
                 debugOut(String(ETH.linkSpeed()), DEBUG_MIN_INFO);
                 debugOutLn("Mbps", DEBUG_MIN_INFO);
                 eth_state = CONNECTED;
+                got_ntp = NAMNetwork::acquireNetworkTime();
 
                 // Uncomment to automatically make a test connection to a server:
                 // testClient( "192.168.0.1", 80 );
