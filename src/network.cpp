@@ -21,8 +21,62 @@ namespace NAMNetwork {
     bool settingsSaved = false;
 
     WiFiStatus wifi_state = UNSET;
+    EthStatus eth_status = DISCONNECTED;
 
     DNSServer *dnsServer = nullptr;
+
+    void networkEvent(WiFiEvent_t event) {
+#ifdef ETHERNET
+        switch (event) {
+
+            case ARDUINO_EVENT_ETH_START:
+                // This will happen during setup, when the Ethernet service starts
+                debugOutLn("ETH Started", DEBUG_MIN_INFO);
+                //set eth hostname here
+                ETH.setHostname("esp32-ethernet");
+                break;
+
+            case ARDUINO_EVENT_ETH_CONNECTED:
+                // This will happen when the Ethernet cable is plugged
+                debugOutLn("ETH Connected", DEBUG_MIN_INFO);
+                break;
+
+            case ARDUINO_EVENT_ETH_GOT_IP:
+                // This will happen when we obtain an IP address through DHCP:
+                debugOut("Got an IP Address for ETH MAC: ", DEBUG_MIN_INFO);
+                debugOut(ETH.macAddress(), DEBUG_MIN_INFO);
+                debugOut(", IPv4: ", DEBUG_MIN_INFO);
+                debugOut(ETH.localIP().toString(), DEBUG_MIN_INFO);
+                if (ETH.fullDuplex()) {
+                    debugOut(", FULL_DUPLEX", DEBUG_MIN_INFO);
+                }
+                debugOut(", ", DEBUG_MIN_INFO);
+                debugOut(String(ETH.linkSpeed()), DEBUG_MIN_INFO);
+                debugOut("Mbps", DEBUG_MIN_INFO);
+                eth_status = CONNECTED;
+
+                // Uncomment to automatically make a test connection to a server:
+                // testClient( "192.168.0.1", 80 );
+
+                break;
+
+            case ARDUINO_EVENT_ETH_DISCONNECTED:
+                // This will happen when the Ethernet cable is unplugged
+                Serial.println("ETH Disconnected");
+                eth_status = DISCONNECTED;
+                break;
+
+            case ARDUINO_EVENT_ETH_STOP:
+                // This will happen when the ETH interface is stopped but this never happens
+                Serial.println("ETH Stopped");
+                eth_status = DISCONNECTED;
+                break;
+
+            default:
+                break;
+        }
+#endif
+    }
 
     static int selectChannelForAp(struct struct_wifiInfo *info, int count) {
         std::array<int, 14> channels_rssi;
@@ -170,7 +224,16 @@ namespace NAMNetwork {
                 lastCheck = millis();
             }
         }
+#ifdef ETHERNET
+        if (wifi_state == UNSET && !cfg::eth_connected && !credentialPresent()) {
+            startAP();
+        }
+#endif
+
     }
+
+
+
 
     //Just try to get back WIFI_STA, it should use old credentials - to be used with SDS stopping WiFi
     void restartWiFi() {
@@ -363,7 +426,9 @@ void configNetwork() {
         NAMNetwork::startAP();
     }
 #ifdef ETHERNET
-
+    WiFi.onEvent(NAMNetwork::networkEvent);
+    debugOutLn(F("Ethernet start"), DEBUG_MIN_INFO);
+    ETH.begin();
 #endif
 
 }

@@ -8,6 +8,10 @@
 #include "variables.h"
 #include "defines.h"
 #include "helpers.h"
+#ifdef ETHERNET
+#include <ETH.h>
+#include <WiFi.h>
+#endif
 namespace NAMNetwork {
         typedef enum {
             UNSET,
@@ -16,6 +20,12 @@ namespace NAMNetwork {
             CLIENT,
         } WiFiStatus;
     extern WiFiStatus wifi_state;
+
+    typedef enum {
+        CONNECTED,
+        DISCONNECTED,
+    } EthStatus;
+    extern EthStatus eth_state;
 
     //scan WiFi list
     void rescanWiFi();

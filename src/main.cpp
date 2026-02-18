@@ -677,7 +677,8 @@ void setup() {
     Wire.begin(I2C_PIN_SDA, I2C_PIN_SCL);
     Wire.setClock(100000); // Force bus speed 100 Khz
 
-
+#ifdef ETHERNET
+#endif
     initNonTrivials(esp_chipid().c_str());
 
 
