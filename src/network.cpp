@@ -52,7 +52,7 @@ namespace NAMNetwork {
                 }
                 debugOut(", ", DEBUG_MIN_INFO);
                 debugOut(String(ETH.linkSpeed()), DEBUG_MIN_INFO);
-                debugOut("Mbps", DEBUG_MIN_INFO);
+                debugOutLn("Mbps", DEBUG_MIN_INFO);
                 eth_status = CONNECTED;
 
                 // Uncomment to automatically make a test connection to a server:
