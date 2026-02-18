@@ -726,8 +726,8 @@ void setup() {
     }
 
 
-    configNetwork();
-    if (cfg::internet()) {//we are connected to internet
+    NAMNetwork::configNetwork();
+    if (NAMNetwork::internet()) {//we are connected to internet
         Reporting::reportBoot();
         Serial.println(F(" After Report boot"));
     }
@@ -795,7 +795,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
         LoRaWan::sendLoRaWAN(data);
     }
 #endif
-    if (cfg::internet()) {    //send data to API only if we have access to network
+    if (NAMNetwork::internet()) {    //send data to API only if we have access to network
         if (cfg::send2madavi) {
             debug_out(String(FPSTR(DBG_TXT_SENDING_TO)) + F("madavi.de: "), DEBUG_MIN_INFO, 1);
             start_send = millis();
@@ -1019,7 +1019,7 @@ void loop() {
 		server.handleClient();
 		yield();
 //		server.stop();
-        if (cfg::internet()) {
+        if (NAMNetwork::internet()) {
             const int HTTP_PORT_DUSTI = (cfg::ssl_dusti ? 443 : 80);
 
             if (cfg::pms_read) {
@@ -1075,7 +1075,7 @@ void loop() {
         // reconnect to WiFi if disconnected
         NAMNetwork::tryToReconnect();
 
-        if (cfg::internet() && cfg::send2dusti) {
+        if (NAMNetwork::internet() && cfg::send2dusti) {
 		    SimpleScheduler::sendToSC();
 		}
 		data_sample_times.concat(Value2Json("signal", signal_strength));

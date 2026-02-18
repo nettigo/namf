@@ -79,7 +79,6 @@ namespace cfg {
 //    extern String lw_apps_key;
 //    extern String lw_dev_addr;
 #endif
-    inline bool internet() { return (eth_connected || wifi_connected); }
 
     extern bool dht_read;
     extern bool sds_read;

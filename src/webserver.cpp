@@ -1187,7 +1187,7 @@ void webserver_status_page(void) {
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_NUMBER_OF_MEASUREMENTS), String(count_sends), ""));
     page_content.concat(table_row_from_value(F("NAM"), F("Uptime"), millisToTime(millis()), ""));
     page_content.concat(table_row_from_value(F("NAM"), FPSTR(INTL_TIME_FROM_UPDATE), millisToTime(msSince(last_update_attempt)), ""));
-    page_content.concat(table_row_from_value(F("NAM"), F("Internet connection"),String(cfg::internet()), ""));
+    page_content.concat(table_row_from_value(F("NAM"), F("Internet connection"),String(NAMNetwork::internet()), ""));
 #ifdef NAM_LORAWAN
     String tmp1;
 

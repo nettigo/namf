@@ -27,6 +27,8 @@ namespace NAMNetwork {
     } EthStatus;
     extern EthStatus eth_state;
 
+    inline bool internet() { return (eth_state == CONNECTED || wifi_state == CLIENT); }
+
     //scan WiFi list
     void rescanWiFi();
 
@@ -49,8 +51,9 @@ namespace NAMNetwork {
 
     //collect info about visible networks
     struct struct_wifiInfo* collectWiFiInfo(int&);
+
+    //configure network currently two modes - wifi client or wifi AP
+    void configNetwork();
 }
-//configure network currently two modes - wifi client or wifi AP
-void configNetwork();
 
 #endif //NAMF_WIFI_H

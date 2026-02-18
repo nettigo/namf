@@ -7,7 +7,6 @@
 #include <DNSServer.h>
 
 namespace NAMNetwork {
-
     struct WiFiSettingsT {
         uint16_t magic;
         uint32_t ip_address;
@@ -18,17 +17,17 @@ namespace NAMNetwork {
         uint8_t wifi_bssid[6];
         uint16_t wifi_channel;
     } settings;
+
     bool settingsSaved = false;
 
     WiFiStatus wifi_state = UNSET;
-    EthStatus eth_status = DISCONNECTED;
+    EthStatus eth_state = DISCONNECTED;
 
     DNSServer *dnsServer = nullptr;
 
     void networkEvent(WiFiEvent_t event) {
 #ifdef ETHERNET
         switch (event) {
-
             case ARDUINO_EVENT_ETH_START:
                 // This will happen during setup, when the Ethernet service starts
                 debugOutLn("ETH Started", DEBUG_MIN_INFO);
@@ -53,7 +52,7 @@ namespace NAMNetwork {
                 debugOut(", ", DEBUG_MIN_INFO);
                 debugOut(String(ETH.linkSpeed()), DEBUG_MIN_INFO);
                 debugOutLn("Mbps", DEBUG_MIN_INFO);
-                eth_status = CONNECTED;
+                eth_state = CONNECTED;
 
                 // Uncomment to automatically make a test connection to a server:
                 // testClient( "192.168.0.1", 80 );
@@ -63,13 +62,13 @@ namespace NAMNetwork {
             case ARDUINO_EVENT_ETH_DISCONNECTED:
                 // This will happen when the Ethernet cable is unplugged
                 debugOutLn("ETH Disconnected", DEBUG_MIN_INFO);
-                eth_status = DISCONNECTED;
+                eth_state = DISCONNECTED;
                 break;
 
             case ARDUINO_EVENT_ETH_STOP:
                 // This will happen when the ETH interface is stopped but this never happens
                 debugOutLn("ETH Stopped", DEBUG_MIN_INFO);
-                eth_status = DISCONNECTED;
+                eth_state = DISCONNECTED;
                 break;
 
             default:
@@ -99,29 +98,29 @@ namespace NAMNetwork {
         }
     }
 
-    struct struct_wifiInfo* collectWiFiInfo(int &count) {
+    struct struct_wifiInfo *collectWiFiInfo(int &count) {
         count = WiFi.scanNetworks(false, true);
         struct struct_wifiInfo *wifiInfo = new struct_wifiInfo[count];
         for (int i = 0; i < count; i++) {
-            uint8_t * BSSID;
+            uint8_t *BSSID;
             String SSID;
 
 #if defined(ARDUINO_ARCH_ESP8266)
-        WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel, wifiInfo[i].isHidden);
+            WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel,
+                                wifiInfo[i].isHidden);
 #else
-        //esp32
+            //esp32
             WiFi.getNetworkInfo(i, SSID, wifiInfo[i].encryptionType, wifiInfo[i].RSSI, BSSID, wifiInfo[i].channel);
 #endif
             SSID.toCharArray(wifiInfo[i].ssid, 35);
         }
 
         return wifiInfo;
-
     }
 
-/*****************************************************************
- * WifiConfig                                                    *
- *****************************************************************/
+    /*****************************************************************
+     * WifiConfig                                                    *
+     *****************************************************************/
 
     void wifiConfig() {
         debug_out(F("Starting WiFiManager"), DEBUG_MIN_INFO, 1);
@@ -134,9 +133,9 @@ namespace NAMNetwork {
         wificonfig_loop_update = millis();
 
         WiFi.disconnect(true);
-//        debug_out(F("scaning for wifi networks..."), DEBUG_MIN_INFO, 1);
-//
-//        wifiInfo = collectWiFiInfo(count_wifiInfo);
+        //        debug_out(F("scaning for wifi networks..."), DEBUG_MIN_INFO, 1);
+        //
+        //        wifiInfo = collectWiFiInfo(count_wifiInfo);
 
         WiFi.mode(WIFI_AP);
         const IPAddress apIP(192, 168, 4, 1);
@@ -155,11 +154,10 @@ namespace NAMNetwork {
         if (dnsServer == nullptr)
             dnsServer = new(DNSServer);
         dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-        dnsServer->start(53, "*", apIP);                            // 53 is port for DNS server
+        dnsServer->start(53, "*", apIP); // 53 is port for DNS server
 
         // 10 minutes timeout for wifi config
         last_page_load = millis();
-
     }
 
     void rescanWiFi() {
@@ -192,12 +190,11 @@ namespace NAMNetwork {
                 wdt_reset(); // nodemcu is alive
 #endif
                 yield();
-            } else { //AP timeout
+            } else {
+                //AP timeout
                 wifi_state = AP_CLOSING;
                 last_page_load = millis();
             }
-
-
         }
         if (wifi_state == AP_CLOSING) {
             if ((millis() - last_page_load) < 500) {
@@ -211,7 +208,7 @@ namespace NAMNetwork {
 
             delete []wifiInfo;
             wifiInfo = nullptr;
-            wificonfig_loop = 0;    //stop updating WiFi list in loop
+            wificonfig_loop = 0; //stop updating WiFi list in loop
 
             dnsServer->stop();
             delete dnsServer;
@@ -219,70 +216,68 @@ namespace NAMNetwork {
         }
         //can we reconnect?
         if (wifi_state == UNSET && credentialPresent()) {
-            static unsigned long lastCheck=millis();
-            if (millis() - lastCheck > 98*1000) {
+            static unsigned long lastCheck = millis();
+            if (millis() - lastCheck > 98 * 1000) {
                 debug_out(F("WiFi state is UNSET and client SSID present. Trying to connect...."), DEBUG_MIN_INFO);
                 connectWifi();
                 lastCheck = millis();
             }
         }
 #ifdef ETHERNET
-        if (wifi_state == UNSET && !cfg::eth_connected && !credentialPresent()) {
+        if (wifi_state == UNSET && (eth_state != CONNECTED) && !credentialPresent()) {
+            debugOutLn("Eth not connected? Start AP...",DEBUG_MIN_INFO);
+            debugOutLn(String(wifi_state),DEBUG_MIN_INFO);
+            debugOutLn(String(eth_state),DEBUG_MIN_INFO);
             startAP();
         }
 #endif
-
     }
-
-
 
 
     //Just try to get back WIFI_STA, it should use old credentials - to be used with SDS stopping WiFi
     void restartWiFi() {
         unsigned long t = millis();
 
-//        if (settingsSaved) {
-//            debug_out(F("Trying fast WiFi reconnect"), DEBUG_MED_INFO);
-//            cfg::wifi_connected = true;
-//            WiFi.persistent(true);
-//            WiFi.mode(WIFI_STA);
-//            WiFi.config(settings.ip_address, settings.ip_gateway, settings.ip_mask);
-//            WiFi.begin(cfg::wlanssid, cfg::wlanpwd, settings.wifi_channel, settings.wifi_bssid, true); //won't work with fallback wifi
-//        } else {
+        //        if (settingsSaved) {
+        //            debug_out(F("Trying fast WiFi reconnect"), DEBUG_MED_INFO);
+        //            WiFi.persistent(true);
+        //            WiFi.mode(WIFI_STA);
+        //            WiFi.config(settings.ip_address, settings.ip_gateway, settings.ip_mask);
+        //            WiFi.begin(cfg::wlanssid, cfg::wlanpwd, settings.wifi_channel, settings.wifi_bssid, true); //won't work with fallback wifi
+        //        } else {
         debug_out(F("Reconnecting WiFi..."), DEBUG_MED_INFO);
         connectWifi();
 
         debug_out(F(" done."), DEBUG_MED_INFO);
-//        }
+        //        }
         delay(10);
-        byte cnt=0;
-        while (cnt < 35 && !WiFi.isConnected() ) {
-            cnt ++;
+        byte cnt = 0;
+        while (cnt < 35 && !WiFi.isConnected()) {
+            cnt++;
             delay(100);
         };
         debug_out(F("Reconnect time: "),DEBUG_MED_INFO, false);
-        debug_out(String((millis()-t)/1000.0),DEBUG_MED_INFO);
+        debug_out(String((millis() - t) / 1000.0),DEBUG_MED_INFO);
         debug_out(F("WiFi status: "),DEBUG_MED_INFO, false);
         debug_out(String(WiFi.isConnected()),DEBUG_MED_INFO);
-
-
     }
-/*****************************************************************
- * Start WiFi in AP mode (for configuration)
- *****************************************************************/
+
+    /*****************************************************************
+     * Start WiFi in AP mode (for configuration)
+     *****************************************************************/
 
     void startAP(void) {
         String fss = String(cfg::fs_ssid);
         display_debug(fss.substring(0, 16), fss.substring(16));
         wifiConfig();
         wifi_state = AP_RUNNING;
-
     }
-//update WiFi SSIDs list
 
-/*****************************************************************
- * WiFi auto connecting script                                   *
- *****************************************************************/
+    //update WiFi SSIDs list
+
+    /*****************************************************************
+     * WiFi auto connecting script                                   *
+     *****************************************************************/
     void connectWifi() {
         display_debug(F("Connecting to"), String(cfg::wlanssid));
         debug_out(F("SSID: '"), DEBUG_ERROR, 0);
@@ -293,7 +288,7 @@ namespace NAMNetwork {
 #if defined(ARDUINO_ARCH_ESP8266)
         WiFi.setOutputPower(cfg::outputPower);
         WiFi.setPhyMode(WIFI_PHY_MODE_11N);
-        WiFi.setPhyMode((WiFiPhyMode_t)cfg::phyMode);
+        WiFi.setPhyMode((WiFiPhyMode_t) cfg::phyMode);
 #endif
         WiFi.mode(WIFI_STA);
 
@@ -313,17 +308,13 @@ namespace NAMNetwork {
                 debug_out(cfg::fbssid, DEBUG_ERROR);
                 WiFi.begin(cfg::fbssid, cfg::fbpwd); // Start WiFI
                 waitForWifiToConnect(40);
-
             }
             if (WiFi.status() != WL_CONNECTED) {
                 startAP();
-                cfg::wifi_connected = false;
             } else {
-                cfg::wifi_connected = true;
                 wifi_state = CLIENT;
             }
         } else {
-            cfg::wifi_connected = true;
             wifi_state = CLIENT;
         }
         debug_out(F("WiFi connected\nIP address: "), DEBUG_MIN_INFO, 0);
@@ -374,6 +365,7 @@ namespace NAMNetwork {
         }
         return false;
     }
+
     void stopWifi() {
         debug_out(F("Stopping WiFi"), DEBUG_MED_INFO);
         if (WiFi.isConnected()) {
@@ -385,18 +377,20 @@ namespace NAMNetwork {
             settings.ip_dns2 = WiFi.dnsIP(1);
             memcpy(settings.wifi_bssid, WiFi.BSSID(), 6);
             settings.wifi_channel = WiFi.channel();
-        } else  settingsSaved = false;
+        } else settingsSaved = false;
 
         WiFi.mode(WIFI_OFF);
-        cfg::wifi_connected = false;
+        wifi_state = UNSET;
     }
+
     void tryToReconnect() {
         if (wifi_state == CLIENT && !WiFi.isConnected()) {
             debug_out(F("Connection lost, reconnecting "), DEBUG_MIN_INFO, 0);
             WiFi.reconnect();
             NAMNetwork::waitForWifiToConnect(20);
             debug_out("", DEBUG_MIN_INFO, 1);
-            if (WiFi.status() != WL_CONNECTED) {    //still no connection
+            if (WiFi.status() != WL_CONNECTED) {
+                //still no connection
                 debug_out(F("Still no WiFi, turn off..."), DEBUG_MIN_INFO);
                 WiFi.mode(WIFI_OFF);
                 delay(2000);
@@ -406,31 +400,32 @@ namespace NAMNetwork {
                 NAMNetwork::waitForWifiToConnect(20);
             }
         }
-
     }
-}
 
-//config network
-void configNetwork() {
-    if (strlen(cfg::wlanssid) > 0) {
-        NAMNetwork::connectWifi();
-        if (NAMNetwork::wifi_state == NAMNetwork::CLIENT) {
-            got_ntp = NAMNetwork::acquireNetworkTime();
-            debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
-            debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
-            if (cfg::auto_update) {
-                updateFW();
-            }
-        }
-
-    } else {
-        cfg::wifi_connected = false;
-        NAMNetwork::startAP();
-    }
+    //config network
+    void configNetwork() {
 #ifdef ETHERNET
-    WiFi.onEvent(NAMNetwork::networkEvent);
-    debugOutLn(F("Ethernet start"), DEBUG_MIN_INFO);
-    ETH.begin();
+        WiFi.onEvent(NAMNetwork::networkEvent);
+        debugOutLn(F("Ethernet start"), DEBUG_MIN_INFO);
+        ETH.begin();
+#endif
+        if (strlen(cfg::wlanssid) > 0) {
+            NAMNetwork::connectWifi();
+            if (NAMNetwork::wifi_state == NAMNetwork::CLIENT) {
+                got_ntp = NAMNetwork::acquireNetworkTime();
+                debug_out(F("NTP time "), DEBUG_MIN_INFO, 0);
+                debug_out(String(got_ntp ? "" : "not ") + F("received"), DEBUG_MIN_INFO, 1);
+                if (cfg::auto_update) {
+                    updateFW();
+                }
+            }
+        } else {
+            wifi_state = UNSET;
+#ifdef ETHERNET
+            return; //don't start by default AP on eth board. It should start after a while when no eth connection
 #endif
 
+            NAMNetwork::startAP();
+        }
+    }
 }

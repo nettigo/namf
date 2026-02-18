@@ -45,8 +45,6 @@ namespace cfg {
     char *fs_ssid = nullptr;
     char *fs_pwd = nullptr;
 
-    bool wifi_connected = false;
-    bool eth_connected = false;
 
 #ifdef NAM_LORAWAN
     bool lw_en = false;
