@@ -82,8 +82,16 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #endif
 
 // define pins for I2C
+#ifdef ETHERNET
+// #define I2C_PIN_SCL 33
+// #define I2C_PIN_SDA 32
+#define I2C_PIN_SCL 15
+#define I2C_PIN_SDA 33
+#else
 #define I2C_PIN_SCL D4
 #define I2C_PIN_SDA D3
+#endif
+
 
 #define ONEWIRE_PIN D7
 
@@ -92,8 +100,15 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 // TX (transmitting) pin on one side goes to RX (receiving) pin on other side
 // SoftSerial RX PIN is D1 and goes to SDS TX
 // SoftSerial TX PIN is D2 and goes to SDS RX
+#ifdef ETHERNET
+#define PM_SERIAL_RX 16  // -> SDS TX
+#define PM_SERIAL_TX 32  // -> SDS RX
+
+#else
 #define PM_SERIAL_RX D1  // -> SDS TX
 #define PM_SERIAL_TX D2  // -> SDS RX
+#endif
+
 #define GPS_SERIAL_RX D5
 #define GPS_SERIAL_TX D6
 
