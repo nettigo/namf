@@ -91,13 +91,13 @@ void verifyUpdate (t_httpUpdate_return result) {
     switch (result) {
         case HTTP_UPDATE_FAILED:
             display_debug(F("[update] Update failed."),"");
-            Serial.println(F("[update] Update failed."));
+            debugOutLn(F("[update] Update failed."), DEBUG_ERROR);
             break;
         case HTTP_UPDATE_NO_UPDATES:
             display_debug(F("[update] no Update."), String(SOFTWARE_VERSION));
-            Serial.println(F("[update] no Update."));
-            Serial.print(F("Still running version: "));
-            Serial.println(SOFTWARE_VERSION);
+            debugOutLn(F("[update] no Update."),DEBUG_MIN_INFO);
+            debugOut(F("Still running version: "), DEBUG_MIN_INFO);
+            debugOutLn(SOFTWARE_VERSION, DEBUG_MIN_INFO);
             break;
         case HTTP_UPDATE_OK:
             Serial.println(F("[update] Update ok.")); // may not called we reboot the ESP
