@@ -20,11 +20,32 @@ extern const unsigned char UNIT_CELCIUS_LCD[];
 
 int32_t calcWiFiSignalQuality(int32_t rssi);
 
-void debug_out(const String& text, const int level, const bool linebreak = true);
+void debug_out(const String& text, int level, bool linebreak = true);
 //debug out w/ new line at end
-void debugOutLn(const String& text, const int level);
+void debugOutLn(const String& text, int level);
+//debug out w/ new line at end, severity Error
+void debugOutLnE(const String &text);;
+//debug out w/ new line at end, severity Warning
+void debugOutLnW(const String &text);
+//debug out w/ new line at end, severity Min
+void debugOutLnMin(const String &text);
+//debug out w/ new line at end, severity Info med
+void debugOutLnMed(const String &text);
+//debug out w/ new line at end, severity Info Max
+void debugOutLnMax(const String &text);
+
 //debug out w/o new line
-void debugOut(const String& text, const int level);
+void debugOut(const String &text,  int level);
+//debug out w/o new line, severity error
+void debugOutE(const String &text);
+//debug out w/o new line, severity Warning
+void debugOutW(const String &text);
+//debug out w/o new line, severity info min
+void debugOutMin(const String &text);
+//debug out w/o new line, severity info med
+void debugOutMed(const String &text);
+//debug out w/o new line, severity info max
+void debugOutMax(const String &text);
 
 //declarations for changing .ino to .cpp
 String Float2String(const double value, uint8_t digits);

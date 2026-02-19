@@ -250,8 +250,29 @@ void debug_out(const String& text, const int level, const bool linebreak) {
 //debug out w/ new line at end
 void debugOutLn(const String &text, const int level) { debug_out(text, level, true); };
 
+//debug out w/ new line at end, severity Error
+void debugOutLnE(const String &text) { debug_out(text, DEBUG_ERROR, true); };
+//debug out w/ new line at end, severity Warning
+void debugOutLnW(const String &text) { debug_out(text, DEBUG_WARNING, true); };
+//debug out w/ new line at end, severity Min
+void debugOutLnMin(const String &text) { debug_out(text, DEBUG_MIN_INFO, true); };
+//debug out w/ new line at end, severity Info med
+void debugOutLnMed(const String &text) { debug_out(text, DEBUG_MED_INFO, true); };
+//debug out w/ new line at end, severity Info Max
+void debugOutLnMax(const String &text) { debug_out(text, DEBUG_MAX_INFO, true); };
+
 //debug out w/o new line
 void debugOut(const String &text, const int level) { debug_out(text, level, false); }
+//debug out w/o new line, severity error
+void debugOutE(const String &text) { debug_out(text, DEBUG_ERROR, false); }
+//debug out w/o new line, severity Warning
+void debugOutW(const String &text) { debug_out(text, DEBUG_WARNING, false); }
+//debug out w/o new line, severity info min
+void debugOutMin(const String &text) { debug_out(text, DEBUG_MIN_INFO, false); }
+//debug out w/o new line, severity info med
+void debugOutMed(const String &text) { debug_out(text, DEBUG_MED_INFO, false); }
+//debug out w/o new line, severity info max
+void debugOutMax(const String &text) { debug_out(text, DEBUG_MAX_INFO, false); }
 
 
 
