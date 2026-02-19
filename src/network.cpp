@@ -59,6 +59,7 @@ namespace NAMNetwork {
                 debugOutLn("Mbps", DEBUG_MIN_INFO);
                 eth_state = CONNECTED;
                 got_ntp = NAMNetwork::acquireNetworkTime();
+                if (cfg::auto_update) updateFW();
 
                 // Uncomment to automatically make a test connection to a server:
                 // testClient( "192.168.0.1", 80 );
