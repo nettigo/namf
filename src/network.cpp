@@ -26,6 +26,10 @@ namespace NAMNetwork {
     DNSServer *dnsServer = nullptr;
     static bool acquireNetworkTime();
 
+    bool wifiClient() {
+        return wifi_state == CLIENT;
+    }
+
     void networkEvent(WiFiEvent_t event) {
 #ifdef ETHERNET
         switch (event) {

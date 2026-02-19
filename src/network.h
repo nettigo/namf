@@ -46,6 +46,9 @@ namespace NAMNetwork {
 
     void process();
 
+    //is WiFi connected as client (internet possible)
+    bool wifiClient();
+
     //try to reconnect if client was configured
     void tryToReconnect();
 

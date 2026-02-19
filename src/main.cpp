@@ -1093,7 +1093,10 @@ void loop() {
 
 		checkForceRestart();
 
-		if (cfg::auto_update && msSince(last_update_attempt) > PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS) {
+		if (
+			cfg::auto_update && msSince(last_update_attempt) > PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS &&
+			NAMNetwork::wifiClient()
+			) {
 			updateFW();
 		}
 
