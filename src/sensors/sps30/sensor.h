@@ -9,7 +9,7 @@
 #include "system/scheduler.h"
 #include "helpers.h"
 #include "html-content.h"
-#include <sps30.h>
+#include <SensirionI2cSps30.h>
 
 #define SPS_MAX_SERIAL_LEN 32
 
@@ -20,9 +20,24 @@ namespace SPS30 {
     extern int16_t ret;
     extern uint8_t auto_clean_days;
     extern uint32_t auto_clean;
-    extern struct sps30_measurement sum ;
     extern unsigned int measurement_count;
     extern char serial[SPS_MAX_SERIAL_LEN];
+
+    typedef struct  {
+        float mc1p0 = 0;
+        float mc2p5 = 0;
+        float mc4p0 = 0;
+        float mc10p0 = 0;
+        float nc0p5 = 0;
+        float nc1p0 = 0;
+        float nc2p5 = 0;
+        float nc4p0 = 0;
+        float nc10p0 = 0;
+        float typicalParticleSize = 0;
+    }  sps30_measurement;
+
+    extern sps30_measurement sum;
+
 
     extern void zeroMeasurementStruct(sps30_measurement &str);
 
