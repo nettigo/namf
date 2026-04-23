@@ -13,11 +13,14 @@ namespace SPS30 {
     bool started = false;
     bool enabled = false;
     bool printOnLCD = false;
+
+    SensirionI2cSps30 sensor;
+
     unsigned long refresh = 10;
     int16_t ret;
     uint8_t auto_clean_days = 4;
     uint32_t auto_clean;
-    struct sps30_measurement sum;
+    sps30_measurement sum;
     unsigned int measurement_count;
     char serial[SPS_MAX_SERIAL_LEN];
 
@@ -61,45 +64,11 @@ namespace SPS30 {
 
     //Start SPS30 sensor
     unsigned long init() {
-        debug_out(F("************** SPS30 initBMPx80"), DEBUG_MIN_INFO, true);
-        zeroMeasurementStruct(sum);
-        sensirion_i2c_init();
-        byte cnt = 0;
-        while (
-                ((ret = sps30_probe()) != 0) &&
-                (cnt++ < 15)
-                ) {
-            delay(500);
-            if (cnt == 10) {
-                debug_out(F("SPS30 probing failed, disabling sensor"), DEBUG_ERROR, true);
-                return 0;
-            }
-        }
-        sps30_reset();
-        delay(200);
-        if (sps30_get_serial(serial) != 0) {
-            debug_out(F("Error getting SPS30 serial"), DEBUG_ERROR, true);
-            return 0;
-        }
-        debug_out("SPS30 serial: ", DEBUG_MIN_INFO, false);
-        debug_out(serial, DEBUG_MIN_INFO, true);
-        uint8_t major, minor;
-        if (sps30_read_firmware_version(&major, &minor) == 0) {
-            char tmp[60];
-            sprintf(tmp, "SPS30 rev: %i.%i", major, minor);
-            debug_out(tmp, DEBUG_MIN_INFO, true);
-        }
+        debug_out(F("************** SPS30 init"), DEBUG_MIN_INFO, true);
+        sensor.begin(Wire, SPS30_I2C_ADDR_69);
 
-        ret = sps30_set_fan_auto_cleaning_interval_days(auto_clean_days);
-        if (ret) {
-            debug_out(F("error setting the auto-clean interval: "), DEBUG_ERROR, true);
-        }
-        ret = sps30_start_measurement();
-        if (ret < 0) {
-            debug_out(F("error starting measurement"), DEBUG_ERROR, true);
-        } else {
-            started = true;
-        }
+        zeroMeasurementStruct(sum);
+        sensor.startMeasurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
         registerDisplaySPS();
         return 10 * 1000;
     }
@@ -124,16 +93,16 @@ namespace SPS30 {
 
     //helper function to sum current measurement with previous results - for averaging
     void addMeasurementStruct(sps30_measurement &storage, sps30_measurement reading) {
-        storage.mc_1p0 += reading.mc_1p0;
-        storage.mc_2p5 += reading.mc_2p5;
-        storage.mc_4p0 += reading.mc_4p0;
-        storage.mc_10p0 += reading.mc_10p0;
-        storage.nc_0p5 += reading.nc_0p5;
-        storage.nc_1p0 += reading.nc_1p0;
-        storage.nc_2p5 += reading.nc_2p5;
-        storage.nc_4p0 += reading.nc_4p0;
-        storage.nc_10p0 += reading.nc_10p0;
-        storage.typical_particle_size += reading.typical_particle_size;
+        storage.mc1p0 += reading.mc1p0;
+        storage.mc2p5 += reading.mc2p5;
+        storage.mc4p0 += reading.mc4p0;
+        storage.mc10p0 += reading.mc10p0;
+        storage.nc0p5 += reading.nc0p5;
+        storage.nc1p0 += reading.nc1p0;
+        storage.nc2p5 += reading.nc2p5;
+        storage.nc4p0 += reading.nc4p0;
+        storage.nc10p0 += reading.nc10p0;
+        storage.typicalParticleSize += reading.typicalParticleSize;
     }
 
     /************************************************************************
@@ -144,23 +113,32 @@ namespace SPS30 {
      */
 
     unsigned long process(SimpleScheduler::LoopEventType e) {
-        struct sps30_measurement m;
+        sps30_measurement m;
 
         switch (e) {
             case SimpleScheduler::STOP:
                 zeroMeasurementStruct(sum);
                 measurement_count = 0;
                 started = false;
-                sps30_stop_measurement();
+                sensor.stopMeasurement();
                 return 0;
             case SimpleScheduler::INIT:
                 init();
                 break;
             case SimpleScheduler::RUN:
+                uint16_t dataReadyFlag = 0;
+                int error = sensor.readDataReadyFlag(dataReadyFlag);
                 debug_out(F("SPS30: process"), DEBUG_MAX_INFO, true);
-                ret = sps30_read_measurement(&m);
+                if (error) {
+                    debugOutLn(F("SPS30: read data ready"), DEBUG_ERROR);
+                    return refresh * 1000;
+                }
+                ret = sensor.readMeasurementValuesFloat(m.mc1p0, m.mc2p5, m.mc4p0, m.mc10p0,
+                                              m.nc0p5, m.nc1p0, m.nc2p5, m.nc4p0,
+                                              m.nc10p0, m.typicalParticleSize);
+
                 if (ret < 0) {
-                    //Error reading
+                    debugOutLn(F("Error reading Float from SPS30"), DEBUG_ERROR);
                 } else {
                     addMeasurementStruct(sum, m);
                     measurement_count++;
@@ -174,10 +152,10 @@ namespace SPS30 {
         if (!enabled) return;
         page_content.concat(FPSTR(EMPTY_ROW));
         uint8_t major, minor;
-        if (sps30_read_firmware_version(&major, &minor) == 0) {
-            page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), String(major)+String(F("."))+String(minor), ""));
-        } else
-            page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), FPSTR(INTL_SPS30_FW_FAIL), ""));
+        // if (sps30_read_firmware_version(&major, &minor) == 0) {
+        //     page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), String(major)+String(F("."))+String(minor), ""));
+        // } else
+        //     page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), FPSTR(INTL_SPS30_FW_FAIL), ""));
 
 
 
@@ -222,16 +200,16 @@ namespace SPS30 {
         String tmp;
         tmp.reserve(512);
 
-        tmp.concat(Value2Json(F("SPS30_P0"), String(sum.mc_1p0 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_P2"), String(sum.mc_2p5 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_P4"), String(sum.mc_4p0 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_P1"), String(sum.mc_10p0 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_N05"), String(sum.nc_0p5 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_N1"), String(sum.nc_1p0 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_N25"), String(sum.nc_2p5 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_N4"), String(sum.nc_4p0 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_N10"), String(sum.nc_10p0 / measurement_count)));
-        tmp.concat(Value2Json(F("SPS30_TS"), String(sum.typical_particle_size / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P0"), String(sum.mc1p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P2"), String(sum.mc2p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P4"), String(sum.mc4p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_P1"), String(sum.mc10p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N05"), String(sum.nc0p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N1"), String(sum.nc1p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N25"), String(sum.nc2p5 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N4"), String(sum.nc4p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_N10"), String(sum.nc10p0 / measurement_count)));
+        tmp.concat(Value2Json(F("SPS30_TS"), String(sum.typicalParticleSize / measurement_count)));
 //        debug_out(tmp,DEBUG_MIN_INFO,true);
         s.concat(tmp);
     }
@@ -262,29 +240,29 @@ namespace SPS30 {
             page_content.concat(FPSTR(INTL_SPS30_CONCENTRATIONS));
             page_content.concat(F("</td></tr>\n"));
 
-            page_content.concat(table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc_1p0 / measurement_count), unit_PM));
-            page_content.concat(table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc_2p5 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM1"), String(sum.mc1p0 / measurement_count), unit_PM));
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM2.5"), String(sum.mc2p5 / measurement_count),
                                                  unit_PM));
-            page_content.concat(table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc_4p0 / measurement_count), unit_PM));
-            page_content.concat(table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc_10p0 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM4"), String(sum.mc4p0 / measurement_count), unit_PM));
+            page_content.concat(table_row_from_value(F("SPS30"), F("PM10"), String(sum.mc10p0 / measurement_count),
                                                  unit_PM));
 
             page_content.concat(F("<tr><td colspan='3'>"));
             page_content.concat(FPSTR(INTL_SPS30_COUNTS));
             page_content.concat(F("</td></tr>\n"));
 
-            page_content.concat(table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc_0p5 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC0.5"), String(sum.nc0p5 / measurement_count),
                                                  FPSTR(INTL_SPS30_CONCENTRATION)));
-            page_content.concat(table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc_1p0 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC1.0"), String(sum.nc1p0 / measurement_count),
                                                  FPSTR(INTL_SPS30_CONCENTRATION)));
-            page_content.concat(table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc_2p5 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC2.5"), String(sum.nc2p5 / measurement_count),
                                                  FPSTR(INTL_SPS30_CONCENTRATION)));
-            page_content.concat(table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc_4p0 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC4.0"), String(sum.nc4p0 / measurement_count),
                                                  FPSTR(INTL_SPS30_CONCENTRATION)));
-            page_content.concat(table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc_10p0 / measurement_count),
+            page_content.concat(table_row_from_value(F("SPS30"), F("NC10.0"), String(sum.nc10p0 / measurement_count),
                                                  FPSTR(INTL_SPS30_CONCENTRATION)));
             page_content.concat(table_row_from_value(F("SPS30"), F("TS"),
-                                                 String(sum.typical_particle_size / measurement_count),
+                                                 String(sum.typicalParticleSize / measurement_count),
                                                  FPSTR(INTL_SPS30_SIZE)));
 
         }
@@ -308,36 +286,36 @@ namespace SPS30 {
             switch (minor) {
                 case 0:
                     lines[row] += (F("SPS: PM1:"));
-                    lines[row] += (String(sum.mc_1p0 / measurement_count, 1));
+                    lines[row] += (String(sum.mc1p0 / measurement_count, 1));
                     row++;
                     lines[row] += (F("PM2.5: "));
-                    lines[row] += (String(sum.mc_2p5 / measurement_count, 1));
+                    lines[row] += (String(sum.mc2p5 / measurement_count, 1));
                     break;
                 case 1:
                     lines[row] += (F("SPS: PM4:"));
-                    lines[row] += (String(sum.mc_4p0 / measurement_count, 1));
+                    lines[row] += (String(sum.mc4p0 / measurement_count, 1));
                     row++;
                     lines[row] += (F("PM10: "));
-                    lines[row] += (String(sum.mc_10p0 / measurement_count, 1));
+                    lines[row] += (String(sum.mc10p0 / measurement_count, 1));
                     break;
                 case 2:
                     lines[row] += (F("SPS: NC1:"));
-                    lines[row] += (String(sum.nc_1p0 / measurement_count, 1));
+                    lines[row] += (String(sum.nc1p0 / measurement_count, 1));
                     row++;
                     lines[row] += (F("NC2.5: "));
-                    lines[row] += (String(sum.nc_2p5 / measurement_count, 1));
+                    lines[row] += (String(sum.nc2p5 / measurement_count, 1));
                     break;
                 case 3:
                     lines[row] += (F("SPS: NC4:"));
-                    lines[row] += (String(sum.nc_4p0 / measurement_count, 1));
+                    lines[row] += (String(sum.nc4p0 / measurement_count, 1));
                     row++;
                     lines[row] += (F("NC10: "));
-                    lines[row] += (String(sum.nc_10p0 / measurement_count, 1));
+                    lines[row] += (String(sum.nc10p0 / measurement_count, 1));
                     break;
                 case 4:
                     lines[row] += (F("Typical size:"));
                     row++;
-                    lines[row] += (String(sum.typical_particle_size / measurement_count, 2));
+                    lines[row] += (String(sum.typicalParticleSize / measurement_count, 2));
 
             }
 
@@ -345,31 +323,31 @@ namespace SPS30 {
             switch (minor) {
                 case 0:
                     lines[row] = F("SPS: PM1:");
-                    lines[row] += String(sum.mc_1p0 / measurement_count, 1);
+                    lines[row] += String(sum.mc1p0 / measurement_count, 1);
                     row++;
                     lines[row] = F("PM2.5: ");
-                    lines[row] += String(sum.mc_2p5 / measurement_count, 1);
+                    lines[row] += String(sum.mc2p5 / measurement_count, 1);
                     row++;
                     lines[row] = F("PM4:   ");
-                    lines[row] += String(sum.mc_4p0 / measurement_count, 1);
+                    lines[row] += String(sum.mc4p0 / measurement_count, 1);
                     row++;
                     lines[row] = F("PM10:  ");
-                    lines[row] += String(sum.mc_10p0 / measurement_count, 1);
+                    lines[row] += String(sum.mc10p0 / measurement_count, 1);
                     break;
                 case 1:
                     lines[row] = F(" SPS: NC1:");
-                    lines[row] += String(sum.nc_1p0 / measurement_count, 1);
+                    lines[row] += String(sum.nc1p0 / measurement_count, 1);
                     row++;
                     lines[row] = F("NC2.5: ");
-                    lines[row] += String(sum.nc_2p5 / measurement_count, 1);
+                    lines[row] += String(sum.nc2p5 / measurement_count, 1);
                     row++;
                     lines[row] = F("NC4:   ");
-                    lines[row] += String(sum.nc_4p0 / measurement_count, 1);
+                    lines[row] += String(sum.nc4p0 / measurement_count, 1);
                     row++;
                     lines[row] = F("NC10:");
-                    lines[row] += String(sum.nc_10p0 / measurement_count, 1);
+                    lines[row] += String(sum.nc10p0 / measurement_count, 1);
                     lines[row] += F(" TS:");
-                    lines[row] += String(sum.typical_particle_size / measurement_count, 1);
+                    lines[row] += String(sum.typicalParticleSize / measurement_count, 1);
                     break;
             }
         }
