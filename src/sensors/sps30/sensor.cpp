@@ -30,6 +30,19 @@ namespace SPS30 {
         str = zero;
     }
 
+    void dumpStruct(sps30_measurement s) {
+        debugOutLn(F("SPS30 measurement"), DEBUG_MAX_INFO);
+        debugOut(F("mc1p0: "), DEBUG_MAX_INFO);
+        debugOut(String(s.mc1p0), DEBUG_MAX_INFO);
+        debugOut(F(", mc2p5: "), DEBUG_MAX_INFO);
+        debugOut(String(s.mc2p5), DEBUG_MAX_INFO);
+        debugOut(F(" mc4p0: "), DEBUG_MAX_INFO);
+        debugOut(String(s.mc4p0), DEBUG_MAX_INFO);
+        debugOut(F(" mc10p0: "), DEBUG_MAX_INFO);
+        debugOut(String(s.mc10p0), DEBUG_MAX_INFO);
+        debugOutLn(F(""),DEBUG_MAX_INFO);
+    }
+
     //return string with HTML used to configure SPS30 sensor. Right now it only takes number of seconds to wait between measurements
     //taken to average
     String getConfigHTML(void) {
@@ -152,10 +165,10 @@ namespace SPS30 {
         if (!enabled) return;
         page_content.concat(FPSTR(EMPTY_ROW));
         uint8_t major, minor;
-        // if (sps30_read_firmware_version(&major, &minor) == 0) {
-        //     page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), String(major)+String(F("."))+String(minor), ""));
-        // } else
-        //     page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), FPSTR(INTL_SPS30_FW_FAIL), ""));
+        if (sensor.readFirmwareVersion(major, minor) == 0) {
+            page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), String(major)+String(F("."))+String(minor), ""));
+        } else
+            page_content.concat(table_row_from_value(FPSTR(KEY), F("FW ver"), FPSTR(INTL_SPS30_FW_FAIL), ""));
 
 
 
