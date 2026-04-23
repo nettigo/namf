@@ -290,7 +290,7 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
         } val, data[3];
 
         ret = dnms_i2c_read_cmd(I2C_ADDRESS, DNMS_CMD_READ_LEQ, data->uu, DNMS_NUM_WORDS(data));
-        if (ret != STATUS_OK)
+        if (ret != DNMS_STATUS_OK)
             return ret;
 
         DNMS_WORDS_TO_BYTES(data->uu, DNMS_NUM_WORDS(data));
