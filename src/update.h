@@ -19,14 +19,22 @@
 WiFiClient *client;
 t_httpUpdate_return tryUpdate(const String& host, const String& path, const String& ver, const bool SSL_only) {
     unsigned int port = SECURE_UPDATE_PORT;
+#ifdef ETHERNET
     client = new NetworkClientSecure;
+#else
+    client = new WiFiClientSecure;
+#endif
     configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
     t_httpUpdate_return ret = httpUpdate.update(*client, host, port, path, ver);
 //    t_httpUpdate_return ret = httpUpdate.update(*client, "192.168.1.228", 9080, path, ver);
     if (ret == HTTP_UPDATE_FAILED && httpUpdate.getLastError() == -1 && !SSL_only) { //connection refused, maybe problem with SSL, try port 80
         debug_out(F("Failed update via SSL. Trying unsecure connection"),DEBUG_ERROR);
         delete client;
+#ifdef ETHERNET
         client = new NetworkClient;
+#else
+        client = new WiFiClient;
+#endif
         port = UPDATE_PORT;
         ret = httpUpdate.update(*client, host, port, path, ver);
     }
