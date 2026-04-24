@@ -83,6 +83,7 @@ namespace SPS30 {
         zeroMeasurementStruct(sum);
         sensor.startMeasurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
         registerDisplaySPS();
+        started = true;
         return 10 * 1000;
     }
 
