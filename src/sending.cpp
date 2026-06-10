@@ -243,7 +243,9 @@ void send_csv(const String& data) {
     debug_out(data, DEBUG_MIN_INFO, 1);
     if (json2data.success()) {
         String headline = F("Timestamp_ms;");
-        String valueline = String(act_milli) + ";";
+        String valueline = String(F("csv:"));
+        valueline.concat(String(act_milli));
+        valueline.concat(F(";"));
         for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
             String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
             headline += tmp_str + ";";
@@ -255,13 +257,13 @@ void send_csv(const String& data) {
             if (headline.length() > 0) {
                 headline.remove(headline.length() - 1);
             }
-            Serial.println(headline);
+            debugOutLn(headline, DEBUG_ERROR);
             first_csv_line = false;
         }
         if (valueline.length() > 0) {
             valueline.remove(valueline.length() - 1);
         }
-        Serial.println(valueline);
+        debugOutLn(valueline, DEBUG_ERROR);
     } else {
         debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
     }
