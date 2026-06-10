@@ -242,7 +242,7 @@ void send_csv(const String& data) {
     debug_out(F("CSV Output"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);
     if (json2data.success()) {
-        String headline = F("Timestamp_ms;");
+        String headline = F("csv:Timestamp_ms;");
         String valueline = String(F("csv:"));
         valueline.concat(String(act_milli));
         valueline.concat(F(";"));
@@ -257,13 +257,13 @@ void send_csv(const String& data) {
             if (headline.length() > 0) {
                 headline.remove(headline.length() - 1);
             }
-            debugOutLn(headline, DEBUG_ERROR);
+            debugOutLn(headline, DEBUG_SERIAL);
             first_csv_line = false;
         }
         if (valueline.length() > 0) {
             valueline.remove(valueline.length() - 1);
         }
-        debugOutLn(valueline, DEBUG_ERROR);
+        debugOutLn(valueline, DEBUG_SERIAL);
     } else {
         debug_out(FPSTR(DBG_TXT_DATA_READ_FAILED), DEBUG_ERROR, 1);
     }

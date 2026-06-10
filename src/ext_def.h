@@ -193,6 +193,7 @@ const char URL_INFLUX[] PROGMEM = "/write?db=luftdaten";
 #define DEBUG 3
 
 // Definition der Debuglevel
+#define DEBUG_SERIAL 0
 #define DEBUG_ERROR 1
 #define DEBUG_WARNING 2
 #define DEBUG_MIN_INFO 3
