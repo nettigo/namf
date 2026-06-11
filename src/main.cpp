@@ -534,7 +534,6 @@ void init_lcd() {
 
 static void powerOnTestSensors() {
      debug_out(F("PowerOnTest"),0,1);
-    cfg::debug = DEBUG_MED_INFO;
 
 
     if (cfg::pms_read) {
@@ -652,6 +651,7 @@ void initNonTrivials(const char *id) {
  *****************************************************************/
 void setup() {
     Debug.begin(115200);
+	cfg::debug = DEBUG_MED_INFO;
     debug_out(F("\nNAMF ver: "), DEBUG_ERROR, false);
     debug_out(SOFTWARE_VERSION, DEBUG_ERROR, false);
     debug_out(F("/"), DEBUG_ERROR, false);
@@ -703,6 +703,9 @@ void setup() {
     debug_out(String(ESP.getCpuFreqMHz()), DEBUG_ERROR);
 
     readConfig();
+	int debug_from_config = cfg::debug;
+	cfg::debug = DEBUG_MED_INFO;
+
     debug_out(getConfigString(), DEBUG_MED_INFO);
     resetMemoryStats();
     Reporting::setupHomePhone();
@@ -776,6 +779,8 @@ void setup() {
 	starttime_SDS = starttime;
 //	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
 
+	//restore debug set in config
+	cfg::debug = debug_from_config;
 }
 
 static void checkForceRestart() {
