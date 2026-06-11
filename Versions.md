@@ -2,6 +2,8 @@ NAMF-48rc2 ()
 - LoRaWAN session persistence - new join request after reboot is not needed.
 - SPS30 library was updated
 - Experimental Ethernet support (Olimex ESP32-PoE board)
+- Restored CSV output to serial
+- Save debug level in config. During boot set debug level to MED_INFO if in config is lower. 
 
 NAMF-48rc1 (2025-10-17 rev)
 - Disable factory reset procedure. It seems that it clears config when problem with power source occurs
