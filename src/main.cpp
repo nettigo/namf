@@ -704,7 +704,11 @@ void setup() {
 
     readConfig();
 	int debug_from_config = cfg::debug;
-	cfg::debug = DEBUG_MED_INFO;
+
+    if (cfg::debug < DEBUG_MED_INFO) {
+    	cfg::debug = DEBUG_MED_INFO;
+    	debugOutLn(F("Enabling debug messages MED_INFO"), DEBUG_MED_INFO);
+	}
 
     debug_out(getConfigString(), DEBUG_MED_INFO);
     resetMemoryStats();
@@ -780,7 +784,12 @@ void setup() {
 //	next_display_millis = starttime + DISPLAY_UPDATE_INTERVAL_MS;
 
 	//restore debug set in config
-	cfg::debug = debug_from_config;
+	if (debug_from_config != cfg::debug) {
+		debugOutLn(F("Restoring debug level to value in config"), DEBUG_MED_INFO);
+		cfg::debug = debug_from_config;
+
+	}
+
 }
 
 static void checkForceRestart() {
