@@ -303,9 +303,6 @@ namespace SimpleScheduler {
 
 //check if senor has display subroutine. TODO - second parameter with LCD object
     bool displaySensor(SimpleScheduler::LoopEntryType sensor, String (&lines)[4], byte cols, byte rows, byte minor) {
-//        Serial.print("displaySensor for: ");
-//        Serial.println(LET_NAMES[sensor]);
-//        Serial.println(cols);
         switch (sensor) {
             case BME280:
                 if (cols == 0) return true;
