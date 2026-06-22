@@ -26,8 +26,7 @@ namespace SPS30 {
 
     //helper function to zero measurements struct (for averaging)
     void zeroMeasurementStruct(sps30_measurement &str) {
-        sps30_measurement zero = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-        str = zero;
+        str = SPS30::sps30_measurement{};
     }
 
     void dumpStruct(sps30_measurement s) {
