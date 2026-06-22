@@ -253,13 +253,15 @@ namespace SimpleScheduler {
 
     void NAMFScheduler::dumpTable() {
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
-            Serial.print(i);
-            Serial.print(",");
-            Serial.print(_tasks[i].slotID);
-            Serial.print(",");
-            Serial.print(_tasks[i].nextRun);
-            Serial.print(",");
-            Serial.println(_tasks[i].hasDisplay);
+            Debug.print(i);
+            Debug.print(",");
+            Debug.print(LET_NAMES[_tasks[i].slotID]);
+            Debug.print(",");
+            Debug.print(_tasks[i].slotID);
+            Debug.print(",");
+            Debug.print(_tasks[i].nextRun);
+            Debug.print(",");
+            Debug.println(_tasks[i].hasDisplay);
         }
     }
 
