@@ -179,11 +179,9 @@ void display_values() {
         struct tm *timeinfo;
         time (&rawtime);
         timeinfo = localtime(&rawtime);
-
-
         backlight = hourIsInRange(timeinfo->tm_hour, backlight_start, backlight_stop);
-
     }
+
     if (cfg::pms_read) {
         pm10_value = last_value_PMS_P1;
         pm10_sensor = FPSTR(SENSORS_PMSx003);
@@ -227,47 +225,11 @@ void display_values() {
     if (cfg::sh_dev_inf) {
         screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
     }
-    bool skipOldDisplay = (static_screen_count == 0);
-    if (next_display_count+1 > static_screen_count) {
-        byte diff = next_display_count - static_screen_count;
-        byte minor;
-        SimpleScheduler::LoopEntryType sensor = scheduler.selectSensorToDisplay(diff, minor);
-        if (sensor == SimpleScheduler::EMPTY) {
-            next_display_count = 0;
-        } else {
-            String lines[] = {"","","",""};
-            SimpleScheduler::displaySensor(sensor, lines, 20, 4, minor);
-            if (display) {
-                display->clear();
-                display->displayOn();
-//                display->setTextAlignment(TEXT_ALIGN_CENTER);
-//                display->drawString(64, 1, display_header);
-                display->setTextAlignment(TEXT_ALIGN_LEFT);
-                display->drawString(0, 1, lines[0]);
-                display->drawString(0, 16, lines[1]);
-                display->drawString(0, 28, lines[2]);
-                display->drawString(0, 40, lines[3]);
-                display->setTextAlignment(TEXT_ALIGN_CENTER);
-                display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
-                display->display();
-            }
-            if (char_lcd) {
-                char_lcd->clear();
-                char_lcd->setBacklight(backlight);
-                for (byte i = 0; i < 4; i++) {
-                    char_lcd->setCursor(0,i);
-                    if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));
-                    char_lcd->print(lines[i]);
-                }
-                displayProgressBar();
-            }
-            next_display_count++;
-            skipOldDisplay = true;
-        }
-
-
-    }
-    if (!skipOldDisplay) {
+    debugOutMed(F("Display count: "));
+    debugOutMed(String(next_display_count));
+    debugOutMed(F(" static: "));
+    debugOutLnMed(String(static_screen_count));
+    if (static_screen_count && next_display_count <= static_screen_count) {
 
         if (cfg::has_display || cfg::has_lcd2004) {
             switch (screens[next_display_count % static_screen_count]) {
@@ -324,7 +286,7 @@ void display_values() {
                     display_header = F("Device Info");
                     display_lines[0] = "ID: " + esp_chipid();
                     display_lines[1] = "FW: " + String(SOFTWARE_VERSION);
-                    display_lines[2] = "Measurements: " + String(count_sends);
+                    display_lines[2] = String(F("Measurements: ")) + String(count_sends);
                     break;
             }
 
@@ -394,10 +356,49 @@ void display_values() {
             char_lcd->setCursor(0, 1);
             char_lcd->print(display_lines[1]);
         }
-    next_display_count += 1;
+        next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
     }
+
+    if (next_display_count+1 > static_screen_count) {
+        byte diff = next_display_count - static_screen_count;
+        byte minor;
+        SimpleScheduler::LoopEntryType sensor = scheduler.selectSensorToDisplay(diff, minor);
+        if (sensor == SimpleScheduler::EMPTY) {
+            next_display_count = 0;
+        } else {
+            String lines[] = {"","","",""};
+            SimpleScheduler::displaySensor(sensor, lines, 20, 4, minor);
+            if (display) {
+                display->clear();
+                display->displayOn();
+//                display->setTextAlignment(TEXT_ALIGN_CENTER);
+//                display->drawString(64, 1, display_header);
+                display->setTextAlignment(TEXT_ALIGN_LEFT);
+                display->drawString(0, 1, lines[0]);
+                display->drawString(0, 16, lines[1]);
+                display->drawString(0, 28, lines[2]);
+                display->drawString(0, 40, lines[3]);
+                display->setTextAlignment(TEXT_ALIGN_CENTER);
+                display->drawString(64, 52, displayGenerateFooter(static_screen_count + scheduler.countScreens()));
+                display->display();
+            }
+            if (char_lcd) {
+                char_lcd->clear();
+                char_lcd->setBacklight(backlight);
+                for (byte i = 0; i < 4; i++) {
+                    char_lcd->setCursor(0,i);
+                    if (i==0) char_lcd->print(getLCDHeader(getLCDRows()==4));
+                    char_lcd->print(lines[i]);
+                }
+                displayProgressBar();
+            }
+            next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
+        }
+
+
+    }
+    next_display_count++;
     yield();
-    next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
 }
 
 //get LCD screen sizes. returns 0 if no LCD or graphical one (SSD1306)
