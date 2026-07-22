@@ -225,12 +225,10 @@ void display_values() {
     if (cfg::sh_dev_inf) {
         screens[static_screen_count++] = DisplayPages::PageInfo;    // chipID, firmware and count of measurements
     }
-    debugOutMed(F("Display count: "));
-    debugOutMed(String(next_display_count));
-    debugOutMed(F(" static: "));
-    debugOutLnMed(String(static_screen_count));
-    if (static_screen_count && next_display_count <= static_screen_count) {
 
+    yield();
+    if (next_display_count < static_screen_count) {
+        debugOutLnMed(F("old display"));
         if (cfg::has_display || cfg::has_lcd2004) {
             switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
@@ -253,7 +251,7 @@ void display_values() {
                         display_header += " / " + p_sensor;
                     }
                     if (t_sensor != "") {
-                            display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
+                        display_lines[line_count++] = "Temp.: " + check_display_value(t_value, -128, 1, 6) + " °C";
                     }
                     if (h_sensor != "") {
                         display_lines[line_count++] = "Hum.:  " + check_display_value(h_value, -1, 1, 6) + " %";
@@ -357,9 +355,8 @@ void display_values() {
             char_lcd->print(display_lines[1]);
         }
         next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
-    }
-
-    if (next_display_count+1 > static_screen_count) {
+        next_display_count++;
+    } else {
         byte diff = next_display_count - static_screen_count;
         byte minor;
         SimpleScheduler::LoopEntryType sensor = scheduler.selectSensorToDisplay(diff, minor);
@@ -371,8 +368,8 @@ void display_values() {
             if (display) {
                 display->clear();
                 display->displayOn();
-//                display->setTextAlignment(TEXT_ALIGN_CENTER);
-//                display->drawString(64, 1, display_header);
+                //                display->setTextAlignment(TEXT_ALIGN_CENTER);
+                //                display->drawString(64, 1, display_header);
                 display->setTextAlignment(TEXT_ALIGN_LEFT);
                 display->drawString(0, 1, lines[0]);
                 display->drawString(0, 16, lines[1]);
@@ -392,13 +389,11 @@ void display_values() {
                 }
                 displayProgressBar();
             }
+            next_display_count++;
             next_display_millis = millis() + DISPLAY_UPDATE_INTERVAL_MS;
         }
 
-
     }
-    next_display_count++;
-    yield();
 }
 
 //get LCD screen sizes. returns 0 if no LCD or graphical one (SSD1306)
