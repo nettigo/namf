@@ -21,6 +21,15 @@ namespace BH17 {
         ambientLightMin = 70000;
     }
 
+    static void registerDisplay() {
+        if (enabled && printOnLCD) {
+            scheduler.registerDisplay(SimpleScheduler::BH1750, 1);
+        } else {
+            scheduler.registerDisplay(SimpleScheduler::BH1750, 0);
+        }
+    } ;
+
+
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BH1750);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::BH1750);
@@ -28,6 +37,7 @@ namespace BH17 {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplay();
         return ret;
     };
 
@@ -45,11 +55,8 @@ namespace BH17 {
             debug_out(F("BH1750: stop"), DEBUG_MIN_INFO, 1);
             scheduler.unregisterSensor(SimpleScheduler::BH1750);
         }
-        //register display - separate check to allow enable/disable display not only when turning BH1750 on/off
 
-        if (enabled && printOnLCD) {
-            scheduler.registerDisplay(SimpleScheduler::BH1750, 1);
-        }
+        registerDisplay();
     }
 
     bool initBH1750(void) {

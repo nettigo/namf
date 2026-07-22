@@ -196,6 +196,12 @@ namespace BMPx80 {
         res.concat(table_row_from_value(F("BMx80"), F("Sensor type"), String(currentSensor), ""));
 
     }
+    static void registerDisplay() {
+        if (enabled && printOnLCD)
+            scheduler.registerDisplay(SimpleScheduler::BMPx80, 1);
+        else
+            scheduler.registerDisplay(SimpleScheduler::BMPx80, 0);
+    }
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BMPx80);
@@ -205,6 +211,7 @@ namespace BMPx80 {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplay();
         ret[F("i")] = sensorInsideCase;
         return ret;
     };
@@ -260,6 +267,6 @@ namespace BMPx80 {
             scheduler.unregisterSensor(SimpleScheduler::BMPx80);
         }
         //register display - separate check to allow enable/disable display not only when turning BMPx80 on/off
-        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::BMPx80, 1);
+        registerDisplay();
     }
 }

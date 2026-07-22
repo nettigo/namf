@@ -273,6 +273,15 @@ namespace SDS011 {
         return (data[7] == 0xAB && checksum_is == data[6]);
     }
 
+    //for internal use - register/deregister display
+    void registerDisplay() {
+        if (enabled && printOnLCD)
+            scheduler.registerDisplay(SimpleScheduler::SDS011, 1);  // one screen
+        else
+            scheduler.registerDisplay(SimpleScheduler::SDS011, 0);  // disable
+    }
+
+
 
 
     JsonObject &parseHTTPRequest() {
@@ -289,6 +298,7 @@ namespace SDS011 {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplay();
         ret[F("w")] = warmupTime;
         ret[F("r")] = readTime;
         ret[F("dbg")] = hardwareWatchdog;

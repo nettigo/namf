@@ -101,6 +101,7 @@ namespace SPS30 {
         ret[F("refresh")] = refresh;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplaySPS();
         return ret;
     }
 

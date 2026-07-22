@@ -256,6 +256,7 @@ namespace BME280 {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        if (!printOnLCD) {scheduler.registerDisplay(SimpleScheduler::BME280, 0);}   //deregister display
         return ret;
     };
 

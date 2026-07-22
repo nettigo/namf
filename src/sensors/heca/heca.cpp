@@ -26,6 +26,13 @@ namespace HECA {
         humiditySet = 63; //this is default humidity value when HECA turns on
     }
 
+    static void registerDisplay() {
+        if (enabled && printOnLCD)
+            scheduler.registerDisplay(SimpleScheduler::HECA, 1);
+        else
+            scheduler.registerDisplay(SimpleScheduler::HECA, 0);
+    }
+
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::HECA);
@@ -35,6 +42,7 @@ namespace HECA {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplay();
         return ret;
     };
 
@@ -64,12 +72,7 @@ namespace HECA {
             scheduler.unregisterSensor(SimpleScheduler::HECA);
             debug_out(F("HECA stopped"), DEBUG_MED_INFO);
         }
-        if (enabled)
-            if (printOnLCD)
-                scheduler.registerDisplay(SimpleScheduler::HECA, 1);
-            else
-                scheduler.registerDisplay(SimpleScheduler::HECA, 0);
-
+        registerDisplay();
     };
 
     bool display(byte rows, byte minor, String lines[]) {

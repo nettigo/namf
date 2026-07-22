@@ -60,6 +60,13 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
     int16_t dnms_i2c_read_cmd(uint8_t address, uint16_t cmd, uint16_t *data_words, uint16_t num_words);
     int16_t dnms_read_leq(struct dnms_measurements *leq);
 
+    //for internal use - register/deregister display
+    void registerDisplay() {
+        if (enabled && printOnLCD)
+            scheduler.registerDisplay(SimpleScheduler::DNMS, 1);  // one screen
+        else
+            scheduler.registerDisplay(SimpleScheduler::DNMS, 0);  // disable
+    }
 
     JsonObject &parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::DNMS);
@@ -68,6 +75,7 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplay();
         return ret;
     };
 

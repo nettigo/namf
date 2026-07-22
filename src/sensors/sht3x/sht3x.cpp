@@ -62,6 +62,13 @@ namespace SHT3x {
         lines[row] += FPSTR(UNIT_PERCENT);
     }
 
+    static void registerDisplay() {
+        if (enabled && printOnLCD)
+            scheduler.registerDisplay(SimpleScheduler::SHT3x, 1);
+        else
+            scheduler.registerDisplay(SimpleScheduler::SHT3x, 0);
+    }
+
     JsonObject &parseHTTPRequest(void) {
 //        String host;
 //        parseHTTP(F("host"), host);
@@ -72,11 +79,13 @@ namespace SHT3x {
         JsonObject &ret = jsonBuffer.createObject();
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
+        registerDisplay();
         ret.printTo(Serial);
         return ret;
     }
 
-    String getConfigJSON(void) {
+
+    String getConfigJSON() {
         String ret = F("");
         ret += Var2JsonInt(F("e"), enabled);
         ret += Var2JsonInt(F("d"), printOnLCD);
@@ -88,8 +97,7 @@ namespace SHT3x {
         printOnLCD = json.get<bool>(F("d"));
 
         scheduler.enableSubsystem(SimpleScheduler::SHT3x, enabled, SHT3x::process, FPSTR(SHT3x::KEY));
-        if (enabled && printOnLCD) scheduler.registerDisplay(SimpleScheduler::SHT3x, 1);
-
+        registerDisplay();
     }
 
     unsigned long process (SimpleScheduler::LoopEventType event){

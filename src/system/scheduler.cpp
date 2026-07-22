@@ -201,8 +201,8 @@ namespace SimpleScheduler {
 
     }
 
-    //inform scheduler that we want to display data on LCD
-    int NAMFScheduler::registerDisplay(LoopEntryType slot, byte screens) {
+    //inform scheduler that we want to display data on LCD, set screens to 0 to stop displaying data
+    int NAMFScheduler::registerDisplay(const LoopEntryType slot, const byte screens) {
         int i = findSlot(slot);
         if (i < 0) return -1;
         _tasks[i].hasDisplay = screens;
@@ -210,7 +210,7 @@ namespace SimpleScheduler {
     }
 
     //how many screens is being registered
-    unsigned NAMFScheduler::countScreens(void) {
+    unsigned NAMFScheduler::countScreens() {
         unsigned sum = 0;
         for (byte i = 0; i < SCHEDULER_SIZE; i++) {
             if (_tasks[i].slotID == EMPTY) continue;
