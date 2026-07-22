@@ -7,7 +7,6 @@
 #define REPORTING_MINRSSI_NO_VAL 127
 #define REPORTING_MAXRSSI_NO_VAL -128
 #include "helpers.h"
-#include "sensors/sds011.h"
 #if defined(ARDUINO_ARCH_ESP8266)
 #include <ESP8266WiFi.h>
 #else
