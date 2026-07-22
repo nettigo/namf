@@ -228,7 +228,6 @@ void display_values() {
 
     yield();
     if (next_display_count < static_screen_count) {
-        debugOutLnMed(F("old display"));
         if (cfg::has_display || cfg::has_lcd2004) {
             switch (screens[next_display_count % static_screen_count]) {
                 case (DisplayPages::PagePM):
