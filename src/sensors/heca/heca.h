@@ -21,10 +21,10 @@ namespace HECA {
     bool initHECA();
     extern ClosedCube_SHT31D heca;
 
-    JsonObject& parseHTTPRequest();
+    JsonDocument parseHTTPRequest();
 
     String getConfigJSON();
-    void readConfigJSON( JsonObject &json);
+    void readConfigJSON( JsonDocument json);
     unsigned long process(SimpleScheduler::LoopEventType e);
     void afterSend(bool);
     void getResults(String &);

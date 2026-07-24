@@ -33,13 +33,12 @@ namespace HECA {
             scheduler.registerDisplay(SimpleScheduler::HECA, 0);
     }
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::HECA);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::HECA);
         setVariableFromHTTP(String(F("s")), humiditySet, SimpleScheduler::HECA);
         setVariableFromHTTP(String(F("c")), humidityClear, SimpleScheduler::HECA);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplay();
@@ -55,22 +54,22 @@ namespace HECA {
         return ret;
     };
 
-    void readConfigJSON( JsonObject &json){
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
-        if (json.containsKey(F("s"))) {
-            humiditySet = json.get<unsigned long>(F("s"));
+    void readConfigJSON( JsonDocument json){
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();;
+        if (json[F("s")].is<unsigned long>()){
+            humiditySet = json[F("s")].as<unsigned long>();
         }
-        if (json.containsKey(F("c"))) {
-            humidityClear = json.get<unsigned long>(F("c"));
+        if (json[F("c")].is<unsigned long>()){
+            humidityClear = json[F("c")].as<unsigned long>();;
         }
         if (enabled && !scheduler.isRegistered(SimpleScheduler::HECA)) {
             scheduler.registerSensor(SimpleScheduler::HECA, HECA::process, FPSTR(HECA::KEY));
             scheduler.init(SimpleScheduler::HECA);
-            debug_out(F("HECA started"), DEBUG_MED_INFO);
+            debugOutLnMed(F("HECA started"));
         } else if (!enabled && scheduler.isRegistered(SimpleScheduler::HECA)) {
             scheduler.unregisterSensor(SimpleScheduler::HECA);
-            debug_out(F("HECA stopped"), DEBUG_MED_INFO);
+            debugOutLnMed(F("HECA stopped"));
         }
         registerDisplay();
     };
