@@ -29,8 +29,6 @@ const char FS_PWD[] PROGMEM =  "";
 #define SEND2CSV 0
 #define SEND2CUSTOM 0
 
-// OpenSenseMap
-#define SENSEBOXID ""
 
 enum LoggerEntry
 {

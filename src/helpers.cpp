@@ -73,30 +73,25 @@ int32_t calcWiFiSignalQuality(int32_t rssi) {
     return (rssi + 100) * 2;
 }
 
-//store string as char array, for functions
-unsigned stringToChar(char **dst, const String src) {
-//    Serial.println(F("stringToChar"));
-//    Serial.println(src.c_str());
-    if (*dst != nullptr) {
-//        Serial.println(F("Deleting DST"));
-        delete (*dst);
+//store string as char array, for functions, if n is >0 then no more than n chars
+unsigned stringToChar(char **dst, const String src, const unsigned n = 0) {
+    unsigned len;
+    if (n) {
+        len = src.length() < n ? src.length() : n;
+    } else {
+        len = src.length();
     }
-//    Serial.println(F("allocating"));
-    unsigned int len = src.length() + 1;
-    *dst = new char[len];
-//    Serial.println(F("after allocating"));
-
-    if (*dst == nullptr) return 0;   //does it return nullptr or raises Abort? Probaby fails in 3.0.0 ArduinoCore
-//    Serial.print(F("copying len: "));
-//    Serial.println(len);
-    strncpy(*dst, src.c_str(), len);
-//    Serial.println(F("copied..."));
-//    Serial.println(*dst);
-    return len;
+    char *buffer = new(std::nothrow) char[len + 1];
+    if (buffer != nullptr) {
+        strncpy(buffer, src.c_str(), len);
+        buffer[len] = 0;
+        delete[] dst;
+        *dst = buffer;
+        return len;
+    }
 }
 
 unsigned setDefault(char **dst, const __FlashStringHelper *defaultValue) {
-//    Serial.println(F("setDefault"));
     if (dst == nullptr || !strlen(*dst)) {
         String src = String(defaultValue);
 //        Serial.println(F("SRC READY"));
@@ -399,14 +394,72 @@ void verifyLang(char *cl) {
 
 void dbg(char *v) { if (v == nullptr) Serial.println(F("NULL")); else Serial.println(v);}
 
-
-void setCharVar(const JsonObject &json, char **var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
-    if (json.containsKey(key)) stringToChar(var, json[key]);
+//set char variable form JSON, no more than N chars
+void setNCharVar(const JsonObject json, char **var, const __FlashStringHelper *key,
+                 unsigned n,
+                 const __FlashStringHelper *def = nullptr) {
+    if (json[key].is<String>()) stringToChar(var, json[key].as<String>(), n);
     if (def != nullptr) setDefault(var, def);
 }
-void setCharVar(const JsonObject &json, String &var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
-    if (json.containsKey(key)) var = json.get<String>(key);
-    if (def != nullptr) var = def;
+
+void setCharVar(const JsonObject json, char **var, const __FlashStringHelper *key,
+                const __FlashStringHelper *def = nullptr) {
+    setNCharVar(json, var, key, 0, def);
+}
+
+
+// void setCharVar(const JsonObject &json, String &var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
+//     if (json.containsKey(key)) var = json.get<String>(key);
+//     if (def != nullptr) var = def;
+// }
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, bool &dst) {
+    if (handle[key].is<bool>())
+        dst = handle[key].as<bool>();
+}
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, byte &dst) {
+    if (handle[key].is<unsigned char>())
+        dst = handle[key].as<unsigned char>();
+}
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, int &dst) {
+    if (handle[key].is<int>())
+        dst = handle[key].as<int>();
+}
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, unsigned long &dst) {
+    if (handle[key].is<unsigned long>())
+        dst = handle[key].as<unsigned long>();
+}
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, float &dst) {
+    if (handle[key].is<float>())
+        dst = handle[key].as<float>();
+}
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, String &dst) {
+    if (handle[key].is<String>())
+        dst = handle[key].as<String>();
+}
+
+void setFromJSON(const JsonObject handle, const __FlashStringHelper *key,
+                 char *dst,
+                 unsigned n = 0
+) {
+    unsigned len;
+    if (handle[key].is<const char *>()) {
+        len = strlen(handle[key].as<const char *>());
+        len = len < n ? len : n;
+        strncpy(dst, handle[key].as<const char *>(), len);
+        dst[len] = 0;
+    }
+}
+
+//copy string, no more than len chars. If len is 0, then allocate
+void strcpyFromJSON(const JsonObject handle, const __FlashStringHelper *key, char **dst, unsigned len = 0) {
+    if (handle[key].is<const char *>())
+        dst = handle[key].as<const char *>();
 }
 
 int readAndParseConfigFile(File configFile) {
@@ -414,175 +467,131 @@ int readAndParseConfigFile(File configFile) {
     String json_string = "";
     bool pms24_read = false;
     bool pms32_read = false;
+    JsonDocument doc;
+
     if (configFile) {
         debug_out(F("opened config file..."), DEBUG_MED_INFO, 1);
-        const size_t size = configFile.size();
         // Allocate a buffer to store contents of the file.
-        std::unique_ptr<char[]> buf(new char[size]);
-
-        configFile.readBytes(buf.get(), size);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &json = jsonBuffer.parseObject(buf.get());
-        debug_out(F("Config - JSON object memory used:"),DEBUG_MED_INFO, false);
-        debug_out(String(jsonBuffer.size()),DEBUG_MED_INFO);
-
-        json.printTo(json_string);
-        debug_out(F("File content: "), DEBUG_MAX_INFO, 0);
-        debug_out(String(buf.get()), DEBUG_MAX_INFO, 1);
-        debug_out(F("JSON Buffer content: "), DEBUG_MAX_INFO, 0);
+        DeserializationError error = deserializeJson(doc, configFile);
+        if (error) {
+            debugOutLnE(F("Error parsing config file"));
+            debugOutLnE(error.c_str());
+            return -1;
+        }
+        debugOutLnMed(F("JSON parsed"));
         Debug.stopWebCopy();
-        debug_out(json_string, DEBUG_MAX_INFO, 1);
+        if (cfg::debug >= DEBUG_MAX_INFO) {
+            debug_out(F("Parsed JSON: "), DEBUG_MAX_INFO, 0);
+            deserializeJson(doc, Debug);
+        }
         Debug.resumeWebCopy();
-        if (json.success()) {
-            debug_out(F("JSON parsed"), DEBUG_MED_INFO, 1);
-            setCharVar(json, &wlanssid, F("wlanssid"), FPSTR(EMPTY_STRING));
-            setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
-            setCharVar(json, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
-            setCharVar(json, &fbpwd, F("fbpwd"), FPSTR(EMPTY_STRING));
-            setCharVar(json, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
-            setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
-            setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
-            setCharVar(json, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
-#define setFromJSON(key)    if (json.containsKey(#key)) key = json[#key];
+        JsonObject handle = doc.as<JsonObject>();
+
+#define SET_CHAR_VAR(key, def) setCharVar(handle, &key, F(#key), def);
+#define SET_N_CHAR_VAR(key, n, def) setNCharVar(handle, &key, F(#key), n, def);
+
+        SET_CHAR_VAR(wlanssid, FPSTR(EMPTY_STRING))
+        setCharVar(handle, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
+        setCharVar(handle, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
+        setCharVar(handle, &fbpwd, F("fbpwd"), FPSTR(EMPTY_STRING));
+        setCharVar(handle, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
+        setCharVar(handle, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
+        setCharVar(handle, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
+        setCharVar(handle, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
-
+#define SET_FROM_JSON(key) setFromJSON(handle, F(#key), key);
 #ifdef NAM_LORAWAN
-            setFromJSON(lw_en);
-            setCharVar(json, lw_d_eui, F("lw_d_eui"));
-            setCharVar(json, lw_a_eui, F("lw_a_eui"));
-            setCharVar(json, lw_app_key, F("lw_app_key"));
-//            setCharVar(json, lw_nws_key, F("lw_nws_key"));
-//            setCharVar(json, lw_apps_key, F("lw_apps_key"));
-//            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
+        setFromJSON(handle, lw_en);
+        setCharVar(json, lw_d_eui, F("lw_d_eui"));
+        setCharVar(json, lw_a_eui, F("lw_a_eui"));
+        setCharVar(json, lw_app_key, F("lw_app_key"));
+        //            setCharVar(json, lw_nws_key, F("lw_nws_key"));
+        //            setCharVar(json, lw_apps_key, F("lw_apps_key"));
+        //            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
 #endif
-            setCharVar(json, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
-            setCharVar(json, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
-            setCharVar(json, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
-            setCharVar(json, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
+        setCharVar(handle, &user_custom, F("user_custom"), FPSTR(USER_CUSTOM));
+        setCharVar(handle, &pwd_custom, F("pwd_custom"), FPSTR(PWD_CUSTOM));
+        setCharVar(handle, &user_influx, F("user_influx"), FPSTR(EMPTY_STRING));
+        setCharVar(handle, &pwd_influx, F("pwd_influx"), FPSTR(EMPTY_STRING));
 
-            strcpyFromJSON(current_lang);
-            verifyLang(current_lang);
+        setFromJSON(handle, F("current_lang"), current_lang, 2);
+        verifyLang(current_lang);
 
 
-            setFromJSON(www_basicauth_enabled);
-            setFromJSON(dht_read);
-            setFromJSON(sds_read);
-            setFromJSON(pms_read);
-            setFromJSON(pms24_read);
-            setFromJSON(pms32_read);
-            setFromJSON(bmp280_read);
-            setFromJSON(bme280_read);
-            setFromJSON(heca_read);
-            setFromJSON(ds18b20_read);
-            setFromJSON(gps_read);
-            setFromJSON(send2dusti);
-            setFromJSON(ssl_dusti);
-            setFromJSON(send2madavi);
-            setFromJSON(ssl_madavi);
-            setFromJSON(send2sensemap);
-            setFromJSON(send2fsapp);
-            setFromJSON(send2lora);
-            setFromJSON(send2csv);
-            setFromJSON(auto_update);
-            setFromJSON(update_channel);
-            setFromJSON(has_display);
-            setFromJSON(has_lcd1602);
-            setFromJSON(has_lcd2004);
-            if(json.containsKey(F("bl"))) {
-                backlight_start = json[F("bl")][0];
-                backlight_stop = json[F("bl")][1];
-            }
-            //need to migrate old config values to new ones - can not use JSON helpers
-            if (json.containsKey(F("has_lcd1602_27"))) { has_lcd1602 = json[F("has_lcd1602_27")];}
-            if (json.containsKey(F("has_lcd2004_27"))) {
-                has_lcd2004 = json[F("has_lcd2004_27")];
-                debug_out("2004 z 27 ustawiony na ", DEBUG_MED_INFO,0);
-                debug_out(String(has_lcd2004), DEBUG_MED_INFO);
+        setFromJSON(handle, F("www_basicauth_enabled"), www_basicauth_enabled);
+        setFromJSON(handle, F("dht_read"), dht_read);
+        setFromJSON(handle, F("sds_read"), sds_read);
+        setFromJSON(handle, F("pms_read"), pms_read);
+        setFromJSON(handle, F("pms24_read"), pms24_read);
+        setFromJSON(handle, F("pms32_read"), pms32_read);
+        setFromJSON(handle, F("bmp280_read"), bmp280_read);
+        setFromJSON(handle, F("bme280_read"), bme280_read);
+        setFromJSON(handle, F("heca_read"), heca_read);
+        setFromJSON(handle, F("ds18b20_read"), ds18b20_read);
+        setFromJSON(handle, F("gps_read"), gps_read);
+        setFromJSON(handle, F("send2dusti"), send2dusti);
+        setFromJSON(handle, F("ssl_dusti"), ssl_dusti);
+        setFromJSON(handle, F("send2madavi"), send2madavi);
+        setFromJSON(handle, F("ssl_madavi"), ssl_madavi);
+        setFromJSON(handle, F("send2sensemap"), send2sensemap);
+        setFromJSON(handle, F("send2fsapp"), send2fsapp);
+        setFromJSON(handle, F("send2lora"), send2lora);
+        setFromJSON(handle, F("send2csv"), send2csv);
+        setFromJSON(handle, F("auto_update"), auto_update);
+        setFromJSON(handle, F("update_channel"), update_channel);
+        setFromJSON(handle, F("has_display"), has_display);
+        setFromJSON(handle, F("has_lcd1602"), has_lcd1602);
+        setFromJSON(handle, F("has_lcd2004"), has_lcd2004);
+        if (handle[F("bl")].is<JsonArray>()) {
+            backlight_start = handle[F("bl")][0];
+            backlight_stop = handle[F("bl")][1];
+        }
+        setFromJSON(handle, F("show_wifi_info"), show_wifi_info);
+        setFromJSON(handle, F("sh_dev_inf"), sh_dev_inf);
+        setFromJSON(handle, F("has_ledbar_32"), has_ledbar_32);
+        setFromJSON(handle, F("debug"), debug);
+        setFromJSON(handle, F("send_diag"), send_diag);
+        setFromJSON(handle, F("sending_intervall_ms"), sending_intervall_ms);
+        setFromJSON(handle, F("time_for_wifi_config"), time_for_wifi_config);
+        setFromJSON(handle, F("outputPower"), outputPower);
+        setFromJSON(handle, F("phyMode"), phyMode);
+        SET_N_CHAR_VAR(senseboxid, 30, nullptr)
+        if (strcmp(senseboxid, "00112233445566778899aabb") == 0) {
+            strcpy(senseboxid, "");
+            send2sensemap = false;
+        }
+        setFromJSON(handle, F("send2custom"), send2custom);
 
-            }
-            if (json.containsKey(F("has_lcd2004_3f"))) {
-                has_lcd2004 = json[F("has_lcd2004_3f")];
-                debug_out("2004 z 3F ustawiony na ", DEBUG_MED_INFO,0);
-                debug_out(String(has_lcd2004), DEBUG_MED_INFO);
+        SET_FROM_JSON(host_custom)
+        SET_FROM_JSON(url_custom)
+        SET_FROM_JSON(port_custom)
+        SET_FROM_JSON(send2aqi)
+        SET_FROM_JSON(token_AQI)
 
-            }
-            setFromJSON(show_wifi_info);
-            setFromJSON(sh_dev_inf);
-            setFromJSON(has_ledbar_32);
-            setFromJSON(debug);
-            setFromJSON(send_diag);
-            setFromJSON(sending_intervall_ms);
-            setFromJSON(time_for_wifi_config);
-            setFromJSON(outputPower);
-            setFromJSON(phyMode);
-            strcpyFromJSON(senseboxid);
-            if (strcmp(senseboxid, "00112233445566778899aabb") == 0) {
-                strcpy(senseboxid, "");
-                send2sensemap = 0;
-            }
-            setFromJSON(send2custom);
+        SET_FROM_JSON(send2influx)
+        SET_FROM_JSON(api_v2_influx)
+        SET_FROM_JSON(host_influx)
+        SET_FROM_JSON(url_influx)
+        SET_FROM_JSON(port_influx)
 
-            if (json.containsKey(F("host_custom"))) host_custom =  json.get<String>(F("host_custom"));
-            if (json.containsKey(F("url_custom"))) url_custom =  json.get<String>(F("url_custom"));
-            setFromJSON(port_custom);
+        if (host_influx.equals(F("api.luftdaten.info"))) {
+            host_influx = F("");
+            send2influx = false;
+        }
 
-            setFromJSON(send2aqi);
+        SET_FROM_JSON(UUID)
 
-            if (json.containsKey(F("token_AQI"))) token_AQI =  json.get<String>(F("token_AQI"));
-
-            setFromJSON(send2influx);
-            setFromJSON(api_v2_influx);
-
-            if (json.containsKey(F("host_influx"))) host_influx =  json.get<String>(F("host_influx"));
-            if (json.containsKey(F("url_influx"))) url_influx =  json.get<String>(F("url_influx"));
-            setFromJSON(port_influx);
-
-            if (host_influx.equals(F("api.luftdaten.info"))) {
-                host_influx = F("");
-                send2influx = 0;
-            }
-
-            if (json.containsKey(F("UUID"))) UUID = json.get<String>(F("UUID"));
-
-            configFile.close();
-            if (pms24_read || pms32_read) {
-                pms_read = 1;
-                writeConfig();
-            };
+        configFile.close();
+        if (pms24_read || pms32_read) {
+            pms_read = true;
+            writeConfig();
+        };
 #undef setFromJSON
 #undef strcpyFromJSON
-            //Sensor configs from simple scheduler
-            if (!json.containsKey(F("sensors")))
-                json.createNestedObject(F("sensors"));
-            if (json.containsKey(F("sensors"))) {
-                JsonObject& item = json[F("sensors")];
-                if (cfg::sds_read) {
-                    if (!item.containsKey(F("SDS011"))) {
-                        item.createNestedObject(F("SDS011"));
-                    }
-                    item[F("SDS011")][F("e")] = 1;
-                    item[F("SDS011")][F("d")] = 1;
-                }
-                if (cfg::bme280_read) {
-                    if (!item.containsKey(F("BME280"))) {
-                        item.createNestedObject(F("BME280"));
-                    }
-                    item[F("BME280")][F("e")] = 1;
-//                    item[F("BME280")][F("d")] = 1;
-                }
-                if (cfg::heca_read) {
-                    if (!item.containsKey(F("HECA"))) {
-                        item.createNestedObject(F("HECA"));
-                    }
-                    item[F("HECA")][F("e")] = 1;
-                    item[F("HECA")][F("d")] = 1;
-                }
-                SimpleScheduler::readConfigJSON(item);
-            }
+        //Sensor configs from simple scheduler
+        if (!handle[F("sensors")].is<JsonObject>()) {
+            SimpleScheduler::readConfigJSON(handle[F("sensors")].as<JsonObject>());
             return 0;
-        } else {
-            debug_out(F("failed to load json config"), DEBUG_ERROR, 1);
-            return -1;
         }
     }
     return -1;

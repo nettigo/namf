@@ -174,7 +174,7 @@ namespace SimpleScheduler {
         }
     }
 
-    void readConfigJSON(LoopEntryType sensor, JsonObject &json) {
+    void readConfigJSON(LoopEntryType sensor, JsonObject json) {
         switch (sensor) {
             case SimpleScheduler::HECA:
                 HECA::readConfigJSON(json);
@@ -211,7 +211,7 @@ namespace SimpleScheduler {
         }
     }
 
-    void readConfigJSON(JsonObject &json) {
+    void readConfigJSON(JsonObject json) {
         LoopEntryType i = EMPTY;
         i++;
         for (; i < NAMF_LOOP_SIZE; i++) {

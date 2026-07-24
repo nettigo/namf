@@ -577,36 +577,33 @@ namespace LoRaWan {
         static float sum_pm10 = 0;
         static float sum_pm25 = 0;
         static float sum_h = 0;
-        DynamicJsonBuffer jsonBuffer;
+        JsonDocument json;
 
         if (state == JOIN_FAILED ) {
             debug_out(F("Not joined to LoRaWAN!"), DEBUG_ERROR);
             return;
         };
 
-        JsonObject &json = jsonBuffer.parseObject(data);
-        if (!json.success()) {
-            debug_out(F("Internal JSON (data) parsing failure!"), DEBUG_ERROR);
+        DeserializationError error = deserializeJson(json, data);
+        if (error) {
+            debugOutLnE(F("Internal JSON (data) parsing failure!"));
+            debugOutLnE(error.c_str());
             return;
         }
-        if (json.containsKey("sensordatavalues")){
-
-            JsonArray& items = json["sensordatavalues"];
+        if (json[F("sensordatavalues")].is<JsonArray>()) {
+            JsonArray items = json[F("sensordatavalues")];
             for (auto obj : items) {
-                String k = obj.as<JsonObject>()["value_type"];
-
-//                debug_out(obj.as<JsonObject>()["value"], DEBUG_ERROR);
-                if (k.equals(String(F("SDS_P1")))) {
-                    pm10 = obj.as<JsonObject>().get<float>("value");
+                if (obj[F("value_type")] == F("SDS_P1")) {
+                    pm10 = obj[F("value")].as<float>();
                 }
-                if (k.equals(String(F("SDS_P2")))) {
-                    pm25 = obj.as<JsonObject>().get<float>("value");
+                if (obj[F("value_type")] == F("SDS_P2")) {
+                    pm25 = obj[F("value")].as<float>();
                 }
-                if (k.equals(String(F("BME280_temperature")))) {
-                    temp = obj.as<JsonObject>().get<float>("value");
+                if (obj[F("value_type")] == F("BME280_temperature")) {
+                    temp = obj[F("value")].as<float>();
                 }
-                if (k.equals(String(F("BME280_humidity")))) {
-                    h = obj.as<JsonObject>().get<float>("value");
+                if (obj[F("value_type")] == F("BME280_humidity")) {
+                    h = obj[F("value")].as<float>();
                 }
             }
 

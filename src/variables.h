@@ -115,7 +115,7 @@ namespace cfg {
 
     extern bool ssl_madavi;
     extern bool ssl_dusti ;
-    extern char senseboxid[30];
+    extern char * senseboxid;
 
     extern int port_influx;
     extern char *user_influx;

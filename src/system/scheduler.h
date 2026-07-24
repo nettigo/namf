@@ -81,8 +81,8 @@ namespace SimpleScheduler {
 
     void getConfigForms(String &page);
     void getConfigJSON(String &json);
-    void readConfigJSON(LoopEntryType sensor, JsonObject& json);
-    void readConfigJSON(JsonObject& json);
+    void readConfigJSON(LoopEntryType sensor, JsonObject json);
+    void readConfigJSON(JsonObject json);
 
     const __FlashStringHelper *findSlotDescription(LoopEntryType sensor);
     const __FlashStringHelper *findSlotKey(LoopEntryType sensor);
