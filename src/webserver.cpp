@@ -775,11 +775,10 @@ void webserver_simple_config() {
         if (server.hasArg(F("sensor"))) {
             SimpleScheduler::LoopEntryType sensor;
             sensor = static_cast<SimpleScheduler::LoopEntryType>(server.arg(F("sensor")).toInt());
-            JsonObject &ret = SimpleScheduler::parseHTTPConfig(sensor);
-            ret.printTo(Serial);
-            if (ret.containsKey(F("err"))){
+            JsonDocument ret = SimpleScheduler:parseHTTPConfig(sensor);
+            if (ret[F("err")].is<char *>(){
                 page_content += F("<h2>");
-                page_content += String(ret.get<char *>(F("err")) );//ret.get<char *>(F("err"));
+                page_content += String(ret[F("err")]);//ret.get<char *>(F("err"));
                 page_content += F("</h2>");
 
             } else {

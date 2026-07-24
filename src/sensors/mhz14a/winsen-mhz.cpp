@@ -40,17 +40,14 @@ namespace MHZ14A {
         return !(samples == nullptr || samplesCount == 0 || last_value_WINSEN_CO2 == VAL_FAILURE);
     }
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::MHZ14A);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::MHZ14A);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplayMHZ();
-        ret.printTo(Serial);
         return ret;
-
     };
 
     //send data to LD API...
@@ -70,9 +67,9 @@ namespace MHZ14A {
                                              F("ppm")));
     }
 
-    void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
+    void readConfigJSON(JsonDocument json) {
+        enabled = json[F("e")];
+        printOnLCD = json[F("d")];
         scheduler.enableSubsystem(SimpleScheduler::MHZ14A, enabled, MHZ14A::process, FPSTR(MHZ14A::KEY));
         registerDisplayMHZ();
 

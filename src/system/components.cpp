@@ -116,7 +116,7 @@ namespace SimpleScheduler {
         }
     }
 
-    JsonObject& parseHTTPConfig(LoopEntryType sensor) {
+    JsonDocument parseHTTPConfig(LoopEntryType sensor) {
 
         switch (sensor) {
             case SimpleScheduler::HECA:
