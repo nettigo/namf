@@ -68,11 +68,10 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
             scheduler.registerDisplay(SimpleScheduler::DNMS, 0);  // disable
     }
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::DNMS);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::DNMS);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplay();
@@ -206,9 +205,9 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
 
     }
 
-    void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
+    void readConfigJSON(JsonDocument json) {
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::DNMS)) {

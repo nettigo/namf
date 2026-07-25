@@ -16,10 +16,10 @@ namespace DNMS {
     extern const char KEY[] PROGMEM;
     extern bool enabled;
 
-    JsonObject &parseHTTPRequest();
+    JsonDocument parseHTTPRequest();
     String getConfigJSON();
     void getStatusReport(String &res);
-    void readConfigJSON(JsonObject &json);
+    void readConfigJSON(JsonDocument json);
     unsigned long process(SimpleScheduler::LoopEventType);
     void resultsAsHTML(String &);
     void afterSend(bool status);
