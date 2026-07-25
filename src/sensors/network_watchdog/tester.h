@@ -25,8 +25,8 @@
 namespace NetworkWatchdog {
     extern const char KEY[] PROGMEM;
     extern String getConfigHTML(void);
-    extern JsonObject & parseHTTPRequest(void);
-    extern void readConfigJSON (JsonObject & );
+    extern JsonDocument parseHTTPRequest(void);
+    extern void readConfigJSON (JsonDocument );
     unsigned long process (SimpleScheduler::LoopEventType);
     String getConfigJSON(void);
     void resultsAsHTML(String &page_content);

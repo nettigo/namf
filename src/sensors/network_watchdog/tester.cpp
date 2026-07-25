@@ -32,14 +32,14 @@ namespace NetworkWatchdog {
 
     WatchdogState currentState = IDLE;
 
-    JsonObject &parseHTTPRequest(void) {
+    JsonDocument parseHTTPRequest(void) {
         String host;
         parseHTTP(F("host"), host);
         String sensorID = F("enabled-{s}");
         sensorID.replace(F("{s}"),String(SimpleScheduler::NTW_WTD));
         parseHTTP(sensorID, enabled);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+
+        JsonDocument ret;
 #if defined(ARDUINO_ARCH_ESP8266)
         if (addr.isValid(host)) {
             addr.fromString(host);
@@ -61,11 +61,11 @@ namespace NetworkWatchdog {
         return ret;
     }
 
-    void readConfigJSON(JsonObject &json) {
+    void readConfigJSON(JsonDocument json) {
 #if defined(ARDUINO_ARCH_ESP8266)
         String ip;
-        enabled = json.get<bool>(F("e"));
-        ip = json.get<String>(F("ip"));
+        enabled = json[F("e")].as<bool>();
+        ip = json[F("ip")].as<String>();
         if (addr.isValid(ip)) {
             addr.fromString(ip);
             configured = true;
