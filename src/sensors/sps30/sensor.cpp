@@ -88,7 +88,7 @@ namespace SPS30 {
 
 
     //callback to parse HTML form sent from `getConfigHTML`
-    JsonObject &parseHTTPRequest(void) {
+    JsonDocument parseHTTPRequest(void) {
         parseHTTP(F("refresh"), refresh);
         //enabled?
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SPS30);
@@ -96,8 +96,8 @@ namespace SPS30 {
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SPS30);
         registerDisplaySPS();  //register display if enabled on runtime
 
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+
+        JsonDocument ret;
         ret[F("refresh")] = refresh;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
@@ -192,10 +192,10 @@ namespace SPS30 {
 
     //get configuration data from JsonObject and save in own config
     // if sensor is enabled then run init. On shutdown
-    void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
-        refresh = json.get<int>(F("refresh"));
+    void readConfigJSON(JsonDocument json) {
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
+        refresh = json[F("refresh")].as<int>();
 
         if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30)) {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));
