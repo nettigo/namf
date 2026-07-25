@@ -15,9 +15,9 @@
 namespace BH17 {
     extern const char KEY[] PROGMEM;
 
-    JsonObject &parseHTTPRequest();
+    JsonDocument parseHTTPRequest();
 
-    void readConfigJSON(JsonObject &);
+    void readConfigJSON(JsonDocument);
 
     unsigned long process(SimpleScheduler::LoopEventType);
 

@@ -30,11 +30,10 @@ namespace BH17 {
     } ;
 
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BH1750);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::BH1750);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplay();
@@ -42,8 +41,8 @@ namespace BH17 {
     };
 
     void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::BH1750)) {
