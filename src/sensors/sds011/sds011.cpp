@@ -284,7 +284,7 @@ namespace SDS011 {
 
 
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SDS011);
         //use display?
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SDS011);
@@ -294,8 +294,8 @@ namespace SDS011 {
         setVariableFromHTTP(F("trck"), (byte&)trackValue, SimpleScheduler::SDS011);
         setVariableFromHTTP(F("tl"), (unsigned long&)threshold, SimpleScheduler::SDS011);
         setVariableFromHTTP(F("th"), (unsigned long&)hysteresis, SimpleScheduler::SDS011);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplay();
@@ -346,29 +346,29 @@ namespace SDS011 {
         return ret;
     };
 
-    void readConfigJSON(JsonObject &json) {
+    void readConfigJSON(JsonDocument json) {
 //        Serial.println("SDS readConfigJson");
 //        json.printTo(Serial);
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
-        if (json.containsKey(F("r"))) {
-            readTime = json.get<unsigned long>(F("r"));
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
+        if (json[F("r")].is<unsigned long>()) {
+            readTime = json[F("r")].as<unsigned long>();
         }
-        if (json.containsKey(F("w"))) {
-            warmupTime = json.get<unsigned long>(F("w"));
+        if (json[F("w")].is<unsigned long>()) {
+            warmupTime = json[F("w")].as<unsigned long>();
         }
-        if (json.containsKey(F("dbg"))) {
-            hardwareWatchdog = json.get<bool>(F("dbg"));
+        if (json[F("dbg")].is<bool>()) {
+            hardwareWatchdog = json[F("dbg")].as<bool>();
             EXPANDER::init();
         }
-        if (json.containsKey(F("trck"))) {
-            trackValue = static_cast<TrackValueType>(json.get<byte>(F("trck")));
+        if (json[F("trck")]) {
+            trackValue = static_cast<TrackValueType>(json[F("trck")].as<unsigned char>());
         }
-        if (json.containsKey(F("tl"))) {
-            threshold = json.get<unsigned>(F("tl"));
+        if (json[F("tl")].is<unsigned>()) {
+            threshold = json[F("tl")].as<unsigned>();
         }
-        if (json.containsKey(F("th"))) {
-            hysteresis = json.get<unsigned>(F("th"));
+        if (json[F("th")].is<unsigned>()) {
+            hysteresis = json[F("th")].as<unsigned>();
         }
 
 

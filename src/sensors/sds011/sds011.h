@@ -45,7 +45,7 @@ namespace SDS011 {
 
     bool SDS_checksum_valid(const uint8_t (&data)[8]);
 
-    JsonObject &parseHTTPRequest();
+    JsonDocument parseHTTPRequest();
 
     bool getDisplaySetting();
 
@@ -53,7 +53,7 @@ namespace SDS011 {
 
     String getConfigJSON();
 
-    void readConfigJSON(JsonObject &json);
+    void readConfigJSON(JsonDocument json);
 
     unsigned long process(SimpleScheduler::LoopEventType e);
 
