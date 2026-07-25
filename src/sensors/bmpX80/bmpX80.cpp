@@ -203,12 +203,11 @@ namespace BMPx80 {
             scheduler.registerDisplay(SimpleScheduler::BMPx80, 0);
     }
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BMPx80);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::BMPx80);
         setBoolVariableFromHTTP(String(F("in")), sensorInsideCase, SimpleScheduler::BMPx80);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplay();
@@ -247,10 +246,10 @@ namespace BMPx80 {
 
     }
 
-    void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
-        sensorInsideCase = json.get<bool>(F("i"));
+    void readConfigJSON(JsonDocument json) {
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
+        sensorInsideCase = json[F("i")].as<bool>();
 
         if (cfg::bmp280_read) { //old setting takes over
             enabled = true;
