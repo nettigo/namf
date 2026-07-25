@@ -69,18 +69,16 @@ namespace SHT3x {
             scheduler.registerDisplay(SimpleScheduler::SHT3x, 0);
     }
 
-    JsonObject &parseHTTPRequest(void) {
+    JsonDocument parseHTTPRequest(void) {
 //        String host;
 //        parseHTTP(F("host"), host);
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::SHT3x);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::SHT3x);
 
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         registerDisplay();
-        ret.printTo(Serial);
         return ret;
     }
 
@@ -93,8 +91,8 @@ namespace SHT3x {
     }
 
     void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
 
         scheduler.enableSubsystem(SimpleScheduler::SHT3x, enabled, SHT3x::process, FPSTR(SHT3x::KEY));
         registerDisplay();

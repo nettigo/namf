@@ -16,9 +16,9 @@ namespace SHT3x {
 
 
     extern String getConfigHTML();
-    extern JsonObject &parseHTTPRequest(void);
+    extern JsonDocument parseHTTPRequest(void);
     extern String getConfigJSON(void);
-    extern void readConfigJSON(JsonObject &json);
+    extern void readConfigJSON(JsonDocument);
     extern unsigned long process (SimpleScheduler::LoopEventType);
     //send data to LD API...
     extern void sendToLD();
