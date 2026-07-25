@@ -15,9 +15,9 @@
 namespace BME280 {
     extern const char KEY[] PROGMEM;
 
-    JsonObject &parseHTTPRequest();
+    JsonDocument parseHTTPRequest();
 
-    void readConfigJSON(JsonObject &json);
+    void readConfigJSON(JsonDocument json);
 
     unsigned long process(SimpleScheduler::LoopEventType e);
 

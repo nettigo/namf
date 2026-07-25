@@ -249,11 +249,10 @@ namespace BME280 {
 
     }
 
-    JsonObject &parseHTTPRequest() {
+    JsonDocument parseHTTPRequest() {
         setBoolVariableFromHTTP(String(F("enabled")), enabled, SimpleScheduler::BME280);
         setBoolVariableFromHTTP(String(F("display")), printOnLCD, SimpleScheduler::BME280);
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &ret = jsonBuffer.createObject();
+        JsonDocument ret;
         ret[F("e")] = enabled;
         ret[F("d")] = printOnLCD;
         if (!printOnLCD) {scheduler.registerDisplay(SimpleScheduler::BME280, 0);}   //deregister display
@@ -302,9 +301,9 @@ namespace BME280 {
 
     }
 
-    void readConfigJSON(JsonObject &json) {
-        enabled = json.get<bool>(F("e"));
-        printOnLCD = json.get<bool>(F("d"));
+    void readConfigJSON(JsonDocument json) {
+        enabled = json[F("e")].as<bool>();
+        printOnLCD = json[F("d")].as<bool>();
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::BME280)) {
