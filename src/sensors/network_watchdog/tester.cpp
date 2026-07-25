@@ -64,7 +64,7 @@ namespace NetworkWatchdog {
     void readConfigJSON(JsonDocument json) {
 #if defined(ARDUINO_ARCH_ESP8266)
         String ip;
-        enabled = json[F("e")].as<bool>();
+        enabled = asBool(json[F("e")]);
         ip = json[F("ip")].as<String>();
         if (addr.isValid(ip)) {
             addr.fromString(ip);

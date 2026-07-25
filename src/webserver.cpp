@@ -422,7 +422,9 @@ void parse_config_request(String &page_content) {
     readBoolParam(send2fsapp);
 
     readBoolParam(send2sensemap);
-    readCharParam(senseboxid);
+    if (server.hasArg(F("senseboxid"))){
+        stringToChar(&senseboxid,server.arg(F("senseboxid")));
+    }
 
     readBoolParam(send2custom);
     parseHTTP(F("host_custom"), host_custom);
@@ -647,7 +649,7 @@ void webserver_config(){
         page_content.concat(
                 formCheckboxGrid("send2sensemap", FPSTR(INTL_ENABLE), send2sensemap));
         page_content.concat(formInputGrid("senseboxid", "senseBox-ID: ", senseboxid,
-                                          capacity_null_terminated_char_array(senseboxid)));
+                                          30));
 
         page_content.concat(formSubmitGrid(FPSTR(INTL_SAVE_AND_RESTART)));
         page_content.concat(F("</div>"));   //grid
@@ -775,8 +777,8 @@ void webserver_simple_config() {
         if (server.hasArg(F("sensor"))) {
             SimpleScheduler::LoopEntryType sensor;
             sensor = static_cast<SimpleScheduler::LoopEntryType>(server.arg(F("sensor")).toInt());
-            JsonDocument ret = SimpleScheduler:parseHTTPConfig(sensor);
-            if (ret[F("err")].is<char *>(){
+            JsonDocument ret = SimpleScheduler::parseHTTPConfig(sensor);
+            if (ret[F("err")].is<const char *>()) {
                 page_content += F("<h2>");
                 page_content += String(ret[F("err")]);//ret.get<char *>(F("err"));
                 page_content += F("</h2>");
@@ -1326,13 +1328,14 @@ void webserver_prometheus_endpoint() {
     data_4_prometheus.replace("{up}", String(msSince(time_point_device_start_ms)));
     data_4_prometheus.replace("{si}", String(cfg::sending_intervall_ms));
     data_4_prometheus.replace("{cs}", String(count_sends));
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& json2data = jsonBuffer.parseObject(last_data_string);
-    if (json2data.success()) {
-        for (uint8_t i = 0; i < json2data["sensordatavalues"].size() - 1; i++) {
-            String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
+
+    JsonDocument json2data;
+    DeserializationError error = deserializeJson(json2data, last_data_string);
+    if (!error) {
+        for (uint8_t i = 0; i < json2data[F("sensordatavalues")].size() - 1; i++) {
+            String tmp_str = json2data[F("sensordatavalues")][i][F("value_type")].as<const char*>();
             data_4_prometheus += tmp_str + "{" + id + "} ";
-            tmp_str = json2data["sensordatavalues"][i]["value"].as<char*>();
+            tmp_str = json2data[F("sensordatavalues")][i][F("value")].as<const char*>();
             data_4_prometheus += tmp_str + "\n";
         }
         data_4_prometheus += F("last_sample_age_ms{");

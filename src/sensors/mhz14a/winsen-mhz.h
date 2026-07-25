@@ -30,7 +30,7 @@ namespace MHZ14A {
 
     void resultsAsHTML (String &);
 
-    void readConfigJSON(JsonObject &);
+    void readConfigJSON(JsonDocument);
 
     String getConfigJSON(void);
 

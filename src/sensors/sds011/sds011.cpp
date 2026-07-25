@@ -349,18 +349,16 @@ namespace SDS011 {
     void readConfigJSON(JsonDocument json) {
 //        Serial.println("SDS readConfigJson");
 //        json.printTo(Serial);
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
         if (json[F("r")].is<unsigned long>()) {
             readTime = json[F("r")].as<unsigned long>();
         }
         if (json[F("w")].is<unsigned long>()) {
             warmupTime = json[F("w")].as<unsigned long>();
         }
-        if (json[F("dbg")].is<bool>()) {
-            hardwareWatchdog = json[F("dbg")].as<bool>();
-            EXPANDER::init();
-        }
+        hardwareWatchdog = asBool(json[F("dbg")]);
+        if (hardwareWatchdog) EXPANDER::init();
         if (json[F("trck")]) {
             trackValue = static_cast<TrackValueType>(json[F("trck")].as<unsigned char>());
         }

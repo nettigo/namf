@@ -140,8 +140,7 @@ namespace SimpleScheduler {
             case SimpleScheduler::DNMS:
                 return DNMS::parseHTTPRequest();
             default:
-                StaticJsonBuffer<16> jsonBuffer;    //empty response
-                JsonObject & ret = jsonBuffer.createObject();
+                JsonDocument ret;
                 return ret;
         }
     }
@@ -174,7 +173,7 @@ namespace SimpleScheduler {
         }
     }
 
-    void readConfigJSON(LoopEntryType sensor, JsonObject json) {
+    void readConfigJSON(LoopEntryType sensor, JsonDocument json) {
         switch (sensor) {
             case SimpleScheduler::HECA:
                 HECA::readConfigJSON(json);
@@ -215,8 +214,8 @@ namespace SimpleScheduler {
         LoopEntryType i = EMPTY;
         i++;
         for (; i < NAMF_LOOP_SIZE; i++) {
-            if (json.containsKey(findSlotKey(i))) {
-                JsonObject &item = json[findSlotKey(i)];
+            if (json[findSlotKey(i)].is<JsonObject>()) {
+                JsonDocument item = json[findSlotKey(i)].as<JsonObject>();
                 readConfigJSON(i, item);
             }
         }

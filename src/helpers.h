@@ -102,7 +102,8 @@ void collectMemStats();
 void dumpCurrentMemStats();
 void display_debug(const String& text1, const String& text2);
 String millisToTime(const unsigned long);
-unsigned stringToChar(char **dst, String src, unsigned n);
+unsigned stringToChar(char **dst, String src, unsigned n=0 );
+bool asBool(JsonObject);
 //void dbg(char *v);
 String getConfigString(boolean maskPwd = false);
 

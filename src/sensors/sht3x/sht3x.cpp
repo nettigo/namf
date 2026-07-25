@@ -90,9 +90,9 @@ namespace SHT3x {
         return ret;
     }
 
-    void readConfigJSON(JsonObject &json) {
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();
+    void readConfigJSON(JsonDocument json) {
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
 
         scheduler.enableSubsystem(SimpleScheduler::SHT3x, enabled, SHT3x::process, FPSTR(SHT3x::KEY));
         registerDisplay();

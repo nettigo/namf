@@ -40,9 +40,9 @@ namespace BH17 {
         return ret;
     };
 
-    void readConfigJSON(JsonObject &json) {
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();
+    void readConfigJSON(JsonDocument json) {
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::BH1750)) {

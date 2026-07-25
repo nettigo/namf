@@ -159,9 +159,10 @@ String create_influxdb_string(const String& data) {
     String data_4_influxdb = "";
     debug_out(F("Parse JSON for influx DB"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& json2data = jsonBuffer.parseObject(data);
-    if (json2data.success()) {
+
+    JsonDocument json2data;
+    DeserializationError error = deserializeJson(json2data, data);
+    if (!error) {
         bool first_line = true;
         data_4_influxdb.concat(F("feinstaub,node="));
         data_4_influxdb.concat(String(F(PROCESSOR_ARCH)) + String(F("-")));
@@ -190,21 +191,21 @@ String create_influxdb_string(const String& data) {
 
         }
         data_4_influxdb.concat(F(" "));
-        for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
+        for (uint8_t i = 0; i < json2data[F("sensordatavalues")].size(); i++) {
             String tmp_str = "";
             if (first_line)
                 first_line = false;
             else
                 tmp_str.concat(F(","));
-            tmp_str.concat(json2data["sensordatavalues"][i]["value_type"].as<char *>());
+            tmp_str.concat(json2data[F("sensordatavalues")][i][F("value_type")].as<const char *>());
             tmp_str.concat(F("="));
             if (
-                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_date")) ||
-                    json2data["sensordatavalues"][i]["value_type"] == String(F("GPS_time"))
+                    json2data[F("sensordatavalues")][i][F("value_type")] == String(F("GPS_date")) ||
+                    json2data[F("sensordatavalues")][i][F("value_type")] == String(F("GPS_time"))
                     )
-                tmp_str.concat(String(F("\"")) + json2data["sensordatavalues"][i]["value"].as<char *>() + String(F("\"")));
+                tmp_str.concat(String(F("\"")) + json2data[F("sensordatavalues")][i][F("value")].as<const char *>() + String(F("\"")));
             else
-                tmp_str.concat(json2data["sensordatavalues"][i]["value"].as<char *>());
+                tmp_str.concat(json2data[F("sensordatavalues")][i][F("value")].as<const char *>());
             data_4_influxdb.concat(tmp_str);
         }
 #ifdef DBG_NAMF_SDS_NO_DATA
@@ -237,19 +238,19 @@ String create_influxdb_string(const String& data) {
  * send data as csv to serial out                                *
  *****************************************************************/
 void send_csv(const String& data) {
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& json2data = jsonBuffer.parseObject(data);
+    JsonDocument json2data;
+    DeserializationError error = deserializeJson(json2data, data);
     debug_out(F("CSV Output"), DEBUG_MIN_INFO, 1);
     debug_out(data, DEBUG_MIN_INFO, 1);
-    if (json2data.success()) {
+    if (!error) {
         String headline = F("csv:Timestamp_ms;");
         String valueline = String(F("csv:"));
         valueline.concat(String(act_milli));
         valueline.concat(F(";"));
-        for (uint8_t i = 0; i < json2data["sensordatavalues"].size(); i++) {
-            String tmp_str = json2data["sensordatavalues"][i]["value_type"].as<char*>();
+        for (uint8_t i = 0; i < json2data[F("sensordatavalues")].size(); i++) {
+            String tmp_str = json2data[F("sensordatavalues")][i][F("value_type")].as<const char*>();
             headline += tmp_str + ";";
-            tmp_str = json2data["sensordatavalues"][i]["value"].as<char*>();
+            tmp_str = json2data[F("sensordatavalues")][i][F("value")].as<const char*>();
             valueline += tmp_str + ";";
         }
         static bool first_csv_line = true;

@@ -193,9 +193,9 @@ namespace SPS30 {
     //get configuration data from JsonObject and save in own config
     // if sensor is enabled then run init. On shutdown
     void readConfigJSON(JsonDocument json) {
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();
-        refresh = json[F("refresh")].as<int>();
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
+        refresh = json[F("refresh")].as<unsigned long>();
 
         if (enabled && !scheduler.isRegistered(SimpleScheduler::SPS30)) {
             scheduler.registerSensor(SimpleScheduler::SPS30, SPS30::process, FPSTR(SPS30::KEY));

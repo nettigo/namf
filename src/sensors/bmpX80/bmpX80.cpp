@@ -247,9 +247,9 @@ namespace BMPx80 {
     }
 
     void readConfigJSON(JsonDocument json) {
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();
-        sensorInsideCase = json[F("i")].as<bool>();
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
+        sensorInsideCase = asBool(json[F("i")]);
 
         if (cfg::bmp280_read) { //old setting takes over
             enabled = true;

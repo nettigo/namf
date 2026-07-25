@@ -74,21 +74,23 @@ int32_t calcWiFiSignalQuality(int32_t rssi) {
 }
 
 //store string as char array, for functions, if n is >0 then no more than n chars
-unsigned stringToChar(char **dst, const String src, const unsigned n = 0) {
+unsigned stringToChar(char **dst, const String src, const unsigned n) {
     unsigned len;
     if (n) {
         len = src.length() < n ? src.length() : n;
     } else {
         len = src.length();
     }
-    char *buffer = new(std::nothrow) char[len + 1];
+    char *buffer = nullptr;
+    buffer = new(std::nothrow) char[len + 1];
     if (buffer != nullptr) {
         strncpy(buffer, src.c_str(), len);
         buffer[len] = 0;
-        delete[] dst;
+        if (dst != nullptr) delete[] *dst;
         *dst = buffer;
         return len;
     }
+    return 0;
 }
 
 unsigned setDefault(char **dst, const __FlashStringHelper *defaultValue) {
@@ -407,6 +409,19 @@ void setCharVar(const JsonObject json, char **var, const __FlashStringHelper *ke
     setNCharVar(json, var, key, 0, def);
 }
 
+//with Arduino JSON 7.x bool is being treated more strict, we use mix of values in config, so this is wrapper for reading value
+bool asBool(JsonVariant json) {
+    if (json.is<bool>()) {
+        return json.as<bool>();
+    }
+    if (json.is<unsigned char>()) {
+        return json.as<unsigned char>() > 0;
+    }
+    if (json.is<String>()) {
+        return json.as<String>() == String(F("true"));
+    }
+    return false;
+}
 
 // void setCharVar(const JsonObject &json, String &var, const __FlashStringHelper *key, const __FlashStringHelper *def = nullptr) {
 //     if (json.containsKey(key)) var = json.get<String>(key);
@@ -414,8 +429,29 @@ void setCharVar(const JsonObject json, char **var, const __FlashStringHelper *ke
 // }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, bool &dst) {
-    if (handle[key].is<bool>())
+    debugOutW(F("SetFromJson: "));
+    debugOutW(key);
+    debugOutW(F(", : "));
+    debugOutW(handle[key].as<String>());
+    if (handle[key].is<bool>()) {
+        debugOutW(F(" bool:"));
         dst = handle[key].as<bool>();
+        debugOutLnW(String(dst));
+    } else if (handle[key].is<unsigned char>()) {
+        debugOutW(F(" unsigned char: "));
+        dst = handle[key].as<unsigned char>() > 0;
+        debugOutLnW(String(dst));
+    } else if (handle[key].is<String>()) {
+        if (String(F("true")) == handle[key].as<String>())
+            dst = true;
+        else
+            dst = false;
+        debugOutW(F(" string: "));
+        debugOutLnW(String(dst));
+    } else {
+        debugOutLnW(F(" no bool!"));
+    }
+
 }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, byte &dst) {
@@ -456,11 +492,6 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key,
     }
 }
 
-//copy string, no more than len chars. If len is 0, then allocate
-void strcpyFromJSON(const JsonObject handle, const __FlashStringHelper *key, char **dst, unsigned len = 0) {
-    if (handle[key].is<const char *>())
-        dst = handle[key].as<const char *>();
-}
 
 int readAndParseConfigFile(File configFile) {
     using namespace cfg;
@@ -594,7 +625,7 @@ int readAndParseConfigFile(File configFile) {
             return 0;
         }
     }
-    return -1;
+    return 0;
 }
 
 /*****************************************************************
@@ -606,9 +637,9 @@ int writeConfigRaw(const String &json_string, const char * filename) {
     Debug.resumeWebCopy();
     File configFile;
     if (filename) {
-        configFile = SPIFFS.open(filename, "w");
+        configFile = SPIFFS.open(filename, "w+");
     } else {
-        configFile = SPIFFS.open("/config.json", "w");
+        configFile = SPIFFS.open("/config.json", "w+");
     }
     if (configFile) {
         configFile.print(json_string);

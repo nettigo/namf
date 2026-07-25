@@ -55,8 +55,8 @@ namespace HECA {
     };
 
     void readConfigJSON( JsonDocument json){
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();;
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
         if (json[F("s")].is<unsigned long>()){
             humiditySet = json[F("s")].as<unsigned long>();
         }

@@ -206,8 +206,8 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
     }
 
     void readConfigJSON(JsonDocument json) {
-        enabled = json[F("e")].as<bool>();
-        printOnLCD = json[F("d")].as<bool>();
+        enabled = asBool(json[F("e")]);
+        printOnLCD = asBool(json[F("d")]);
 
         //register/deregister sensor
         if (enabled && !scheduler.isRegistered(SimpleScheduler::DNMS)) {
