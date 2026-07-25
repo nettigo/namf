@@ -429,27 +429,27 @@ bool asBool(JsonVariant json) {
 // }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, bool &dst) {
-    debugOutW(F("SetFromJson: "));
-    debugOutW(key);
-    debugOutW(F(", : "));
-    debugOutW(handle[key].as<String>());
+    // debugOutW(F("SetFromJson: "));
+    // debugOutW(key);
+    // debugOutW(F(", : "));
+    // debugOutW(handle[key].as<String>());
     if (handle[key].is<bool>()) {
-        debugOutW(F(" bool:"));
+        // debugOutW(F(" bool:"));
         dst = handle[key].as<bool>();
-        debugOutLnW(String(dst));
+        // debugOutLnW(String(dst));
     } else if (handle[key].is<unsigned char>()) {
-        debugOutW(F(" unsigned char: "));
+        // debugOutW(F(" unsigned char: "));
         dst = handle[key].as<unsigned char>() > 0;
-        debugOutLnW(String(dst));
+        // debugOutLnW(String(dst));
     } else if (handle[key].is<String>()) {
         if (String(F("true")) == handle[key].as<String>())
             dst = true;
         else
             dst = false;
-        debugOutW(F(" string: "));
-        debugOutLnW(String(dst));
+        // debugOutW(F(" string: "));
+        // debugOutLnW(String(dst));
     } else {
-        debugOutLnW(F(" no bool!"));
+        // debugOutLnW(F(" no bool!"));
     }
 
 }
@@ -620,7 +620,7 @@ int readAndParseConfigFile(File configFile) {
 #undef setFromJSON
 #undef strcpyFromJSON
         //Sensor configs from simple scheduler
-        if (!handle[F("sensors")].is<JsonObject>()) {
+        if (handle[F("sensors")].is<JsonObject>()) {
             SimpleScheduler::readConfigJSON(handle[F("sensors")].as<JsonObject>());
             return 0;
         }

@@ -347,8 +347,6 @@ namespace SDS011 {
     };
 
     void readConfigJSON(JsonDocument json) {
-//        Serial.println("SDS readConfigJson");
-//        json.printTo(Serial);
         enabled = asBool(json[F("e")]);
         printOnLCD = asBool(json[F("d")]);
         if (json[F("r")].is<unsigned long>()) {
