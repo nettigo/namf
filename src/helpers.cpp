@@ -300,6 +300,7 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
     json_string += Var2Json(F("fbssid"), fbssid);
+    json_string += Var2Json(F("summertime"), summertime);
 
 #ifdef NAM_LORAWAN
 
@@ -520,6 +521,7 @@ int readAndParseConfigFile(File configFile) {
 
 #define SET_CHAR_VAR(key, def) setCharVar(handle, &key, F(#key), def);
 #define SET_N_CHAR_VAR(key, n, def) setNCharVar(handle, &key, F(#key), n, def);
+#define SET_FROM_JSON(key) setFromJSON(handle, F(#key), key);
 
         SET_CHAR_VAR(wlanssid, FPSTR(EMPTY_STRING))
         setCharVar(handle, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
@@ -529,8 +531,8 @@ int readAndParseConfigFile(File configFile) {
         setCharVar(handle, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
         setCharVar(handle, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
         setCharVar(handle, &fs_pwd, F("fs_pwd"), FPSTR(FS_PWD));
+        SET_FROM_JSON(summertime)
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
-#define SET_FROM_JSON(key) setFromJSON(handle, F(#key), key);
 #ifdef NAM_LORAWAN
         SET_FROM_JSON(lw_en)
         lw_d_eui = handle[F("lw_d_eui")].as<String>();

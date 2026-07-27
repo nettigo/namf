@@ -418,6 +418,7 @@ void parse_config_request(String &page_content) {
     readIntParam(backlight_stop);
 
     readBoolParam(send2csv);
+    readBoolParam(summertime);
 
     readBoolParam(send2fsapp);
 
@@ -676,6 +677,7 @@ void webserver_config(){
         page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_BACKLIGHT), F("m/backlight")));
         page_content.concat(formInputGrid("backlight_stop", FPSTR(INTL_BACKLIGHT_STOP), String(backlight_stop), 5));
         page_content.concat(formInputGrid("backlight_start", FPSTR(INTL_BACKLIGHT_START), String(backlight_start), 5));
+        page_content.concat(formCheckboxGrid("summertime", FPSTR(INTL_SUMMERTIME), summertime));
 
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI)));
         page_content.concat(formSectionHeader(FPSTR(INTL_FS_WIFI_DESCRIPTION), 3));

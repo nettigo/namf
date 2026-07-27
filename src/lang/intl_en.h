@@ -171,6 +171,7 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - high precision particle matter sensor";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
 /* ./src/lang/intl_en.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Sensor status";
+/* ./src/lang/intl_en.lang */ const char INTL_SUMMERTIME[] PROGMEM = "Summertime";
 /* ./src/lang/intl_en.lang */ const char INTL_TAB_ADVANCED[] PROGMEM = "Advanced";
 /* ./src/lang/intl_en.lang */ const char INTL_TAB_API[] PROGMEM = "API";
 /* ./src/lang/intl_en.lang */ const char INTL_TAB_BASIC[] PROGMEM = "Basic";

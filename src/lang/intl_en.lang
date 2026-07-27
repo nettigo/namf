@@ -1,6 +1,7 @@
 INTL_CLEAR_LORA Really clear LoRaWAN join data?
 INTL_CLEAR_AND_RESTART Clear and restart
 INTL_HELP More info about feature
+INTL_SUMMERTIME Summertime
 INTL_BACKLIGHT LCD backlight
 INTL_BACKLIGHT_STOP Stop at (hour):
 INTL_BACKLIGHT_START Start at (hour):

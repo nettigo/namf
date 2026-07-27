@@ -72,6 +72,7 @@ namespace cfg {
     bool send2lora = SEND2LORA;
     bool send2influx = SEND2INFLUX;
     bool send2csv = SEND2CSV;
+    bool summertime = false;
     byte apiCount = 0;
     apiTimeStat *apiStats = nullptr;
     bool auto_update = AUTO_UPDATE;

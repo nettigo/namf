@@ -110,6 +110,7 @@ namespace cfg {
     extern float outputPower;
     extern int phyMode; 
     extern int  debug;
+    extern bool summertime;
 
     extern bool send_diag;
 
