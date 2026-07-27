@@ -780,7 +780,7 @@ void webserver_simple_config() {
             JsonDocument ret = SimpleScheduler::parseHTTPConfig(sensor);
             if (ret[F("err")].is<const char *>()) {
                 page_content += F("<h2>");
-                page_content += String(ret[F("err")]);//ret.get<char *>(F("err"));
+                page_content += String(ret[F("err")].as<const char *>());//ret.get<char *>(F("err"));
                 page_content += F("</h2>");
 
             } else {

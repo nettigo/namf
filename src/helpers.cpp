@@ -106,7 +106,7 @@ unsigned setDefault(char **dst, const __FlashStringHelper *defaultValue) {
 unsigned charStringToChar(char *dst, const char *src) {
     if (dst != nullptr) delete (dst);
     size_t len = strlen(src);
-    dst = new(char[len + 1]);
+    dst = new char[len + 1];
     if (dst == nullptr) return 0;
     strncpy(dst, src, len+1);
     return len + 1;
@@ -532,10 +532,10 @@ int readAndParseConfigFile(File configFile) {
 #define strcpyFromJSON(key) if (json.containsKey(#key)) strcpy(key, json[#key]);
 #define SET_FROM_JSON(key) setFromJSON(handle, F(#key), key);
 #ifdef NAM_LORAWAN
-        setFromJSON(handle, lw_en);
-        setCharVar(json, lw_d_eui, F("lw_d_eui"));
-        setCharVar(json, lw_a_eui, F("lw_a_eui"));
-        setCharVar(json, lw_app_key, F("lw_app_key"));
+        SET_FROM_JSON(lw_en)
+        lw_d_eui = handle[F("lw_d_eui")].as<String>();
+        lw_a_eui = handle[F("lw_a_eui")].as<String>();
+        lw_app_key = handle[F("lw_app_key")].as<String>();
         //            setCharVar(json, lw_nws_key, F("lw_nws_key"));
         //            setCharVar(json, lw_apps_key, F("lw_apps_key"));
         //            setCharVar(json, lw_dev_addr, F("lw_dev_addr"));
