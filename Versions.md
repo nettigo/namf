@@ -1,4 +1,5 @@
 NAMF-48rc2 ()
+- allow to select if it is summertime and get correct time from NTP
 - update Arduino JSON library from 5.x to 7.x
 - LoRaWAN session persistence - new join request after reboot is not needed.
 - SPS30 library was updated
