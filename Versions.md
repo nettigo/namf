@@ -1,4 +1,5 @@
 NAMF-48rc2 ()
+- update Arduino JSON library from 5.x to 7.x
 - LoRaWAN session persistence - new join request after reboot is not needed.
 - SPS30 library was updated
 - Experimental Ethernet support (Olimex ESP32-PoE board)
