@@ -22,6 +22,9 @@ namespace BH17 {
     unsigned long process(SimpleScheduler::LoopEventType);
 
     String getConfigJSON();
+    bool getDisplaySetting();
+    void display(byte, byte, String []);
+
     void resultsAsHTML(String &);
     void results(String &);
     void afterSend(bool);

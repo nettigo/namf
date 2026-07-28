@@ -21,6 +21,30 @@ namespace BH17 {
         ambientLightMin = 70000;
     }
 
+    static float currentReading() {
+        float sum = 0;
+        if (samplesCount == 0) return -1;
+
+        for (byte i = 0; i < samplesCount; i++)
+            sum += samples[i];
+        return sum /static_cast<float>(samplesCount);
+    }
+
+    void display(byte cols, byte minor, String lines[]) {
+        lines[0] = F("BH1750");
+        float x = currentReading();
+        if (x < 0) {
+            lines[1] = (F("--"));
+        } else {
+            lines[1] = String(x, 0);
+        }
+
+    }
+
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
+
     static void registerDisplay() {
         if (enabled && printOnLCD) {
             scheduler.registerDisplay(SimpleScheduler::BH1750, 1);
@@ -102,14 +126,6 @@ namespace BH17 {
         }
     }
 
-    float currentReading() {
-        float sum = 0;
-        if (samplesCount == 0) return 0;
-
-        for (byte i = 0; i < samplesCount; i++)
-            sum += samples[i];
-        return sum /(float)samplesCount;
-    }
 
     float maxVal(){
         if (samplesCount == 0) {

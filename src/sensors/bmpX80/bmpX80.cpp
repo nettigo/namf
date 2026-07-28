@@ -217,6 +217,10 @@ namespace BMPx80 {
         
     }
 
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
+
     static void registerDisplay() {
         if (enabled && printOnLCD)
             scheduler.registerDisplay(SimpleScheduler::BMPx80, 1);

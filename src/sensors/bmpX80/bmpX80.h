@@ -30,6 +30,7 @@ namespace BMPx80 {
     void sendToLD();
     void setDefaults(void);
     String getConfigHTML(void);
+    bool getDisplaySetting();
 
     void display(byte, byte, String[]);
 
