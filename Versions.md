@@ -1,4 +1,4 @@
-NAMF-48rc2 (2026-07-28 rev)
+NAMF-48rc2 (2026-07-28 rev 7f92c509ce57a114250304b59c7688b1b5647f5e)
 - fixes for displaying sensors info (BMPx80, DNMS, BH1750) on LCDs
 - allow to select if it is summertime and get correct time from NTP
 - update Arduino JSON library from 5.x to 7.x
