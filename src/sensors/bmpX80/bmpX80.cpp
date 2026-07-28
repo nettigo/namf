@@ -196,6 +196,27 @@ namespace BMPx80 {
         res.concat(table_row_from_value(F("BMx80"), F("Sensor type"), String(currentSensor), ""));
 
     }
+
+    void display(byte cols, byte minor, String lines[]) {
+        lines[0] = F("BMP: T:");
+        float x = currentTemp();
+        if (x < -125) {
+            lines[0].concat(F("--"));
+        } else {
+            lines[0].concat(String(x, 1));
+            lines[0].concat(FPSTR(UNIT_CELCIUS_LCD));
+        }
+        lines[1] = F("P: ");
+        x = currentPressure();
+        if (x < 0) {
+            lines[1].concat(F("--"));
+        } else {
+            lines[1].concat(String(x, 1));
+            lines[1].concat(F(" hPa"));
+        }
+        
+    }
+
     static void registerDisplay() {
         if (enabled && printOnLCD)
             scheduler.registerDisplay(SimpleScheduler::BMPx80, 1);

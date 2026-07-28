@@ -31,6 +31,9 @@ namespace BMPx80 {
     void setDefaults(void);
     String getConfigHTML(void);
 
+    void display(byte, byte, String[]);
+
+
     void getStatusReport(String &res);
 }
 

@@ -26,6 +26,7 @@ namespace DNMS {
     void results(String &s);
     void display(byte, byte, String []);
     int16_t readVersion(char *);
+    bool getDisplaySetting();
 }
 
 #endif //NAMF_DNMS_H

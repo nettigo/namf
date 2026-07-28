@@ -18,6 +18,8 @@ namespace SimpleScheduler {
                 return SPS30::getDisplaySetting();
             case SimpleScheduler::MHZ14A:
                 return MHZ14A::getDisplaySetting();
+            case SimpleScheduler::DNMS:
+                return DNMS::getDisplaySetting();
             default:
                 return false;
         }
@@ -326,6 +328,10 @@ namespace SimpleScheduler {
             case MHZ14A:
                 if (cols == 0) return true;
                 MHZ14A::display(rows, minor, lines);
+                return true;
+            case BMPx80:
+                if (cols == 0) return true;
+                BMPx80::display(rows, minor, lines);
                 return true;
             case DNMS:
                 if (cols == 0) return true;

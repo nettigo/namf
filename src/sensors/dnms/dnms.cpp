@@ -262,6 +262,10 @@ constexpr uint8_t DNMS_CMD_READ_VERSION = 0x0002;
 
     };
 
+    bool getDisplaySetting() {
+        return printOnLCD;
+    };
+
 
     String getConfigJSON() {
         String ret = F("");
