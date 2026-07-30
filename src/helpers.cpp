@@ -458,26 +458,56 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, bool &
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, byte &dst) {
     if (handle[key].is<unsigned char>())
         dst = handle[key].as<unsigned char>();
+    else if (handle[key].is<String>()) {
+        dst = handle[key].as<int>();
+    } else {
+        debugOutE(F("Unprocessed JSON value for key: "));
+        debugOutLnE(key);
+    }
+
 }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, int &dst) {
     if (handle[key].is<int>())
         dst = handle[key].as<int>();
+    else if (handle[key].is<String>()) {
+        dst = handle[key].as<int>();;
+    } else {
+        debugOutE(F("Unprocessed JSON value for key: "));
+        debugOutLnE(key);
+    }
 }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, unsigned long &dst) {
     if (handle[key].is<unsigned long>())
         dst = handle[key].as<unsigned long>();
+    else if (handle[key].is<String>()) {
+        dst = handle[key].as<unsigned long>();;
+    } else {
+        debugOutE(F("Unprocessed JSON value for key: "));
+        debugOutLnE(key);
+    }
+
 }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, float &dst) {
     if (handle[key].is<float>())
         dst = handle[key].as<float>();
+    else if (handle[key].is<String>()) {
+        dst = handle[key].as<float>();;
+    } else {
+        debugOutE(F("Unprocessed JSON value for key: "));
+        debugOutLnE(key);
+    }
 }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, String &dst) {
     if (handle[key].is<String>())
         dst = handle[key].as<String>();
+    else {
+        debugOutE(F("Unprocessed JSON value for key: "));
+        debugOutLnE(key);
+    }
 }
 
 void setFromJSON(const JsonObject handle, const __FlashStringHelper *key,
@@ -490,6 +520,9 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key,
         len = len < n ? len : n;
         strncpy(dst, handle[key].as<const char *>(), len);
         dst[len] = 0;
+    } else {
+        debugOutE(F("Unprocessed JSON value for key: "));
+        debugOutLnE(key);
     }
 }
 
