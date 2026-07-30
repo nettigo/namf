@@ -1,3 +1,6 @@
+NAMF-48rc3 (2026-07-30 rev)
+- 48rc2 did not read all config settings correctly, this release fixes that
+
 NAMF-48rc2 (2026-07-28 rev 7f92c509ce57a114250304b59c7688b1b5647f5e)
 - fixes for displaying sensors info (BMPx80, DNMS, BH1750) on LCDs
 - allow to select if it is summertime and get correct time from NTP
