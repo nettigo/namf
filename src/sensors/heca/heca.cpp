@@ -57,11 +57,11 @@ namespace HECA {
     void readConfigJSON( JsonDocument json){
         enabled = asBool(json[F("e")]);
         printOnLCD = asBool(json[F("d")]);
-        if (json[F("s")].is<unsigned long>()){
-            humiditySet = json[F("s")].as<unsigned long>();
+        if (json[F("s")].is<JsonVariant>()){
+            setFromJSON(json, F("s"), humiditySet);
         }
-        if (json[F("c")].is<unsigned long>()){
-            humidityClear = json[F("c")].as<unsigned long>();;
+        if (json[F("c")].is<JsonVariant>()){
+            setFromJSON(json, F("c"), humidityClear);
         }
         if (enabled && !scheduler.isRegistered(SimpleScheduler::HECA)) {
             scheduler.registerSensor(SimpleScheduler::HECA, HECA::process, FPSTR(HECA::KEY));
