@@ -490,6 +490,13 @@ void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, unsig
 
 }
 
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, unsigned &dst) {
+    unsigned long t_dst = dst;
+    setFromJSON(handle, key, t_dst);
+    dst = static_cast<unsigned>(t_dst);
+}
+
+
 void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, float &dst) {
     if (handle[key].is<float>())
         dst = handle[key].as<float>();

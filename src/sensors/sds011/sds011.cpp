@@ -349,19 +349,19 @@ namespace SDS011 {
     void readConfigJSON(JsonDocument json) {
         enabled = asBool(json[F("e")]);
         printOnLCD = asBool(json[F("d")]);
-        if (json[F("r")].is<unsigned long>()) {
-            readTime = json[F("r")].as<unsigned long>();
+        if (json[F("r")].is<JsonVariant>()) {
+            setFromJSON(json, F("r"),readTime);
         }
-        if (json[F("w")].is<unsigned long>()) {
-            warmupTime = json[F("w")].as<unsigned long>();
+        if (json[F("w")].is<JsonVariant>()) {
+            setFromJSON(json, F("w"), warmupTime);
         }
         hardwareWatchdog = asBool(json[F("dbg")]);
         if (hardwareWatchdog) EXPANDER::init();
-        if (json[F("trck")]) {
+        if (json[F("trck")].is<JsonVariant>()) {
             trackValue = static_cast<TrackValueType>(json[F("trck")].as<unsigned char>());
         }
-        if (json[F("tl")].is<unsigned>()) {
-            threshold = json[F("tl")].as<unsigned>();
+        if (json[F("tl")].is<JsonVariant>()) {
+            setFromJSON(json, F("tl"), threshold);
         }
         if (json[F("th")].is<unsigned>()) {
             hysteresis = json[F("th")].as<unsigned>();
