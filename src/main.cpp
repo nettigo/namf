@@ -731,7 +731,7 @@ void setup() {
         default:
             PAUSE_BETWEEN_UPDATE_ATTEMPTS_MS = ONE_DAY_IN_MS;
     }
-
+	setupUpdate();
 
     NAMNetwork::configNetwork();
     if (NAMNetwork::internet()) {//we are connected to internet
