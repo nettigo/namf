@@ -429,7 +429,7 @@ bool asBool(JsonVariant json) {
 //     if (def != nullptr) var = def;
 // }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, bool &dst) {
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, bool &dst) {
     // debugOutW(F("SetFromJson: "));
     // debugOutW(key);
     // debugOutW(F(", : "));
@@ -455,7 +455,7 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, bool &
 
 }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, byte &dst) {
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, byte &dst) {
     if (handle[key].is<unsigned char>())
         dst = handle[key].as<unsigned char>();
     else if (handle[key].is<String>()) {
@@ -467,7 +467,7 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, byte &
 
 }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, int &dst) {
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, int &dst) {
     if (handle[key].is<int>())
         dst = handle[key].as<int>();
     else if (handle[key].is<String>()) {
@@ -478,7 +478,7 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, int &d
     }
 }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, unsigned long &dst) {
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, unsigned long &dst) {
     if (handle[key].is<unsigned long>())
         dst = handle[key].as<unsigned long>();
     else if (handle[key].is<String>()) {
@@ -490,7 +490,7 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, unsign
 
 }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, float &dst) {
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, float &dst) {
     if (handle[key].is<float>())
         dst = handle[key].as<float>();
     else if (handle[key].is<String>()) {
@@ -501,7 +501,7 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, float 
     }
 }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, String &dst) {
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key, String &dst) {
     if (handle[key].is<String>())
         dst = handle[key].as<String>();
     else {
@@ -510,7 +510,7 @@ void setFromJSON(const JsonObject handle, const __FlashStringHelper *key, String
     }
 }
 
-void setFromJSON(const JsonObject handle, const __FlashStringHelper *key,
+void setFromJSON(const JsonVariant handle, const __FlashStringHelper *key,
                  char *dst,
                  unsigned n = 0
 ) {
