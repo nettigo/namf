@@ -358,13 +358,15 @@ namespace SDS011 {
         hardwareWatchdog = asBool(json[F("dbg")]);
         if (hardwareWatchdog) EXPANDER::init();
         if (json[F("trck")].is<JsonVariant>()) {
-            trackValue = static_cast<TrackValueType>(json[F("trck")].as<unsigned char>());
+            byte tmp;
+            setFromJSON(json, F("trck"), tmp);
+            trackValue = static_cast<TrackValueType>(tmp);
         }
         if (json[F("tl")].is<JsonVariant>()) {
             setFromJSON(json, F("tl"), threshold);
         }
-        if (json[F("th")].is<unsigned>()) {
-            hysteresis = json[F("th")].as<unsigned>();
+        if (json[F("th")].is<JsonVariant>()) {
+            setFromJSON(json, F("th"), hysteresis);
         }
 
 

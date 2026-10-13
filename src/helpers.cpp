@@ -419,7 +419,9 @@ bool asBool(JsonVariant json) {
         return json.as<unsigned char>() > 0;
     }
     if (json.is<String>()) {
-        return json.as<String>() == String(F("true"));
+        if (json.as<String>() == String(F("true"))) return true;
+        if (json.as<String>() == String(F("1"))) return true;
+
     }
     return false;
 }

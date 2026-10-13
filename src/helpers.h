@@ -73,13 +73,13 @@ void parseHTTP(const __FlashStringHelper *, String & );
 void parseHTTP(const String &name, bool &value );
 void parseHTTP(const String &name, byte &value );
 
-void setFromJSON(JsonVariant, __FlashStringHelper *, bool &);
-void setFromJSON(JsonVariant, __FlashStringHelper *, byte &);
-void setFromJSON(JsonVariant, __FlashStringHelper *, int &);
-void setFromJSON(JsonVariant, __FlashStringHelper *, unsigned long &);
-void setFromJSON(JsonVariant, __FlashStringHelper *, unsigned &);
-void setFromJSON(JsonVariant, __FlashStringHelper *, float &);
-void setFromJSON(JsonVariant, __FlashStringHelper *, String &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, bool &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, byte &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, int &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, unsigned long &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, unsigned &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, float &);
+void setFromJSON(const JsonVariant, const __FlashStringHelper *, String &);
 
 void setBoolVariableFromHTTP(String const name, bool &v, byte i);
 void setVariableFromHTTP(String const name, unsigned long &v, byte i);
