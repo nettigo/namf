@@ -36,6 +36,8 @@ void updateFinished() {
 
 void updateProgress(int cur, int total) {
     Debug.printf("CALLBACK:  HTTP update process at %d of %d bytes...\n", cur, total);
+    updateOnLCD(cur, total);
+
 }
 
 void updateError(int err) {

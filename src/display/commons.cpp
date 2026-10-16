@@ -435,3 +435,28 @@ void cycleDisplay(void){
     }
 
 }
+
+void updateOnLCD(int curr, int total) {
+    static bool first = true;
+    static int percentPrev = 0, percent = 0;
+    if ((cfg::has_lcd2004 || cfg::has_lcd1602) && char_lcd != nullptr) {
+        if (first) {
+            char_lcd->clear();
+            char_lcd->setCursor(0, 0);
+            char_lcd->print(F("Update:"));
+            char_lcd->setCursor(0, 1);
+
+            char_lcd->print(F("0 %"));
+            first = false;
+        }
+        percent = (int)(curr/(float)total*100);
+        if (percent - percentPrev > 9) {
+            char_lcd->setCursor(0, 1);
+
+            char_lcd->print(percent);
+            char_lcd->print(F(" %"));
+            percentPrev = percent;
+        }
+    }
+
+}

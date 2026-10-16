@@ -31,5 +31,7 @@ void cycleDisplay();
 //create "progress bar"
 void initCustomChars();
 void displaySendSignal();
+//update progres on LCD
+void updateOnLCD(int, int);
 
 #endif //NAMF_DISPLAY_COMMONS_H
