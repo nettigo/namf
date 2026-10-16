@@ -58,16 +58,16 @@ extern String tmpl(const String& patt, const String& value);
 #define PORT_FSAPP 443
 
 #define UPDATE_HOST F("fw.nettigo.pl")
-#define UPDATE_HOST_ALFA F("alfa.fw.nettigo.pl")
-#define UPDATE_HOST_BETA F("beta.fw.nettigo.pl")
+#define UPDATE_HOST_ALFA F("fw.nettigo.pl")
+#define UPDATE_HOST_BETA F("fw.nettigo.pl")
 #ifdef ETHERNET
 #define UPDATE_URL F("/NAMF-ETH/index.php")
 #define UPDATE_URL_ALFA F("/alfa/NAMF-ETH/index.php")
 #define UPDATE_URL_BETA F("/beta/NAMF-ETH/index.php")
 #else
 #define UPDATE_URL F("/NAMF/index.php")
-#define UPDATE_URL_ALFA F("/NAMF/index.php")
-#define UPDATE_URL_BETA F("/NAMF/index.php")
+#define UPDATE_URL_ALFA F("/alfa/NAMF/index.php")
+#define UPDATE_URL_BETA F("/beta/NAMF/index.php")
 
 #endif
 
