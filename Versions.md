@@ -1,4 +1,7 @@
-NAMF-48rc3 (2026-07-30 rev)
+NAMF_48rc4 (x-x-x rev)
+- more config parsing fixes
+
+NAMF-48rc3 (2026-07-30 rev 460eb3b6899dab35d9e060bf7b3080b5a8fdc92b)
 - 48rc2 did not read all config settings correctly, this release fixes that
 
 NAMF-48rc2 (2026-07-28 rev 7f92c509ce57a114250304b59c7688b1b5647f5e)
