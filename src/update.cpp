@@ -30,7 +30,7 @@ void updateStarted() {
     Debug.println("CALLBACK:  HTTP update process started");
 }
 
-void udpateFinished() {
+void updateFinished() {
     Debug.println("CALLBACK:  HTTP update process finished");
 }
 
@@ -44,7 +44,7 @@ void updateError(int err) {
 
 void setupUpdate() {
     updateObj.onStart(updateStarted);
-    updateObj.onEnd(udpateFinished);
+    updateObj.onEnd(updateFinished);
     updateObj.onProgress(updateProgress);
     updateObj.onError(updateError);
 
