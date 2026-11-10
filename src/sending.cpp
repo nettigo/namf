@@ -35,6 +35,8 @@ int sendData(const LoggerEntry logger, const String &data, const int pin, const 
         client = new WiFiClientSecure;
         ssl = true;
         configureCACertTrustAnchor(static_cast<WiFiClientSecure *>(client));
+        // Own API sits behind a CA other than ISRG Root X1 (e.g. Cloudflare/GTS): encrypt, but don't verify.
+        if (logger == LoggerCustom) static_cast<WiFiClientSecure *>(client)->setInsecure();
 #if defined(ARDUINO_ARCH_ESP8266)
         static_cast<WiFiClientSecure *>(client)->setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
 #endif
