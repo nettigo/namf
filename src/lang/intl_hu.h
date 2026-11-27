@@ -195,4 +195,11 @@ Files with .lang extension are searched in following directories and it's subdir
  const char INTL_DISPLAY_NEW[] PROGMEM = "Translate HU: INTL_DISPLAY_NEW 🐱;";
 
 
+ const char INTL_STATIC_IP_SECTION[] PROGMEM = "Static IP";
+ const char INTL_STATIC_IP_ENABLE[] PROGMEM = "Enable static IP (skip DHCP at boot)";
+ const char INTL_STATIC_IP_ADDR[] PROGMEM = "IP address";
+ const char INTL_STATIC_IP_GW[] PROGMEM = "Gateway";
+ const char INTL_STATIC_IP_MASK[] PROGMEM = "Netmask";
+ const char INTL_STATIC_IP_DNS[] PROGMEM = "DNS";
+
 #endif

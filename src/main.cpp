@@ -115,6 +115,10 @@ void setDefaultConfig(void) {
     stringToChar(&cfg::wlanpwd, FPSTR(EMPTY_STRING));
     stringToChar(&cfg::fbssid, FPSTR(EMPTY_STRING));
     stringToChar(&cfg::fbpwd, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::static_ip, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::static_gw, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::static_mask, FPSTR(EMPTY_STRING));
+    stringToChar(&cfg::static_dns, FPSTR(EMPTY_STRING));
     stringToChar(&cfg::user_custom, FPSTR(USER_CUSTOM));
     stringToChar(&cfg::pwd_custom, FPSTR(PWD_CUSTOM));
     stringToChar(&cfg::pwd_influx, FPSTR(EMPTY_STRING));

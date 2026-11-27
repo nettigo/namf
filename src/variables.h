@@ -56,6 +56,13 @@ namespace cfg {
     extern char *fbssid;
     extern char *fbpwd;
 
+    //static IP (patch: pola konfiguracyjne, omijaja DHCP przy starcie)
+    extern bool static_ip_enabled;
+    extern char *static_ip;
+    extern char *static_gw;
+    extern char *static_mask;
+    extern char *static_dns;
+
     extern bool in_factory_reset_window;
 
     extern char current_lang[3];

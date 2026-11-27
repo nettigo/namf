@@ -170,6 +170,12 @@ Files with .lang extension are searched in following directories and it's subdir
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_REFRESH[] PROGMEM = "Pause between saving measurements";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SENSOR_DESC[] PROGMEM = "Sensirion SPS30 - high precision particle matter sensor";
 /* ./src/sensors/sps30/sps30_en.lang */ const char INTL_SPS30_SIZE[] PROGMEM = "µm";
+/* ./src/lang/intl_en.lang */ const char INTL_STATIC_IP_ADDR[] PROGMEM = "IP address";
+/* ./src/lang/intl_en.lang */ const char INTL_STATIC_IP_DNS[] PROGMEM = "DNS";
+/* ./src/lang/intl_en.lang */ const char INTL_STATIC_IP_ENABLE[] PROGMEM = "Enable static IP (skip DHCP at boot)";
+/* ./src/lang/intl_en.lang */ const char INTL_STATIC_IP_GW[] PROGMEM = "Gateway";
+/* ./src/lang/intl_en.lang */ const char INTL_STATIC_IP_MASK[] PROGMEM = "Netmask";
+/* ./src/lang/intl_en.lang */ const char INTL_STATIC_IP_SECTION[] PROGMEM = "Static IP";
 /* ./src/lang/intl_en.lang */ const char INTL_STATUS_PAGE[] PROGMEM = "Sensor status";
 /* ./src/lang/intl_en.lang */ const char INTL_TAB_ADVANCED[] PROGMEM = "Advanced";
 /* ./src/lang/intl_en.lang */ const char INTL_TAB_API[] PROGMEM = "API";
