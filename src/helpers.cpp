@@ -282,6 +282,10 @@ String getConfigString(boolean maskPwd) {
     json_string += Var2Json(F("www_password"), www_password);
     json_string += Var2Json(F("fs_ssid"), fs_ssid);
     json_string += Var2Json(F("fbssid"), fbssid);
+    json_string += Var2Json(F("static_ip"), static_ip);
+    json_string += Var2Json(F("static_gw"), static_gw);
+    json_string += Var2Json(F("static_mask"), static_mask);
+    json_string += Var2Json(F("static_dns"), static_dns);
 
 #ifdef NAM_LORAWAN
 
@@ -312,6 +316,7 @@ String getConfigString(boolean maskPwd) {
     copyToJSON_Bool(send2lora);
     copyToJSON_Bool(send2csv);
     copyToJSON_Bool(auto_update);
+    copyToJSON_Bool(static_ip_enabled);
     copyToJSON_Int(update_channel);
     copyToJSON_Bool(has_display);
     copyToJSON_Bool(has_lcd1602);
@@ -418,6 +423,10 @@ int readAndParseConfigFile(File configFile) {
             setCharVar(json, &wlanpwd, F("wlanpwd"), FPSTR(EMPTY_STRING));
             setCharVar(json, &fbssid, F("fbssid"), FPSTR(EMPTY_STRING));
             setCharVar(json, &fbpwd, F("fbpwd"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &static_ip, F("static_ip"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &static_gw, F("static_gw"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &static_mask, F("static_mask"), FPSTR(EMPTY_STRING));
+            setCharVar(json, &static_dns, F("static_dns"), FPSTR(EMPTY_STRING));
             setCharVar(json, &www_username, F("www_username"), FPSTR(WWW_USERNAME));
             setCharVar(json, &www_password, F("www_password"), FPSTR(WWW_PASSWORD));
             setCharVar(json, &fs_ssid, F("fs_ssid"), FPSTR(FS_SSID));
@@ -463,6 +472,7 @@ int readAndParseConfigFile(File configFile) {
             setFromJSON(send2lora);
             setFromJSON(send2csv);
             setFromJSON(auto_update);
+            setFromJSON(static_ip_enabled);
             setFromJSON(update_channel);
             setFromJSON(has_display);
             setFromJSON(has_lcd1602);

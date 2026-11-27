@@ -236,6 +236,22 @@ namespace NAMWiFi {
         //hostname += esp_chipid();
         //WiFi.hostname(hostname.c_str()); // Hostname for DHCP Server.
 
+#if defined(ARDUINO_ARCH_ESP8266)
+        if (cfg::static_ip_enabled && strlen(cfg::static_ip) > 0) {
+            IPAddress ip, gw, mask, dns;
+            bool ok = ip.fromString(cfg::static_ip);
+            if (!gw.fromString(cfg::static_gw)) gw = ip;
+            if (!mask.fromString(cfg::static_mask)) mask = IPAddress(255, 255, 255, 0);
+            if (!dns.fromString(cfg::static_dns)) dns = gw;
+            if (ok) {
+                WiFi.config(ip, gw, mask, dns);
+                debug_out(F("Static IP enabled: "), DEBUG_MIN_INFO, 0);
+                debug_out(cfg::static_ip, DEBUG_MIN_INFO, 1);
+            }
+        } else {
+            WiFi.config(IPAddress(0,0,0,0), IPAddress(0,0,0,0), IPAddress(0,0,0,0));  // wymus DHCP
+        }
+#endif
         WiFi.hostname(cfg::fs_ssid); // Hostname for DHCP Server
         WiFi.begin(cfg::wlanssid, cfg::wlanpwd); // Start WiFI
 

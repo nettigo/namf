@@ -34,6 +34,11 @@ namespace cfg {
 
     char *fbssid = nullptr;
     char *fbpwd = nullptr;
+    bool static_ip_enabled = false;
+    char *static_ip = nullptr;
+    char *static_gw = nullptr;
+    char *static_mask = nullptr;
+    char *static_dns = nullptr;
 
     bool in_factory_reset_window = true;
 

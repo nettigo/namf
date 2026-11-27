@@ -374,6 +374,11 @@ void parse_config_request(String &page_content) {
         }
         readPwdParam(&fbpwd,F("fbpwd"));
     }
+    readBoolParam(static_ip_enabled);
+    if (server.hasArg(F("static_ip"))){ stringToChar(&static_ip, server.arg(F("static_ip"))); }
+    if (server.hasArg(F("static_gw"))){ stringToChar(&static_gw, server.arg(F("static_gw"))); }
+    if (server.hasArg(F("static_mask"))){ stringToChar(&static_mask, server.arg(F("static_mask"))); }
+    if (server.hasArg(F("static_dns"))){ stringToChar(&static_dns, server.arg(F("static_dns"))); }
     //always allow to change output power
     readFloatParam(outputPower);
     readIntParam(phyMode);
@@ -679,6 +684,12 @@ void webserver_config(){
                                           String(time_for_wifi_config / 1000), 5));
         page_content.concat(formInputGrid("outputPower", FPSTR(INTL_WIFI_TX_PWR), String(outputPower), 5));
         page_content.concat(formInputGrid("phyMode", FPSTR(INTL_WIFI_PHY_MODE), String(phyMode), 5));
+        page_content.concat(formSectionHeader(FPSTR(INTL_STATIC_IP_SECTION)));
+        page_content.concat(formCheckboxOpenGrid("static_ip_enabled", FPSTR(INTL_STATIC_IP_ENABLE), static_ip_enabled));
+        page_content.concat(formInputGrid("static_ip", FPSTR(INTL_STATIC_IP_ADDR), static_ip, 15));
+        page_content.concat(formInputGrid("static_gw", FPSTR(INTL_STATIC_IP_GW), static_gw, 15));
+        page_content.concat(formInputGrid("static_mask", FPSTR(INTL_STATIC_IP_MASK), static_mask, 15));
+        page_content.concat(formInputGrid("static_dns", FPSTR(INTL_STATIC_IP_DNS), static_dns, 15));
 
         page_content.concat(formSectionHeaderWithHelp(FPSTR(INTL_BACKLIGHT), F("m/backlight")));
         page_content.concat(formInputGrid("backlight_stop", FPSTR(INTL_BACKLIGHT_STOP), String(backlight_stop), 5));
